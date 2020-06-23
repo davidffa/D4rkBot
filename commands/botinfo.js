@@ -13,8 +13,11 @@ module.exports = {
         const cpu = osu.cpu;
         const ram = osu.mem;
         const cpuUsage = await cpu.usage();
-        const usedMem = await (await ram.info()).usedMemMb * 1024;
-        const totalMem = await (await ram.info()).totalMemMb * 1024;
+        
+        //HEROKU
+        const nonMem = (await ram.info()).totalMemMb - 512;
+        const usedMem = await (await ram.info()).usedMemMb * 1024 - nonMem;
+        const totalMem = 512/*await (await ram.info()).totalMemMb * 1024*/;
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('BotInfo')
@@ -26,7 +29,7 @@ module.exports = {
             .addField('Servidores em que estou', `\`${client.guilds.cache.size}\``, true)
             .addField(':ping_pong: Ping da API', `\`${Math.round(client.ws.ping)}ms\``, true)
             .addField('<:bot_badgehypesquad:590943982436089858> Prefixos', `Padrão: \`.\`\n No servidor: \`${prefix}\``, true)
-            .addField('<:lang_js:427101545478488076> Versão NodeJS', '`v12.16.2`', true)
+            .addField('<:lang_js:427101545478488076> Versão NodeJS', '`v12.18.1`', true)
             .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.2.0`', true)
             .addField('Banco de dados NoSql', '`MongoDB`', true)
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}\` %`, true)
