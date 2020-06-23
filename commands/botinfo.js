@@ -11,13 +11,11 @@ module.exports = {
     cooldown: 10,
     async execute(client, message, args, prefix) { 
         const cpu = osu.cpu;
-        const ram = osu.mem;
+        //const ram = osu.mem;
         const cpuUsage = await cpu.usage();
-        
-        //HEROKU
-        const nonMem = await (await ram.info()).totalMemMb * 1024 - 512;
-        const usedMem = await (await ram.info()).usedMemMb * 1024 - nonMem;
-        const totalMem = 512/*await (await ram.info()).totalMemMb * 1024*/;
+       
+        /*const usedMem = await (await ram.info()).usedMemMb * 1024 - nonMem;
+        const totalMem = await (await ram.info()).totalMemMb * 1024;*/
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('BotInfo')
@@ -33,7 +31,7 @@ module.exports = {
             .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.2.0`', true)
             .addField('Banco de dados NoSql', '`MongoDB`', true)
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}\` %`, true)
-            .addField('RAM', `\`${usedMem}MB / ${totalMem}MB\``, true)
+            //.addField('RAM', `\`${usedMem}MB / ${totalMem}MB\``, true)
             .setTimestamp()
             .setFooter(message.author.tag, message.author.displayAvatarURL());
         message.channel.send(embed);
