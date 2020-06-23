@@ -6,6 +6,7 @@ const prefixdb = require('./models/prefixdb');
 const welcomedb = require("./models/welcomedb");
 const roledb = require('./models/roledb');
 const Canvas = require('canvas');
+const path = require('path');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -26,7 +27,7 @@ for (const file of commandFiles) {
 client.once('ready', () => {
     console.log("D4rkBot iniciado");
     console.log(`Utilizadores: ${client.users.cache.size} \nServidores: ${client.guilds.cache.size}`)
-    client.user.setActivity("EM MANUTENÇÃO", {type: "WATCHING"});
+    client.user.setActivity("D4rkB", {type: "WATCHING"});
 });
 
 client.on('guildMemberAdd', async member => {
@@ -52,7 +53,7 @@ client.on('guildMemberAdd', async member => {
         const canvas = Canvas.createCanvas(700, 250);
         const ctx = canvas.getContext("2d");
 
-        const background = await Canvas.loadImage("C:/Users/david/Desktop/DiscordBots/D4rkBotJSv3/assets/wallpaper.png");
+        const background = await Canvas.loadImage(path.resolve(__dirname, 'assets', 'wallpaper.png'));
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
         ctx.strokeStyle = "#74037b";
@@ -99,7 +100,7 @@ client.on('message', async message => {
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    if (message.author.id !== '334054158879686657') return message.channel.send(":x: Bot em manutenção!");
+    //if (message.author.id !== '334054158879686657') return message.channel.send(":x: Bot em manutenção!");
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
