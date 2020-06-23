@@ -14,15 +14,22 @@ module.exports = {
         if (!args.length) {
             if (guildExists) {
                 const role = message.guild.roles.cache.get(guildExists.roleID);
-                message.channel.send(`Role default atual: \`${role.name}\``)
+                if (role) message.channel.send(`Role default atual: \`${role.name}\``)
+                else {
+                    await roledb.deleteOne(guildExists);   
+                }
             }
-            message.channel.send(`**Use:** ${prefix}autorole <Nome do cargo> (${prefix}autorole 0 - para desligar esta função)`);
+            return message.channel.send(`**Use:** ${prefix}autorole <Nome do cargo> (${prefix}autorole 0 - para desligar esta função)`);
         }
         if (args[0] == '0') {
             if (guildExists) {
                 await roledb.deleteOne(guildExists);
                 message.channel.send('<a:lab_verificado:643912897218740224> Autorole desativado!');
             }
+        }
+
+        if (!message.guild.member(client.user.id).hasPermission('MANAGE_ROLES')) {
+            message.channel.send(":warning: Não tenho permissão para alterar cargos de membros.");
         }
 
         const role = message.mentions.roles.first();

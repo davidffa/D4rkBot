@@ -32,9 +32,9 @@ client.once('ready', () => {
 
 client.on('guildMemberAdd', async member => {
     const guildExists = await roledb.findOne({ guildID: member.guild.id });
-    if (guildExists) {
-        const role = member.guild.roles.get(guildExists.roleID);
-        member.addRole(role).catch(console.log);
+    if (guildExists && member.guild.member(client.user.id).hasPermission('MANAGE_ROLES')) {
+        const role = member.guild.roles.cache.get(guildExists.roleID);
+        member.roles.add(role).catch(console.log);
     }
 
     const applyText = (canvas, text) => {
@@ -52,8 +52,8 @@ client.on('guildMemberAdd', async member => {
         const chat = guildExists2.chatID;
         const canvas = Canvas.createCanvas(700, 250);
         const ctx = canvas.getContext("2d");
-
-        const background = await Canvas.loadImage(path.resolve(__dirname, 'assets', 'wallpaper.png'));
+        
+        const background = await Canvas.loadImage(String(path.resolve(__dirname, 'assets', 'wallpaper.png')));
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
         ctx.strokeStyle = "#74037b";
@@ -70,7 +70,7 @@ client.on('guildMemberAdd', async member => {
         ctx.closePath();
         ctx.clip();
 
-        client.channels.cache.get(chat).send(member.user.displayAvatarURL({ format: 'png' }));
+        //client.channels.cache.get(chat).send(member.user.displayAvatarURL({ format: 'png' }));
         const avatar = await Canvas.loadImage(member.user.displayAvatarURL({ format: 'png' }));
         ctx.drawImage(avatar, 25, 25, 200, 200);
 
@@ -83,7 +83,7 @@ client.on('guildMemberRemove', async member => {
     const guildExists = await welcomedb.findOne({ guildID: member.guild.id });
     if (guildExists) {
         const chat = guildExists.chatID;
-        client.channels.get(chat).send(`Adeus \`${member.user.username}\``);
+        client.channels.cache.get(chat).send(`Adeus \`${member.user.username}\``);
     } 
 });
 
