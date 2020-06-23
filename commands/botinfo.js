@@ -15,7 +15,7 @@ module.exports = {
         const cpuUsage = await cpu.usage();
         
         //HEROKU
-        const nonMem = (await ram.info()).totalMemMb - 512;
+        const nonMem = await (await ram.info()).totalMemMb * 1024 - 512;
         const usedMem = await (await ram.info()).usedMemMb * 1024 - nonMem;
         const totalMem = 512/*await (await ram.info()).totalMemMb * 1024*/;
         const embed = new MessageEmbed()
