@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const YouTubeAPI = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
-const ytinfo = require('youtube-info');
+const ytinfo = require('updated-youtube-info');
 //const ytsearch = require('yt-search');
 const emojiChar = require('../utils/emojiCharaters');
 

@@ -19,10 +19,10 @@
     "simple-youtube-api": "^5.2.1",
     "sodium": "^3.0.2",
     "steam-provider": "^0.3.2",
+    "updated-youtube-info": "^1.3.3",
     "utf-8-validate": "^5.0.2",
     "util": "^0.12.2",
     "weather-js": "^2.0.0",
-    "youtube-info": "^1.3.2",
     "yt-search": "^1.1.2",
     "ytdl-core": "^2.1.7"
   },

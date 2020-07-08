@@ -2774,6 +2774,17 @@ update-notifier@^4.0.0:
     semver-diff "^3.1.1"
     xdg-basedir "^4.0.0"
 
+updated-youtube-info@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/updated-youtube-info/-/updated-youtube-info-1.3.3.tgz#157af2e0b74666375d021b89205b8bd3b4a7657e"
+  integrity sha512-7KTTQ6t/uy7SC5XHMcoEibUvFyP6/e4KcDJjyW834Ojue0Djt+vP3HdKcrj99lFOkvUMwdd1haw33HwVSNBQxA==
+  dependencies:
+    cheerio "^0.19.0"
+    debug "^2.2.0"
+    lodash.isfunction "^3.0.6"
+    request "2.81.0"
+    request-promise "^4.2.2"
+
 uri-js@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/uri-js/-/uri-js-4.2.2.tgz#94c540e1ff772956e2299507c010aea6c8838eb0"
@@ -2907,17 +2918,6 @@ yallist@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
-
-youtube-info@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/youtube-info/-/youtube-info-1.3.2.tgz#d9d2d7401ae61b1b9dc366a713629177608f0fee"
-  integrity sha512-LnBZxCuCof0bwFNtLSxklLYgaU1XR8OK+cGieWyPS10rn3P0TMHdIikRpO/W/duE9SR9JfzOk8ThgwDgx0B3Vw==
-  dependencies:
-    cheerio "^0.19.0"
-    debug "^2.2.0"
-    lodash.isfunction "^3.0.6"
-    request "2.81.0"
-    request-promise "^4.2.2"
 
 yt-search@^1.1.2:
   version "1.1.2"
