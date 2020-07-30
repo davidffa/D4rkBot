@@ -343,7 +343,7 @@ module.exports = {
                                             .setColor('RANDOM')
                                             .setDescription('<a:carregando:488783607352131585> A obter informação da playlist...')
                                     )
-                                    await sendInfo(videos[id].id, msg, author);
+                                    await sendInfo(videos[i].id, msg, author, voiceChannel);
                                     await play(message, voiceChannel, videos[i].url);
                                 }
                         }).catch(console.log);
