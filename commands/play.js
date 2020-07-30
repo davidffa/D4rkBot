@@ -2,7 +2,7 @@ const { MessageEmbed } = require('discord.js');
 const YouTubeAPI = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
 const ytinfo = require('updated-youtube-info');
-//const ytsearch = require('yt-search');
+const ytsearch = require('yt-search');
 const emojiChar = require('../utils/emojiCharaters');
 
 //URL Regex
@@ -235,7 +235,7 @@ async function createCollector(results, message, args, author) {
         switch(r.emoji.name) {
             case emojiChar[1]:
                 reacted = true;
-                await sendInfo(results[0].id, msg, author, voiceChannel);
+                await sendInfo(results[0].videoId, msg, author, voiceChannel);
                 await play(message,voiceChannel, results[0].url)
                 setTimeout(() => {
                     msg.reactions.removeAll();
@@ -243,7 +243,7 @@ async function createCollector(results, message, args, author) {
                 break;
             case emojiChar[2]:
                 reacted = true;
-                await sendInfo(results[1].id, msg, author, voiceChannel);
+                await sendInfo(results[1].videoId, msg, author, voiceChannel);
                 await play(message, voiceChannel, results[1].url)
                 setTimeout(() => {
                     msg.reactions.removeAll();
@@ -251,7 +251,7 @@ async function createCollector(results, message, args, author) {
                 break;
             case emojiChar[3]:
                 reacted = true;
-                await sendInfo(results[2].id, msg, author, voiceChannel);
+                await sendInfo(results[2].videoId, msg, author, voiceChannel);
                 await play(message, voiceChannel, results[2].url)
                 setTimeout(() => {
                     msg.reactions.removeAll();
@@ -356,20 +356,20 @@ module.exports = {
             if (args[0].startsWith('http') || args[0].startsWith('www.'))
                 return message.channel.send(':x: Só consigo tocar links do YouTube.');
             message.channel.send(`A procurar \`${args.join(' ')}\` :mag:`);
-            /*ytsearch(args.join(' '), async (err, results) => {
+            ytsearch(args.join(' '), async (err, results) => {
                 if (err)
                     return message.channel.send(':x: Ocorreu um erro!');
                 if (!results.videos.length)
                     return message.channel.send(`:x: Nenhuns resultados encontrados para \`${args.join(' ')}\``);
                 await createCollector(results.videos, message, args, message.author);
-            });*/
-            yt.searchVideos(args.join(' '), 3)
+            });
+            /*yt.searchVideos(args.join(' '), 3)
                 .then(async results => {
                     if (!results)
                         return message.channel.send(`:x: Nenhuns resultados encontrados para \`${args.join(' ')}\``);
 
                     await createCollector(results, message, args, message.author);
-            }).catch(console.log);
+            }).catch(console.log);*/
         }
     }   
 }
