@@ -1,5 +1,5 @@
 {
-  "name": "d4rkbotjs",
+  "name": "d4rkbot",
   "version": "3.0.0",
   "description": "Bot para discord em NodeJS",
   "main": "index.js",
@@ -7,6 +7,8 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
+    "@k3rn31p4nic/google-translate-api": "^1.1.1",
+    "@y2nk4/currency-converter": "^1.0.2",
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
     "discord.js": "^12.2.0",

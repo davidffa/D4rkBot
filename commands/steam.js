@@ -14,6 +14,9 @@ module.exports = {
             return message.channel.send(`:x: Argumentos em falta! **Usa:** ${prefix}steam <Jogo>`);
 
         provider.search(args.join(' '), 1, 'portuguese', 'pt').then(result => {
+            if (!result.length) {
+                return message.channel.send(':x: Jogo não encontrado!');
+            }
             provider.detail(result[0].id, 'portuguese', 'pt').then(results => {
                 const embed = new MessageEmbed()
                     .setColor('RANDOM')
