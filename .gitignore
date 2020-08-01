@@ -1,4 +1,4 @@
 node_modules
 .env
-screenshots/*
-!screenshots/.gitkeep
+screenshots
+render.js
