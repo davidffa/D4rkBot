@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'currency',
-    description: 'Converte um',
+    description: 'Conversor de moeda',
     aliases: ['moeda', 'conversormoeda', 'curr'], 
     category: 'Outros',
     usage: '<de> <para> <valor>',

@@ -11,11 +11,8 @@ module.exports = {
     cooldown: 10,
     async execute(client, message, args, prefix) { 
         const cpu = osu.cpu;
-        //const ram = osu.mem;
         const cpuUsage = await cpu.usage();
        
-        /*const usedMem = await (await ram.info()).usedMemMb * 1024 - nonMem;
-        const totalMem = await (await ram.info()).totalMemMb * 1024;*/
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('BotInfo')
@@ -24,14 +21,14 @@ module.exports = {
             .addField(':closed_book: Meu ID', '`499901597762060288`', true)
             .addField(':man: Dono', '`D4rkB#2408`', true)
             .addField('<a:malakoi:478003266815262730> Uptime', `\`${msToDate(client.uptime)}\``, true)
-            .addField('Servidores em que estou', `\`${client.guilds.cache.size}\``, true)
+            .addField(':desktop: Servidores em que estou', `\`${client.guilds.cache.size}\``, true)
             .addField(':ping_pong: Ping da API', `\`${Math.round(client.ws.ping)}ms\``, true)
             .addField('<:bot_badgehypesquad:590943982436089858> Prefixos', `Padrão: \`.\`\n No servidor: \`${prefix}\``, true)
-            .addField('<:lang_js:427101545478488076> Versão NodeJS', '`v12.18.2`', true)
+            .addField('<:lang_js:427101545478488076> Versão NodeJS', '`v12.18.3`', true)
             .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.2.0`', true)
-            .addField('Banco de dados NoSql', '`MongoDB`', true)
+            .addField(':bank: Banco de dados', '`MongoDB`', true)
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}\` %`, true)
-            //.addField('RAM', `\`${usedMem}MB / ${totalMem}MB\``, true)
+            .addField('RAM', `\`${(process.memoryUsage().rss/1024/1024).toFixed(0)}MB\``, true)
             .setTimestamp()
             .setFooter(message.author.tag, message.author.displayAvatarURL());
         message.channel.send(embed);
