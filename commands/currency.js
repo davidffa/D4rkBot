@@ -20,24 +20,23 @@ module.exports = {
 
         let converter = new currencyConverter(process.env.CurrConverterAPI);
 
-        let convertedCurrency;
         try {
-            convertedCurrency = await converter.convert(args[0], args[1], Number(args[2]));
+            const convertedCurrency = await converter.convert(args[0], args[1], Number(args[2]));
+
+            const embed = new MessageEmbed()
+                .setTitle("Conversor Moeda")
+                .setColor("RANDOM")
+                .addField(`:moneybag: Valor de origem: (${args[0]})`, `\`\`\`${args[2]}\`\`\``)
+                .addField(`:moneybag: Valor convertido: (${args[1]})`, `\`\`\`${convertedCurrency}\`\`\``)
+                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+                .setTimestamp();
+                
+            message.channel.send(embed);
         }catch (err) {
             if (err.message === 'Currency may be wrong or not supported.')
                 message.channel.send(':x: Formato da moeda inválido! Tente: `USD, EUR, BRL, ...`');
             else
                 message.channel.send(':x: Ocorreu um erro!');
-            return;
-        }
-        const embed = new MessageEmbed()
-            .setTitle("Conversor Moeda")
-            .setColor("RANDOM")
-            .addField(`:moneybag: Valor de origem: (${args[0]})`, `\`\`\`${args[2]}\`\`\``)
-            .addField(`:moneybag: Valor convertido: (${args[1]})`, `\`\`\`${convertedCurrency}\`\`\``)
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
-            .setTimestamp()
-        message.channel.send(embed);
-        
+        }       
     }
 }

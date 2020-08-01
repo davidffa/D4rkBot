@@ -1,7 +1,7 @@
 module.exports = {
-    name: 'escrever',
+    name: 'say',
     description: 'Escreve algo no chat',
-    aliases: ['falar'], 
+    aliases: ['escrever', 'falar'], 
     category: 'Outros',
     usage: '<Texto>',
     cooldown: 3,
