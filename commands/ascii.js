@@ -5,11 +5,10 @@ module.exports = {
     description: 'Torna uma frase numa ascii art',
     aliases: ['asciiart'], 
     category: 'Outros',
+    args: 1,
     usage: '<Frase/Palavra>',
     cooldown: 3,
     execute(client, message, args, prefix) {
-        if (!args.length) 
-            return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}ascii <Frase/Palavra>`);
         if (args.join(' ').length > 20)
             return message.channel.send(':x: Máximo de 20 caracteres permitido!');
         

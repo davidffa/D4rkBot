@@ -25,7 +25,7 @@ module.exports = {
                 user = userMentioned;
             }else {
                 message.guild.members.cache.map(member => {
-                    if (member.user.tag.startsWith(args[0])) {
+                    if (member.user.tag.toLowerCase().startsWith(args[0].toLowerCase())) {
                         user = member.user;
                     }
                 })

@@ -135,13 +135,13 @@ client.on('message', async message => {
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
     if (command.args && !args.length) {
-        let reply = `:x: Argumentos em falta, \`${message.author.user}\``;
+        let reply = `:x: Argumentos em falta! `;
 
         if (command.usage) {
             reply += `**Usa:** \`${prefix}${commandName} ${command.usage}\``;
         }
         
-        message.channel.send(reply);
+        return message.channel.send(reply);
     }
 
     try {

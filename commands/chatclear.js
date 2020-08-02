@@ -4,13 +4,18 @@ module.exports = {
     name: 'chatclear',
     description: 'Limpa mensagens do servidor', 
     aliases: ['clear', 'limparchat', 'purge', 'cc'],
-    usage: '<Número de mensagens 2/99>',
+    usage: '<Número de mensagens>',
     category: 'Admin',
     guildOnly: true,
+    args: 1,
     cooldown: 5,
     execute(client, message, args, prefix) {
         if (!message.member.hasPermission('MANAGE_MESSAGES'))
             return message.channel.send(':x: Não tens permissão!');
+
+        if (!message.guild.member(client.user.id).hasPermission('MANAGE_MESSAGES'))
+            return message.channel.send(':x: Não tenho permissão para apagar mensagens!');
+
         if (!args.length)
             return message.channel.send(`**Usa:** ${prefix}chatclear <Nº de mensagens (entre 2 e 99)>`);
         
