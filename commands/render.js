@@ -23,6 +23,8 @@ module.exports = {
         else 
             url = args[0];
 
+        if (!fs.existsSync('./screenshots')) 
+            fs.mkdirSync('./screenshots')
 
         const browser = await puppeteer.launch({
             args: [
