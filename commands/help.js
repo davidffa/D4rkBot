@@ -5,7 +5,7 @@ module.exports = {
     description: 'Lista de todos os comandos ou informações de um comando específico.',
     aliases: ['comandos', 'cmd', 'cmds'],
     cooldown: 5,
-    execute(client, message, args, prefix) {
+    async execute(client, message, args, prefix) {
         const data = [];
         const Admin = [];
         const Definicoes = [];
@@ -46,10 +46,10 @@ module.exports = {
                     if (message.channel.type === 'dm') return;
                     message.reply('<a:lab_verificado:643912897218740224> Enviei-te uma mensagem privada com todos os meus comandos!');
                 })
-                .catch(error => {
-                    console.error(`Nao foi possivel enviar DM ao ${message.author.tag}. \n`, error);
-                    message.reply(':x: Não te consigo enviar uma mensagem privada. Verifica se tens as mensagens privadas desativadas.')
-                })
+                .catch(async err => {
+                    const msg = await message.channel.send(res);
+                    await msg.delete({timeout: 30000});
+                });
         }
 
         const name = args[0].toLowerCase();

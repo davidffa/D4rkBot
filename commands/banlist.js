@@ -12,7 +12,7 @@ module.exports = {
 
         const bans = await message.guild.fetchBans();
         bans.map(user => {
-            msg += user.user.username;
+            msg += user.user.username + ', ';
         });
 
         if (msg === '') {

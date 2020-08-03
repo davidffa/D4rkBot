@@ -16,7 +16,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('BotInfo')
-            .setDescription('<a:lab_blobdance:643917533136814087> Adiciona me no teu servidor [aqui](https://discordapp.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)')
+            .setDescription('<a:lab_blobdance:643917533136814087> Adiciona me no teu servidor [aqui](https://discord.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)')
             .addField(':calendar: Criado em', `\`${client.user.createdAt}\``, true)
             .addField(':closed_book: Meu ID', '`499901597762060288`', true)
             .addField(':man: Dono', '`D4rkB#2408`', true)

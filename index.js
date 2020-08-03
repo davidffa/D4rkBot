@@ -92,7 +92,7 @@ client.on('message', async message => {
     if (message.channel.type === 'text') {
         prefixDB = await prefixdb.findOne({ guildID: message.guild.id });
     }
-    const prefix = prefixDB ? prefixDB.prefix : ".";
+    const prefix = prefixDB ? prefixDB.prefix : "db.";
 
     if (message.channel.type === 'text' && message.mentions.members.has(client.user.id)) {
         return message.channel.send(`<a:lab_bloblegal:643912893246603314> Olá <@${message.author.id}> O meu prefixo neste servidor é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`);
