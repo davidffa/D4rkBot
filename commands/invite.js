@@ -1,7 +1,7 @@
 module.exports = {
     name: 'invite',
     description: 'Link do meu convite.',
-    aliases: ['convite'], 
+    aliases: ['convite', 'inv'], 
     category: 'info',
     cooldown: 3,
     execute(client, message, args, prefix) {

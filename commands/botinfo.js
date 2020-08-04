@@ -1,6 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 const osu = require('node-os-utils');
 const msToDate = require('../utils/mstodate');
+const moment = require('moment');
+moment.locale('pt-PT');
 
 module.exports = {
     name: 'botinfo',
@@ -12,12 +14,12 @@ module.exports = {
     async execute(client, message, args, prefix) { 
         const cpu = osu.cpu;
         const cpuUsage = await cpu.usage();
-       
+        
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('BotInfo')
             .setDescription('<a:lab_blobdance:643917533136814087> Adiciona me no teu servidor [aqui](https://discord.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)')
-            .addField(':calendar: Criado em', `\`${client.user.createdAt}\``, true)
+            .addField(':calendar: Criado em', `\`${moment(client.user.createdAt).format('L')} (${moment(client.user.createdAt).startOf('day').fromNow()})\``, true)
             .addField(':closed_book: Meu ID', '`499901597762060288`', true)
             .addField(':man: Dono', '`D4rkB#2408`', true)
             .addField('<a:malakoi:478003266815262730> Uptime', `\`${msToDate(client.uptime)}\``, true)
