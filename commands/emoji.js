@@ -174,7 +174,7 @@ module.exports = {
             const embed = new MessageEmbed()
                 .setTitle(':grinning: Emojis do servidor')
                 .setColor('RANDOM')
-                .setDescription(getEmojiMessage2())
+                .setDescription('Clique num emoji para obter informações sobre ele\n\n' + getEmojiMessage2())
                 .setTimestamp()
                 .setFooter(message.author.tag, message.author.displayAvatarURL())
             
