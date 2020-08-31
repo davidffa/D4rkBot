@@ -1,6 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const urlExist = require('url-exist');
 
 module.exports = {
     name: 'render',
@@ -11,12 +12,8 @@ module.exports = {
     cooldown: 3,
     guildOnly: true,
     async execute(client, message, args, prefix) {
-        if (!message.channel.nsfw && message.author.id != '334054158879686657')
-            return message.channel.send(':x: Só posso executar esse comando em canais nsfw!');
-
         if (!args.length) 
             return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}render <URL>`);
-
 
         const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
@@ -25,6 +22,17 @@ module.exports = {
             url = 'http://' + args[0];
         else 
             url = args[0];
+
+        async function urlExists() {
+            const exists = await urlExist(url);
+            
+            if (exists)
+                return true;
+            return false;
+        }
+
+        if (!await urlExists()) 
+            return message.reply(':x: Link inválido!')
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
@@ -35,6 +43,18 @@ module.exports = {
                 '--disable-setuid-sandbox',
             ]
         });
+
+        if (!message.channel.nsfw) {
+            const nsfwPage = await browser.newPage();
+
+            await nsfwPage.goto(`https://fortiguard.com/search?q=${url}&engine=1`);
+
+            const text = await nsfwPage.$eval('section .iprep h2 a', el => el.textContent);
+
+            if (text === 'Pornography')
+                return message.reply(':x: Não podes renderizar sites pornográficos!');
+        }
+
         const page = await browser.newPage();
     
         await page.setViewport({

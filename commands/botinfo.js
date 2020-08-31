@@ -25,7 +25,7 @@ module.exports = {
             .addField('<a:malakoi:478003266815262730> Uptime', `\`${msToDate(client.uptime)}\``, true)
             .addField(':desktop: Servidores em que estou', `\`${client.guilds.cache.size}\``, true)
             .addField(':ping_pong: Ping da API', `\`${Math.round(client.ws.ping)}ms\``, true)
-            .addField('<:bot_badgehypesquad:590943982436089858> Prefixos', `Padrão: \`.\`\n No servidor: \`${prefix}\``, true)
+            .addField('<:bot_badgehypesquad:590943982436089858> Prefixos', `Padrão: \`db.\`\n No servidor: \`${prefix}\``, true)
             .addField('<:lang_js:427101545478488076> Versão NodeJS', '`v12.18.3`', true)
             .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.3.1`', true)
             .addField(':bank: Banco de dados', '`MongoDB`', true)

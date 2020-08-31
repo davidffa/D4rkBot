@@ -13,10 +13,18 @@ module.exports = {
         if (!args.length) 
             return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}wiki <Palavra/Frase>`);
 
+        let lang = 'pt';
+
+        if (args[args.length-1] === 'en') {
+            lang = 'en';
+            args.pop();
+        }
+
         let content = args.join(' ');
+
         const input = {
             'articleName': content,
-            'lang': 'pt'
+            'lang': lang
         };
 
         const msg = await message.channel.send('<a:lab_loading:643912893011853332> A procurar...');
