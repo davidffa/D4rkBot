@@ -1,7 +1,6 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const urlExist = require('url-exist');
 
 module.exports = {
     name: 'render',
@@ -22,17 +21,6 @@ module.exports = {
             url = 'http://' + args[0];
         else 
             url = args[0];
-
-        async function urlExists() {
-            const exists = await urlExist(url);
-            
-            if (exists)
-                return true;
-            return false;
-        }
-
-        if (!await urlExists()) 
-            return message.reply(':x: Link inválido!')
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
