@@ -54,7 +54,8 @@ module.exports = {
         try {
             await page.goto(url);
         }catch (err) {
-            return message.channel.send(':x: Link inválido!');
+            message.channel.send(':x: Link inválido!');
+            return await browser.close();
         }
             
         await page.screenshot({ path: `./screenshots/${name}.png`});
