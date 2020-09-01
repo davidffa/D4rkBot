@@ -32,18 +32,18 @@ module.exports = {
             ]
         });
 
-        if (!message.channel.nsfw) {
-            const nsfwPage = await browser.newPage();
-
-            await nsfwPage.goto(`https://fortiguard.com/search?q=${url}&engine=1`);
-
-            const text = await nsfwPage.$eval('section .iprep h2 a', el => el.textContent);
-
-            if (text === 'Pornography')
-                return message.reply(':x: Não podes renderizar sites pornográficos!');
-        }
-
         const page = await browser.newPage();
+
+        if (!message.channel.nsfw) {
+            await page.goto(`https://fortiguard.com/search?q=${url}&engine=1`);
+
+            const text = await page.$eval('section .iprep h2 a', el => el.textContent);
+
+            if (text === 'Pornography') {
+                message.reply(':x: Não podes renderizar sites pornográficos!');
+                return await browser.close();
+            }
+        }
     
         await page.setViewport({
             width: 1920,
@@ -58,7 +58,6 @@ module.exports = {
         }
             
         await page.screenshot({ path: `./screenshots/${name}.png`});
-        await browser.close();
 
         const attachment = new MessageAttachment(`./screenshots/${name}.png`);
             
@@ -70,7 +69,8 @@ module.exports = {
             .setTimestamp();
     
         await message.channel.send({ embed, files: [attachment] });
-
+        
+        await browser.close();
         return fs.unlinkSync(`./screenshots/${name}.png`); 
     }
 }
