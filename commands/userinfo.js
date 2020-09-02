@@ -46,7 +46,7 @@ module.exports = {
             .addField(':shrug: Status', `\`${getStatus(user.presence.status)}\``, true)
             .setTimestamp()
             .setThumbnail(user.displayAvatarURL())
-            .setFooter(message.author.tag, message.author.displayAvatarURL());
+            .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
         return message.channel.send(embed);
     }
 }

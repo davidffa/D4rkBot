@@ -18,7 +18,7 @@ module.exports = {
                 .setColor("RANDOM")
                 .addField(":watch: BOT: ", `\`\`\`${m.createdTimestamp - message.createdTimestamp}ms\`\`\``)
                 .addField(":watch: WebSocket: ", `\`\`\`${Math.round(client.ws.ping)}ms\`\`\``)
-                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
                 .setTimestamp()
             m.edit(embed2)
     },

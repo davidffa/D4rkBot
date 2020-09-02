@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 module.exports = {
     name: 'eval',
     description: 'Executa um código JavaScript e retorna o seu output',
-    aliases: ['e', 'evaluate'], 
+    aliases: ['e', 'evaluate', 'evl'], 
     usage: '<código>',
     category: 'Desenvolvedor',
     cooldown: 1,
@@ -28,7 +28,7 @@ module.exports = {
                             `\`\`\`js\n${evaled}\`\`\`\n`
             )
                 .setTimestamp()
-                .setFooter(message.author.tag, message.author.displayAvatarURL());
+                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
             message.channel.send(embed);
         } catch (err) {
             message.channel.send(`:x: ERRO: ${err.message}`);

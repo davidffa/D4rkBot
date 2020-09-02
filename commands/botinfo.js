@@ -32,7 +32,7 @@ module.exports = {
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}\` %`, true)
             .addField('RAM', `\`${(process.memoryUsage().rss/1024/1024).toFixed(0)}MB\``, true)
             .setTimestamp()
-            .setFooter(message.author.tag, message.author.displayAvatarURL());
+            .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
         message.channel.send(embed);
     }
 };

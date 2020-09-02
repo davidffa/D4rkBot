@@ -18,7 +18,7 @@ module.exports = {
         const res = new MessageEmbed()
             .setTitle('Ajuda')
             .setColor('RANDOM')
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp();
 
         if (!args.length) {

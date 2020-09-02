@@ -39,7 +39,7 @@ module.exports = {
             .setTitle(`Wikipedia: (${args.join(' ')})`)
             .setColor('RANDOM')
             .setDescription(content.join('\n'))
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp());
 
         async function fetchContentFromWikipedia() {   

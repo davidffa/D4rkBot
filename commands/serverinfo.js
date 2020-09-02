@@ -32,7 +32,7 @@ module.exports = {
                 .addField(`:spider_web: Cargos`, `[${message.guild.roles.cache.size}]`)
                 .setThumbnail(message.guild.iconURL({ format: 'png' }))
                 .setTimestamp()
-                .setFooter(message.author.tag, message.author.displayAvatarURL())
+                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
         message.channel.send(embed)
     }
 };

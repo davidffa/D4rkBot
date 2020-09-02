@@ -28,7 +28,7 @@ module.exports = {
                 .setColor("RANDOM")
                 .addField(`:moneybag: Valor de origem: (${args[0]})`, `\`\`\`${args[2]}\`\`\``)
                 .addField(`:moneybag: Valor convertido: (${args[1]})`, `\`\`\`${convertedCurrency}\`\`\``)
-                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
                 .setTimestamp();
                 
             message.channel.send(embed);

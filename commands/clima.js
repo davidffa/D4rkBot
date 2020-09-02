@@ -33,7 +33,7 @@ module.exports = {
                 .addField(':clock: Hora de observação:', `\`${data.observationtime}\` (Hora local)`, true)
                 .setThumbnail(data.imageUrl)
                 .setTimestamp()
-                .setFooter(message.author.tag, message.author.displayAvatarURL());
+                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
 
             message.channel.send(embed);
         }); 

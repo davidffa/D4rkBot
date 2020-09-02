@@ -1,3 +1,5 @@
+const { MessageEmbed } = require('discord.js');
+
 module.exports = {
     name: 'say',
     description: 'Escreve algo no chat',
@@ -9,6 +11,12 @@ module.exports = {
         if (!args.length) 
             return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}escrever <Texto>`);
         
-        return message.channel.send(args.join(' '));
+        const embed = new MessageEmbed()
+                    .setTitle('Mensagem')
+                    .setDescription(args.join(' '))
+                    .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
+                    .setTimestamp();
+                    
+        message.channel.send(embed);
     }
 }

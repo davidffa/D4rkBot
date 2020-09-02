@@ -38,7 +38,7 @@ module.exports = {
             .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
             .setImage(url)
             .setTimestamp()
-            .setFooter(message.author.tag, message.author.displayAvatarURL());
+            .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
 
         return message.channel.send(embed);
     }

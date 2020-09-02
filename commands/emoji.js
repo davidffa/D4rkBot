@@ -1,4 +1,4 @@
-const { MessageEmbed, GuildEmoji } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
 moment.locale('pt-PT');
 
@@ -108,7 +108,7 @@ module.exports = {
                         .addField('Identificador:', `\`${emoji.animated ? '<' + emoji.identifier + '>' : '<:' + emoji.identifier + '>'}\``, true)
                         .setThumbnail(emoji.url)
                         .setTimestamp()
-                        .setFooter(message.author.tag, message.author.displayAvatarURL())
+                        .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
                     return message.channel.send(embed);
                 }
             }
@@ -176,7 +176,7 @@ module.exports = {
                 .setColor('RANDOM')
                 .setDescription('Clique num emoji para obter informações sobre ele\n\n' + getEmojiMessage2())
                 .setTimestamp()
-                .setFooter(message.author.tag, message.author.displayAvatarURL())
+                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
             
             const msg = await message.channel.send(embed);
             

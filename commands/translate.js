@@ -35,7 +35,7 @@ module.exports = {
             .setColor("RANDOM")
             .addField(`:bookmark: Texto de origem: (${args[0]})`, `\`\`\`${originText}\`\`\``)
             .addField(`:book: Texto traduzido: (${args[1]})`, `\`\`\`${text.text}\`\`\``)
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
         message.channel.send(embed);
     }

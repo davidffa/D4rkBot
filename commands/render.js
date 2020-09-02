@@ -104,7 +104,7 @@ module.exports = {
             .setTitle(args[0])
             .setURL(url)
             .setImage(`attachment://${name}.png`)
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL())
+            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp();
     
         await message.channel.send({ embed, files: [attachment] });

@@ -53,7 +53,7 @@ async function sendInfo(id, msg, author, voiceChannel) {
             .setURL(info.url)
             .setThumbnail(info.thumbnailUrl)
             .setTimestamp()
-            .setFooter(author.tag, author.displayAvatarURL())
+            .setFooter(author.tag, author.displayAvatarURL({ dynamic: true }))
         )
     }).catch(async err => {
         console.log(err)
@@ -62,7 +62,7 @@ async function sendInfo(id, msg, author, voiceChannel) {
             .setTitle(":x: Ocorreu um erro!")
             .setDescription("Ocorreu um erro ao obter a informação dessa música!")
             .setTimestamp()
-            .setFooter(author.tag, author.displayAvatarURL())
+            .setFooter(author.tag, author.displayAvatarURL({ dynamic: true }))
         )
     })
     msg.reactions.removeAll();
@@ -225,7 +225,7 @@ async function createCollector(results, message, args, author) {
             :x: \` CANCELAR \`
             `)
             .setTimestamp()
-            .setFooter(author.tag, author.displayAvatarURL())
+            .setFooter(author.tag, author.displayAvatarURL({ dynamic: true }))
     );
 
     const filter = (r, u) => r.me && u.id === author.id;
@@ -266,7 +266,7 @@ async function createCollector(results, message, args, author) {
                         .setTitle('Cancelar')
                         .setDescription(`:x: Pedido \`${args.join(' ')}\` cancelado!`)
                         .setTimestamp()
-                        .setFooter(author.tag, author.displayAvatarURL())
+                        .setFooter(author.tag, author.displayAvatarURL({ dynamic: true }))
                 );  
                 break;
         }

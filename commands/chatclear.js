@@ -29,7 +29,7 @@ module.exports = {
             .setColor('RANDOM')
             .setTitle('Chat Clear')
             .setTimestamp()
-            .setFooter(message.author.tag, message.author.displayAvatarURL());
+            .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
 
         message.channel.bulkDelete(parseInt(args[0]), { filterOld: true }).then(msgs => {
             if (parseInt(args[0]) !== msgs.size) 

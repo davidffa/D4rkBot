@@ -32,7 +32,7 @@ module.exports = {
                     .addField('Publicador(es)', `\`${results.otherData.publisher.join(', ')}\``, true)
                     .setImage(results.otherData.imageUrl)
                     .setTimestamp()
-                    .setFooter(message.author.tag, message.author.displayAvatarURL());
+                    .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
                 message.channel.send(embed);
             })
         })
