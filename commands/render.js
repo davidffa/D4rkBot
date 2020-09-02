@@ -48,8 +48,10 @@ module.exports = {
 
         finalURL = await exists();
 
-        if (!finalURL)
+        if (finalURL === null)
             return message.reply(':x: Site inválido!');
+        else if (finalURL === undefined)
+            finalURL = url;
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
