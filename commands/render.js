@@ -1,7 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const isUp = require('is-up');
+const request = require('request');
 
 module.exports = {
     name: 'render',
@@ -9,7 +9,7 @@ module.exports = {
     aliases: ['webrender'], 
     category: 'Outros',
     usage: '<URL>',
-    cooldown: 3,
+    cooldown: 10,
     guildOnly: true,
     async execute(client, message, args, prefix) {
         if (!args.length) 
@@ -23,10 +23,33 @@ module.exports = {
         else 
             url = args[0];
 
-        const exists = await isUp(url).catch(err => false);
+        async function exists() {
+            return new Promise((resolve, reject) => {
+                request({url: url, followRedirect: false}, (error, res, body) => {
+                    if (res && res.statusCode >= 300 && res.statusCode < 400) {
+                        resolve(res.headers.location);
+                    }else {
+                        resolve(null);
+                    }
+                });
+            });
+        }
 
-        if (!exists) 
-            return message.reply(':x: Link inválido!')
+        async function checkPorn() {
+            return new Promise((resolve, reject) => {
+                request({ url: `https://fortiguard.com/search?q=${finalURL}&engine=1`}, (err, res, body) => {
+                    if (body.includes('Pornography')) 
+                        resolve(true);
+                    else 
+                        resolve(false);
+                });
+            });
+        }
+
+        finalURL = await exists();
+
+        if (!finalURL)
+            return message.reply(':x: Site inválido!');
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
@@ -41,13 +64,22 @@ module.exports = {
         const page = await browser.newPage();
 
         if (!message.channel.nsfw) {
-            await page.goto(`https://fortiguard.com/search?q=${url}&engine=1`);
+            //Check if website is nsfw using webscraping with puppeteer
+            /*await page.goto(`https://fortiguard.com/search?q=${finalURL}&engine=1`);
 
-            const text = await page.$eval('section .iprep h2 a', el => el.textContent);
+            const text = await page.$eval('section .iprep h2 a', el => el.textContent).catch(err => null);
 
-            if (text === 'Pornography') {
+            if (!text) {
+                message.reply(':x: Site inválido!');
+                return await browser.close();
+            }else if (text === 'Pornography') {
                 message.reply(':x: Não podes renderizar sites pornográficos!');
                 return await browser.close();
+            }*/
+
+            if (await checkPorn()) {
+                message.reply(':x: Não podes renderizar sites pornográficos!');
+                return browser.close();
             }
         }
     
@@ -61,7 +93,7 @@ module.exports = {
             await page.goto(url);
         }catch (err) {
             message.channel.send(':x: Link inválido!');
-            return await browser.close();
+            return browser.close();
         }
             
         await page.screenshot({ path: `./screenshots/${name}.png`});
