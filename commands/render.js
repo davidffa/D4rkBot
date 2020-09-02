@@ -26,7 +26,7 @@ module.exports = {
         async function exists() {
             return new Promise((resolve, reject) => {
                 request({url: url, followRedirect: false}, (error, res, body) => {
-                    if (res && res.statusCode >= 300 && res.statusCode < 400) {
+                    if (res && res.statusCode >= 200 && res.statusCode < 400) {
                         resolve(res.headers.location);
                     }else {
                         resolve(null);
