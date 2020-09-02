@@ -47,7 +47,7 @@ module.exports.run = async (client, message) => {
         }
     }
 
-    if (args >= command.args) {
+    if (args.length >= command.args) {
         timestamps.set(message.author.id, now);
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }

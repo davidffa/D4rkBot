@@ -9,12 +9,10 @@ module.exports = {
     aliases: ['webrender'], 
     category: 'Outros',
     usage: '<URL>',
+    args: 1,
     cooldown: 10,
     guildOnly: true,
     async execute(client, message, args, prefix) {
-        if (!args.length) 
-            return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}render <URL>`);
-
         const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
 
