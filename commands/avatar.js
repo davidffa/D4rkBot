@@ -12,6 +12,8 @@ module.exports = {
 
         if (!args.length) {
             user = message.author;
+        }else if (!isNaN(args[0]) && args[0].length === 18) {
+            user = client.users.cache.get(args[0]);
         }else {
             const userMentioned = message.mentions.users.first();
             if (userMentioned) {
@@ -28,7 +30,7 @@ module.exports = {
         if (!user) 
             return message.channel.send(':x: Utilizador não encontrado!');
 
-        const url = user.displayAvatarURL({ format: 'png', size: 2048 });
+        const url = user.displayAvatarURL({ format: 'png', dynamic: true, size: 2048 });
 
         const embed = new MessageEmbed()
             .setTitle(`:frame_photo: ${user.tag}`)
