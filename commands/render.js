@@ -1,6 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const isUp = require('is-up');
 
 module.exports = {
     name: 'render',
@@ -21,6 +22,11 @@ module.exports = {
             url = 'http://' + args[0];
         else 
             url = args[0];
+
+        const exists = await isUp(url).catch(err => false);
+
+        if (!exists) 
+            return message.reply(':x: Link inválido!')
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
@@ -72,6 +78,6 @@ module.exports = {
         await message.channel.send({ embed, files: [attachment] });
         
         await browser.close();
-        return fs.unlinkSync(`./screenshots/${name}.png`); 
+        fs.unlinkSync(`./screenshots/${name}.png`); 
     }
 }
