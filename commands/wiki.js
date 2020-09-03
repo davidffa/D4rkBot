@@ -13,18 +13,11 @@ module.exports = {
         if (!args.length) 
             return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}wiki <Palavra/Frase>`);
 
-        let lang = 'pt';
-
-        if (args[args.length-1] === 'en') {
-            lang = 'en';
-            args.pop();
-        }
-
         let content = args.join(' ');
 
         const input = {
             'articleName': content,
-            'lang': lang
+            'lang': 'pt'
         };
 
         const msg = await message.channel.send('<a:lab_loading:643912893011853332> A procurar...');
@@ -38,6 +31,7 @@ module.exports = {
         await msg.edit('', new MessageEmbed()
             .setTitle(`Wikipedia: (${args.join(' ')})`)
             .setColor('RANDOM')
+            .setThumbnail('https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png')
             .setDescription(content.join('\n'))
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp());
