@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 module.exports = {
     name: 'help',
     description: 'Lista de todos os comandos ou informações de um comando específico.',
-    aliases: ['comandos', 'cmd', 'cmds'],
+    aliases: ['comandos', 'cmd', 'cmds', 'ajuda', 'ajd', 'cmdlist', 'commandlist'],
     cooldown: 5,
     async execute(client, message, args, prefix) {
         const data = [];
