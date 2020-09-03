@@ -64,20 +64,9 @@ module.exports = {
         const page = await browser.newPage();
 
         if (!message.channel.nsfw) {
-            //Check if website is nsfw using webscraping with puppeteer
-            /*await page.goto(`https://fortiguard.com/search?q=${finalURL}&engine=1`);
+            const isPorn = await checkPorn();
 
-            const text = await page.$eval('section .iprep h2 a', el => el.textContent).catch(err => null);
-
-            if (!text) {
-                message.reply(':x: Site inválido!');
-                return await browser.close();
-            }else if (text === 'Pornography') {
-                message.reply(':x: Não podes renderizar sites pornográficos!');
-                return await browser.close();
-            }*/
-
-            if (await checkPorn()) {
+            if (isPorn) {
                 message.reply(':x: Não podes renderizar sites pornográficos!');
                 return browser.close();
             }
@@ -102,14 +91,29 @@ module.exports = {
             
         const embed = new MessageEmbed()
             .setTitle(args[0])
+            .setColor('RANDOM')
             .setURL(url)
             .setImage(`attachment://${name}.png`)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp();
     
-        await message.channel.send({ embed, files: [attachment] });
+        const msg = await message.channel.send({ embed, files: [attachment] });
         
         await browser.close();
         fs.unlinkSync(`./screenshots/${name}.png`); 
+        
+        await msg.react('751062867444498432');
+
+        const filter = (r, u) => r.me && (u.id === message.author.id || u.id === '334054158879686657' || message.guild.member(u).hasPermission('MANAGE_MESSAGES'));
+        const collector = msg.createReactionCollector(filter, { max: 1, time: 60 * 1000 });
+
+        collector.on('collect', async r => {
+            switch(r.emoji.name) {
+                case 'x_':
+                    await msg.delete();
+                    message.channel.send('<a:lab_verificado:643912897218740224> Render fechada.');  
+                    break;
+            }
+        });
     }
 }
