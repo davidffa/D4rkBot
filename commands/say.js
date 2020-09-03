@@ -12,6 +12,7 @@ module.exports = {
             return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}escrever <Texto>`);
         
         const embed = new MessageEmbed()
+                    .setColor('RANDOM')
                     .setTitle('Mensagem')
                     .setDescription(args.join(' '))
                     .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
