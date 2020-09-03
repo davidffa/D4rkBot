@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js');
+const { inspect } = require('util');
 
 module.exports = {
     name: 'eval',
@@ -17,7 +18,9 @@ module.exports = {
             let evaled = eval(code);
 
             if (typeof evaled !== 'string') 
-                evaled = require('util').inspect(evaled);
+                evaled = inspect(evaled);
+
+            if (evaled.size > 1950) evaled = evaled.substr(0, 1950);
             
             const embed = new MessageEmbed()
                 .setColor('RANDOM')
