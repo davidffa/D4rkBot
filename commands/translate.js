@@ -36,6 +36,7 @@ module.exports = {
             .addField(`:bookmark: Texto de origem: (${args[0]})`, `\`\`\`${originText}\`\`\``)
             .addField(`:book: Texto traduzido: (${args[1]})`, `\`\`\`${text.text}\`\`\``)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+            .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Google_Translate_logo.svg/250px-Google_Translate_logo.svg.png')
             .setTimestamp()
         message.channel.send(embed);
     }
