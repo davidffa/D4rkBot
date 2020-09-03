@@ -20,7 +20,12 @@ module.exports = {
             if (typeof evaled !== 'string') 
                 evaled = inspect(evaled);
 
-            if (evaled.size > 1950) evaled = evaled.substr(0, 1950);
+            const max = 1977 - code.length; 
+
+            if (evaled.length > max) {
+                evaled = evaled.substr(0, max);
+                evaled += '\n...'
+            }
             
             const embed = new MessageEmbed()
                 .setColor('RANDOM')
