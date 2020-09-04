@@ -30,7 +30,7 @@ module.exports = {
             .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.3.1`', true)
             .addField(':bank: Banco de dados', '`MongoDB`', true)
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}\` %`, true)
-            .addField('RAM', `\`${(process.memoryUsage().rss/1024/1024).toFixed(0)}MB\``, true)
+            .addField('<:ram:751468688686841986> RAM', `\`${(process.memoryUsage().rss/1024/1024).toFixed(0)}MB\``, true)
             .setTimestamp()
             .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
         message.channel.send(embed);
