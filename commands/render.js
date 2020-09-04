@@ -1,7 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const request = require('request');
+const fetch = require('node-fetch');
 
 module.exports = {
     name: 'render',
@@ -22,34 +22,37 @@ module.exports = {
             url = args[0];
 
         async function exists() {
-            return new Promise((resolve, reject) => {
-                request({ url: url, followRedirect: false, timeout: 3000 }, (error, res, body) => {
-                    if (res && res.statusCode) {
-                        resolve(res.headers.location);
-                    }else {
+            return new Promise(async (resolve, reject) => {
+                setTimeout(() => {
+                    resolve(null);
+                }, 5000)
+                try {
+                    const res = await fetch(url);
+                
+                    if (res) 
+                        resolve(res.url);
+                    else
                         resolve(null);
-                    }
-                });
-            });
+                }catch (err) {
+                    resolve(null);
+                }  
+            })
         }
 
         async function checkPorn() {
-            return new Promise((resolve, reject) => {
-                request({ url: `https://fortiguard.com/search?q=${finalURL}&engine=1`}, (err, res, body) => {
-                    if (body.includes('Pornography')) 
-                        resolve(true);
-                    else 
-                        resolve(false);
-                });
-            });
+            const res = await fetch(`https://fortiguard.com/search?q=${finalURL}&engine=1`);
+            const text = await res.text();
+
+            if (text.includes('Pornography')) 
+                return true;
+            else 
+                return false;
         }
 
-        let finalURL = await exists();
+        const finalURL = await exists();
 
-        if (finalURL === null)
-            return message.reply(`:x: O site ${url} não existe ou não respondeu dentro de 3 segundos!`);
-        else if (finalURL === undefined)
-            finalURL = url;
+        if (!finalURL)
+            return message.reply(`:x: O site ${url} não existe ou não respondeu dentro de 5 segundos!`);
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
@@ -81,7 +84,7 @@ module.exports = {
         try {
             await page.goto(url);
         }catch (err) {
-            message.channel.send(':x: Link inválido!');
+            message.channel.send(':x: Site inválido!');
             return browser.close();
         }
             
@@ -92,7 +95,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle(args[0])
             .setColor('RANDOM')
-            .setURL(url)
+            .setURL(finalURL)
             .setImage(`attachment://${name}.png`)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp();
