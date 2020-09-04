@@ -23,8 +23,8 @@ module.exports = {
 
         async function exists() {
             return new Promise((resolve, reject) => {
-                request({url: url, followRedirect: false}, (error, res, body) => {
-                    if (res && res.statusCode >= 200 && res.statusCode < 400) {
+                request({ url: url, followRedirect: false, timeout: 3000 }, (error, res, body) => {
+                    if (res && res.statusCode) {
                         resolve(res.headers.location);
                     }else {
                         resolve(null);
@@ -47,7 +47,7 @@ module.exports = {
         finalURL = await exists();
 
         if (finalURL === null)
-            return message.reply(':x: Site inválido!');
+            return message.reply(`:x: O site ${url} não existe ou não respondeu dentro de 3 segundos!`);
         else if (finalURL === undefined)
             finalURL = url;
 
