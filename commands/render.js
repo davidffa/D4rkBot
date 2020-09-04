@@ -6,13 +6,14 @@ const fetch = require('node-fetch');
 module.exports = {
     name: 'render',
     description: 'Renderiza uma página web',
-    aliases: ['webrender'], 
+    aliases: ['webrender', 'renderizar'], 
     category: 'Outros',
     usage: '<URL>',
     args: 1,
     cooldown: 10,
     guildOnly: true,
     async execute(client, message, args, prefix) {
+        const waitMsg = await message.channel.send('<a:lab_loading:643912893011853332> A Verificar se o URL é válido...');
         const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
 
@@ -52,7 +53,7 @@ module.exports = {
         const finalURL = await exists();
 
         if (!finalURL)
-            return message.reply(`:x: O site ${url} não existe ou não respondeu dentro de 5 segundos!`);
+            return waitMsg.edit(`:x: <@${message.member.id}>, O site ${url} não existe ou não respondeu dentro de 5 segundos!`);
 
         if (!fs.existsSync('./screenshots')) 
             fs.mkdirSync('./screenshots');
@@ -70,7 +71,7 @@ module.exports = {
             const isPorn = await checkPorn();
 
             if (isPorn) {
-                message.reply(':x: Não podes renderizar sites pornográficos!');
+                waitMsg.edit(`:x: <@${message.member.id}>, Não podes renderizar sites pornográficos!`);
                 return browser.close();
             }
         }
@@ -82,9 +83,10 @@ module.exports = {
         });
     
         try {
+            await waitMsg.edit('<a:lab_loading:643912893011853332> A Renderizar a página...')
             await page.goto(url);
         }catch (err) {
-            message.channel.send(':x: Site inválido!');
+            msg.edit(':x: Site inválido!');
             return browser.close();
         }
             
@@ -99,7 +101,8 @@ module.exports = {
             .setImage(`attachment://${name}.png`)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp();
-    
+        
+        waitMsg.delete();
         const msg = await message.channel.send({ embed, files: [attachment] });
         
         await browser.close();
