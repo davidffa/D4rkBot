@@ -44,7 +44,7 @@ module.exports = {
             });
         }
 
-        finalURL = await exists();
+        let finalURL = await exists();
 
         if (finalURL === null)
             return message.reply(`:x: O site ${url} não existe ou não respondeu dentro de 3 segundos!`);
