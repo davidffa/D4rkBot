@@ -111,7 +111,7 @@ module.exports = {
         await msg.react('751062867444498432');
 
         const filter = (r, u) => r.me && (u.id === message.author.id || u.id === '334054158879686657' || message.guild.member(u).hasPermission('MANAGE_MESSAGES'));
-        const collector = msg.createReactionCollector(filter, { max: 1, time: 60 * 1000 });
+        const collector = msg.createReactionCollector(filter, { max: 1, time: 5 * 60 * 1000 });
 
         collector.on('collect', async r => {
             switch(r.emoji.name) {
