@@ -48,6 +48,11 @@ module.exports = {
                     case 'x_':
                         if (message.guild.me.hasPermission('MANAGE_MESSAGES'))
                             msg.reactions.removeAll();
+                        else {
+                            msg.reactions.cache.map(reaction => {
+                                reaction.users.remove(client.user.id)
+                            });
+                        }
                         msg.edit('<a:lab_verificado:643912897218740224> Eval fechada.', { embed: null });  
                         break;
                 }
