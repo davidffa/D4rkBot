@@ -1,5 +1,69 @@
-module.exports.run = (client) => {
+const { ErelaClient } = require('erela.js');
+const { MessageEmbed } = require('discord.js');
+const mstohour = require('../utils/mstohour');
+
+const nodes = [
+    {
+        tag: 'Node 1',
+        host: process.env.LAVALINKHOST,
+        port: process.env.LAVALINKPORT,
+        password: process.env.LAVALINKPASSWORD,
+    },
+
+    {
+        tag: 'Node 2',
+        host: process.env.LAVALINKNODE2HOST,
+        port: process.env.LAVALINKNODE2PORT,
+        password: process.env.LAVALINKPASSWORD,
+    },
+]
+
+module.exports.run = async (client) => {
     console.log("D4rkBot iniciado");
     console.log(`Utilizadores: ${client.users.cache.size} \nServidores: ${client.guilds.cache.size}`)
     client.user.setActivity("D4rkB", {type: "WATCHING"});
+
+    client.music = new ErelaClient(client, nodes);
+
+    client.music.on('nodeConnect', node => {
+        console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} conectado!`);
+    });
+
+    client.music.on('nodeConnect', node => {
+        console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} re-conectado!`);
+    });
+
+    client.music.on('nodeError', (node, error) => {
+        console.log(`Ocorreu um erro no Node ${node.options.tag}. Erro: ${error.message}`);
+    });
+
+    client.music.on('nodeDisconnect', (node, error) => {
+        console.log(`O node do lavalink ${node.options.tag} desconectou inesperadamente.`);
+    });
+
+    client.music.on('trackStart', (player, track) => {
+        const embed = new MessageEmbed()
+            .setColor("RANDOM")
+            .setTitle('<a:Labfm:482171966833426432> A Tocar')
+            .addField(":page_with_curl: Nome:", '`' + track.title + '`')
+            .addField(":robot: Enviado por:", '`' + track.author + '`')
+            .addField(":watch: Duração:", '`' + mstohour(track.duration) + '`')
+            .setURL(track.uri)
+            .setThumbnail(`https://i.ytimg.com/vi/${track.identifier}/maxresdefault.jpg`)
+            .setTimestamp()
+            .setFooter(player.queue[0].requester.tag, player.queue[0].requester.displayAvatarURL({ dynamic: true }));
+
+        player.textChannel.send(embed);
+    });
+
+    client.music.on('queueEnd', player => {
+        player.textChannel.send('A lista de músicas acabou!');
+        client.music.players.destroy(player.guild);
+    });
+
+    client.levels = new Map()
+        .set('none', 0.0)
+        .set('low', 0.10)
+        .set('medium', 0.15)
+        .set('high', 0.25);
 }
