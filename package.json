@@ -1,12 +1,11 @@
 {
   "name": "d4rkbot",
-  "version": "3.2.5",
+  "version": "3.3.0",
   "description": "Bot para discord em NodeJS",
   "main": "index.js",
   "author": "D4rkB",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
     "@k3rn31p4nic/google-translate-api": "^1.1.1",
     "@y2nk4/currency-converter": "^1.0.2",
     "algorithmia": "^0.3.10",
@@ -14,8 +13,8 @@
     "canvas": "^2.6.1",
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
+    "erela.js": "^1.1.8",
     "erlpack": "discordapp/erlpack",
-    "ffmpeg-static": "^4.2.7",
     "figlet": "^1.5.0",
     "moment": "^2.27.0",
     "mongoose": "^5.10.2",
@@ -23,15 +22,11 @@
     "node-os-utils": "^1.3.1",
     "puppeteer": "^5.2.1",
     "sbd": "^1.0.18",
-    "simple-youtube-api": "^5.2.1",
     "sodium": "^3.0.2",
     "steam-provider": "^0.3.2",
-    "updated-youtube-info": "^1.4.7",
     "utf-8-validate": "^5.0.2",
     "util": "^0.12.2",
-    "weather-js": "^2.0.0",
-    "yt-search": "^2.3.0",
-    "ytdl-core": "^3.2.2"
+    "weather-js": "^2.0.0"
   },
   "scripts": {
     "start": "nodemon ./index.js"
