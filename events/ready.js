@@ -8,6 +8,8 @@ const nodes = [
         host: process.env.LAVALINKHOST,
         port: process.env.LAVALINKPORT,
         password: process.env.LAVALINKPASSWORD,
+        retryAmount: 1,
+        retryDelay: 15
     },
 
     {
@@ -15,6 +17,8 @@ const nodes = [
         host: process.env.LAVALINKNODE2HOST,
         port: process.env.LAVALINKNODE2PORT,
         password: process.env.LAVALINKPASSWORD,
+        retryAmount: 1,
+        retryDelay: 15
     },
 ]
 
@@ -29,7 +33,7 @@ module.exports.run = async (client) => {
         console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} conectado!`);
     });
 
-    client.music.on('nodeConnect', node => {
+    client.music.on('nodeReconnect', node => {
         console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} re-conectado!`);
     });
 
