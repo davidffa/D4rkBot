@@ -4,6 +4,7 @@ module.exports = {
     aliases: ['p', 'tocar'], 
     usage: '<Nome/URL>',
     category: 'Musica',
+    args: 1,
     guildOnly: true,
     cooldown: 1,
     async execute(client, message, args) {
