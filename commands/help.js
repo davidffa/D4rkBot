@@ -41,15 +41,20 @@ module.exports = {
                .addField(':books: Outros', Outros.join(', '))
                .addField(':thinking: Ajuda', '\nFaz `.help [nome do comando]` para obter informação sobre um comando específico');
             
-            return message.author.send(res)
-                .then(() => {
-                    if (message.channel.type === 'dm') return;
-                    message.reply('<a:lab_verificado:643912897218740224> Enviei-te uma mensagem privada com todos os meus comandos!');
-                })
-                .catch(async err => {
-                    const msg = await message.channel.send(res);
-                    await msg.delete({timeout: 90000});
-                });
+            const msg = await message.channel.send(res);
+            msg.delete({ timeout: 90000 });
+            await msg.react('751062867444498432');
+
+            const filter = (r, u) => r.me && (u.id === message.author.id || message.guild.member(u).hasPermission('MANAGE_MESSAGES'));
+            const collector = msg.createReactionCollector(filter, { max: 1, time: 90 * 1000 });
+
+            collector.on('collect', async r => {
+                switch(r.emoji.name) {
+                    case 'x_':
+                        msg.delete();
+                        break;
+                }
+            });
         }
 
         const name = args[0].toLowerCase();
