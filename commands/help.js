@@ -55,6 +55,7 @@ module.exports = {
                         break;
                 }
             });
+            return;
         }
 
         const name = args[0].toLowerCase();
