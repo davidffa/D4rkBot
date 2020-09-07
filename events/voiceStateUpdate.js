@@ -5,6 +5,7 @@ module.exports.run = (client, oldState, newState) => {
     if (client.music.players.get(oldState.guild.id) && voiceChannel === client.music.players.get(oldState.guild.id).voiceChannel) {
         if (voiceChannel.members.size === 1) {
             const timeout = setTimeout(() => {
+                client.music.players.get(oldState.guild.id).textChannel.send(':warning: Parei de tocar música por inatividade no canal de voz.');
                 client.music.players.destroy(oldState.guild.id);
             }, 5 * 60 * 1000);
             client.voiceStateTimeouts.set(oldState.guild.id, timeout);
