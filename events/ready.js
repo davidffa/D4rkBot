@@ -11,15 +11,6 @@ const nodes = [
         retryAmount: 1,
         retryDelay: 15
     },
-
-    {
-        tag: 'Node 2',
-        host: process.env.LAVALINKNODE2HOST,
-        port: process.env.LAVALINKNODE2PORT,
-        password: process.env.LAVALINKPASSWORD,
-        retryAmount: 1,
-        retryDelay: 15
-    },
 ]
 
 module.exports.run = async (client) => {
@@ -29,8 +20,25 @@ module.exports.run = async (client) => {
 
     client.music = new ErelaClient(client, nodes);
 
-    client.music.on('nodeConnect', node => {
+    client.music.on('nodeConnect', async node => {
         console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} conectado!`);
+
+        // This code is only for lavalinks hosted on heroku
+        const player = await client.music.players.spawn({
+            guild: process.env.TESTGUILDID,
+            voiceChannel: process.env.VOICECHANNELID,
+            textChannel: client.guilds.cache.get(process.env.TESTGUILDID).channels.cache.get(process.env.TEXTCHANNELID),
+            selfDeaf: true,
+            selfMute: true
+        });
+    
+        const { tracks } = await client.music.search('12 hour video', client.user);
+    
+        player.queue.add(tracks[0]);
+    
+        if (!player.playing) 
+            player.play();
+        //
     });
 
     client.music.on('nodeReconnect', node => {
@@ -46,6 +54,14 @@ module.exports.run = async (client) => {
     });
 
     client.music.on('trackStart', (player, track) => {
+        // This code is only for lavalinks hosted on heroku
+        if (player.guild == process.env.TESTGUILDID) {
+            setTimeout(() => {
+                player.pause(true);
+            }, 3000);
+        }
+        //
+            
         const embed = new MessageEmbed()
             .setColor("RANDOM")
             .setTitle('<a:Labfm:482171966833426432> A Tocar')
