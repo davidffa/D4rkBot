@@ -9,14 +9,15 @@ module.exports = {
     usage: '<Frase/Palavra>',
     cooldown: 3,
     execute(client, message, args, prefix) {
-        if (args.join(' ').length > 20)
-            return message.channel.send(':x: Máximo de 20 caracteres permitido!');
+        if (args.join(' ').length > 15)
+            return message.channel.send(':x: Máximo de 15 caracteres permitido!');
         
         figlet(args.join(' '), (err, data) => {
             if (err) 
                 return message.channel.send(':x: Ocorreu um erro!');
 
-            message.channel.send(data, { code: 'AsciiArt' });
+            if (data)
+                message.channel.send(data, { code: 'AsciiArt' });
         });
     }
 }
