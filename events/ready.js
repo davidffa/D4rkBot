@@ -59,6 +59,7 @@ module.exports.run = async (client) => {
             setTimeout(() => {
                 player.pause(true);
             }, 3000);
+            return;
         }
         //
             
