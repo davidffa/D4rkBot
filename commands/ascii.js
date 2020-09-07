@@ -18,6 +18,8 @@ module.exports = {
 
             if (data)
                 message.channel.send(data, { code: 'AsciiArt' });
+            else
+                message.channel.send(':x: Conteúdo inválido!');
         });
     }
 }
