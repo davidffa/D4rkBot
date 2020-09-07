@@ -7,9 +7,7 @@ const nodes = [
         tag: 'Node 1',
         host: process.env.LAVALINKHOST,
         port: process.env.LAVALINKPORT,
-        password: process.env.LAVALINKPASSWORD,
-        retryAmount: 1,
-        retryDelay: 15
+        password: process.env.LAVALINKPASSWORD
     },
 ]
 
