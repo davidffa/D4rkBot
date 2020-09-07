@@ -14,8 +14,8 @@ module.exports = {
 
         const voiceChannel = message.member.voice.channel;
 
-        if (!voiceChannel) 
-            return message.channel.send(':x: Precisas de estar num canal de voz para executar esse comando!');
+        if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel.id))
+            return message.channel.send(':x: Precisas de estar no meu canal de voz para usar esse comando!');
 
         if (Number(args[0]) < 0 || Number(args[0]) > player.queue[0].duration) 
             return message.channel.send(`:x: O tempo tem de variar entre \`0 e ${player.queue[0].duration / 1000}\` segundos`)
