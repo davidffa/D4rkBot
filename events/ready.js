@@ -16,6 +16,7 @@ module.exports.run = async (client) => {
     console.log(`Utilizadores: ${client.users.cache.size} \nServidores: ${client.guilds.cache.size}`)
     client.user.setActivity("D4rkB", {type: "WATCHING"});
 
+    client.voiceStateTimeouts = new Map(); // Key: guildID, Value: timeout
     client.music = new ErelaClient(client, nodes);
 
     client.music.on('nodeConnect', async node => {
@@ -30,7 +31,7 @@ module.exports.run = async (client) => {
             selfMute: true
         });
     
-        const { tracks } = await client.music.search('12 hour video', client.user);
+        const { tracks } = await client.music.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', client.user);
     
         player.queue.add(tracks[0]);
     
