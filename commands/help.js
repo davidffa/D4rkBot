@@ -48,7 +48,7 @@ module.exports = {
                 })
                 .catch(async err => {
                     const msg = await message.channel.send(res);
-                    await msg.delete({timeout: 30000});
+                    await msg.delete({timeout: 90000});
                 });
         }
 
