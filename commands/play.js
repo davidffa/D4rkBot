@@ -1,3 +1,5 @@
+const { MessageEmbed } = require('discord.js');
+
 module.exports = {
     name: 'play',
     description: 'Toca uma música ou adiciona-a na lista de músicas.',
@@ -21,22 +23,46 @@ module.exports = {
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
         
-        const player = await client.music.players.spawn({
-            guild: message.guild.id,
-            voiceChannel,
-            textChannel: message.channel,
-            selfDeaf: true
-        });
-
         try {
-            const { tracks } = await client.music.search(args.join(' '), message.author);
+            const res = await client.music.search(args.join(' '), message.author);
 
-            player.queue.add(tracks[0]);
+            const player = await client.music.players.spawn({
+                guild: message.guild.id,
+                voiceChannel,
+                textChannel: message.channel,
+                selfDeaf: true
+            });
+            
+            if (res.loadType === 'PLAYLIST_LOADED') {
+                const playlist = res.playlist;
+                for (const track of playlist.tracks) 
+                    player.queue.add(track);
 
-            if (!player.playing) 
-                return player.play();
-            else
-                return message.channel.send(`:bookmark_tabs: Adicionado à lista \`${tracks[0].title}\``);
+                if (!player.playing) 
+                    player.play();
+
+                const embed = new MessageEmbed()
+                        .setColor("RANDOM")
+                        .setTitle('<a:Labfm:482171966833426432> Playlist Carregada')
+                        .addField(":page_with_curl: Nome:", '`' + playlist.info.name + '`')
+                        .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + playlist.tracks.length + '`')
+                        .setURL(args[0])
+                        .setTimestamp()
+                        .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
+                
+                message.channel.send(embed);
+
+            }else {
+                const tracks = res.tracks;
+
+                player.queue.add(tracks[0]);
+
+                if (!player.playing) 
+                    return player.play();
+                else
+                    return message.channel.send(`:bookmark_tabs: Adicionado à lista \`${tracks[0].title}\``);
+            }
+            
         }catch (err) {
             console.log(err)
             return message.channel.send(':x: Música não encontrada!');
