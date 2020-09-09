@@ -9,16 +9,16 @@ module.exports = {
     guildOnly: true,
     cooldown: 5,
     execute(client, message) { 
-        const online = message.guild.members.cache.filter(member => member.presence.status == "online").size
-        const dontDisturb = message.guild.members.cache.filter(member => member.presence.status == "dnd").size
-        const idle = message.guild.members.cache.filter(member => member.presence.status == "idle").size
-        const offline = message.guild.members.cache.filter(member => member.presence.status == "offline").size
+        const online = message.guild.members.cache.filter(member => member.presence.status == "online").size;
+        const dontDisturb = message.guild.members.cache.filter(member => member.presence.status == "dnd").size;
+        const idle = message.guild.members.cache.filter(member => member.presence.status == "idle").size;
+        const offline = message.guild.members.cache.filter(member => member.presence.status == "offline").size;
 
-        const bot = message.guild.members.cache.filter(member => member.user.bot).size
-        const membersSize = message.guild.memberCount
+        const bot = message.guild.members.cache.filter(member => member.user.bot).size;
+        const membersSize = message.guild.members.cache.size;
 
-        const textChannels = message.guild.channels.cache.filter(channel => channel.type === "text").size
-        const voiceChannels = message.guild.channels.cache.filter(channel => channel.type === "voice").size
+        const textChannels = message.guild.channels.cache.filter(channel => channel.type === "text").size;
+        const voiceChannels = message.guild.channels.cache.filter(channel => channel.type === "voice").size;
 
         const embed = new MessageEmbed()
                 .setColor("RANDOM")
@@ -34,7 +34,7 @@ module.exports = {
                 .addField(`:spider_web: Cargos`, `[${message.guild.roles.cache.size}]`)
                 .setThumbnail(message.guild.iconURL({ format: 'png', dynamic: true }))
                 .setTimestamp()
-                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
-        message.channel.send(embed)
+                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
+        message.channel.send(embed);
     }
 };
