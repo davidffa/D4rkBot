@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js');
+const { getData } = require('spotify-url-info');
 
 module.exports = {
     name: 'play',
@@ -23,6 +24,55 @@ module.exports = {
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
         
+        const spotifyRegex = /^(https:\/\/open.spotify.com\/playlist\/|https:\/\/open.spotify.com\/track\/|https:\/\/open.spotify.com\/album\/|spotify:playlist:|spotify:track:|spotify:album:)([a-zA-Z0-9]+)(.*)$/
+
+        if (spotifyRegex.test(args[0])) {
+            let data;
+            try {
+                data = await getData(args[0]);
+            }catch (err) {}
+
+            if (data.type === 'track') {
+                args = `${data.name} ${data.artists[0].name}`
+            }else {
+                const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
+                const player = await client.music.players.spawn({
+                    guild: message.guild.id,
+                    voiceChannel,
+                    textChannel: message.channel,
+                    selfDeaf: true
+                });
+                
+                for (const track of data.tracks.items) {
+                    try {
+                        let tracks;
+                        if (data.type === 'playlist') 
+                            tracks = await client.music.search(`${track.track.name} ${track.track.artists[0].name}`, message.author);
+                        else 
+                            tracks = await client.music.search(`${track.name} ${track.artists[0].name}`, message.author);
+
+                        player.queue.add(tracks.tracks[0]);
+
+                        if (!player.playing) 
+                            player.play();
+                    }catch (err) {
+                        continue;
+                    }   
+                }   
+    
+                const embed = new MessageEmbed()
+                    .setColor("RANDOM")
+                    .setTitle('<a:Labfm:482171966833426432> Playlist Carregada')
+                    .addField(":page_with_curl: Nome:", '`' + data.name + '`')
+                    .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + data.tracks.total + '`')
+                    .setURL(data.external_urls.spotify)
+                    .setTimestamp()
+                    .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
+                    
+                return msg.edit('', embed);
+            }
+        }
+
         try {
             const res = await client.music.search(args.join(' '), message.author);
 
