@@ -76,6 +76,18 @@ module.exports.run = async (client) => {
         player.textChannel.send(embed);
     });
 
+    client.music.on('trackStuck', (player, track, message) => {
+        player.textChannel.send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
+        client.music.players.destroy(player.guild);
+        console.log(`[Erro] Track Error: ${message.error}`);
+    });
+
+    client.music.on('trackError', (player, track, message) => {
+        player.textChannel.send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
+        client.music.players.destroy(player.guild);
+        console.log(`[Erro] Track Error: ${message.error}`);
+    });
+
     client.music.on('queueEnd', player => {
         player.textChannel.send('A lista de músicas acabou!');
         client.music.players.destroy(player.guild);
