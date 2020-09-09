@@ -23,6 +23,7 @@
     "puppeteer": "^5.2.1",
     "sbd": "^1.0.18",
     "sodium": "^3.0.2",
+    "spotify-url-info": "^1.4.0",
     "steam-provider": "^0.3.2",
     "utf-8-validate": "^5.0.2",
     "util": "^0.12.2",
