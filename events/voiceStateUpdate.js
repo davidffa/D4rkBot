@@ -2,6 +2,10 @@ module.exports.run = (client, oldState, newState) => {
     const voiceChannel = oldState.channel;
     const voiceChannel2  = newState.channel;
 
+    if (oldState.member === oldState.guild.me && voiceChannel && !voiceChannel2) {
+        client.music.players.destroy(oldState.guild.id);
+    }
+
     if (client.music.players.get(oldState.guild.id) && voiceChannel === client.music.players.get(oldState.guild.id).voiceChannel) {
         if (voiceChannel.members.size === 1) {
             client.music.players.get(oldState.guild.id).pause(true);
