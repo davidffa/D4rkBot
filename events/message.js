@@ -52,7 +52,7 @@ module.exports.run = async (client, message) => {
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
 
-    if (command.args && !args.length) {
+    if (command.args && args.length && args.length < command.args) {
         let reply = `:x: Argumentos em falta! `;
 
         if (command.usage) {
