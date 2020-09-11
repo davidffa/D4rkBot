@@ -14,7 +14,7 @@ const nodes = [
 module.exports.run = async (client) => {
     console.log("D4rkBot iniciado");
     console.log(`Utilizadores: ${client.users.cache.size} \nServidores: ${client.guilds.cache.size}`)
-    client.user.setActivity("D4rkB", {type: "WATCHING"});
+    client.user.setActivity("D4rkB", { type: "WATCHING" });
 
     client.voiceStateTimeouts = new Map(); // Key: guildID, Value: timeout
     client.music = new ErelaClient(client, nodes);
@@ -30,12 +30,12 @@ module.exports.run = async (client) => {
             selfDeaf: true,
             selfMute: true
         });
-    
+
         const { tracks } = await client.music.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', client.user);
-    
+
         player.queue.add(tracks[0]);
-    
-        if (!player.playing) 
+
+        if (!player.playing)
             player.play();
         //
     });
@@ -61,7 +61,7 @@ module.exports.run = async (client) => {
             return;
         }
         //
-            
+
         const embed = new MessageEmbed()
             .setColor("RANDOM")
             .setTitle('<a:Labfm:482171966833426432> A Tocar')
@@ -84,12 +84,35 @@ module.exports.run = async (client) => {
 
     client.music.on('trackError', (player, track, message) => {
         player.textChannel.send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
+        if (player.guild === process.env.TESTGUILDID) {
+            client.music.players.destroy(player.guild);
+
+            setTimeout(async () => {
+                // This code is only for lavalinks hosted on heroku
+                const player = await client.music.players.spawn({
+                    guild: process.env.TESTGUILDID,
+                    voiceChannel: process.env.VOICECHANNELID,
+                    textChannel: client.guilds.cache.get(process.env.TESTGUILDID).channels.cache.get(process.env.TEXTCHANNELID),
+                    selfDeaf: true,
+                    selfMute: true
+                });
+
+                const { tracks } = await client.music.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', client.user);
+
+                player.queue.add(tracks[0]);
+
+                if (!player.playing)
+                    player.play();
+                //
+            }, 5000);
+            return;
+        }
         client.music.players.destroy(player.guild);
         console.log(`[Erro] Track Error: ${message.error}`);
     });
 
     client.music.on('queueEnd', player => {
-        player.textChannel.send('A lista de músicas acabou!');
+        player.textChannel.send(':bookmark_tabs: A lista de músicas acabou!');
         client.music.players.destroy(player.guild);
     });
 
