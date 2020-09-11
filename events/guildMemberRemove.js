@@ -1,9 +1,9 @@
-const welcomedb = require("../models/welcomedb");
+const guildDB = require("../models/guildDB");
 
 module.exports.run = async (client, member) => {
-    const guildExists = await welcomedb.findOne({ guildID: member.guild.id });
-    if (guildExists) {
-        const chat = guildExists.chatID;
-        client.channels.cache.get(chat).send(`Adeus \`${member.user.username}#${member.user.discriminator}\``);
+    const guild = await guildDB.findOne({ guildID: member.guild.id });
+    if (guild && guild.welcomeChatID) {
+        const chat = guild.welcomeChatID;
+        client.channels.cache.get(chat).send(`O membro \`${member.user.username}#${member.user.discriminator}\` saiu do servidor.`);
     }
 }

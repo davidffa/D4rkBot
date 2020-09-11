@@ -1,13 +1,13 @@
 const Discord = require('discord.js');
-const welcomedb = require("../models/welcomedb");
-const roledb = require('../models/roledb');
+const guildDB = require("../models/guildDB");
 const Canvas = require('canvas');
 const path = require('path');
 
 module.exports.run = async (client, member) => {
-    const guildExists = await roledb.findOne({ guildID: member.guild.id });
-    if (guildExists && member.guild.member(client.user.id).hasPermission('MANAGE_ROLES')) {
-        const role = member.guild.roles.cache.get(guildExists.roleID);
+    const guild = await guildDB.findOne({ guildID: member.guild.id });
+    if (guild && guild.roleID && member.guild.me.hasPermission('MANAGE_ROLES')) {
+        const role = member.guild.roles.cache.get(guild.roleID);
+        if (role.position >= member.guild.me.roles.highest.position) return;
         member.roles.add(role).catch(console.log);
     }
 
@@ -21,9 +21,8 @@ module.exports.run = async (client, member) => {
         return ctx.font;
     }
 
-    const guildExists2 = await welcomedb.findOne({ guildID: member.guild.id });
-    if (guildExists2) {
-        const chat = guildExists2.chatID;
+    if (guild && guild.welcomeChatID) {
+        const chat = guild.welcomeChatID;
         const canvas = Canvas.createCanvas(700, 250);
         const ctx = canvas.getContext("2d");
         
