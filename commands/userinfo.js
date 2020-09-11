@@ -1,5 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const moment = require('moment');
+const { isNumber } = require('util');
 moment.locale('pt-PT');
 
 function getStatus(status) {
@@ -25,6 +26,8 @@ module.exports = {
             const userMentioned = message.mentions.users.first();
             if (userMentioned) {
                 user = userMentioned;
+            }else if (Number(args[0]) && args[0].length === 18) {
+                user = client.users.cache.get(args[0]);
             }else {
                 message.guild.members.cache.map(member => {
                     if (member.user.tag.toLowerCase().startsWith(args[0].toLowerCase())) {
