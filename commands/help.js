@@ -39,7 +39,7 @@ module.exports = {
                .addField(':information_source: Info', Info.join(', '))
                .addField('<a:Labfm:482171966833426432> Musica', Musica.join(', '))
                .addField(':books: Outros', Outros.join(', '))
-               .addField(':thinking: Ajuda', '\nFaz `.help [nome do comando]` para obter informação sobre um comando específico');
+               .addField(':thinking: Ajuda', `\nFaz \`${prefix}help [nome do comando]\` para obter informação sobre um comando específico`);
             
             const msg = await message.channel.send(res);
             msg.delete({ timeout: 90000 });
