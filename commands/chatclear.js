@@ -32,7 +32,7 @@ module.exports = {
             .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
 
         message.channel.bulkDelete(parseInt(args[0])+1, { filterOld: true }).then(async msgs => {
-            if (parseInt(args[0]) !== msgs.size) 
+            if (parseInt(args[0])+1 !== msgs.size) 
                 embed.setDescription(`<a:lab_verificado:643912897218740224> Limpas \`${msgs.size}\` mensagens\n
                                       :x: Não consigo apagar mais mensagens! Só consigo apagar mensagens com data de envio menor que 2 semanas.`);
             else
