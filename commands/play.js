@@ -33,7 +33,7 @@ module.exports = {
             }catch (err) {}
 
             if (data.type === 'track') {
-                args = `${data.name} ${data.artists[0].name}`
+                args = [data.name, data.artists[0].name]
             }else {
                 const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
                 const player = await client.music.players.spawn({
