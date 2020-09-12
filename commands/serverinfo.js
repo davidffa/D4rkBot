@@ -8,7 +8,7 @@ module.exports = {
     category: 'Info',
     guildOnly: true,
     cooldown: 5,
-    execute(client, message) { 
+    execute(_client, message) { 
         const online = message.guild.members.cache.filter(member => member.presence.status == "online").size;
         const dontDisturb = message.guild.members.cache.filter(member => member.presence.status == "dnd").size;
         const idle = message.guild.members.cache.filter(member => member.presence.status == "idle").size;
@@ -20,11 +20,28 @@ module.exports = {
         const textChannels = message.guild.channels.cache.filter(channel => channel.type === "text").size;
         const voiceChannels = message.guild.channels.cache.filter(channel => channel.type === "voice").size;
 
+        const regions = {
+            'brazil': ':flag_br: Brasil',
+            'europe': ':flag_eu: Europa',
+            'eu_west': ':flag_eu: Europa',
+            'hong-kong': ':flag_hk: Hong-Kong',
+            'japan': ':flag_jp: Japão',
+            'india': ':flag_in: Índia',
+            'russia': ':flag_ru: Rússia',
+            'singapore': ':flag_sg: Singapura',
+            'sydney': ':flag_au: Sydney',
+            'us-south': ':flag_us: Sul dos Estados Unidos',
+            'us-east': ':flag_us: Este dos Estados Unidos',
+            'us-central': ':flag_us: Centro dos Estados Unidos',
+            'us-west': ':flag_us: Oeste dos Estados Unidos',
+            'southafria': ':flag_za: África do Sul'
+        }
+
         const embed = new MessageEmbed()
                 .setColor("RANDOM")
                 .setTitle(`:bookmark_tabs: Informações do servidor ${message.guild.name}`)
                 .addField(":crown: Dono do servidor", `${message.guild.owner.user.tag}`)
-                .addField(':map: Local', message.guild.region)
+                .addField(':map: Local', regions[message.guild.region] ? regions[message.guild.region] : message.guild.region)
                 .addField(":calendar: Criado em", `${moment(message.guild.createdAt).format('L')} (${moment(message.guild.createdAt).startOf('day').fromNow()})`)
                 .addField(':calendar: Entrada em', `${moment(message.member.joinedAt).format('L')} (${moment(message.member.joinedAt).startOf('day').fromNow()})`)
                 .addField(":closed_book: ID", message.guild.id)
