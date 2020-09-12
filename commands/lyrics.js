@@ -61,6 +61,12 @@ module.exports = {
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
 
+                    if (message.guild.me.hasPermission('MANAGE_MESSAGES')) {
+                        msg.reactions.cache.map(reaction => {
+                            reaction.users.remove(message.author.id)
+                        });
+                    }
+
                     break;
                 case '➡️':
                     if (page === pages)
@@ -69,6 +75,12 @@ module.exports = {
                     embed.setDescription(lyrics.slice((page-1) * 800, page * 800))
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
+
+                    if (message.guild.me.hasPermission('MANAGE_MESSAGES')) {
+                        msg.reactions.cache.map(reaction => {
+                            reaction.users.remove(message.author.id)
+                        });
+                    }
 
                     break;
             }
