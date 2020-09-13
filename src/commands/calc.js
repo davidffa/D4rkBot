@@ -32,7 +32,7 @@ module.exports = {
             return message.channel.send(':x: Expressão inválida!');
         }
 
-        if (result === Infinity || result === -Infinity || result === NaN) result = 'Impossível determinar';
+        if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
