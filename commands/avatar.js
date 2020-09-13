@@ -20,10 +20,17 @@ module.exports = {
                 user = userMentioned;
             }else {
                 message.guild.members.cache.map(member => {
-                    if (member.user.tag.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    if (member.displayName === args.join(' ')) 
                         user = member.user;
-                    }
-                })
+                });
+
+                if (!user) {
+                    message.guild.members.cache.map(member => {
+                        if (member.displayName.toLowerCase().startsWith(args.join(' ').toLowerCase())) {
+                            user = member.user;
+                        }
+                    });
+                }
             }
         }
 
