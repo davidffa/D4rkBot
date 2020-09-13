@@ -23,15 +23,16 @@ module.exports = {
             derivative: function () { throw new Error(':x: A função derivative está desativada') }
         }, { override: true });
 
+        const expr = args.join(' ').split('π').join('pi').split('÷').join('/').split('×').join('*').split('**').join('^').toLowerCase();
         let result;
 
         try {
-            result = limitedEvaluate(args.join(' '));
+            result = limitedEvaluate(expr);
         }catch (err) {
             return message.channel.send(':x: Expressão inválida!');
         }
 
-        if (result === 'Infinity' || result === '-Infinity' || result === 'NaN') result = 'Impossível determinar';
+        if (result === Infinity || result === -Infinity || result === NaN) result = 'Impossível determinar';
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
