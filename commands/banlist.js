@@ -12,13 +12,13 @@ module.exports = {
 
         const bans = await message.guild.fetchBans();
         bans.map(user => {
-            msg += user.user.username + ', ';
+            msg += `\`${user.user.tag}\`, `;
         });
 
         if (msg === '') {
             message.channel.send('Este servidor não tem membros banidos!');
         }else {
-            message.channel.send(':bookmark_tabs: Lista de membros banidos:\n' + msg);
+            message.channel.send(':bookmark_tabs: Lista de membros banidos:\n' + msg, { split: true });
         }
     }
 };
