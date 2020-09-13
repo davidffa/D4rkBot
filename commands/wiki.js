@@ -21,6 +21,7 @@ module.exports = {
         };
 
         const msg = await message.channel.send('<a:lab_loading:643912893011853332> A procurar...');
+        let url = '';
 
         await fetchContentFromWikipedia();
         if (content == args.join(' ')) return;
@@ -33,6 +34,7 @@ module.exports = {
             .setColor('RANDOM')
             .setThumbnail('https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png')
             .setDescription(content.join('\n'))
+            .setURL(url)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp());
 
@@ -42,6 +44,7 @@ module.exports = {
             const wikipediaResponse = await wikipediaAlgorithm.pipe(input);
             try {
                 const wikipediaContent = wikipediaResponse.get();
+                url = wikipediaContent.url;
                 content = wikipediaContent.content;
             }catch(err) {
                 return await msg.edit(`:x: Não encontrei nada na wikipédia para \`${args.join(' ')}\``)
