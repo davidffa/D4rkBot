@@ -32,7 +32,7 @@
     "weather-js": "^2.0.0"
   },
   "scripts": {
-    "start": "nodemon ./index.js"
+    "start": "nodemon ./src/index.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"

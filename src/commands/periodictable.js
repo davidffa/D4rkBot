@@ -8,7 +8,7 @@ module.exports = {
     usage: '',
     cooldown: 3,
     execute(client, message, args, prefix) {
-        const attachment = new MessageAttachment('./assets/TP.png');
+        const attachment = new MessageAttachment('./src/assets/TP.png');
 
         const embed = new MessageEmbed()
             .setTitle('Tabela Periódica')

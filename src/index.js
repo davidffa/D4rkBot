@@ -12,7 +12,7 @@ mongoose.connect(`mongodb+srv://d4rkb:${process.env.dbpassword}@d4rkbotjs-7ttdo.
 });
 
 //Command Handler
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -20,7 +20,7 @@ for (const file of commandFiles) {
 }
 
 //Event Handler
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./src/events').filter(file => file.endsWith('.js'));
 
 for (const file of eventFiles) {
     const event = require(`./events/${file}`);

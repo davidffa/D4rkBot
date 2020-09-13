@@ -59,8 +59,8 @@ module.exports = {
         if (!finalURL)
             return waitMsg.edit(`:x: <@${message.member.id}>, O site ${url} não existe ou não respondeu dentro de 5 segundos!`);
 
-        if (!fs.existsSync('./screenshots')) 
-            fs.mkdirSync('./screenshots');
+        if (!fs.existsSync('./src/screenshots')) 
+            fs.mkdirSync('./src/screenshots');
 
         const browser = await puppeteer.launch({
             args: [
@@ -94,9 +94,9 @@ module.exports = {
             return browser.close();
         }
             
-        await page.screenshot({ path: `./screenshots/${name}.png`});
+        await page.screenshot({ path: `./src/screenshots/${name}.png`});
 
-        const attachment = new MessageAttachment(`./screenshots/${name}.png`);
+        const attachment = new MessageAttachment(`./src/screenshots/${name}.png`);
             
         const embed = new MessageEmbed()
             .setTitle(args[0])
@@ -110,7 +110,7 @@ module.exports = {
         const msg = await message.channel.send({ embed, files: [attachment] });
         
         await browser.close();
-        fs.unlinkSync(`./screenshots/${name}.png`); 
+        fs.unlinkSync(`./src/screenshots/${name}.png`); 
         
         await msg.react('751062867444498432');
 
