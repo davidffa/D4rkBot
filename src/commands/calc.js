@@ -20,7 +20,8 @@ module.exports = {
             evaluate: function () { throw new Error(':x: A função evaluate está desativada') },
             parse: function () { throw new Error(':x: A função parse está desativada') },
             simplify: function () { throw new Error(':x: A função simplify está desativada') },
-            derivative: function () { throw new Error(':x: A função derivative está desativada') }
+            derivative: function () { throw new Error(':x: A função derivative está desativada') },
+            format: function() { throw new Error(':x: A função format está desativada') }
         }, { override: true });
 
         const expr = args.join(' ').split('π').join('pi').split('÷').join('/').split('×').join('*').split('**').join('^').toLowerCase();
@@ -29,8 +30,11 @@ module.exports = {
         try {
             result = limitedEvaluate(expr);
         }catch (err) {
+            console.log(err)
             return message.channel.send(':x: Expressão inválida!');
         }
+
+        console.log(result);
 
         if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
 
