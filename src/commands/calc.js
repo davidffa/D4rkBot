@@ -30,13 +30,11 @@ module.exports = {
         try {
             result = limitedEvaluate(expr);
         }catch (err) {
-            console.log(err)
             return message.channel.send(':x: Expressão inválida!');
         }
 
-        console.log(result);
-
         if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
+        if (typeof result === 'function') result = `Função ${expr}`;
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
