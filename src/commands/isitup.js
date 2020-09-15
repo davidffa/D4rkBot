@@ -8,7 +8,7 @@ module.exports = {
     usage: '<URL>',
     args: 1,
     cooldown: 4,
-    async execute(client, message, args, prefix) {
+    async execute(client, message, args) {
         const HTTP = /^[a-zA-Z]+:\/\//
         const PATH = /(\/(.+)?)/g
 
