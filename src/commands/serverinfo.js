@@ -53,7 +53,7 @@ module.exports = {
                 .setTimestamp()
                 .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
         if (message.guild.banner)
-            embed.setImage(message.guild.bannerURL({ format: 'png', dynamic: true }));
+            embed.setImage(message.guild.bannerURL({ format: 'png', size: 2048, dynamic: true }));
         message.channel.send(embed);
     }
 };
