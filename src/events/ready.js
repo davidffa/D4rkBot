@@ -1,9 +1,10 @@
 const lavalink = require('../utils/lavalink');
+const activities = require('../utils/activities');
 
 module.exports.run = async (client) => {
     console.log("D4rkBot iniciado");
     console.log(`Utilizadores: ${client.users.cache.size} \nServidores: ${client.guilds.cache.size}`)
-    client.user.setActivity("D4rkB", { type: "WATCHING" });
+    activities.load(client);
 
     client.voiceStateTimeouts = new Map(); // Key: guildID, Value: {timeout, message}
     lavalink.load(client);
