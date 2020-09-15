@@ -42,11 +42,11 @@ module.exports.run = async (client, message) => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``);
+            return message.reply(`Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``).then(msg => msg.delete({ timeout: timeLeft*1000 }));
         }
     }
 
-    if (args.length >= command.args) {
+    if ((args.length >= command.args) || !command.args) {
         timestamps.set(message.author.id, now);
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
