@@ -52,8 +52,8 @@ module.exports = {
                 .setThumbnail(message.guild.iconURL({ format: 'png', dynamic: true }))
                 .setTimestamp()
                 .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
-        if (guild.banner)
-            embed.setImage(guild.bannerURL({ format: 'png', dynamic: true }));
+        if (message.guild.banner)
+            embed.setImage(message.guild.bannerURL({ format: 'png', dynamic: true }));
         message.channel.send(embed);
     }
 };
