@@ -7,10 +7,9 @@ module.exports = {
     aliases: ['meteorologia'], 
     category: 'Outros',
     usage: '<cidade>',
+    args: 1,
     cooldown: 5,
-    execute(client, message, args, prefix) {
-        if (!args.length) return message.channel.send(`:x: Argumentos em falta! **Usa:** ${prefix}clima <cidade>`);
-
+    execute(client, message, args) {
         weather.find({ lang: 'pt-PT', search: args.join(' '), degreeType: 'C' }, (err, result) => {
             if (err) 
                 return message.channel.send(':x: Ocorreu um erro!');
