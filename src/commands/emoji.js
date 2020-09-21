@@ -9,7 +9,7 @@ module.exports = {
     category: 'Outros',
     guildOnly: true,
     usage: '[Nome]',
-    cooldown: 3,
+    cooldown: 6,
     async execute(client, message, args, prefix) {
         if (message.guild.emojis.cache.size === 0)
                 return message.channel.send(':x: Este servidor não tem emojis!');
@@ -21,7 +21,7 @@ module.exports = {
             function getEmojiMessage() {
                 let eMsg = '';
 
-                for (let pos = (page-1)*20; pos < (page-1)*20+20; pos++) {
+                for (let pos = (page-1)*10; pos < (page-1)*10+10; pos++) {
                     if (!emojiArr[pos].animated) 
                         eMsg += '<:';
                     else
@@ -30,7 +30,7 @@ module.exports = {
 
                     if (!emojiArr[pos+1]) break;
 
-                    if (pos != (page-1)*20+20-1) eMsg += ' | ';
+                    if (pos != (page-1)*10+10-1) eMsg += ' | ';
                 }
 
                 return eMsg;
@@ -54,18 +54,18 @@ module.exports = {
                                     .setTitle(':grinning: Emojis do servidor')
                                     .setColor('RANDOM')
                                     .setDescription(getEmojiMessage())
-                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/20)}`)
+                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/10)}`)
                                 await msg.edit(embed);
                             }
                             break;
                         case '⏩':
-                            if (page != Math.ceil(emojiArr.length/20)) {
+                            if (page != Math.ceil(emojiArr.length/10)) {
                                 page++;
                                 const embed = new MessageEmbed()
                                     .setTitle(':grinning: Emojis do servidor')
                                     .setColor('RANDOM')
                                     .setDescription(getEmojiMessage())
-                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/20)}`)
+                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/10)}`)
                                 await msg.edit(embed);
                             }
                             break;
@@ -77,7 +77,7 @@ module.exports = {
                 .setTitle(':grinning: Emojis do servidor')
                 .setColor('RANDOM')
                 .setDescription(getEmojiMessage())
-                .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/20)}`)
+                .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/10)}`)
             
             const msg = await message.channel.send(embed);
             
@@ -127,7 +127,7 @@ module.exports = {
 
             async function reactMessage() {
                 try {
-                    for (let pos=0; pos < 20 && emojiArr[pos]; pos++) {
+                    for (let pos=0; pos < 10 && emojiArr[pos]; pos++) {
                         await msg.react(emojiArr[pos].identifier);
                     }
                 }catch(err) {}
@@ -147,7 +147,7 @@ module.exports = {
             function getEmojiMessage2() {
                 let eMsg = '';
 
-                for (let pos = 0; pos < 20; pos++) {
+                for (let pos = 0; pos < 10; pos++) {
                     if (!emojiArr[pos].animated) 
                         eMsg += '<:';
                     else
