@@ -15,8 +15,8 @@ module.exports = {
         if (!user) return message.reply(':x: Utilizador inválido!');
         const member = message.guild.member(user);
 
-        let reason = args[1];
-        if (!reason) reason = '';
+        let reason = args.slice(1);
+        if (!reason) reason = 'Sem motivo';
 
         if (member.id === client.user.id) return message.reply(':x: Não me consigo banir a mim próprio!')
         if (!member.bannable) return message.reply(`:x: Não tenho permissão para banir o \`${member.displayName}\`.`)
