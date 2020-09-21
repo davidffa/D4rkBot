@@ -19,7 +19,7 @@ module.exports = {
         if (!reason) reason = '';
 
         if (member.id === client.user.id) return message.reply(':x: Não me consigo banir a mim próprio!')
-        if (!member.bannable) returnmessage.reply(`:x: Não tenho permissão para banir o \`${member.displayName}\`.`)
+        if (!member.bannable) return message.reply(`:x: Não tenho permissão para banir o \`${member.displayName}\`.`)
 
         member.ban(reason).then(() => message.channel.send(`<a:lab_verificado:643912897218740224> Banis-te o \`${member.displayName}\` por \`${reason}\`.`))
             .catch(err => {
