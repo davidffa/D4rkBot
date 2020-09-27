@@ -1,4 +1,6 @@
 module.exports.run = async (client, oldState, newState) => {
+    if (oldState.guild.id === process.env.TESTGUILDID) return;
+
     const voiceChannel = oldState.channel;
     const voiceChannel2  = newState.channel;
 
