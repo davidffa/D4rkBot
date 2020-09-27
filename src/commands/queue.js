@@ -19,7 +19,7 @@ module.exports = {
             const data = [];
 
             for (let i=pos1; i<=pos2 && queue[i]; i++) {
-                data.push(`${i}º - \`${queue[i].title}\` (Requisitado por \`${queue[i].requester.tag}\`)`);
+                data.push(`${i+1}º - \`${queue[i].title}\` (Requisitado por \`${queue[i].requester.tag}\`)`);
             }
             return data.join('\n');
         }
@@ -31,9 +31,9 @@ module.exports = {
             .setColor('RANDOM')
             .setTitle(':bookmark_tabs: Lista de músicas')
             .setDescription(`
-                <a:Labfm:482171966833426432> **A tocar:** \`${queue[0].title}\` (Requisitado por \`${queue[0].requester.tag}\`)\n
+                <a:Labfm:482171966833426432> **A tocar:** \`${queue.current.title}\` (Requisitado por \`${queue.current.requester.tag}\`)\n
                 :alarm_clock: Tempo total da queue (${mstohour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}\n
-                ${getSongDetails(1, 9)}
+                ${getSongDetails(0, 8)}
             `)
             .setTimestamp()
             .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));

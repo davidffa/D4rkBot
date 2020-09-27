@@ -1,30 +1,40 @@
 const mstohour = require('../utils/mstohour');
-const { ErelaClient } = require('erela.js');
+const { Manager } = require('erela.js');
 const { MessageEmbed } = require('discord.js');
 
 const nodes = [
     {
-        tag: 'Node 1',
+        identifier: 'Node 1',
         host: process.env.LAVALINKHOST,
         port: process.env.LAVALINKPORT,
-        password: process.env.LAVALINKPASSWORD
+        password: process.env.LAVALINKPASSWORD,
+        secure: false,
     },
 ]
 
 module.exports.load = (client) => {
-    client.music = new ErelaClient(client, nodes);
+    client.music = new Manager({
+        nodes,
+        autoPlay: true,
+        send(id, payload) {
+            const guild = client.guilds.cache.get(id);
+            if (guild) guild.shard.send(payload);
+        }
+    });
 
     client.music.on('nodeConnect', async node => {
-        console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} conectado!`);
+        console.log(`Node ${node.options.identifier} do Lavalink com o IP ${node.options.host}:${node.options.port} conectado!`);
 
         /************************** This code is only for lavalinks hosted on heroku **************************/
-        const player = await client.music.players.spawn({
+        const player = client.music.create({
             guild: process.env.TESTGUILDID,
             voiceChannel: process.env.VOICECHANNELID,
             textChannel: client.guilds.cache.get(process.env.TESTGUILDID).channels.cache.get(process.env.TEXTCHANNELID),
-            selfDeaf: true,
+            selfDeafen: true,
             selfMute: true
         });
+
+        player.connect();
 
         const { tracks } = await client.music.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', client.user);
 
@@ -36,15 +46,15 @@ module.exports.load = (client) => {
     });
 
     client.music.on('nodeReconnect', node => {
-        console.log(`Node ${node.options.tag} do Lavalink com o IP ${node.options.host}:${node.options.port} re-conectado!`);
+        console.log(`Node ${node.options.identifier} do Lavalink com o IP ${node.options.host}:${node.options.port} re-conectado!`);
     });
 
     client.music.on('nodeError', (node, error) => {
-        console.log(`Ocorreu um erro no Node ${node.options.tag}. Erro: ${error.message}`);
+        console.log(`Ocorreu um erro no Node ${node.options.identifier}. Erro: ${error.message}`);
     });
 
     client.music.on('nodeDisconnect', (node, error) => {
-        console.log(`O node do lavalink ${node.options.tag} desconectou inesperadamente.`);
+        console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.`);
     });
 
     client.music.on('trackStart', (player, track) => {
@@ -64,33 +74,35 @@ module.exports.load = (client) => {
             .addField(":robot: Enviado por:", '`' + track.author + '`')
             .addField(":watch: Duração:", '`' + mstohour(track.duration) + '`')
             .setURL(track.uri)
-            .setThumbnail(`https://i.ytimg.com/vi/${track.identifier}/maxresdefault.jpg`)
+            .setThumbnail(track.displayThumbnail())
             .setTimestamp()
-            .setFooter(player.queue[0].requester.tag, player.queue[0].requester.displayAvatarURL({ dynamic: true }));
+            .setFooter(player.queue.current.requester.tag, player.queue.current.requester.displayAvatarURL({ dynamic: true }));
 
-        player.textChannel.send(embed);
+        client.channels.cache.get(player.textChannel).send(embed);
     });
 
     client.music.on('trackStuck', (player, track, message) => {
-        player.textChannel.send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
-        client.music.players.destroy(player.guild);
+        client.channels.cache.get(player.textChannel).send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
+        client.music.players.get(player.guild).destroy();
         console.log(`[Erro] Track Error: ${message.error}`);
     });
 
     client.music.on('trackError', (player, track, message) => {
-        player.textChannel.send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
+        client.channels.cache.get(player.textChannel).send(`:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${message.error}\``)
         if (player.guild === process.env.TESTGUILDID) {
-            client.music.players.destroy(player.guild);
+            client.music.players.get(player.guild).destroy();
 
             setTimeout(async () => {
                 /************** This code is only for lavalinks hosted on heroku **************/
-                const player = await client.music.players.spawn({
+                const player = client.music.create({
                     guild: process.env.TESTGUILDID,
                     voiceChannel: process.env.VOICECHANNELID,
                     textChannel: client.guilds.cache.get(process.env.TESTGUILDID).channels.cache.get(process.env.TEXTCHANNELID),
                     selfDeaf: true,
                     selfMute: true
                 });
+
+                player.connect();
 
                 const { tracks } = await client.music.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', client.user);
 
@@ -102,12 +114,17 @@ module.exports.load = (client) => {
             }, 5000);
             return;
         }
-        client.music.players.destroy(player.guild);
+        client.music.players.get(player.guild).destroy();
         console.log(`[Erro] Track Error: ${message.error}`);
     });
 
     client.music.on('queueEnd', player => {
-        player.textChannel.send(':bookmark_tabs: A lista de músicas acabou!');
-        client.music.players.destroy(player.guild);
+        const channel = client.channels.cache.get(player.textChannel);
+        if (channel) channel.send(':bookmark_tabs: A lista de músicas acabou!');
+        client.music.players.get(player.guild).destroy();
     });
+
+    client.music.init(client.user.id);
+
+    client.on("raw", (d) => client.music.updateVoiceState(d));
 }

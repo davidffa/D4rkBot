@@ -9,16 +9,16 @@ module.exports = {
     execute(client, message, args) {
         const player = client.music.players.get(message.guild.id);
 
-        if (!player || !player.queue[0])
+        if (!player || !player.queue.current)
             return message.channel.send(':x: Não estou a tocar nada de momento!');
 
         const voiceChannel = message.member.voice.channel;
 
-        if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel.id))
+        if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel))
             return message.channel.send(':x: Precisas de estar no meu canal de voz para usar esse comando!');
 
-        if (Number(args[0]) < 0 || Number(args[0]) > player.queue[0].duration) 
-            return message.channel.send(`:x: O tempo tem de variar entre \`0 e ${player.queue[0].duration / 1000}\` segundos`)
+        if (Number(args[0]) < 0 || Number(args[0]) * 1000 > player.queue.current.duration) 
+            return message.channel.send(`:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`)
         
         player.seek(args[0]*1000);
         message.channel.send(`<a:lab_verificado:643912897218740224> Tempo da música setado para \`${args[0]}\` segundos`);

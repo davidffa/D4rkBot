@@ -36,12 +36,14 @@ module.exports = {
                 args = [data.name, data.artists[0].name]
             }else {
                 const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
-                const player = await client.music.players.spawn({
+                const player = client.music.create({
                     guild: message.guild.id,
                     voiceChannel,
                     textChannel: message.channel,
                     selfDeaf: true
                 });
+
+                player.connect();
                 
                 for (const track of data.tracks.items) {
                     try {
@@ -76,14 +78,21 @@ module.exports = {
         try {
             const res = await client.music.search(args.join(' '), message.author);
 
-            const player = await client.music.players.spawn({
+            if (res.loadType === 'LOAD_FAILED') 
+                return message.channel.send(`:x: Erro ao procurar por \`${args.join(' ')}\``);
+
+            const player = client.music.create({
                 guild: message.guild.id,
-                voiceChannel,
-                textChannel: message.channel,
+                voiceChannel: voiceChannel.id,
+                textChannel: message.channel.id,
                 selfDeaf: true
             });
+
+            player.connect();
             
-            if (res.loadType === 'PLAYLIST_LOADED') {
+            if (res.loadType === 'NO_MATCHES'){
+                message.channel.send(`:x: Não encontrei resultados para \`${args.join(' ')}\``);
+            }else if (res.loadType === 'PLAYLIST_LOADED') {
                 const playlist = res.playlist;
                 for (const track of playlist.tracks) 
                     player.queue.add(track);

@@ -13,11 +13,15 @@ module.exports = {
         
         const voiceChannel = message.member.voice.channel;
 
-        if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel.id))
+        if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel))
             return message.channel.send(':x: Precisas de estar no meu canal de voz para usar esse comando!');
 
-        if (message.author.id === player.queue[0].requester.id) {
+        if (message.author.id === player.queue.current.requester.id) {
             player.stop();
+            if (!player.queue[0]) {
+                player.destroy();
+                return message.channel.send(':bookmark_tabs: A lista de músicas acabou!');
+            }
             message.channel.send(':fast_forward: Música pulada!');
         }else if (message.member.permissions.has('ADMINISTRATOR')) {
             player.stop();
