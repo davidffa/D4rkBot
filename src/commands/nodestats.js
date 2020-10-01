@@ -13,7 +13,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('Status do Node do LavaLink')
-            .addField(':id: Nome', `\`${node.options.tag}\``, true)
+            .addField(':id: Nome', `\`${node.options.identifier}\``, true)
             .addField(':calendar: Players a tocar', `\`${node.stats.playingPlayers}\``, true)
             .addField('<a:malakoi:478003266815262730> Uptime', `\`${msToDate(node.stats.uptime)}\``, true)
             .addField('<a:carregando:488783607352131585> CPU', `Cores: \`${node.stats.cpu.cores}\`\nLavalink: \`${node.stats.cpu.lavalinkLoad.toFixed(2)}%\`\nSistema: \`${node.stats.cpu.systemLoad.toFixed(2)}%\``, true)

@@ -24,7 +24,7 @@ module.exports = {
             format: function() { throw new Error(':x: A função format está desativada') }
         }, { override: true });
 
-        const expr = args.join(' ').split('π').join('pi').split('÷').join('/').split('×').join('*').split('**').join('^').toLowerCase();
+        const expr = args.join(' ').split('π').join('pi').split('÷').join('/').split('×').join('*').split('**').join('^').split(':').join('/').toLowerCase();
         let result;
 
         try {
