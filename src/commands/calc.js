@@ -21,7 +21,9 @@ module.exports = {
             parse: function () { throw new Error(':x: A função parse está desativada') },
             simplify: function () { throw new Error(':x: A função simplify está desativada') },
             derivative: function () { throw new Error(':x: A função derivative está desativada') },
-            format: function() { throw new Error(':x: A função format está desativada') }
+            format: function() { throw new Error(':x: A função format está desativada') },
+            ones: function () { throw new Error(':x: A função ones está desativada') },
+            identity: function() { throw new Error(':x: A função identity está desativada') }
         }, { override: true });
 
         const expr = args.join(' ').split('π').join('pi').split('÷').join('/').split('×').join('*').split('**').join('^').split(':').join('/').toLowerCase();
