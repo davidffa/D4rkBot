@@ -22,6 +22,7 @@ module.exports = {
             simplify: function () { throw new Error(':x: A função simplify está desativada') },
             derivative: function () { throw new Error(':x: A função derivative está desativada') },
             format: function() { throw new Error(':x: A função format está desativada') },
+            zeros: function () { throw new Error(':x: A função zeros está desativada') },
             ones: function () { throw new Error(':x: A função ones está desativada') },
             identity: function() { throw new Error(':x: A função identity está desativada') }
         }, { override: true });
