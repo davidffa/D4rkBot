@@ -10,7 +10,7 @@ module.exports.run = async (client, message) => {
     }
     const prefix = guild && guild.prefix ? guild.prefix : "db.";
 
-    if (message.mentions.members.has(client.user.id) && message.content.split(' ').length === 1) 
+    if (message.mentions.members && message.mentions.members.has(client.user.id) && message.content.split(' ').length === 1) 
         return message.channel.send(`<a:lab_bloblegal:643912893246603314> Olá <@${message.author.id}> O meu prefixo neste servidor é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`);
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -28,6 +28,9 @@ module.exports.run = async (client, message) => {
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply(':x: Não posso executar esse comando nas DMs!');
     }
+
+    if (guild && guild.disabledCmds && guild.disabledCmds.includes(command.name))
+        return message.channel.send(`:x: O comando \`${command.name}\` está desativado neste servidor.`);
 
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());

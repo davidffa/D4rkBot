@@ -13,6 +13,9 @@ const guildDB = new Schema({
     },
     welcomeChatID: {
         type: String
+    },
+    disabledCmds: {
+        type: Array
     }
 });
 
