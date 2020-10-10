@@ -6,7 +6,6 @@ module.exports = {
     description: 'Informações sobre o node do lavalink',
     aliases: ['lavalinkstats'], 
     category: 'Info',
-    guildOnly: true,
     cooldown: 10,
     async execute(client, message) { 
         const node = client.music.nodes.first();
