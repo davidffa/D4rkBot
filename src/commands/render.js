@@ -12,11 +12,7 @@ module.exports = {
     args: 1,
     cooldown: 10,
     guildOnly: true,
-    async execute(client, message, args, prefix) {
-        if (!message.channel.nsfw) {
-            return message.channel.send(':x: Só podes usar esse comando num canal marcado para nsfw.');
-        }
-
+    async execute(client, message, args) {
         const waitMsg = await message.channel.send('<a:lab_loading:643912893011853332> A Verificar se o URL é válido...');
         const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
@@ -44,7 +40,7 @@ module.exports = {
             })
         }
 
-        /*async function checkPorn() {
+        async function checkPorn() {
             const res = await fetch(`https://fortiguard.com/search?q=${finalURL}&engine=1`);
             const text = await res.text();
 
@@ -52,7 +48,7 @@ module.exports = {
                 return true;
             else 
                 return false;
-        }*/
+        }
 
         const finalURL = await exists();
 
@@ -71,14 +67,14 @@ module.exports = {
 
         const page = await browser.newPage();
 
-        /*if (!message.channel.nsfw) {
+        if (!message.channel.nsfw) {
             const isPorn = await checkPorn();
 
             if (isPorn) {
                 waitMsg.edit(`:x: <@${message.member.id}>, Não podes renderizar sites pornográficos!`);
                 return browser.close();
             }
-        }*/
+        }
     
         await page.setViewport({
             width: 1920,
