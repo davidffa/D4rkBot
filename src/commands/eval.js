@@ -15,9 +15,7 @@ module.exports = {
         if (!args.length) return message.channel.send(':x: Argumentos em falta! Qual o código para executar?');
         try {
             const code = args.join(' ');
-            let evaled = eval(`(async () => {
-                ${code}
-            })()`);
+            let evaled = eval(code);
 
             if (typeof evaled !== 'string') 
                 evaled = inspect(evaled);
