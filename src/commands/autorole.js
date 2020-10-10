@@ -16,8 +16,7 @@ module.exports = {
                 const role = message.guild.roles.cache.get(guild.roleID);
                 if (role) message.channel.send(`Role default atual: \`${role.name}\``)
                 else {
-                    await guildDB.updateOne({
-                        guildID: message.guild.id,
+                    await guildDB.updateOne({ guildID: message.guild.id }, {
                         roleID: null,
                     });
                 }
@@ -26,8 +25,7 @@ module.exports = {
         }
         if (args[0] === '0') {
             if (guild && guild.roleID) {
-                await guildDB.updateOne({
-                    guildID: message.guild.id,
+                await guildDB.updateOne({ guildID: message.guild.id }, {
                     roleID: null,
                 });
                 message.channel.send('<a:lab_verificado:643912897218740224> Autorole desativado!');
@@ -45,8 +43,7 @@ module.exports = {
         if (role) {
             if (guild) {
                 const roleID = guild.roleID;
-                await guildDB.updateOne({
-                    guildID: message.guild.id,
+                await guildDB.updateOne({ guildID: message.guild.id }, {
                     roleID: role.id,
                 }).catch(console.log)
                 if (roleID)
@@ -56,9 +53,7 @@ module.exports = {
             } else {
                 await guildDB.create({
                     guildID: message.guild.id,
-                    prefix: null,
                     roleID: role.id,
-                    welcomeChatID: null
                 });
                 message.channel.send(`<a:lab_verificado:643912897218740224> Cargo \`${role.name}\` setado como autorole.`)
             }
@@ -69,8 +64,7 @@ module.exports = {
                 return message.channel.send(`:x: Cargo \`${args[0]}\` não encontrado!`);
             if (guild) {
                 const roleID = guild.roleID;
-                await guildDB.updateOne({
-                    guildID: message.guild.id,
+                await guildDB.updateOne({ guildID: message.guild.id }, {
                     roleID: role.id,
                 }).catch(console.log)
                 if (roleID)
@@ -80,9 +74,7 @@ module.exports = {
             } else {
                 await guildDB.create({
                     guildID: message.guild.id,
-                    prefix: null,
                     roleID: role.id,
-                    welcomeChatID: null
                 });
                 message.channel.send(`<a:lab_verificado:643912897218740224> Cargo \`${role.name}\` setado como autorole.`)
             }
