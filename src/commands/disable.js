@@ -30,8 +30,7 @@ module.exports = {
             if (disabledCmds && disabledCmds.includes(command.name))
                 return message.channel.send(`:x: O comando \`${args[0]}\` já está desativado. Usa \`${prefix}enable ${args[0]}\` se quiseres voltar a ativar o comando!`);
             
-            await guildDB.updateOne({
-                guildID: message.guild.id,
+            await guildDB.updateOne({ guildID: message.guild.id }, {
                 disabledCmds: [...disabledCmds, command.name]
             });
             

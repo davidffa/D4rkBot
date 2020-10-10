@@ -18,16 +18,13 @@ module.exports = {
         const guild = await guildDB.findOne({ guildID: message.guild.id });
 
         if (guild) {
-            await guildDB.updateOne({
-                guildID: message.guild.id,
-                prefix: args[0].trim()
+            await guildDB.updateOne({ guildID: message.guild.id }, {
+                prefix: args[0].trim() 
             });
         }else {
             await guildDB.create({
                 guildID: message.guild.id,
                 prefix: args[0].trim(),
-                roleID: null,
-                welcomeChatID: null
             });
         }
         return message.channel.send(`<a:lab_verificado:643912897218740224> Alteras-te o meu prefixo para ${args[0]}`);

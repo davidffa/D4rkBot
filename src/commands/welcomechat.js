@@ -20,9 +20,8 @@ module.exports = {
         }
         if (args[0] === '0') {
             if (guild) {
-                await guildDB.updateOne({
-                    guildID: message.guild.id,
-                    welcomeChatID: null,
+                await guildDB.updateOne({ guildID: message.guild.id }, {
+                    welcomeChatID: chat.id 
                 }).catch(console.log)
                 message.channel.send("<a:lab_verificado:643912897218740224> WelcomeChat desativado!")
             } else {
@@ -36,9 +35,8 @@ module.exports = {
         if (chat) {
             if (guild) {
                 const chatID = guild.welcomeChatID;
-                await guildDB.updateOne({
-                    guildID: message.guild.id,
-                    welcomeChatID: chat.id,
+                await guildDB.updateOne({ guildID: message.guild.id }, {
+                    welcomeChatID: chat.id 
                 }).catch(console.log)
                 if (chatID)
                     message.channel.send(`<a:lab_verificado:643912897218740224> Chat de bem-vindo alterado para ${args[0]}.`)
@@ -47,8 +45,6 @@ module.exports = {
             } else {
                 await guildDB.create({
                     guildID: message.guild.id,
-                    prefix: null,
-                    roleID: null,
                     welcomeChatID: chat.id
                 });
                 message.channel.send(`<a:lab_verificado:643912897218740224> Chat de bem-vindo setado como ${args[0]}.`)
@@ -61,10 +57,10 @@ module.exports = {
 
             if (guild) {
                 const chatID = guild.welcomeChatID;
-                await guildDB.updateOne({
-                    guildID: message.guild.id,
-                    welcomeChatID: chat.id
+                await guildDB.updateOne({ guildID: message.guild.id }, {
+                    welcomeChatID: chat.id 
                 }).catch(console.log)
+
                 if (chatID)
                     message.channel.send(`<a:lab_verificado:643912897218740224> Chat de bem-vindo alterado para ${args[0]}.`)
                 else
@@ -72,8 +68,6 @@ module.exports = {
             } else {
                 await guildDB.create({
                     guildID: message.guild.id,
-                    prefix: null,
-                    roleID: null,
                     welcomeChatID: chat.id
                 });
                 message.channel.send(`<a:lab_verificado:643912897218740224> Chat de bem-vindo setado como ${args[0]}.`)
