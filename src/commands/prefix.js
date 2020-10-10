@@ -10,7 +10,7 @@ module.exports = {
     guildOnly: true,
     cooldown: 5,
     async execute(client, message, args) {
-        if (!message.member.hasPermission('ADMINISTRATOR') && message.author.id !== '334054158879686657')
+        if (!message.member.hasPermission('MANAGE_GUILD') && message.author.id !== '334054158879686657')
             return message.channel.send(':x: Não tens permissão!');
         if (args[0].length > 5)
             return message.channel.send(':x: O meu prefixo não pode ultrapassar 5 caracteres.');
