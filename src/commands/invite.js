@@ -6,7 +6,7 @@ module.exports = {
     aliases: ['convite', 'inv'], 
     category: 'info',
     cooldown: 3,
-    execute(client, message, args, prefix) {
+    execute(client, message) {
         const embed = new MessageEmbed()
                         .setColor('RANDOM')
                         .setTitle('Convite')

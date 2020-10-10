@@ -5,7 +5,6 @@ module.exports = {
     description: 'Mostra o ping do bot e da API',
     aliases: ['latencia', 'latency'],
     category: 'Info',
-    usage: '',
     cooldown: 3,
     async execute(client, message) {
         const embed = new MessageEmbed()

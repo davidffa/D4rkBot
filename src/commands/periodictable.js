@@ -5,9 +5,8 @@ module.exports = {
     description: 'Mostra a imagem da tabela periódica',
     aliases: ['tp', 'tabelaperiodica'], 
     category: 'Outros',
-    usage: '',
     cooldown: 3,
-    execute(client, message, args, prefix) {
+    execute(client, message) {
         const attachment = new MessageAttachment('./src/assets/TP.png');
 
         const embed = new MessageEmbed()
