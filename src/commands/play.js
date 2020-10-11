@@ -16,6 +16,9 @@ module.exports = {
         if (!voiceChannel) 
             return message.channel.send(':x: Precisas de estar num canal de voz para executar esse comando!');
 
+        if (client.music.players.get(message.guild.id) && voiceChannel.id !== client.music.players.get(message.guild.id).voiceChannel)
+            return message.channel.send(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+
         const permissions = voiceChannel.permissionsFor(client.user);
 
         if (!permissions.has('CONNECT'))
@@ -23,6 +26,13 @@ module.exports = {
 
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
+
+        const player = client.music.create({
+            guild: message.guild.id,
+            voiceChannel: voiceChannel.id,
+            textChannel: message.channel.id,
+            selfDeafen: true
+        });
         
         const spotifyRegex = /^(https:\/\/open.spotify.com\/playlist\/|https:\/\/open.spotify.com\/track\/|https:\/\/open.spotify.com\/album\/|spotify:playlist:|spotify:track:|spotify:album:)([a-zA-Z0-9]+)(.*)$/
 
@@ -32,67 +42,54 @@ module.exports = {
                 data = await getData(args[0]);
             }catch (err) {}
 
-            if (data.type === 'track') {
-                args = [data.name, data.artists[0].name]
-            }else {
-                const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
-                const player = client.music.create({
-                    guild: message.guild.id,
-                    voiceChannel,
-                    textChannel: message.channel,
-                    selfDeafen: true
-                });
-
-                player.connect();
-                
-                for (const track of data.tracks.items) {
-                    try {
-                        let tracks;
-                        if (data.type === 'playlist') 
-                            tracks = await client.music.search(`${track.track.name} ${track.track.artists[0].name}`, message.author);
-                        else 
-                            tracks = await client.music.search(`${track.name} ${track.artists[0].name}`, message.author);
-
-                        player.queue.add(tracks.tracks[0]);
-
-                        if (!player.playing) 
-                            player.play();
-                    }catch (err) {
-                        continue;
-                    }   
-                }   
+            if (data) {
+                if (data.type === 'track') {
+                    args = [data.name, data.artists[0].name]
+                }else {
+                    const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
     
-                const embed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle('<a:Labfm:482171966833426432> Playlist Carregada')
-                    .addField(":page_with_curl: Nome:", '`' + data.name + '`')
-                    .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + data.tracks.total + '`')
-                    .setURL(data.external_urls.spotify)
-                    .setTimestamp()
-                    .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
+                    player.connect();
                     
-                return msg.edit('', embed);
+                    for (const track of data.tracks.items) {
+                        try {
+                            let res;
+                            if (data.type === 'playlist') 
+                                res = await client.music.search(`${track.track.name} ${track.track.artists[0].name}`, message.author);
+                            else 
+                                res = await client.music.search(`${track.name} ${track.artists[0].name}`, message.author);
+    
+                            player.queue.add(res.tracks[0]);
+    
+                            if (!player.playing) 
+                                player.play();
+                        }catch (err) {
+                            continue;
+                        }   
+                    }   
+        
+                    const embed = new MessageEmbed()
+                        .setColor("RANDOM")
+                        .setTitle('<a:Labfm:482171966833426432> Playlist Carregada')
+                        .addField(":page_with_curl: Nome:", '`' + data.name + '`')
+                        .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + data.tracks.total + '`')
+                        .setURL(data.external_urls.spotify)
+                        .setTimestamp()
+                        .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
+                        
+                    return msg.edit('', embed);
+                }
             }
         }
 
         try {
             const res = await client.music.search(args.join(' '), message.author);
 
-            if (res.loadType === 'LOAD_FAILED') 
-                return message.channel.send(`:x: Erro ao procurar por \`${args.join(' ')}\``);
-
-            const player = client.music.create({
-                guild: message.guild.id,
-                voiceChannel: voiceChannel.id,
-                textChannel: message.channel.id,
-                selfDeafen: true
-            });
-
-            player.connect();
-            
-            if (res.loadType === 'NO_MATCHES'){
+            if (res.loadType === 'LOAD_FAILED') {
+                message.channel.send(`:x: Erro ao procurar por \`${args.join(' ')}\``);
+            }else if (res.loadType === 'NO_MATCHES'){
                 message.channel.send(`:x: Não encontrei resultados para \`${args.join(' ')}\``);
             }else if (res.loadType === 'PLAYLIST_LOADED') {
+                player.connect();
                 const playlist = res.playlist;
                 for (const track of playlist.tracks) 
                     player.queue.add(track);
@@ -112,6 +109,7 @@ module.exports = {
                 message.channel.send(embed);
 
             }else {
+                player.connect();
                 const tracks = res.tracks;
 
                 player.queue.add(tracks[0]);
