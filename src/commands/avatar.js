@@ -7,7 +7,7 @@ module.exports = {
     guildOnly: true,
     usage: '[nome]',
     cooldown: 3,
-    execute(client, message, args, prefix) {
+    execute(client, message, args) {
         let user;
 
         if (!args.length) {
