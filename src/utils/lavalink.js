@@ -8,6 +8,8 @@ const nodes = [
         host: process.env.LAVALINKHOST,
         port: process.env.LAVALINKPORT,
         password: process.env.LAVALINKPASSWORD,
+        retryAmount: 30,
+        retryDelay: 5000,
         secure: false,
     },
 ]
