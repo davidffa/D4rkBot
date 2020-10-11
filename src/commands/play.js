@@ -40,7 +40,7 @@ module.exports = {
                     guild: message.guild.id,
                     voiceChannel,
                     textChannel: message.channel,
-                    selfDeaf: true
+                    selfDeafen: true
                 });
 
                 player.connect();
@@ -85,7 +85,7 @@ module.exports = {
                 guild: message.guild.id,
                 voiceChannel: voiceChannel.id,
                 textChannel: message.channel.id,
-                selfDeaf: true
+                selfDeafen: true
             });
 
             player.connect();
