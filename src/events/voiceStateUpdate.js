@@ -14,9 +14,11 @@ module.exports.run = async (client, oldState, newState) => {
             client.music.players.get(oldState.guild.id).pause(true);
             const msg = await client.channels.cache.get(client.music.players.get(oldState.guild.id).textChannel).send(':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 5 minutos.');
             const timeout = setTimeout(() => {
-                client.channels.cache.get(client.music.players.get(oldState.guild.id).textChannel).send(':x: Saí do canal de voz porque fiquei sozinho mais de 5 minutos.');
                 const player = client.music.players.get(oldState.guild.id);
-                player.destroy(oldState.guild.id);
+                if (player) {
+                    client.channels.cache.get(client.music.players.get(oldState.guild.id).textChannel).send(':x: Saí do canal de voz porque fiquei sozinho mais de 5 minutos.');
+                    player.destroy();
+                }
             }, 5 * 60 * 1000);
             client.voiceStateTimeouts.set(oldState.guild.id, { timeout, message: msg });
         }
