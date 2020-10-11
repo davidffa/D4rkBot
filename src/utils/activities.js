@@ -18,7 +18,7 @@ module.exports.load = (client) => {
                 client.user.setActivity('db.help ou @D4rkBot', { type: 'PLAYING' });
                 break;
             case 4:
-                client.user.setActivity(`${client.music.nodes.first().stats.playingPlayers} músicas`, { type: 'LISTENING' });
+                client.user.setActivity(`${client.music.nodes.first().stats.players} músicas`, { type: 'LISTENING' });
                 break;
             case 5:
                 client.user.setActivity(`Online à ${mstodate(client.uptime)}`, { type: 'STREAMING' });
