@@ -15,19 +15,15 @@ module.exports = {
         if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel))
             return message.channel.send(':x: Precisas de estar no meu canal de voz para usar esse comando!');
 
-        if (player.bands[0].gain === 0) {
-            player.setEQ([
+        if (player.bands[0] === 0) {
+            player.setEQ(
                 { band: 0, gain: client.levels.get('high') },
                 { band: 1, gain: client.levels.get('medium') },
                 { band: 2, gain: client.levels.get('medium') }
-            ]);
+            );
             message.channel.send('<a:lab_verificado:643912897218740224> Bassboost ativado!');
         }else {
-            player.setEQ([
-                { band: 0, gain: client.levels.get('none') },
-                { band: 1, gain: client.levels.get('none') },
-                { band: 2, gain: client.levels.get('none') }
-            ]);
+            player.clearEQ();
             message.channel.send('<a:lab_verificado:643912897218740224> Bassboost desativado!');
         }
     }
