@@ -285,6 +285,11 @@
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
+"@extreme_hero/deeptype@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@extreme_hero/deeptype/-/deeptype-1.0.1.tgz#c63d41c41c9bbd5a6f157c49d4fdfdde76ae713b"
+  integrity sha512-xTwcSgwiZ7tqlD3vKSfAylqR2HHUKfYeqtlCe14pnDYTs2TInJrGKVaEer3BtlHU0zMk//0x53x/Ftojo7P00w==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"

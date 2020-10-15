@@ -6,6 +6,7 @@
   "author": "D4rkB",
   "license": "MIT",
   "dependencies": {
+    "@extreme_hero/deeptype": "^1.0.1",
     "@k3rn31p4nic/google-translate-api": "^1.1.1",
     "@y2nk4/currency-converter": "^1.0.2",
     "algorithmia": "^0.3.10",

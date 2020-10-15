@@ -1,5 +1,6 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageAttachment } = require('discord.js');
 const { inspect } = require('util');
+const { Type } = require('@extreme_hero/deeptype');
 
 module.exports = {
     name: 'eval',
@@ -13,35 +14,47 @@ module.exports = {
             return message.reply(':x: Não tens permissão!');
         }
         if (!args.length) return message.channel.send(':x: Argumentos em falta! Qual o código para executar?');
+        
+        function clean(text) {
+            if (typeof text === 'string') {
+                text = text
+                    .replace(/`/g, `\`${String.fromCharCode(8203)}`)
+                    .replace(/@/g, `@${String.fromCharCode(8203)}`)
+                    .replace(new RegExp(client.token, 'gi'), '****');
+            }
+            return text;
+        }
+
         try {
+            const start = process.hrtime();
             const code = args.join(' ');
             let evaled = eval(code);
 
-            if (typeof evaled !== 'string') 
-                evaled = inspect(evaled);
-
-            const max = 1977 - code.length; 
-
-            if (evaled.length > max) {
-                evaled = evaled.substr(0, max);
-                evaled += '\n...'
+            if (evaled instanceof Promise) {
+                evaled = await evaled;
             }
+            const stop = process.hrtime(start);
+            const response = [
+                `:outbox_tray: **Output** \`\`\`js\n${clean(inspect(evaled, { depth: 0 }))}\n\`\`\``,
+                `<:lang_js:427101545478488076> **Tipo** \`\`\`js\n${new Type(evaled).is}\n\`\`\``,
+                `:timer: **Tempo** \`\`\`${((stop[0] * 1e9) + stop[1]) / 1e6}ms \`\`\``
+            ];
             
-            const embed = new MessageEmbed()
-                .setColor('RANDOM')
-                .setTitle('EVAL')
-                .setDescription(":inbox_tray: **Input**\n" + 
-                            `\`\`\`js\n${code}\`\`\`\n` + 
-                            ":outbox_tray: **Output**\n" + 
-                            `\`\`\`js\n${evaled}\`\`\`\n`
-            )
-                .setTimestamp()
-                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
-            const msg = await message.channel.send(embed);
+            const res = response.join('\n');
+
+            let msg;
+
+            if (res.length < 2000) {
+                msg = await message.channel.send(res);
+            }else {
+                const file = new MessageAttachment(Buffer.from(res), 'output.txt');
+                msg = await message.channel.send(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', file);
+            }
+
             await msg.react('751062867444498432');
 
             const filter = (r, u) => r.me && (u.id === message.author.id);
-            const collector = msg.createReactionCollector(filter, { max: 1, time: 60 * 1000 });
+            const collector = msg.createReactionCollector(filter, { max: 1, time: 5 * 60 * 1000 });
 
             collector.on('collect', async r => {
                 switch(r.emoji.name) {
@@ -58,7 +71,7 @@ module.exports = {
                 }
             });
         } catch (err) {
-            message.channel.send(`:x: ERRO: ${err.message}`);
+            message.channel.send(`:x: ERRO: \`\`\`x1\n${clean(err)}\`\`\``);
         }
     }
 };
