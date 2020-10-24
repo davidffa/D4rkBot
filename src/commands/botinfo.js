@@ -27,7 +27,7 @@ module.exports = {
             .addField(':ping_pong: Ping da API', `\`${Math.round(client.ws.ping)}ms\``, true)
             .addField('<:bot_badgehypesquad:590943982436089858> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${prefix}\``, true)
             .addField('<:lang_js:427101545478488076> Versão NodeJS', '`v12.19.0`', true)
-            .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.3.1`', true)
+            .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', '`v12.4.1`', true)
             .addField(':bank: Banco de dados', '`MongoDB`', true)
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}\` %`, true)
             .addField('<:ram:751468688686841986> RAM', `\`${(process.memoryUsage().rss/1024/1024).toFixed(0)}MB\``, true)
