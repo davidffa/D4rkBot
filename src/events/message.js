@@ -3,6 +3,8 @@ const guildDB = require('../models/guildDB');
 
 const cooldowns = new Discord.Collection();
 
+const { levenshteinDistance } = require('../utils/levenshteinDistance');
+
 module.exports.run = async (client, message) => {
     let guild;
     if (message.channel.type === 'text') {
@@ -23,7 +25,35 @@ module.exports.run = async (client, message) => {
     const command = client.commands.get(commandName) 
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     
-    if (!command) return;
+    if (!command) {
+        let cmds = client.commands.map(cmd => {
+            return cmd.name;
+        });
+
+        client.commands.forEach(cmd => {
+            if (!cmd.aliases) return;
+            cmds = cmds.concat(cmd.aliases)
+        })
+
+        //console.log(cmds);
+
+        let diduMean = '';
+        let diduMeanLevel = Infinity;
+
+        cmds.forEach(cmd => {
+            levDistance = levenshteinDistance(commandName, cmd)
+            if (levDistance < diduMeanLevel) {
+                diduMean = cmd;
+                diduMeanLevel = levDistance;
+            }
+        });
+
+        const msg = await message.channel.send(`:x: Eu não tenho esse comando.\n:thinking: Querias dizer \`${prefix}${diduMean}\`?`);
+
+        msg.delete({ timeout: 7000 })
+
+        return;
+    }
 
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply(':x: Não posso executar esse comando nas DMs!');
