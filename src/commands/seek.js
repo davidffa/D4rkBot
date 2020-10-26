@@ -17,10 +17,26 @@ module.exports = {
         if (!voiceChannel || (voiceChannel && voiceChannel.id !== player.voiceChannel))
             return message.channel.send(':x: Precisas de estar no meu canal de voz para usar esse comando!');
 
-        if (Number(args[0]) < 0 || Number(args[0]) * 1000 > player.queue.current.duration) 
+        let time = args[0];
+
+        if (time.includes(':')) {
+            const parts = time.split(':');
+
+            if (parts.length > 3) {
+                return message.channel.send(`:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`)
+            }
+
+            time = 0;
+            const len = parts.length
+            for (let i=0; i<len; i++) {
+                time += Number(parts.pop() * Math.pow(60, i));
+            }
+        }
+
+        if (Number(time) < 0 || Number(time) * 1000 > player.queue.current.duration) 
             return message.channel.send(`:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`)
         
-        player.seek(args[0]*1000);
+        player.seek(time*1000);
         message.channel.send(`<a:lab_verificado:643912897218740224> Tempo da música setado para \`${args[0]}\` segundos`);
     }
 }
