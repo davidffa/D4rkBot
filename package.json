@@ -9,7 +9,7 @@
     "@extreme_hero/deeptype": "^1.0.1",
     "@k3rn31p4nic/google-translate-api": "^1.1.1",
     "algorithmia": "^0.3.10",
-    "bufferutil": "^4.0.1",
+    "bufferutil": "^4.0.2",
     "canvas": "^2.6.1",
     "currency-converter": "^0.1.12",
     "discord.js": "^12.4.1",
@@ -28,7 +28,7 @@
     "sodium": "^3.0.2",
     "spotify-url-info": "^2.0.0",
     "steam-provider": "^0.3.2",
-    "utf-8-validate": "^5.0.2",
+    "utf-8-validate": "^5.0.3",
     "weather-js": "^2.0.0"
   },
   "scripts": {
