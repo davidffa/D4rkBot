@@ -18,7 +18,7 @@
     "erlpack": "discordapp/erlpack",
     "figlet": "^1.5.0",
     "genius-lyrics-api": "^3.0.3",
-    "mathjs": "^7.5.1",
+    "mathjs": "^7.6.0",
     "moment": "^2.29.1",
     "mongoose": "^5.10.11",
     "node-fetch": "^2.6.1",
