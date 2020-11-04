@@ -6,7 +6,7 @@ const nodes = [
     {
         identifier: 'Node 1',
         host: process.env.LAVALINKHOST,
-        port: process.env.LAVALINKPORT,
+        port: Number(process.env.LAVALINKPORT),
         password: process.env.LAVALINKPASSWORD,
         retryAmount: 30,
         retryDelay: 5000,
@@ -31,7 +31,7 @@ module.exports.load = (client) => {
         const player = client.music.create({
             guild: process.env.TESTGUILDID,
             voiceChannel: process.env.VOICECHANNELID,
-            textChannel: client.guilds.cache.get(process.env.TESTGUILDID).channels.cache.get(process.env.TEXTCHANNELID),
+            textChannel: process.env.TEXTCHANNELID,
             selfDeafen: true,
             selfMute: true
         });
@@ -99,7 +99,7 @@ module.exports.load = (client) => {
                 const player = client.music.create({
                     guild: process.env.TESTGUILDID,
                     voiceChannel: process.env.VOICECHANNELID,
-                    textChannel: client.guilds.cache.get(process.env.TESTGUILDID).channels.cache.get(process.env.TEXTCHANNELID),
+                    textChannel: process.env.TEXTCHANNELID,
                     selfDeaf: true,
                     selfMute: true
                 });
