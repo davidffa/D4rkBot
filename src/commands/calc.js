@@ -9,7 +9,7 @@ module.exports = {
     args: 1,
     usage: '<Expressão Matemática>',
     cooldown: 3,
-    execute(client, message, args) {
+    execute(_client, message, args) {
         const math = create(all);
 
         const limitedEvaluate = math.evaluate;
@@ -24,10 +24,12 @@ module.exports = {
             format: function() { throw new Error(':x: A função format está desativada') },
             zeros: function () { throw new Error(':x: A função zeros está desativada') },
             ones: function () { throw new Error(':x: A função ones está desativada') },
-            identity: function() { throw new Error(':x: A função identity está desativada') }
+            identity: function() { throw new Error(':x: A função identity está desativada') },
+            range: function () { throw new Error(':x: A função range está desativada') },
+            matrix: function () { throw new Error(':x: A função matrix está desativada') }
         }, { override: true });
 
-        const expr = args.join(' ').split('π').join('pi').split('÷').join('/').split('×').join('*').split('**').join('^').split(':').join('/').toLowerCase();
+        const expr = args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/\'|\[|\]/g, '').toLowerCase();
         let result;
 
         try {
