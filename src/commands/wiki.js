@@ -1,18 +1,16 @@
 const { MessageEmbed } = require('discord.js');
 const algorithmia = require('algorithmia');
-const sentenceBoundaryDetection = require('sbd');
+const sbd = require('sbd');
 
 module.exports = {
     name: 'wiki',
     description: 'Procura algo na wikipedia',
     aliases: ['wikipedia'], 
     category: 'Outros',
+    args: 1,
     usage: '<Palavra/Frase>',
     cooldown: 3,
-    async execute(client, message, args, prefix) {
-        if (!args.length) 
-            return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}wiki <Palavra/Frase>`);
-
+    async execute(_client, message, args) {
         let content = args.join(' ');
 
         const input = {
@@ -25,9 +23,11 @@ module.exports = {
 
         await fetchContentFromWikipedia();
         if (content == args.join(' ')) return;
+
         sanitizeContent();
-        breakContentIntoSentences();
-        limitMaximumSentences();
+
+        content = sbd.sentences(content);
+        content = content.slice(0, 5);
         
         await msg.edit('', new MessageEmbed()
             .setTitle(`Wikipedia: (${args.join(' ')})`)
@@ -72,14 +72,6 @@ module.exports = {
             function removeDatesInParentheses(text) {
                 return text.replace(/\((?:\([^()]*\)|[^()])*\)/gm, '').replace(/  /g, ' ');
             }
-        }
-
-        function breakContentIntoSentences() {
-            content = sentenceBoundaryDetection.sentences(content);
-        }
-
-        function limitMaximumSentences() {
-            content = content.slice(0, 5)
         }
     }
 }
