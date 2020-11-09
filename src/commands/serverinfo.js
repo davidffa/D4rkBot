@@ -47,7 +47,7 @@ module.exports = {
                 .addField(":closed_book: ID", message.guild.id, true)
                 .addField(':grinning: Emojis', message.guild.emojis.cache.size, true)
                 .addField(`:man: Membros [${membersSize}]`, `<:b_online2:585881537493467175> Online: ${online}\n<:b_idle2:585881544124661801> Ausente: ${idle}\n` +
-                                                            `<:b_dnd2:585881517314539523> Ocupado: ${dontDisturb}\n<:b_offline2:585881529079824385> Offline: ${offline}\n <:bot_bot:568569868358516770> Bots: ${bot}`, true)
+                                                            `<:b_dnd2:585881517314539523> Ocupado: ${dontDisturb}\n<:b_offline2:585881529079824385> Offline: ${offline}\n<:bot_bot:568569868358516770> Bots: ${bot}`, true)
                 
                 .addField(`:white_small_square:Canais [${textChannels + voiceChannels}]`, `Texto: ${textChannels}\n Voz: ${voiceChannels}`, true)
                 .addField(`:spider_web: Cargos`, `[${message.guild.roles.cache.size}]`, true)
