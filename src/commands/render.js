@@ -12,7 +12,7 @@ module.exports = {
     args: 1,
     cooldown: 10,
     guildOnly: true,
-    async execute(client, message, args) {
+    async execute(_client, message, args) {
         const waitMsg = await message.channel.send('<a:lab_loading:643912893011853332> A Verificar se o URL é válido...');
         const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
@@ -23,7 +23,7 @@ module.exports = {
             url = args[0];
 
         async function exists() {
-            return new Promise(async (resolve, reject) => {
+            return new Promise(async (resolve, _reject) => {
                 setTimeout(() => {
                     resolve(null);
                 }, 5000)
@@ -55,8 +55,8 @@ module.exports = {
         if (!finalURL)
             return waitMsg.edit(`:x: <@${message.member.id}>, O site ${url} não existe ou não respondeu dentro de 5 segundos!`);
 
-        if (!fs.existsSync('./src/screenshots')) 
-            fs.mkdirSync('./src/screenshots');
+        if (!fs.existsSync('./screenshots')) 
+            fs.mkdirSync('./screenshots');
 
         const browser = await puppeteer.launch({
             args: [
@@ -90,9 +90,9 @@ module.exports = {
             return browser.close();
         }
             
-        await page.screenshot({ path: `./src/screenshots/${name}.png`});
+        await page.screenshot({ path: `./screenshots/${name}.png`});
 
-        const attachment = new MessageAttachment(`./src/screenshots/${name}.png`);
+        const attachment = new MessageAttachment(`./screenshots/${name}.png`);
             
         const embed = new MessageEmbed()
             .setTitle(args[0])
@@ -106,7 +106,7 @@ module.exports = {
         const msg = await message.channel.send({ embed, files: [attachment] });
         
         await browser.close();
-        fs.unlinkSync(`./src/screenshots/${name}.png`); 
+        fs.unlinkSync(`./screenshots/${name}.png`); 
         
         await msg.react('751062867444498432');
 
