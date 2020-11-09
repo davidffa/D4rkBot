@@ -4,16 +4,17 @@ module.exports = {
     name: 'avatar',
     description: 'Converte o teu avatar ou de alguém do servidor em uma imagem', 
     category: 'Outros',
+    aliases: ['av'],
     guildOnly: true,
     usage: '[nome]',
     cooldown: 3,
-    execute(client, message, args) {
+    async execute(client, message, args) {
         let user;
 
         if (!args.length) {
             user = message.author;
-        }else if (!isNaN(args[0]) && args[0].length === 18) {
-            user = client.users.cache.get(args[0]);
+        }else if (!isNaN(args[0]) && (args[0].length === 17 || args[0].length === 18)) {
+            user = await client.users.fetch(args[0]);
         }else {
             const userMentioned = message.mentions.users.first();
             if (userMentioned) {
