@@ -1,11 +1,8 @@
-const guildDB = require('../models/guildDB');
 const { MessageEmbed } = require('discord.js');
 
-module.exports.run = async (client, guild) => {
-    await guildDB.findOneAndDelete({ guildID: guild.id });
-
+module.exports.run = (client, guild) => {
     const embed = new MessageEmbed()
-        .setTitle(':frowning2: Saí de um servidor')
+        .setTitle('<:bot_badgebooster:585905184765378568> Entrei num novo servidor')
         .setColor('RANDOM')
         .addField('Nome', `\`${guild.name}\``, true)
         .addField(':crown: Dono', `\`${guild.owner.user.tag}\``, true)
