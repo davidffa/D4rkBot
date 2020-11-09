@@ -35,8 +35,6 @@ module.exports.run = async (client, message) => {
             cmds = cmds.concat(cmd.aliases)
         })
 
-        //console.log(cmds);
-
         let diduMean = '';
         let diduMeanLevel = Infinity;
 
@@ -99,5 +97,13 @@ module.exports.run = async (client, message) => {
     } catch (err) {
         message.channel.send(`:x: Ocorreu um erro ao executar o comando \`${commandName}\``);
         console.error(err.message);
+
+        const embed = new Discord.MessageEmbed().setTitle(':x: Ocorreu um erro!')
+            .setColor('RANDOM')
+            .setDescription(`Ocorreu um erro ao executar o comando \`${commandName}\` no servidor \`${message.guild.name}\`\n**Args:**\`${args.join(' ')}\`\n**Erro:** \`${err.message}\``)
+            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+            .setTimestamp()
+
+        client.users.cache.get('334054158879686657').send(embed);
     }
 }
