@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const guildDB = require('../models/guildDB');
+const fs = require('fs');
 
 const cooldowns = new Discord.Collection();
 
@@ -94,13 +95,20 @@ module.exports.run = async (client, message) => {
 
     try {
         command.execute(client, message, args, prefix);
+
+        //Logs
+        if (!fs.existsSync('./logs')) 
+            fs.mkdirSync('./logs');
+
+        fs.appendFileSync('./logs/latest.txt', `**Comando:** \`${commandName}\` executado no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.tag}\n\n`)
+        
     } catch (err) {
         message.channel.send(`:x: Ocorreu um erro ao executar o comando \`${commandName}\``);
         console.error(err.message);
 
         const embed = new Discord.MessageEmbed().setTitle(':x: Ocorreu um erro!')
             .setColor('RANDOM')
-            .setDescription(`Ocorreu um erro ao executar o comando \`${commandName}\` no servidor \`${message.guild.name}\`\n**Args:**\`${args.join(' ')}\`\n**Erro:** \`${err.message}\``)
+            .setDescription(`Ocorreu um erro ao executar o comando \`${commandName}\` no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**Erro:** \`${err.message}\``)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
 
