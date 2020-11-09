@@ -10,7 +10,7 @@ module.exports = {
     guildOnly: true,
     usage: '[Nome]',
     cooldown: 6,
-    async execute(client, message, args, prefix) {
+    async execute(_client, message, args) {
         if (message.guild.emojis.cache.size === 0)
                 return message.channel.send(':x: Este servidor não tem emojis!');
 
@@ -106,6 +106,7 @@ module.exports = {
                         .addField('Nome:', `\`${emoji.name}\``, true)
                         .addField('Servidor:', `\`${emoji.guild.name}\``, true)
                         .addField('Identificador:', `\`${emoji.animated ? '<' + emoji.identifier + '>' : '<:' + emoji.identifier + '>'}\``, true)
+                        .setURL(emoji.url)
                         .setThumbnail(emoji.url)
                         .setTimestamp()
                         .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
