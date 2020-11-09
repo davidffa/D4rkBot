@@ -59,6 +59,9 @@ module.exports = {
             collector.on('collect', async r => {
                 switch(r.emoji.name) {
                     case 'x_':
+                        if (msg.attachments.size === 1) {
+                            return msg.delete();
+                        }
                         if (message.guild.me.hasPermission('MANAGE_MESSAGES'))
                             msg.reactions.removeAll();
                         else {
