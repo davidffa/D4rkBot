@@ -14,7 +14,9 @@ module.exports = {
         if (!args.length) {
             user = message.author;
         }else if (!isNaN(args[0]) && (args[0].length === 17 || args[0].length === 18)) {
-            user = await client.users.fetch(args[0]);
+            try {
+                user = await client.users.fetch(args[0]);
+            }catch {}
         }else {
             const userMentioned = message.mentions.users.first();
             if (userMentioned) {
