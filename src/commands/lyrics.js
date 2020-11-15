@@ -31,14 +31,14 @@ module.exports = {
         if (!res)
             return message.channel.send(':x: Não encontrei nenhum resultado!');
 
-        const lyrics = await getLyrics(res[0].url)
+        const lyrics = await getLyrics(res[0].url).then(res => res.split('\n'))
         let page = 1;
-        const pages = Math.ceil(lyrics.length / 800);
+        const pages = Math.ceil(lyrics.length / 20);
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle(args.join(' '))
-            .setDescription(lyrics.slice(0, 800))
+            .setDescription(lyrics.slice(0, 20).join('\n'))
             .setThumbnail(res[0].albumArt)
             .setURL(res[0].url)
             .setTimestamp()
@@ -57,7 +57,7 @@ module.exports = {
                     if (page === 1)
                         return;
                     page--;
-                    embed.setDescription(lyrics.slice((page-1) * 800, page * 800))
+                    embed.setDescription(lyrics.slice((page-1) * 20, page * 20))
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
 
@@ -72,7 +72,7 @@ module.exports = {
                     if (page === pages)
                         return;
                     page++;
-                    embed.setDescription(lyrics.slice((page-1) * 800, page * 800))
+                    embed.setDescription(lyrics.slice((page-1) * 20, page * 20))
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
 
@@ -83,6 +83,16 @@ module.exports = {
                     }
 
                     break;
+            }
+        });
+
+        collector.on('end', (c, reason) => {
+            if (reason === 'time') {
+                if (!msg.deleted) {
+                    msg.reactions.cache.map(reaction => {
+                        reaction.users.remove(client.user.id)
+                    });
+                }
             }
         });
     }
