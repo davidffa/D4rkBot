@@ -20,11 +20,13 @@ module.exports.run = async (client) => {
     if (fs.existsSync(logPath))
         fs.unlinkSync(logPath);
 
+    const canal = client.channels.cache.get('775420724990705736');
+
     setInterval(() => {
         const attachment = new MessageAttachment(logPath)
 
         if (fs.existsSync(logPath)) {
-            client.guilds.cache.get('581220467315179520').channels.cache.get('775420724990705736').send(`:bookmark_tabs: Log dos comandos.\nData: \`${moment(Date.now()).format('LLLL')}\``, attachment)
+            canal.send(`:bookmark_tabs: Log dos comandos.\nData: \`${moment(Date.now()).format('LLLL')}\``, attachment)
             fs.unlinkSync(logPath);
         }
     }, 2 * 60 * 60 * 1000);
