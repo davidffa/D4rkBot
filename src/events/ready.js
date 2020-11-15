@@ -22,11 +22,11 @@ module.exports.run = async (client) => {
 
     const canal = client.channels.cache.get('775420724990705736');
 
-    setInterval(() => {
+    setInterval(async () => {
         const attachment = new MessageAttachment(logPath)
 
         if (fs.existsSync(logPath)) {
-            canal.send(`:bookmark_tabs: Log dos comandos.\nData: \`${moment(Date.now()).format('LLLL')}\``, attachment)
+            await canal.send(`:bookmark_tabs: Log dos comandos.\nData: \`${moment(Date.now()).format('LLLL')}\``, attachment)
             fs.unlinkSync(logPath);
         }
     }, 2 * 60 * 60 * 1000);
