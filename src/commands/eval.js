@@ -1,6 +1,7 @@
 const { MessageAttachment } = require('discord.js');
 const { inspect } = require('util');
 const { Type } = require('@extreme_hero/deeptype');
+const fetch = require('node-fetch');
 
 module.exports = {
     name: 'eval',
@@ -47,8 +48,28 @@ module.exports = {
             if (res.length < 2000) {
                 msg = await message.channel.send(res);
             }else {
-                const file = new MessageAttachment(Buffer.from(res), 'output.txt');
-                msg = await message.channel.send(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', file);
+                const body = {
+                    files: [{
+                        name: 'Eval',
+                        content: `//Output:\n${clean(inspect(evaled, { depth: 0 }))}\n//Tipo:\n${new Type(evaled).is}\n//Tempo:\n${((stop[0] * 1e9) + stop[1]) / 1e6}ms`,
+                        languageId: 183
+                    }]
+                }
+
+                const bin = await fetch('https://sourceb.in/api/bins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                }).then(res => res.json());
+
+                if (bin.key) {
+                    msg = await message.channel.send(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`);
+                }else {
+                    const file = new MessageAttachment(Buffer.from(res), 'output.txt');
+                    msg = await message.channel.send(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', file);
+                }
             }
 
             await msg.react('751062867444498432');
@@ -71,6 +92,16 @@ module.exports = {
                         }
                         msg.edit('<a:lab_verificado:643912897218740224> Eval fechada.', { embed: null });  
                         break;
+                }
+            });
+
+            collector.on('end', (c, reason) => {
+                if (reason === 'time') {
+                    if (!msg.deleted) {
+                        msg.reactions.cache.map(reaction => {
+                            reaction.users.remove(client.user.id)
+                        });
+                    }
                 }
             });
         } catch (err) {
