@@ -19,8 +19,11 @@ module.exports = {
         if (!command)
             return message.channel.send(`:x: Eu não tenho o comando \`${args[0]}\``);
 
-        if (command.name === 'help')    
+        if (command.name === 'help') {
             return message.channel.send(':x: Não podes desativar o comando de ajuda!');
+        }else if (['disable', 'enable', 'ping', 'botinfo', 'invite', 'eval', 'reload'].includes(command.name)) {
+            return message.channel.send(`:x: Não podes desativar o comando \`${args[0]}\``);
+        }
 
         const guild = await guildDB.findOne({ guildID: message.guild.id });
 
