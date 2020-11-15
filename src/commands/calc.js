@@ -29,14 +29,20 @@ module.exports = {
             matrix: function () { throw new Error(':x: A função matrix está desativada') }
         }, { override: true });
 
-        const expr = args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/\'|\[|\]/g, '').toLowerCase();
+        const expr = args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/'|\[|\]|\{|\}/g, '').toLowerCase();
         let result;
+
+        if (expr.length === 0)
+            return message.channel.send(':x: Expressão inválida!');
 
         try {
             result = limitedEvaluate(expr);
         }catch (err) {
             return message.channel.send(':x: Expressão inválida!');
         }
+
+        if (!result)
+            return message.channel.send(':x: Expressão inválida!');
 
         if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
         if (typeof result === 'function') return message.channel.send(':x: Expressão inválida!');
