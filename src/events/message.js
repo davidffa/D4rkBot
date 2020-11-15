@@ -13,7 +13,7 @@ module.exports.run = async (client, message) => {
     }
     const prefix = guild && guild.prefix ? guild.prefix : "db.";
 
-    if (message.mentions.members && message.mentions.members.has(client.user.id) && message.content.split(' ').length === 1) 
+    if (message.mentions.members && message.mentions.members.has(client.user.id) && message.content.split(' ').length === 1)
         return message.channel.send(`<a:lab_bloblegal:643912893246603314> Olá <@${message.author.id}> O meu prefixo neste servidor é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`);
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -23,9 +23,9 @@ module.exports.run = async (client, message) => {
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
-    const command = client.commands.get(commandName) 
+    const command = client.commands.get(commandName)
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    
+
     if (!command) {
         let cmds = client.commands.map(cmd => {
             return cmd.name;
@@ -48,9 +48,25 @@ module.exports.run = async (client, message) => {
         });
 
         const msg = await message.channel.send(`:x: Eu não tenho esse comando.\n:thinking: Querias dizer \`${prefix}${diduMean}\`?`);
+        msg.react('<:shell:777546055952498708>');
 
-        msg.delete({ timeout: 7000 })
+        const filter = (r, u) => r.me && (u.id === message.author.id);
+        const collector = msg.createReactionCollector(filter, { max: 1, time: 10 * 1000 });
 
+        collector.on('collect', async r => {
+            switch (r.emoji.name) {
+                case 'shell':
+                    message.content = message.content.replace(`${commandName}`, `${diduMean}`)
+                    client.emit('message', message)
+                    msg.delete();
+                    break;
+            }
+        });
+
+        setTimeout(() => {
+            if (!msg.deleted)
+                msg.delete();
+        }, 10000)
         return;
     }
 
@@ -74,7 +90,7 @@ module.exports.run = async (client, message) => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``).then(msg => msg.delete({ timeout: timeLeft*1000 }));
+            return message.reply(`Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``).then(msg => msg.delete({ timeout: timeLeft * 1000 }));
         }
     }
 
@@ -83,13 +99,13 @@ module.exports.run = async (client, message) => {
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
 
-    if ((command.args && !args.length) ||args.length < command.args) {
+    if ((command.args && !args.length) || args.length < command.args) {
         let reply = `:x: Argumentos em falta! `;
 
         if (command.usage) {
             reply += `**Usa:** \`${prefix}${commandName} ${command.usage}\``;
         }
-        
+
         return message.channel.send(reply);
     }
 
@@ -97,21 +113,23 @@ module.exports.run = async (client, message) => {
         command.execute(client, message, args, prefix);
 
         //Logs
-        if (!fs.existsSync('./logs')) 
+        if (!fs.existsSync('./logs'))
             fs.mkdirSync('./logs');
 
-        fs.appendFileSync('./logs/latest.txt', `**Comando:** \`${commandName}\` executado no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.tag}\n\n`)
-        
+        if (message.channel.type === 'text') 
+            fs.appendFileSync('./logs/latest.txt', `**Comando:** \`${commandName}\` executado no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.tag}\n\n`)
     } catch (err) {
         message.channel.send(`:x: Ocorreu um erro ao executar o comando \`${commandName}\``);
         console.error(err.message);
 
-        const embed = new Discord.MessageEmbed().setTitle(':x: Ocorreu um erro!')
-            .setColor('RANDOM')
-            .setDescription(`Ocorreu um erro ao executar o comando \`${commandName}\` no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**Erro:** \`${err.message}\``)
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
-            .setTimestamp()
+        if (message.channel.type === 'text') {
+            const embed = new Discord.MessageEmbed().setTitle(':x: Ocorreu um erro!')
+                .setColor('RANDOM')
+                .setDescription(`Ocorreu um erro ao executar o comando \`${commandName}\` no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**Erro:** \`${err.message}\``)
+                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+                .setTimestamp()
 
-        client.users.cache.get('334054158879686657').send(embed);
+            client.users.cache.get('334054158879686657').send(embed);
+        }
     }
 }
