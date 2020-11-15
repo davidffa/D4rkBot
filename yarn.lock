@@ -75,9 +75,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "14.14.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.6.tgz#146d3da57b3c636cc0d1769396ce1cfa8991147f"
-  integrity sha512-6QlRuqsQ/Ox/aJEQWBEJG7A9+u7oSYl3mem/K8IzxXG/kAGbV1YPD9Bg9Zw3vyxC/YP+zONKwy8hGkSt1jxFMw==
+  version "14.14.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.7.tgz#8ea1e8f8eae2430cf440564b98c6dfce1ec5945d"
+  integrity sha512-Zw1vhUSQZYw+7u5dAwNbIA9TuTotpzY/OF7sJM9FqPOF3SPjKnxrjoTktXDZgUjybf4cWVBP7O8wvKdSaGHweg==
 
 "@types/responselike@*", "@types/responselike@^1.0.0":
   version "1.0.0"
@@ -251,9 +251,9 @@ balanced-match@^1.0.0:
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
 base64-js@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
-  integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
+  integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
@@ -1527,10 +1527,10 @@ make-dir@^3.0.0:
   dependencies:
     semver "^6.0.0"
 
-mathjs@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-8.0.0.tgz#b202398e84f392c1709dc744203284b6ff637fd8"
-  integrity sha512-vbuVLQWLwhD7D/BV479uS7csVu7ABLFt4MozWdCXyE0k9cNxFEmurkxU+y9e+ovwY0obhbWS7eVVASq1w2A/kg==
+mathjs@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-8.0.1.tgz#26f3e92a0c83b44c884ce8ffbbf31834e13c21c8"
+  integrity sha512-lvdYNHLNrRORYKRpRs22RMeeAoqVxRePUCjDealCZLfN5io0tJHqQLyNZuJJSXWa8Pl0dkM434D4cIUsbYR1Mg==
   dependencies:
     complex.js "^2.0.11"
     decimal.js "^10.2.1"
@@ -1635,10 +1635,10 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-mongoose@^5.10.13:
-  version "5.10.13"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.10.13.tgz#abcc9234b735886b19a95bec99140710687b295f"
-  integrity sha512-lvZzTj449sVWijY76StOuTKt5oP5kyy70VdM3DMgPpKNqZfkAseHxekmqBbd9YQQDVIgrIYDar9vSlxKqc75MQ==
+mongoose@^5.10.14:
+  version "5.10.14"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.10.14.tgz#2f245ea578c008939599356ff6a8ba7e7643f987"
+  integrity sha512-lG7TCyjGjVPM4R1HWCyWZbdK7hC4MdWRG7P95hDENXSvaLkGLiP7WZbGT83KzLY8+400x1p6C53UALD3MqpsCA==
   dependencies:
     bson "^1.1.4"
     kareem "2.3.1"
@@ -2094,9 +2094,9 @@ regexp-clone@1.0.0, regexp-clone@^1.0.0:
   integrity sha512-TuAasHQNamyyJ2hb97IuBEif4qBHGjPHBS64sZwytpLEqtBQ1gPJTnOaQ6qmpET16cK14kkjbazl6+p0RRv0yw==
 
 registry-auth-token@^4.0.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/registry-auth-token/-/registry-auth-token-4.2.0.tgz#1d37dffda72bbecd0f581e4715540213a65eb7da"
-  integrity sha512-P+lWzPrsgfN+UEpDS3U8AQKg/UjZX6mQSJueZj3EK+vNESoqBSpBUD3gmu4sF9lOsjXWjF11dQKUqemf3veq1w==
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/registry-auth-token/-/registry-auth-token-4.2.1.tgz#6d7b4006441918972ccd5fedcd41dc322c79b250"
+  integrity sha512-6gkSb4U6aWJB4SF2ZvLb76yCBjcvufXBqvvEx1HbmKPkutswjW1xNVRY0+daljIYRbogN7O0etYSlbiaEQyMyw==
   dependencies:
     rc "^1.2.8"
 
@@ -2308,10 +2308,10 @@ spotify-uri@^2.1.0:
   resolved "https://registry.yarnpkg.com/spotify-uri/-/spotify-uri-2.1.0.tgz#1e0428536bd616e90e086d74167310fa23465f6b"
   integrity sha512-+QjB/9zRsbGB+2oOPK6K4jidLEWbsY43mov84vEj66dNj0aqqz6ul6VbxfUDlklOqgL4kVLFC/Yhr01PcXlJbQ==
 
-spotify-url-info@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/spotify-url-info/-/spotify-url-info-2.0.0.tgz#c1caa67314c7bd09b15569a84cd3cbdbc4f8f7df"
-  integrity sha512-HKEalMIiNgQcJ9m8fndR3cWTZTYbQRRsYjDp84vpe5gPJYZ9caxQQx1x5Fy5zUkxY24evthySINhZleOI8P6xw==
+spotify-url-info@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/spotify-url-info/-/spotify-url-info-2.2.0.tgz#7d14adbae65b54b918c46e2dcfdf02b1146f85c8"
+  integrity sha512-GEMoMf2RF+CSPsSGstY/9c7dgViKOKJ09bFZTwrU4KzQ+JpLq+0Ho4eMCeeGmES94yjBz+GHMtBfTcp+4DxEbA==
   dependencies:
     cross-fetch "^3.0.5"
     himalaya "^1.1.0"
