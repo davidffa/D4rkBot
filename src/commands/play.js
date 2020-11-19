@@ -27,12 +27,14 @@ module.exports = {
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
 
-        const player = client.music.create({
-            guild: message.guild.id,
-            voiceChannel: voiceChannel.id,
-            textChannel: message.channel.id,
-            selfDeafen: true
-        });
+        function createPlayer() {
+            return client.music.create({
+                guild: message.guild.id,
+                voiceChannel: voiceChannel.id,
+                textChannel: message.channel.id,
+                selfDeafen: true
+            });
+        }
         
         const spotifyRegex = /^(https:\/\/open.spotify.com\/playlist\/|https:\/\/open.spotify.com\/track\/|https:\/\/open.spotify.com\/album\/|spotify:playlist:|spotify:track:|spotify:album:)([a-zA-Z0-9]+)(.*)$/
 
@@ -48,6 +50,7 @@ module.exports = {
                 }else {
                     const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
     
+                    const player = createPlayer();
                     player.connect();
                     
                     for (const track of data.tracks.items) {
@@ -85,10 +88,11 @@ module.exports = {
             const res = await client.music.search(args.join(' '), message.author);
 
             if (res.loadType === 'LOAD_FAILED') {
-                message.channel.send(`:x: Erro ao procurar por \`${args.join(' ')}\``);
+                message.channel.send(':x: Música não encontrada!');
             }else if (res.loadType === 'NO_MATCHES'){
-                message.channel.send(`:x: Não encontrei resultados para \`${args.join(' ')}\``);
+                message.channel.send(':x: Música não encontrada!');
             }else if (res.loadType === 'PLAYLIST_LOADED') {
+                const player = createPlayer();
                 player.connect();
                 const playlist = res.playlist;
                 for (const track of playlist.tracks) 
@@ -109,6 +113,7 @@ module.exports = {
                 message.channel.send(embed);
 
             }else {
+                const player = createPlayer();
                 player.connect();
                 const tracks = res.tracks;
 

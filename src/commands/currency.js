@@ -7,6 +7,7 @@ module.exports = {
     aliases: ['moeda', 'conversormoeda', 'curr'], 
     category: 'Outros',
     usage: '<de> <para> <valor>',
+    args: 3,
     cooldown: 3,
     async execute(client, message, args) {
         if (isNaN(args[2]))
