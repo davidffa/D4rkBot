@@ -12,7 +12,7 @@ module.exports = {
     cooldown: 3,
     async execute(client, message, args, prefix) {
         if (!message.member.hasPermission('MANAGE_GUILD') && message.author.id !== '334054158879686657')
-            return message.channel.send(':x: Não tens permissão!');
+            return message.channel.send(':x: Precisas da permissão `MANAGE_GUILD` para usar este comando!');
 
         const command = client.commands.get(args[0].toLowerCase()) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(args[0].toLowerCase()));
 
