@@ -12,7 +12,17 @@ module.exports = {
     args: 1,
     cooldown: 10,
     guildOnly: true,
-    async execute(_client, message, args) {
+    async execute(client, message, args) {
+        if (!message.channel.nsfw && message.author.id !== '334054158879686657') {
+            /*const isPorn = await checkPorn();
+
+            if (isPorn) {
+                waitMsg.edit(`:x: <@${message.member.id}>, Não podes renderizar sites pornográficos!`);
+                return browser.close();
+            }*/
+            return message.channel.send(':x: Só posso executar esse comando em canais NSFW.');
+        }
+
         const waitMsg = await message.channel.send('<a:lab_loading:643912893011853332> A Verificar se o URL é válido...');
         const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
@@ -40,7 +50,7 @@ module.exports = {
             })
         }
 
-        async function checkPorn() {
+        /*async function checkPorn() {
             const res = await fetch(`https://fortiguard.com/search?q=${finalURL}&engine=1`);
             const text = await res.text();
 
@@ -48,7 +58,7 @@ module.exports = {
                 return true;
             else 
                 return false;
-        }
+        }*/
 
         const finalURL = await exists();
 
@@ -66,15 +76,6 @@ module.exports = {
         });
 
         const page = await browser.newPage();
-
-        if (!message.channel.nsfw) {
-            const isPorn = await checkPorn();
-
-            if (isPorn) {
-                waitMsg.edit(`:x: <@${message.member.id}>, Não podes renderizar sites pornográficos!`);
-                return browser.close();
-            }
-        }
     
         await page.setViewport({
             width: 1920,
@@ -86,7 +87,7 @@ module.exports = {
             await waitMsg.edit('<a:lab_loading:643912893011853332> A Renderizar a página...')
             await page.goto(url);
         }catch (err) {
-            msg.edit(':x: Site inválido!');
+            waitMsg.edit(':x: Site inválido!');
             return browser.close();
         }
             
@@ -119,6 +120,16 @@ module.exports = {
                     await msg.delete();
                     message.channel.send('<a:lab_verificado:643912897218740224> Render fechada.');  
                     break;
+            }
+        });
+
+        collector.on('end', (_c, reason) => {
+            if (reason === 'time') {
+                if (!msg.deleted) {
+                    msg.reactions.cache.map(reaction => {
+                        reaction.users.remove(client.user.id)
+                    });
+                }
             }
         });
     }
