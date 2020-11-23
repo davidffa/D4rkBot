@@ -50,8 +50,10 @@ module.exports = {
                 }else {
                     const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
     
-                    const player = createPlayer();
-                    player.connect();
+                    const player = client.music.players.get(message.guild.id) || createPlayer();
+
+                    if (player.state === 'DISCONNECTED')
+                        player.connect();
                     
                     for (const track of data.tracks.items) {
                         try {
@@ -92,8 +94,10 @@ module.exports = {
             }else if (res.loadType === 'NO_MATCHES'){
                 message.channel.send(':x: Música não encontrada!');
             }else if (res.loadType === 'PLAYLIST_LOADED') {
-                const player = createPlayer();
-                player.connect();
+                const player = client.music.players.get(message.guild.id) || createPlayer();
+
+                if (player.state === 'DISCONNECTED')
+                    player.connect();
                 const playlist = res.playlist;
                 for (const track of playlist.tracks) 
                     player.queue.add(track);
@@ -113,8 +117,10 @@ module.exports = {
                 message.channel.send(embed);
 
             }else {
-                const player = createPlayer();
-                player.connect();
+                const player = client.music.players.get(message.guild.id) || createPlayer();
+
+                if (player.state === 'DISCONNECTED')
+                    player.connect();
                 const tracks = res.tracks;
 
                 player.queue.add(tracks[0]);
