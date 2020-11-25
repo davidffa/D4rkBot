@@ -1,3 +1,5 @@
+const guildDB = require('../models/guildDB');
+
 module.exports = {
     name: 'skip',
     description: 'Pula a música atual.',
@@ -5,7 +7,7 @@ module.exports = {
     category: 'Musica',
     guildOnly: true,
     cooldown: 2,
-    execute(client, message) {
+    async execute(client, message) {
         const player = client.music.players.get(message.guild.id);
 
         if (!player)
@@ -30,6 +32,15 @@ module.exports = {
             || voiceChannel.size <= 3) {
             stopMusic();
         }else {
+            const guild = await guildDB.findOne({ guildID: message.guild.id });
+            if (guild && guild.djrole) {
+                const role = message.guild.roles.cache.get(guild.djrole);
+
+                if (message.member.roles.cache.has(guild.djrole)) 
+                    return stopMusic();
+                
+                return message.channel.send(`:x: Apenas quem requisitou esta música, alguém com a permissão \`Mover Membros\` ou com o cargo DJ: \`${role.name}\` a pode pular!`);
+            }
             message.channel.send(':x: Apenas quem requisitou esta música ou alguém com a permissão `Mover Membros` a pode pular!');
         }
     }
