@@ -16,6 +16,9 @@ const guildDB = new Schema({
     },
     disabledCmds: {
         type: Array
+    },
+    djrole: {
+        type: String
     }
 });
 
