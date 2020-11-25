@@ -43,10 +43,10 @@ module.exports = {
 
         const role = message.mentions.roles.first() ||
             message.guild.roles.cache.get(args[0]) ||
-            message.guild.roles.cache.filter(role => role.name.toLowerCase() === args[0].toLowerCase()).first();
+            message.guild.roles.cache.filter(role => role.name.toLowerCase() === args.join(' ').toLowerCase()).first();
 
         if (!role)
-            return message.channel.send(`:x: Cargo \`${args[0]}\` não encontrado!`);
+            return message.channel.send(`:x: Cargo \`${args.join(' ')}\` não encontrado!`);
 
         if (guild) {
             const roleID = guild.roleID;
