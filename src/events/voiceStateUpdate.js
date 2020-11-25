@@ -6,7 +6,10 @@ module.exports.run = async (client, oldState, newState) => {
 
     if (oldState.member === oldState.guild.me && voiceChannel && !voiceChannel2) {
         const player = client.music.players.get(oldState.guild.id);
-        if (player) player.destroy();
+        if (player) {
+            client.channels.cache.get(player.textChannel).send(':warning: Fui desconectado do canal de voz, por isso limpei a queue.');
+            player.destroy();
+        }
     }
 
     if (client.music.players.get(oldState.guild.id) && voiceChannel && voiceChannel.id === client.music.players.get(oldState.guild.id).voiceChannel) {
