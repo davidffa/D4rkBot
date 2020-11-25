@@ -13,7 +13,7 @@ module.exports = {
         if (!player)
             return message.channel.send(':x: Não estou a tocar nada de momento!');
 
-        if (message.guild.channels.cache.get(player.voiceChannel).members.size === 1 || (message.member.voice.channel && message.member.voice.channel.id === player.voiceChannel && message.member.voice.channel.members.filter(m => !m.u.bot).size === 1)) {
+        if (message.guild.channels.cache.get(player.voiceChannel).members.size === 1 || (message.member.voice.channel && message.member.voice.channel.id === player.voiceChannel && message.member.voice.channel.members.filter(m => !m.user.bot).size === 1)) {
             player.destroy();
 
             return message.channel.send('<a:lab_verificado:643912897218740224> Parei de tocar música e saí do canal de voz!');
