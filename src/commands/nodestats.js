@@ -16,7 +16,7 @@ module.exports = {
             .addField(':calendar: Players a tocar', `\`${node.stats.players}\``, true)
             .addField('<a:malakoi:478003266815262730> Uptime', `\`${msToDate(node.stats.uptime)}\``, true)
             .addField('<a:carregando:488783607352131585> CPU', `Cores: \`${node.stats.cpu.cores}\`\nLavalink: \`${node.stats.cpu.lavalinkLoad.toFixed(2)}%\`\nSistema: \`${node.stats.cpu.systemLoad.toFixed(2)}%\``, true)
-            .addField('<:ram:751468688686841986> RAM', `\`${(node.stats.memory.used / 1024 / 1024).toFixed(0)}\`MB`, true)
+            .addField('<:ram:751468688686841986> RAM', `\`${(node.stats.memory.used / 1024 / 1024).toFixed(0)}MB\``, true)
             .setTimestamp()
             .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
         message.channel.send(embed);
