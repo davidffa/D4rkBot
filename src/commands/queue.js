@@ -5,6 +5,7 @@ module.exports = {
     name: 'queue',
     description: 'Vê as músicas que estão na queue',
     category: 'Musica',
+    aliases: ['q'],
     guildOnly: true,
     cooldown: 5,
     async execute(client, message) {
