@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-mongoose.connect(`mongodb+srv://d4rkb:${process.env.dbpassword}@d4rkbotjs-7ttdo.gcp.mongodb.net/main?retryWrites=true&w=majority`, {
+mongoose.connect(process.env.MONGODBURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
