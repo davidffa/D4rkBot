@@ -23,8 +23,8 @@ module.exports = {
             .setTitle("🏓 **Pong**")
             .setColor("RANDOM")
             .setDescription(`<:bot_bot:568569868358516770> \`${m.createdTimestamp - message.createdTimestamp}ms\`
-                :stopwatch: API \`${Math.round(client.ws.ping)}ms\`
-                <:MongoDB:773610222602158090> Database \`${pingDB}ms\`
+                :stopwatch: \`${Math.round(client.ws.ping)}ms\`
+                <:MongoDB:773610222602158090> \`${pingDB}ms\`
             `)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
