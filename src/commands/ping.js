@@ -28,6 +28,6 @@ module.exports = {
             `)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
-        m.edit(embed)
+        m.edit('', embed)
     },
 };
