@@ -16,7 +16,7 @@
     "bufferutil": "^4.0.2",
     "canvas": "^2.6.1",
     "currency-converter": "^0.1.12",
-    "discord.js": "^12.5.1",
+    "discord.js": "12.5.0",
     "dotenv": "^8.2.0",
     "erela.js": "^2.2.0",
     "erlpack": "discordapp/erlpack",
