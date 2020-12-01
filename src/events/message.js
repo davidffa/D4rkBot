@@ -27,12 +27,12 @@ module.exports.run = async (client, message) => {
         || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) {
-        let cmds = client.commands.map(cmd => {
-            return cmd.name;
-        });
+        let cmds = message.author.id === '334054158879686657' 
+            ? client.commands.map(cmd => cmd.name) 
+            : client.commands.filter(cmd => cmd.category !== 'Desenvolvedor').map(cmd => cmd.name);
 
         client.commands.forEach(cmd => {
-            if (!cmd.aliases) return;
+            if (!cmd.aliases || (message.author.id !== '334054158879686657' && cmd.category === 'Desenvolvedor')) return;
             cmds = cmds.concat(cmd.aliases)
         })
 
