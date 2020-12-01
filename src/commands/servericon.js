@@ -7,8 +7,11 @@ module.exports = {
     category: 'Outros',
     guildOnly: true,
     cooldown: 3,
-    execute(client, message, args, prefix) {
+    execute(_client, message) {
         const guild = message.guild;
+
+        if (!guild.icon) return message.channel.send(':x: O servidor não tem icon!');
+
         const url = guild.iconURL({ format: 'png', dynamic: true });
 
         const embed = new MessageEmbed()

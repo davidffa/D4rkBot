@@ -41,9 +41,6 @@ module.exports = {
             return message.channel.send(':x: Expressão inválida!');
         }
 
-        if (!result)
-            return message.channel.send(':x: Expressão inválida!');
-
         if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
         if (typeof result === 'function') return message.channel.send(':x: Expressão inválida!');
 
