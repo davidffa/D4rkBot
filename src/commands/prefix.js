@@ -11,7 +11,7 @@ module.exports = {
     cooldown: 5,
     async execute(client, message, args) {
         if (!message.member.hasPermission('MANAGE_GUILD') && message.author.id !== '334054158879686657')
-            return message.channel.send(':x: Não tens permissão!');
+            return message.channel.send(':x: Precisas da permissão `MANAGE_GUILD` para usar este comando!');
         if (args[0].length > 5)
             return message.channel.send(':x: O meu prefixo não pode ultrapassar 5 caracteres.');
 
