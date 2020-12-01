@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const fetch = require('node-fetch');
 
 module.exports = {
     name: 'shell',
@@ -14,7 +15,34 @@ module.exports = {
         if (!args.length) return message.channel.send(':x: Argumentos em falta! Qual o comando a executar?');
 
         exec(args.join(' '), async (err, stdout) => { 
-            const msg = err ? await message.channel.send(`:x: Erro:\n\`\`\`${err}\`\`\``) : await message.channel.send(`:outbox_tray: Output:\n\`\`\`${stdout}\`\`\``);
+            let msg;
+            if (stdout.length + 15 < 2000) {
+                msg = err ? await message.channel.send(`:x: Erro:\n\`\`\`${err}\`\`\``) : await message.channel.send(`:outbox_tray: **Output:**\n\`\`\`${stdout}\`\`\``);
+            }else {
+                const body = {
+                    files: [{
+                        name: 'Shell',
+                        content: err ? `//Erro:\n${err}` : `//Output:\n${stdout}`,
+                        languageId: 346
+                    }]
+                }
+    
+                const bin = await fetch('https://sourceb.in/api/bins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                }).then(res => res.json());
+    
+                if (bin.key) {
+                    msg = await message.channel.send(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`);
+                }else {
+                    const file = new MessageAttachment(Buffer.from(res), 'output.txt');
+                    msg = await message.channel.send(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', file);
+                }
+            }   
+            
             await msg.react('751062867444498432');
 
             const filter = (r, u) => r.me && (u.id === message.author.id);
