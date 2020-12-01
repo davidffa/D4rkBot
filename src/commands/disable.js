@@ -21,7 +21,7 @@ module.exports = {
 
         if (command.name === 'help') {
             return message.channel.send(':x: Não podes desativar o comando de ajuda!');
-        }else if (['disable', 'enable', 'ping', 'botinfo', 'invite', 'eval', 'reload'].includes(command.name)) {
+        }else if (['shell', 'disable', 'enable', 'ping', 'botinfo', 'invite', 'eval', 'reload'].includes(command.name)) {
             return message.channel.send(`:x: Não podes desativar o comando \`${args[0]}\``);
         }
 
