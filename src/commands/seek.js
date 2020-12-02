@@ -37,6 +37,6 @@ module.exports = {
             return message.channel.send(`:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`)
         
         player.seek(time*1000);
-        message.channel.send(`<a:lab_verificado:643912897218740224> Tempo da música setado para \`${args[0]}\` segundos`);
+        message.channel.send(`<a:lab_verificado:643912897218740224> Tempo da música setado para \`${args[0]}\`.`);
     }
 }
