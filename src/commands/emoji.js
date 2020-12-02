@@ -42,7 +42,7 @@ module.exports = {
             }
 
             async function createCollector() {
-                const filter = (r, u) => r.me && u.id === message.author.id;
+                const filter = (_r, u) => u.id === message.author.id;
                 const collector = await msg.createReactionCollector(filter, { time: 60 * 1000 });
 
                 collector.on('collect', async r => {
@@ -135,7 +135,7 @@ module.exports = {
             }
 
             async function createCollector() {
-                const filter = (r, u) => r.me && u.id === message.author.id;
+                const filter = (_r, u) => u.id === message.author.id;
                 const collector = await msg.createReactionCollector(filter, { time: 30 * 1000 });
 
                 collector.on('collect', async r => {

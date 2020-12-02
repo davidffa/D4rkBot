@@ -42,11 +42,10 @@ module.exports = {
                .addField(':thinking: Ajuda', `\nFaz \`${prefix}help [nome do comando]\` para obter informação sobre um comando específico`);
             
             const msg = await message.channel.send(res);
-            msg.delete({ timeout: 90000 });
             await msg.react('751062867444498432');
 
-            const filter = (r, u) => r.me && (u.id === message.author.id || message.guild.member(u).hasPermission('MANAGE_MESSAGES'));
-            const collector = msg.createReactionCollector(filter, { max: 1, time: 90 * 1000 });
+            const filter = (_r, u) => u.id === message.author.id || message.guild.member(u).hasPermission('MANAGE_MESSAGES');
+            const collector = msg.createReactionCollector(filter, { max: 1, time: 3 * 60 * 1000 });
 
             collector.on('collect', async r => {
                 switch(r.emoji.name) {
@@ -55,6 +54,12 @@ module.exports = {
                         break;
                 }
             });
+
+            collector.on('end', (_c, reason) => {
+                if (reason === 'time') {
+                    msg.delete();
+                }
+            })
             return;
         }
 

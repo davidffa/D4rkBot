@@ -74,7 +74,7 @@ module.exports = {
 
             await msg.react('751062867444498432');
 
-            const filter = (r, u) => r.me && (u.id === message.author.id);
+            const filter = (_r, u) => u.id === message.author.id;
             const collector = msg.createReactionCollector(filter, { max: 1, time: 5 * 60 * 1000 });
 
             collector.on('collect', async r => {
@@ -95,13 +95,11 @@ module.exports = {
                 }
             });
 
-            collector.on('end', (c, reason) => {
+            collector.on('end', (_c, reason) => {
                 if (reason === 'time') {
-                    if (!msg.deleted) {
-                        msg.reactions.cache.map(reaction => {
-                            reaction.users.remove(client.user.id)
-                        });
-                    }
+                    msg.reactions.cache.map(reaction => {
+                        reaction.users.remove(client.user.id);
+                    });
                 }
             });
         } catch (err) {

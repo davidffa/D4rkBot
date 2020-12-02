@@ -48,7 +48,7 @@ module.exports = {
         msg.react('⬅️');
         msg.react('➡️');
 
-        const filter = (r, u) => r.me && (u.id === message.author.id);
+        const filter = (_r, u) => u.id === message.author.id;
         const collector = msg.createReactionCollector(filter, { time: 10 * 60 * 1000 });
 
         collector.on('collect', async r => {
@@ -57,7 +57,7 @@ module.exports = {
                     if (page === 1)
                         return;
                     page--;
-                    embed.setDescription(lyrics.slice((page-1) * 20, page * 20))
+                    embed.setDescription(lyrics.slice((page - 1) * 20, page * 20))
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
 
@@ -72,7 +72,7 @@ module.exports = {
                     if (page === pages)
                         return;
                     page++;
-                    embed.setDescription(lyrics.slice((page-1) * 20, page * 20))
+                    embed.setDescription(lyrics.slice((page - 1) * 20, page * 20))
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
 
@@ -86,13 +86,11 @@ module.exports = {
             }
         });
 
-        collector.on('end', (c, reason) => {
+        collector.on('end', (_c, reason) => {
             if (reason === 'time') {
-                if (!msg.deleted) {
-                    msg.reactions.cache.map(reaction => {
-                        reaction.users.remove(client.user.id)
-                    });
-                }
+                msg.reactions.cache.map(reaction => {
+                    reaction.users.remove(client.user.id);
+                });
             }
         });
     }
