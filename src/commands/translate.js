@@ -6,38 +6,31 @@ module.exports = {
     description: 'Traduz uma palavra ou frase',
     aliases: ['traduzir'], 
     category: 'Outros',
-    usage: '<de> <para> <texto>',
+    args: 2,
+    usage: '<para> <texto>',
     cooldown: 3,
-    async execute(client, message, args, prefix) {
-        if (!args.length || args.length < 3) 
-            return message.channel.send(`:x: Argumentos em falta, **Usa:** ${prefix}translate <de> <para> <texto>`);
-
-        const originTextArray = args.slice();
-        originTextArray.shift();
-        originTextArray.shift();
-        const originText = originTextArray.join(' ');
-
-        let text = '';
+    async execute(_client, message, args) {
+        const originText = args.slice(1).join(' ');
 
         try {
-            text = await translate(originText, {
-                from: args[0],
-                to: args[1],
+            const res = await translate(originText, {
+                to: args[0]
             });
+
+            const embed = new MessageEmbed()
+                .setTitle("Tradutor")
+                .setColor("RANDOM")
+                .addField(`:bookmark: Texto de origem: (${res.from.language.iso})`, `\`\`\`${originText}\`\`\``)
+                .addField(`:book: Texto traduzido: (${args[0]})`, `\`\`\`${res.text ? res.text : ''}\`\`\``)
+                .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+                .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Google_Translate_logo.svg/250px-Google_Translate_logo.svg.png')
+                .setTimestamp();
+
+            message.channel.send(embed);
         }catch (err) {
             if (err.message.startsWith('The language') && err.message.endsWith('is not supported.')) 
                 return message.channel.send(':x: Linguagem não suportada! Tente `en, pt, fr, ...`')
             return message.channel.send(':x: Ocorreu um erro!');
         }
-
-        const embed = new MessageEmbed()
-            .setTitle("TRADUTOR")
-            .setColor("RANDOM")
-            .addField(`:bookmark: Texto de origem: (${args[0]})`, `\`\`\`${originText}\`\`\``)
-            .addField(`:book: Texto traduzido: (${args[1]})`, `\`\`\`${text.text}\`\`\``)
-            .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
-            .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Google_Translate_logo.svg/250px-Google_Translate_logo.svg.png')
-            .setTimestamp()
-        message.channel.send(embed);
     }
 }
