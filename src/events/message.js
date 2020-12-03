@@ -50,7 +50,7 @@ module.exports.run = async (client, message) => {
         const msg = await message.channel.send(`:x: Eu não tenho esse comando.\n:thinking: Querias dizer \`${prefix}${diduMean}\`?`);
         msg.react('<:shell:777546055952498708>');
 
-        const filter = (r, u) => r.me && (u.id === message.author.id);
+        const filter = (_r, u) => u.id === message.author.id;
         const collector = msg.createReactionCollector(filter, { max: 1, time: 10 * 1000 });
 
         collector.on('collect', async r => {
