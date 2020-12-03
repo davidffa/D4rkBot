@@ -1,36 +1,50 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Util } = require('discord.js');
+const { parse } = require('twemoji-parser');
 const moment = require('moment');
 moment.locale('pt-PT');
 
 module.exports = {
     name: 'emoji',
     description: 'Informações sobre emojis do servidor',
-    aliases: ['emojis'], 
+    aliases: ['emojis'],
     category: 'Outros',
     guildOnly: true,
     usage: '[Nome]',
     cooldown: 6,
     async execute(_client, message, args) {
+        if (args[0] && parse(args[0]).length) {
+            const emoji = parse(args[0], { assetType: 'png' })[0];
+            const embed = new MessageEmbed()
+                .setTitle(`:grinning: Emoji Info`)
+                .setColor('RANDOM')
+                .setDescription(`Unicode: \\${emoji.text}`)
+                .setURL(emoji.url)
+                .setImage(emoji.url)
+                .setTimestamp()
+                .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
+            return message.channel.send(embed);
+        }
+
         if (message.guild.emojis.cache.size === 0)
-                return message.channel.send(':x: Este servidor não tem emojis!');
+            return message.channel.send(':x: Este servidor não tem emojis!');
 
         if (!args.length) {
             const emojiArr = message.guild.emojis.cache.array();
             let page = 1;
-            
+
             function getEmojiMessage() {
                 let eMsg = '';
 
-                for (let pos = (page-1)*10; pos < (page-1)*10+10; pos++) {
-                    if (!emojiArr[pos].animated) 
+                for (let pos = (page - 1) * 10; pos < (page - 1) * 10 + 10; pos++) {
+                    if (!emojiArr[pos].animated)
                         eMsg += '<:';
                     else
                         eMsg += '<';
                     eMsg += `${emojiArr[pos].identifier}>`;
 
-                    if (!emojiArr[pos+1]) break;
+                    if (!emojiArr[pos + 1]) break;
 
-                    if (pos != (page-1)*10+10-1) eMsg += ' | ';
+                    if (pos != (page - 1) * 10 + 10 - 1) eMsg += ' | ';
                 }
 
                 return eMsg;
@@ -46,7 +60,7 @@ module.exports = {
                 const collector = await msg.createReactionCollector(filter, { time: 60 * 1000 });
 
                 collector.on('collect', async r => {
-                    switch(r.emoji.name) {
+                    switch (r.emoji.name) {
                         case '⏪':
                             if (page != 1) {
                                 page--;
@@ -54,22 +68,22 @@ module.exports = {
                                     .setTitle(':grinning: Emojis do servidor')
                                     .setColor('RANDOM')
                                     .setDescription(getEmojiMessage())
-                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/10)}`)
+                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length / 10)}`)
                                 await msg.edit(embed);
                             }
                             break;
                         case '⏩':
-                            if (page != Math.ceil(emojiArr.length/10)) {
+                            if (page != Math.ceil(emojiArr.length / 10)) {
                                 page++;
                                 const embed = new MessageEmbed()
                                     .setTitle(':grinning: Emojis do servidor')
                                     .setColor('RANDOM')
                                     .setDescription(getEmojiMessage())
-                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/10)}`)
+                                    .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length / 10)}`)
                                 await msg.edit(embed);
                             }
                             break;
-                    }              
+                    }
                 });
             }
 
@@ -77,16 +91,16 @@ module.exports = {
                 .setTitle(':grinning: Emojis do servidor')
                 .setColor('RANDOM')
                 .setDescription(getEmojiMessage())
-                .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length/10)}`)
-            
+                .setFooter(`Página ${page} de ${Math.ceil(emojiArr.length / 10)}`)
+
             const msg = await message.channel.send(embed);
-            
+
             await createCollector();
             await reactMessage();
-        }else {
+        } else {
             const emojiName = args[0].toLowerCase();
             const emojiArr = [];
-            
+
             async function getEmojiById() {
                 let emojiID = args[0];
                 if (isNaN(args[0])) {
@@ -98,7 +112,7 @@ module.exports = {
 
                 if (emoji) {
                     const embed = new MessageEmbed()
-                        .setTitle('Emoji Info')
+                        .setTitle(':grinning: Emoji Info')
                         .setColor('RANDOM')
                         .addField('Animado:', `\`${emoji.animated ? 'Sim' : 'Não'}\``, true)
                         .addField('Criado em:', `\`${moment(emoji.createdAt).format('L')}\``, true)
@@ -123,15 +137,15 @@ module.exports = {
                 }
                 const emoji = message.guild.emojis.cache.get(emojiID);
                 if (emoji)
-                    return await getEmojiById(emoji.id); 
-            }catch(err) {}
+                    return await getEmojiById(emoji.id);
+            } catch (err) { }
 
             async function reactMessage() {
                 try {
-                    for (let pos=0; pos < 10 && emojiArr[pos]; pos++) {
+                    for (let pos = 0; pos < 10 && emojiArr[pos]; pos++) {
                         await msg.react(emojiArr[pos].identifier);
                     }
-                }catch(err) {}
+                } catch (err) { }
             }
 
             async function createCollector() {
@@ -141,7 +155,7 @@ module.exports = {
                 collector.on('collect', async r => {
                     args[0] = r.emoji.id;
                     await msg.delete();
-                    await getEmojiById();            
+                    await getEmojiById();
                 });
             }
 
@@ -149,13 +163,13 @@ module.exports = {
                 let eMsg = '';
 
                 for (let pos = 0; pos < 10; pos++) {
-                    if (!emojiArr[pos].animated) 
+                    if (!emojiArr[pos].animated)
                         eMsg += '<:';
                     else
                         eMsg += '<';
                     eMsg += `${emojiArr[pos].identifier}>`;
 
-                    if (!emojiArr[pos+1]) break;
+                    if (!emojiArr[pos + 1]) break;
 
                     if (pos != 19) eMsg += ' | ';
                 }
@@ -169,8 +183,25 @@ module.exports = {
                 }
             });
 
-            if (!emojiArr.length)
-                return message.channel.send(':x: Emoji não encontrado!');
+            if (!emojiArr.length) {
+                const emoji = Util.parseEmoji(args[0]);
+                if (!emoji.id) {
+                    return message.channel.send(':x: Emoji não encontrado!');
+                }
+
+                const url = `https://cdn.discordapp.com/emojis/${emoji.id}.${emoji.animated ? 'gif' : 'png'}`;
+                
+                const embed = new MessageEmbed()
+                    .setTitle(':grinning: Emoji Info')
+                    .setColor('RANDOM')
+                    .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar o emoji!`)
+                    .setImage(url)
+                    .setTimestamp()
+                    .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
+
+                return message.channel.send(embed);
+            }
+                
 
             const embed = new MessageEmbed()
                 .setTitle(':grinning: Emojis do servidor')
@@ -178,9 +209,9 @@ module.exports = {
                 .setDescription('Clique num emoji para obter informações sobre ele\n\n' + getEmojiMessage2())
                 .setTimestamp()
                 .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
-            
+
             const msg = await message.channel.send(embed);
-            
+
             await createCollector();
             await reactMessage();
         }
