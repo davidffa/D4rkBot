@@ -8,7 +8,7 @@ module.exports = {
     args: 1,
     usage: '<Frase/Palavra>',
     cooldown: 3,
-    execute(client, message, args, prefix) {
+    execute(_client, message, args) {
         if (args.join(' ').length > 15)
             return message.channel.send(':x: Máximo de 15 caracteres permitido!');
         
