@@ -8,13 +8,16 @@ module.exports = {
     aliases: ['qr'], 
     category: 'Outros',
     args: 1,
-    usage: '<Criar/Ler> [Texto/URL]',
+    usage: '<Criar/Ler> (<Texto>/[URL])',
     cooldown: 3,
     async execute(_client, message, args, prefix) {
         switch(args[0].toLowerCase()) {
             case 'criar':
             case 'create':
             case 'c':
+                if (!args[1])
+                    return message.channel.send(`:x: **Use** ${prefix}qrcode criar <Texto>`);
+
                 if (args.slice(1).join(' ').length > 400)
                     return message.channel.send(':x: Só podes criar códigos QR com mensagens até 400 caracteres.');
 
