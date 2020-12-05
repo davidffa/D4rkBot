@@ -6,7 +6,7 @@ module.exports = {
     guildOnly: true,
     cooldown: 3,
     args: 1,
-    async execute(client, message, args, prefix) {
+    async execute(client, message, args) {
         if (!message.member.hasPermission('BAN_MEMBERS')) return message.reply(':x: Não tens permissão para desbanir membros!');
         if (!message.guild.member(client.user.id).hasPermission('BAN_MEMBERS')) return message.channel.send(':x: Não tenho permissão para desbanir membros!');
 
