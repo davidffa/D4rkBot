@@ -17,7 +17,7 @@ module.exports = {
         exec(args.join(' '), async (err, stdout) => { 
             let msg;
             if (stdout.length + 15 < 2000) {
-                msg = err ? await message.channel.send(`:x: Erro:\n\`\`\`sh${err}\`\`\``) : await message.channel.send(`:outbox_tray: **Output:**\n\`\`\`sh${stdout}\`\`\``);
+                msg = err ? await message.channel.send(`:x: Erro:\`\`\`sh\n${err}\`\`\``) : await message.channel.send(`:outbox_tray: **Output:**\`\`\`sh\n${stdout}\n\`\`\``);
             }else {
                 const body = {
                     files: [{
