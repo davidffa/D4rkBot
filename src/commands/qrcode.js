@@ -18,8 +18,8 @@ module.exports = {
                 if (!args[1])
                     return message.channel.send(`:x: **Use** ${prefix}qrcode criar <Texto>`);
 
-                if (args.slice(1).join(' ').length > 400)
-                    return message.channel.send(':x: Só podes criar códigos QR com mensagens até 400 caracteres.');
+                if (args.slice(1).join(' ').length > 700)
+                    return message.channel.send(':x: Só podes criar códigos QR com mensagens até 700 caracteres.');
 
                 const url = await QRCode.toDataURL(args.slice(1).join(' '));
                 const base64data = url.replace(/^data:image\/png;base64,/, '');
@@ -42,7 +42,10 @@ module.exports = {
             case 'l':
                 const qrURL = args[1] || message.attachments.first().url;
 
-                const data = await fetch(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`).then(res => res.json()).then(json => json[0].symbol[0].data);
+                const data = await fetch(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`)
+                    .then(res => res.json())
+                    .then(json => json[0].symbol[0].data)
+                    .catch(() => null);
 
                 if (!data) 
                     return message.channel.send(':x: Código QR inválido!');
