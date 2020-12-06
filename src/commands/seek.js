@@ -19,6 +19,9 @@ module.exports = {
 
         let time = args[0];
 
+        if (isNaN(time.replace(/:/g, '')))
+            return message.channel.send(':x: Tempo inválido! Tente no formato `ss` ou `hh:mm:ss`');
+
         if (time.includes(':')) {
             const parts = time.split(':');
 
