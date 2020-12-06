@@ -1,17 +1,9 @@
 module.exports = function msToDate(time) {
-    let s = Math.round(time * 0.001);
-    let m = 0, h = 0, d = 0;
-    while (s >= 60) {
-        m++;
-        s -= 60;
-    }
-    while (m >= 60) {
-        h++;
-        m -= 60;
-    }
-    while (h >= 24) {
-        d++
-        h -= 24;
-    }
+    time = Math.round(time / 1000)
+    const s = time % 60,
+    m = Math.floor((time / 60) % 60),
+    h = Math.floor((time / 60 / 60) % 24),
+    d = Math.floor(time / 60 / 60 / 24);
+
     return `${d}D:${h}H:${m}M:${s}S`;
 }
