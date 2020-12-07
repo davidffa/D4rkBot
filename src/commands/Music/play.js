@@ -52,8 +52,13 @@ module.exports = {
     
                     const player = client.music.players.get(message.guild.id) || createPlayer();
 
-                    if (player.state === 'DISCONNECTED')
+                    if (player.state === 'DISCONNECTED') {
+                        if (voiceChannel.full) {
+                            message.channel.send(':x: O canal de voz está cheio!');
+                            return player.destroy();
+                        }
                         player.connect();
+                    }
                     
                     for (const track of data.tracks.items) {
                         try {
@@ -96,8 +101,14 @@ module.exports = {
             }else if (res.loadType === 'PLAYLIST_LOADED') {
                 const player = client.music.players.get(message.guild.id) || createPlayer();
 
-                if (player.state === 'DISCONNECTED')
+                if (player.state === 'DISCONNECTED') {
+                    if (voiceChannel.full) {
+                        message.channel.send(':x: O canal de voz está cheio!');
+                        return player.destroy();
+                    }
                     player.connect();
+                }
+
                 const playlist = res.playlist;
                 for (const track of playlist.tracks) 
                     player.queue.add(track);
@@ -119,8 +130,14 @@ module.exports = {
             }else {
                 const player = client.music.players.get(message.guild.id) || createPlayer();
 
-                if (player.state === 'DISCONNECTED')
+                if (player.state === 'DISCONNECTED') {
+                    if (voiceChannel.full) {
+                        message.channel.send(':x: O canal de voz está cheio!');
+                        return player.destroy();
+                    }
                     player.connect();
+                }
+                    
                 const tracks = res.tracks;
 
                 player.queue.add(tracks[0]);
