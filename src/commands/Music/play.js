@@ -1,5 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const { getData } = require('spotify-url-info');
+const mstohour = require('../../utils/mstohour');
 
 module.exports = {
     name: 'play',
@@ -110,7 +111,7 @@ module.exports = {
                 }
 
                 const playlist = res.playlist;
-                for (const track of playlist.tracks) 
+                for (const track of res.tracks) 
                     player.queue.add(track);
 
                 if (!player.playing) 
@@ -119,8 +120,9 @@ module.exports = {
                 const embed = new MessageEmbed()
                         .setColor("RANDOM")
                         .setTitle('<a:Labfm:482171966833426432> Playlist Carregada')
-                        .addField(":page_with_curl: Nome:", '`' + playlist.info.name + '`')
-                        .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + playlist.tracks.length + '`')
+                        .addField(":page_with_curl: Nome:", '`' + playlist.name + '`')
+                        .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + res.tracks.length + '`')
+                        .addField(':watch: Duração', `\`${mstohour(res.playlist.duration)}\``)
                         .setURL(args[0])
                         .setTimestamp()
                         .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
