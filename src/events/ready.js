@@ -13,6 +13,7 @@ module.exports.run = async (client) => {
     activities.load(client);
 
     client.voiceStateTimeouts = new Map(); // Key: guildID, Value: {timeout, message}
+    client.searchMsgCollectors = new Map(); // Key: userID, Value: { MessageCollector, message }
     lavalink.load(client);
 
     const logPath = path.resolve(__dirname, '..', '..', 'logs', 'latest.txt')
