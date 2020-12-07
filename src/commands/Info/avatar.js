@@ -45,7 +45,7 @@ module.exports = {
         const url = user.displayAvatarURL({ format: 'png', dynamic: true, size: 2048 });
 
         const embed = new MessageEmbed()
-            .setTitle(`:frame_photo: ${user.tag}`)
+            .setTitle(`:frame_photo: Avatar de ${message.guild.members.cache.get(user.id) ? message.guild.members.cache.get(user.id).displayName : user.username}`)
             .setColor('RANDOM')
             .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
             .setImage(url)
