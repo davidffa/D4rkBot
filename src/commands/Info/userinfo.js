@@ -40,7 +40,7 @@ module.exports = {
         } else {
             if (!isNaN(args[0]) && (args[0].length === 17 || args[0].length === 18 || args[0].length === 19)) {
                 try {
-                    user = client.users.cache.get(args[0]) && client.users.cache.get(args[0]).presence.guild 
+                    user = client.users.cache.get(args[0]) && message.guild.members.cache.get(args[0]) 
                     ? client.users.cache.get(args[0]) 
                     : await client.users.fetch(args[0]);
                 }catch {}   
@@ -66,7 +66,7 @@ module.exports = {
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
-            .setTitle(`Informações de ${user.bot ? '<:bot_bot:568569868358516770> ' : ''}${user.username}`)
+            .setTitle(`Informações de ${user.bot ? '<:bot_bot:568569868358516770> ' : ''}${message.guild.members.cache.get(user.id) ? message.guild.members.cache.get(user.id).displayName : user.username}`)
             .addField(':bookmark_tabs: Tag', `\`${user.tag}\``, true)
             .addField(':closed_book: ID', `\`${user.id}\``, true)
             .addField(':calendar: Conta criada em', `\`${moment(user.createdAt).format('L')} (${moment(user.createdAt).startOf('day').fromNow()})\``, true)

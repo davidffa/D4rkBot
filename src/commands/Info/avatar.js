@@ -15,7 +15,7 @@ module.exports = {
             user = message.author;
         }else if (!isNaN(args[0]) && (args[0].length === 17 || args[0].length === 18 || args[0].length === 19)) {
             try {
-                user = client.users.cache.get(args[0]) && client.users.cache.get(args[0]).presence.guild 
+                user = client.users.cache.get(args[0]) && message.guild.members.cache.get(args[0])
                     ? client.users.cache.get(args[0]) 
                     : await client.users.fetch(args[0]);
             }catch {}
