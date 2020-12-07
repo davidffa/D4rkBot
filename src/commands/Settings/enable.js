@@ -19,7 +19,7 @@ module.exports = {
         if (!command)
             return message.channel.send(`:x: Eu não tenho o comando \`${args[0]}\``);
 
-        const guild = await guildDB.findOne({ guildID: message.guild.id });
+        const guild = message.guildDB;
 
         if (guild) {
             const disabledCmds = guild.disabledCmds;

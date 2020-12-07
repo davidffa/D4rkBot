@@ -9,7 +9,11 @@ const { levenshteinDistance } = require('../utils/levenshteinDistance');
 module.exports.run = async (client, message) => {
     let guild;
     if (message.channel.type === 'text') {
+        const startDB = process.hrtime();
         guild = await guildDB.findOne({ guildID: message.guild.id });
+        const stopDB = process.hrtime(startDB);
+        message.guildDB = guild;
+        message.pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
     }
     const prefix = guild && guild.prefix ? guild.prefix : "db.";
 

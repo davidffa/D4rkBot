@@ -4,7 +4,6 @@ const os = require('os');
 const msToDate = require('../../utils/mstodate');
 const moment = require('moment');
 moment.locale('pt-PT');
-const guildDB = require('../../models/guildDB');
 const package = require('../../../package.json');
 
 module.exports = {
@@ -18,12 +17,6 @@ module.exports = {
         const cpu = osu.cpu;
         const cpuUsage = await cpu.usage();
         const cpuName = os.cpus()[0].model.split(' @')[0];
-
-        const start = process.hrtime();
-        await guildDB.findOne({ guildID: message.guild.id });
-        const stop = process.hrtime(start);
-
-        const pingDB = Math.round(((stop[0] * 1e9) + stop[1]) / 1e6);
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
@@ -40,7 +33,7 @@ module.exports = {
             .addField('<:bot_badgehypesquad:590943982436089858> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${prefix}\``, true)
             .addField('<:lang_js:427101545478488076> Versão NodeJS', `\`${process.version}\``, true)
             .addField('<a:lab_blobdiscord:643917538555854849> Versão do Discord.js', `\`${package.dependencies['discord.js'].replace(/\^/g, 'v')}\``, true)
-            .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)
+            .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${message.pingDB}ms\``, true)
             .addField('<a:carregando:488783607352131585> CPU', `\`${cpuUsage}%\``, true)
             .addField('<:ram:751468688686841986> RAM', `\`${(process.memoryUsage().rss / 1024 / 1024).toFixed(0)}MB\``, true)
             .setTimestamp()

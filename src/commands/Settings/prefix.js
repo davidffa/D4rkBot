@@ -15,7 +15,7 @@ module.exports = {
         if (args[0].length > 5)
             return message.channel.send(':x: O meu prefixo não pode ultrapassar 5 caracteres.');
 
-        const guild = await guildDB.findOne({ guildID: message.guild.id });
+        const guild = message.guildDB;
 
         if (guild) {
             await guildDB.updateOne({ guildID: message.guild.id }, {

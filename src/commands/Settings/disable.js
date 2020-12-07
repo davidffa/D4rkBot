@@ -25,7 +25,7 @@ module.exports = {
             return message.channel.send(`:x: Não podes desativar o comando \`${args[0]}\``);
         }
 
-        const guild = await guildDB.findOne({ guildID: message.guild.id });
+        const guild = message.guildDB;
 
         if (guild) {
             const disabledCmds = guild.disabledCmds;

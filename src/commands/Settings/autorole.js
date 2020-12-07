@@ -11,7 +11,7 @@ module.exports = {
         if (!message.member.hasPermission('MANAGE_ROLES') && message.author.id !== '334054158879686657')
             return message.channel.send(':x: Precisas da permissão `MANAGE_ROLES` para usar este comando!');
 
-        const guild = await guildDB.findOne({ guildID: message.guild.id });
+        const guild = message.guildDB;
 
         if (!args.length) {
             if (guild && guild.roleID) {
