@@ -37,9 +37,9 @@ module.exports = {
                 if (message.member.roles.cache.has(guild.djrole)) 
                     return stopMusic();
                 
-                return message.channel.send(`:x: Apenas quem requisitou esta música, alguém com a permissão \`Mover Membros\` ou com o cargo DJ: \`${role.name}\` a pode pular!`);
+                return message.channel.send(`:x: Apenas quem requisitou esta música, alguém com a permissão \`Mover Membros\` ou com o cargo DJ: \`${role.name}\` a pode pular (ou ficar sozinho com o bot no canal de voz)!`);
             }
-            message.channel.send(':x: Apenas quem requisitou esta música ou alguém com a permissão `Mover Membros` a pode pular!');
+            message.channel.send(':x: Apenas quem requisitou esta música ou alguém com a permissão `Mover Membros` a pode pular (ou ficar sozinho com o bot no canal de voz)!');
         }
     }
 }
