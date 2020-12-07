@@ -1,5 +1,3 @@
-const guildDB = require('../../models/guildDB');
-
 module.exports = {
     name: 'stop',
     description: 'Para a música atual, sai do canal de voz e limpa a lista de músicas.',
@@ -18,7 +16,7 @@ module.exports = {
 
             return message.channel.send('<a:lab_verificado:643912897218740224> Parei de tocar música e saí do canal de voz!');
         }else {
-            const guild = await guildDB.findOne({ guildID: message.guild.id });
+            const guild = message.guildDB;
             if (guild && guild.djrole) {
                 const role = message.guild.roles.cache.get(guild.djrole);
                 if (message.member.roles.cache.has(guild.djrole)) {

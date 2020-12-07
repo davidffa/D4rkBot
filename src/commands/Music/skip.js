@@ -1,5 +1,3 @@
-const guildDB = require('../../models/guildDB');
-
 module.exports = {
     name: 'skip',
     description: 'Pula a música atual.',
@@ -32,7 +30,7 @@ module.exports = {
             || voiceChannel.size <= 3) {
             stopMusic();
         }else {
-            const guild = await guildDB.findOne({ guildID: message.guild.id });
+            const guild = message.guildDB;
             if (guild && guild.djrole) {
                 const role = message.guild.roles.cache.get(guild.djrole);
 
