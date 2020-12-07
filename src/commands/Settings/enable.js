@@ -1,4 +1,4 @@
-const guildDB = require('../models/guildDB');
+const guildDB = require('../../models/guildDB');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {

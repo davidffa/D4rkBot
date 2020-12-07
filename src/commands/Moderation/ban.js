@@ -2,7 +2,7 @@ module.exports = {
     name: 'ban',
     description: 'Bane alguém', 
     usage: '<@user> [razão]',
-    category: 'Admin',
+    category: 'Moderation',
     args: 1,
     guildOnly: true,
     cooldown: 3,

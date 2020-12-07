@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const guildDB = require('../models/guildDB');
+const guildDB = require('../../models/guildDB');
 
 module.exports = {
     name: 'ping',

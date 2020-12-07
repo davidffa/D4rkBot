@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const mstohour = require('../utils/mstohour');
+const mstohour = require('../../utils/mstohour');
 
 module.exports = {
     name: 'queue',

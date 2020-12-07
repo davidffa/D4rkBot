@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const msToDate = require('../utils/mstodate');
+const msToDate = require('../../utils/mstodate');
 
 module.exports = {
     name: 'nodestats',

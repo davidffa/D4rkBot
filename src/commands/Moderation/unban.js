@@ -2,7 +2,7 @@ module.exports = {
     name: 'unban',
     description: 'Tira o ban a alguém',
     usage: '<user>',
-    category: 'Admin',
+    category: 'Moderation',
     guildOnly: true,
     cooldown: 3,
     args: 1,

@@ -5,7 +5,7 @@ module.exports = {
     description: 'Limpa mensagens do servidor', 
     aliases: ['clear', 'limparchat', 'purge', 'cc'],
     usage: '<Número de mensagens>',
-    category: 'Admin',
+    category: 'Moderation',
     guildOnly: true,
     args: 1,
     cooldown: 5,

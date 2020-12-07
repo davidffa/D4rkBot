@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 module.exports = {
     name: 'avatar',
     description: 'Converte o teu avatar ou de alguém do servidor em uma imagem', 
-    category: 'Outros',
+    category: 'Info',
     aliases: ['av'],
     guildOnly: true,
     usage: '[nome]',

@@ -2,7 +2,7 @@ module.exports = {
     name: 'kick',
     description: 'Kicka alguém', 
     usage: '<@user> [razão]',
-    category: 'Admin',
+    category: 'Moderation',
     guildOnly: true,
     cooldown: 3,
     execute(client, message, args, prefix) { 

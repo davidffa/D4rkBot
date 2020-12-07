@@ -7,7 +7,7 @@ module.exports = {
     cooldown: 5,
     async execute(client, message, args, prefix) {
         const data = [];
-        const Admin = [];
+        const Moderation = [];
         const Definicoes = [];
         const Desenvolvedor = [];
         const Info = [];
@@ -24,7 +24,7 @@ module.exports = {
         if (!args.length) {
             res.setDescription('Lista de todos os meus comandos:')
             commands.map(command => {
-                if (command.category === 'Admin') Admin.push(command.name);
+                if (command.category === 'Moderation') Moderation.push(command.name);
                 else if (command.category === 'Definicoes') Definicoes.push(command.name);
                 else if (command.category === 'Desenvolvedor') Desenvolvedor.push(command.name);
                 else if (command.category === 'Info') Info.push(command.name);
@@ -33,7 +33,7 @@ module.exports = {
                 else Info.push(command.name);
             });
 
-            res.addField(':cop: Admin', Admin.join(', '))
+            res.addField(':cop: Moderação', Moderation.join(', '))
                .addField(':gear: Definições', Definicoes.join(', '))
                .addField('<:lang_js:427101545478488076> Desenvolvedor', Desenvolvedor.join(', '))
                .addField(':information_source: Info', Info.join(', '))

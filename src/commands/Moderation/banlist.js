@@ -1,7 +1,7 @@
 module.exports = {
     name: 'banlist',
     description: 'Lista de bans',
-    category: 'Admin',
+    category: 'Moderation',
     guildOnly: true,
     cooldown: 3,
     async execute(client, message) { 

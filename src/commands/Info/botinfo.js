@@ -1,11 +1,11 @@
 const { MessageEmbed } = require('discord.js');
 const osu = require('node-os-utils');
 const os = require('os');
-const msToDate = require('../utils/mstodate');
+const msToDate = require('../../utils/mstodate');
 const moment = require('moment');
 moment.locale('pt-PT');
-const guildDB = require('../models/guildDB');
-const package = require('../../package.json');
+const guildDB = require('../../models/guildDB');
+const package = require('../../../package.json');
 
 module.exports = {
     name: 'botinfo',
