@@ -1,23 +1,10 @@
-module.exports = function mstohours(duration) {
-    duration /= 1000;
-    duration = duration.toFixed(0);
+module.exports = function mstohours(time) {
+    time = Math.round(time / 1000)
+    const s = time % 60,
+    m = Math.floor((time / 60) % 60),
+    h = Math.floor(time / 60 / 60);
 
-    let hours = 0
-    let minutes = 0
-    let seconds = duration
-    while (seconds >= 60) {
-        minutes += 1
-        seconds -= 60
-    }
-    while (minutes >= 60) {
-        hours += 1
-        minutes -= 60
-    }
-    if (minutes < 10) minutes = `0${minutes}`
-    if (seconds < 10) seconds = `0${seconds}`
-
-    if (hours > 0)
-        return `${hours}:${minutes}:${seconds}`
-    else
-        return `${minutes}:${seconds}`
+    return h
+        ? `${String(h).length === 2 ? h : `0${h}`}:${String(m).length === 2 ? m : `0${m}`}:${String(s).length === 2 ? s : `0${s}`}`
+        : `${String(m).length === 2 ? m : `0${m}`}:${String(s).length === 2 ? s : `0${s}`}`;
 }
