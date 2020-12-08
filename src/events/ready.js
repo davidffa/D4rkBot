@@ -14,6 +14,7 @@ module.exports.run = async (client) => {
 
     client.voiceStateTimeouts = new Map(); // Key: guildID, Value: {timeout, message}
     client.searchMsgCollectors = new Map(); // Key: userID, Value: { MessageCollector, message }
+    client.records = new Map(); // Key: guildID, Value: { userID, audioStream, timeout }
     lavalink.load(client);
 
     const logPath = path.resolve(__dirname, '..', '..', 'logs', 'latest.txt')
