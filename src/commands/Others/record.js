@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Lame = require('node-lame').Lame;
+const { exec } = require('child_process');
 const { Readable } = require('stream')
 
 module.exports = {
@@ -67,30 +67,22 @@ module.exports = {
 
         client.records.set(message.guild.id, { userID: message.author.id, audioStream, timeout });
 
-        async function saveRecord() {
-            const encoder = new Lame({
-                output: mp3FilePath,
-                raw: true,
-                bitrate: 192,
-                scale: 3,
-                sfreq: 48,
-            }).setFile(filePath);
-
-            await encoder.encode();
-
-            await message.channel.send(`:red_circle: Gravação de áudio de ${message.member.displayName} terminada!`, {
-                files: [{
-                    attachment: mp3FilePath,
-                    name: `Áudio de ${message.member.displayName}.mp3`
-                }]
-            });
-
-            fs.unlinkSync(filePath);
-            fs.unlinkSync(mp3FilePath);
-            message.guild.me.voice.channel.leave();
-
-            clearTimeout(client.records.get(message.guild.id).timeout);
-            client.records.delete(message.guild.id);
+        function saveRecord() {
+            exec(`ffmpeg -f s16le -ar 48k -ac 2 -i ${filePath} ${mp3FilePath}`, async () => {
+                await message.channel.send(`:red_circle: Gravação de áudio de ${message.member.displayName} terminada!`, {
+                    files: [{
+                        attachment: mp3FilePath,
+                        name: `Áudio de ${message.member.displayName}.mp3`
+                    }]
+                });
+    
+                fs.unlinkSync(filePath);
+                fs.unlinkSync(mp3FilePath);
+                message.guild.me.voice.channel.leave();
+    
+                clearTimeout(client.records.get(message.guild.id).timeout);
+                client.records.delete(message.guild.id);
+            })
         }
     }
 }
