@@ -29,7 +29,7 @@ module.exports = {
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
 
-        if (voiceChannel.full) 
+        if (voiceChannel.full && !client.records.get(message.guild.id)) 
             return message.channel.send(':x: O canal de voz está cheio!');
 
         if (client.records.get(message.guild.id)) {
