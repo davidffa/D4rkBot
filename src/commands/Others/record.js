@@ -10,6 +10,13 @@ module.exports = {
     category: 'Outros',
     cooldown: 10,
     async execute(client, message) {
+        if (client.records.get(message.guild.id)) {
+            if (client.records.get(message.guild.id).userID === message.author.id) {
+                return client.records.get(message.guild.id).audioStream.destroy();
+            }
+            return message.channel.send(`:x: Apenas o ${message.guild.members.cache.get(client.records.get(message.guild.id).userID).displayName} pode parar a gravação!`);
+        }
+
         const voiceChannel = message.member.voice.channel;
 
         if (!voiceChannel)
@@ -29,15 +36,8 @@ module.exports = {
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
 
-        if (voiceChannel.full && !client.records.get(message.guild.id)) 
+        if (voiceChannel.full) 
             return message.channel.send(':x: O canal de voz está cheio!');
-
-        if (client.records.get(message.guild.id)) {
-            if (client.records.get(message.guild.id).userID === message.author.id) {
-                return client.records.get(message.guild.id).audioStream.destroy();
-            }
-            return message.channel.send(`:x: Apenas o ${message.guild.members.cache.get(client.records.get(message.guild.id).userID).displayName} pode parar a gravação!`);
-        }
 
         if (!fs.existsSync('./records'))
             fs.mkdirSync('./records')
@@ -55,7 +55,7 @@ module.exports = {
 
         audioStream.pipe(fs.createWriteStream(filePath, { flags: 'w' }));
 
-        await message.channel.send(':red_circle: Gravação de áudio iniciada, execute o comando de novo para parar a gravação!\nTempo máximo: `1 minuto`');
+        await message.channel.send(':red_circle: Gravação de áudio iniciada, execute o comando de novo para parar a gravação!\nTempo máximo: `2 minutos`');
 
         audioStream.on('close', () => {
             saveRecord();
@@ -63,7 +63,7 @@ module.exports = {
 
         const timeout = setTimeout(() => {
             saveRecord();
-        }, 60000);
+        }, 2 * 60 * 1000);
 
         client.records.set(message.guild.id, { userID: message.author.id, audioStream, timeout });
 
