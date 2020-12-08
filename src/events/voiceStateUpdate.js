@@ -5,7 +5,11 @@ module.exports.run = async (client, oldState, newState) => {
     const voiceChannel2  = newState.channel;
 
     //Record
-    if (voiceChannel && client.records.get(oldState.guild.id) && client.records.get(oldState.guild.id).userID === oldState.member.id)
+    if (voiceChannel 
+        && client.records.get(oldState.guild.id) 
+        && client.records.get(oldState.guild.id).userID === oldState.member.id
+        && ((voiceChannel2 && voiceChannel.id !== voiceChannel2.id) || voiceChannel && !voiceChannel2)
+    )
         return client.records.get(oldState.guild.id).audioStream.destroy();
 
     //Music
