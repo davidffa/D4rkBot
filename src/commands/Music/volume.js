@@ -29,21 +29,23 @@ module.exports = {
             message.channel.send(`:speaker: Volume da música setado para \`${Number(args[0])}\``);
         }
 
-        if (message.guild.channels.cache.get(player.voiceChannel).permissionsFor(message.author).has('MOVE_MEMBERS') 
-            || message.guild.channels.cache.get(player.voiceChannel).members.size === 1 
-            || (message.member.voice.channel && message.member.voice.channel.id === player.voiceChannel 
+        if (message.author.id === player.queue.current.requester.id
+            || message.guild.channels.cache.get(player.voiceChannel).permissionsFor(message.author).has('MOVE_MEMBERS')
+            || (message.member.voice.channel && message.member.voice.channel.id === player.voiceChannel
                 && message.member.voice.channel.members.filter(m => !m.user.bot).size === 1)) {
-            setVolume();
-        } else {
-            const guild = message.guildDB;
-            if (guild && guild.djrole) {
-                const role = message.guild.roles.cache.get(guild.djrole);
-                if (message.member.roles.cache.has(guild.djrole)) {
-                    setVolume();
-                }
-                return message.channel.send(`:x: Precisas da permissão \`Mover Membros\` ou do cargo DJ: \`${role.name}\` para usar este comando (ou de estar sozinho com o bot no canal de voz)!`);
-            }
-            message.channel.send(':x: Apenas quem requisitou esta música ou alguém com a permissão `Mover Membros` a pode pular (ou estar sozinho com o bot no canal de voz)!');
+            return setVolume();
         }
+        
+        const guild = message.guildDB;
+
+        if (guild && guild.djrole) {
+            const role = message.guild.roles.cache.get(guild.djrole);
+
+            if (message.member.roles.cache.has(guild.djrole))
+                return setVolume();
+            
+            return message.channel.send(`:x: Apenas quem requisitou esta música, alguém com o cargo DJ: \`${role.name}\` ou com a permissão \`Mover Membros\` pode usar este comando (ou de estar sozinho com o bot no canal de voz)!`);
+        }
+        message.channel.send(':x: Apenas quem requisitou esta música ou alguém com a permissão `Mover Membros` a pode pular (ou estar sozinho com o bot no canal de voz)!');
     }
 }
