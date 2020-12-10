@@ -24,7 +24,6 @@ module.exports = {
         }
 
         const waitMsg = await message.channel.send('<a:lab_loading:643912893011853332> A Verificar se o URL é válido...');
-        const name = 'screenshot' + Math.floor((Math.random() * 100) + 1);
         let url;
 
         if (!args[0].startsWith('http'))
@@ -65,9 +64,6 @@ module.exports = {
         if (!finalURL)
             return waitMsg.edit(`:x: <@${message.member.id}>, O site ${url} não existe ou não respondeu dentro de 5 segundos!`);
 
-        if (!fs.existsSync('./screenshots'))
-            fs.mkdirSync('./screenshots');
-
         const browser = await puppeteer.launch({
             args: [
                 '--no-sandbox',
@@ -91,15 +87,14 @@ module.exports = {
             return browser.close();
         }
 
-        await page.screenshot({ path: `./screenshots/${name}.png` });
-
-        const attachment = new MessageAttachment(`./screenshots/${name}.png`);
+        const img = await page.screenshot({ encoding: 'base64' });
+        const attachment = new MessageAttachment(Buffer.from(img, 'base64'), 'render.png');
 
         const embed = new MessageEmbed()
             .setTitle(args[0])
             .setColor('RANDOM')
             .setURL(finalURL)
-            .setImage(`attachment://${name}.png`)
+            .setImage(`attachment://render.png`)
             .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
             .setTimestamp();
 
@@ -107,7 +102,6 @@ module.exports = {
         const msg = await message.channel.send({ embed, files: [attachment] });
 
         await browser.close();
-        fs.unlinkSync(`./screenshots/${name}.png`);
 
         await msg.react('751062867444498432');
 
