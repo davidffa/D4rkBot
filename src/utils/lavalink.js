@@ -1,6 +1,7 @@
 const mstohour = require('../utils/mstohour');
 const { Manager } = require('erela.js');
 const { MessageEmbed } = require('discord.js');
+const Spotify = require('erela.js-spotify');
 
 const nodes = [
     {
@@ -21,7 +22,13 @@ module.exports.load = (client) => {
         send(id, payload) {
             const guild = client.guilds.cache.get(id);
             if (guild) guild.shard.send(payload);
-        }
+        },
+        plugins: [
+            new Spotify({
+                clientID: process.env.SPOTIFYCLIENTID,
+                clientSecret: process.env.SPOTIFYCLIENTSECRET
+            })
+        ]
     });
 
     client.music.on('nodeConnect', async node => {

@@ -1,5 +1,4 @@
 const { MessageEmbed } = require('discord.js');
-const { getData } = require('spotify-url-info');
 const mstohour = require('../../utils/mstohour');
 
 module.exports = {
@@ -36,68 +35,11 @@ module.exports = {
                 selfDeafen: true
             });
         }
-        
-        const spotifyRegex = /^(https:\/\/open.spotify.com\/playlist\/|https:\/\/open.spotify.com\/track\/|https:\/\/open.spotify.com\/album\/|spotify:playlist:|spotify:track:|spotify:album:)([a-zA-Z0-9]+)(.*)$/
-
-        if (spotifyRegex.test(args[0])) {
-            let data;
-            try {
-                data = await getData(args[0]);
-            }catch (err) {}
-
-            if (data) {
-                if (data.type === 'track') {
-                    args = [data.name, data.artists[0].name]
-                }else {
-                    const msg = await message.channel.send('<a:lab_loading:643912893011853332> A carregar playlist.');
-    
-                    const player = client.music.players.get(message.guild.id) || createPlayer();
-
-                    if (player.state === 'DISCONNECTED') {
-                        if (voiceChannel.full) {
-                            message.channel.send(':x: O canal de voz está cheio!');
-                            return player.destroy();
-                        }
-                        player.connect();
-                    }
-                    
-                    for (const track of data.tracks.items) {
-                        try {
-                            let res;
-                            if (data.type === 'playlist') 
-                                res = await client.music.search(`${track.track.name} ${track.track.artists[0].name}`, message.author);
-                            else 
-                                res = await client.music.search(`${track.name} ${track.artists[0].name}`, message.author);
-    
-                            player.queue.add(res.tracks[0]);
-    
-                            if (!player.playing) 
-                                player.play();
-                        }catch (err) {
-                            continue;
-                        }   
-                    }   
-        
-                    const embed = new MessageEmbed()
-                        .setColor("RANDOM")
-                        .setTitle('<a:Labfm:482171966833426432> Playlist Carregada')
-                        .addField(":page_with_curl: Nome:", '`' + data.name + '`')
-                        .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + data.tracks.total + '`')
-                        .setURL(data.external_urls.spotify)
-                        .setTimestamp()
-                        .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
-                        
-                    return msg.edit('', embed);
-                }
-            }
-        }
 
         try {
             const res = await client.music.search(args.join(' '), message.author);
 
-            if (res.loadType === 'LOAD_FAILED') {
-                message.channel.send(':x: Música não encontrada!');
-            }else if (res.loadType === 'NO_MATCHES'){
+            if (res.loadType === 'LOAD_FAILED' || res.loadType === 'NO_MATCHES') {
                 message.channel.send(':x: Música não encontrada!');
             }else if (res.loadType === 'PLAYLIST_LOADED') {
                 const player = client.music.players.get(message.guild.id) || createPlayer();
@@ -123,9 +65,12 @@ module.exports = {
                         .addField(":page_with_curl: Nome:", '`' + playlist.name + '`')
                         .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + res.tracks.length + '`')
                         .addField(':watch: Duração', `\`${mstohour(res.playlist.duration)}\``)
-                        .setURL(args[0])
                         .setTimestamp()
                         .setFooter(message.author.tag, message.author.displayAvatarURL({ dynamic: true }));
+
+                const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+
+                urlRegex.test(args[0]) && embed.setURL(args[0]);
                 
                 message.channel.send(embed);
 
