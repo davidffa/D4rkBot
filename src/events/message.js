@@ -17,7 +17,7 @@ module.exports.run = async (client, message) => {
     }
     const prefix = guild && guild.prefix ? guild.prefix : "db.";
 
-    if (message.mentions.members && message.mentions.members.has(client.user.id) && message.content.split(' ').length === 1)
+    if (new RegExp(`^<@!?${client.user.id}>$`).test(message.content))
         return message.channel.send(`<a:lab_bloblegal:643912893246603314> Olá <@${message.author.id}> O meu prefixo neste servidor é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`);
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
