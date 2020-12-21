@@ -46,7 +46,7 @@ module.exports = {
         msg.react('⬅️');
         msg.react('➡️');
 
-        const filter = (r, u) => r.me && (u.id === message.author.id);
+        const filter = (r, u) => u.id === message.author.id;
         const collector = msg.createReactionCollector(filter, { time: 10 * 60 * 1000 });
 
         collector.on('collect', async r => {
