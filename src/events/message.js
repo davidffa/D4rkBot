@@ -4,8 +4,6 @@ const fs = require('fs');
 
 const cooldowns = new Discord.Collection();
 
-const { levenshteinDistance } = require('../utils/levenshteinDistance');
-
 module.exports.run = async (client, message) => {
     let guild;
     if (message.channel.type === 'text') {
@@ -44,7 +42,7 @@ module.exports.run = async (client, message) => {
         let diduMeanLevel = Infinity;
 
         cmds.forEach(cmd => {
-            levDistance = levenshteinDistance(commandName, cmd)
+            levDistance = client.utils.levenshteinDistance(commandName, cmd)
             if (levDistance < diduMeanLevel) {
                 diduMean = cmd;
                 diduMeanLevel = levDistance;
@@ -94,7 +92,7 @@ module.exports.run = async (client, message) => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``).then(msg => msg.delete({ timeout: timeLeft * 1000 }));
+            return message.reply(`Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``);
         }
     }
 
