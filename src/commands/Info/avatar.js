@@ -9,34 +9,12 @@ module.exports = {
     usage: '[nome]',
     cooldown: 3,
     async execute(client, message, args) {
-        let user;
+        let user = message.mentions.users.first();
 
         if (!args.length) {
             user = message.author;
-        }else if (!isNaN(args[0]) && (args[0].length === 17 || args[0].length === 18 || args[0].length === 19)) {
-            try {
-                user = client.users.cache.get(args[0]) && message.guild.members.cache.get(args[0])
-                    ? client.users.cache.get(args[0]) 
-                    : await client.users.fetch(args[0]);
-            }catch {}
-        }else {
-            const userMentioned = message.mentions.users.first();
-            if (userMentioned) {
-                user = userMentioned;
-            }else {
-                message.guild.members.cache.map(member => {
-                    if (member.displayName === args.join(' ')) 
-                        user = member.user;
-                });
-
-                if (!user) {
-                    message.guild.members.cache.map(member => {
-                        if (member.displayName.toLowerCase().startsWith(args.join(' ').toLowerCase())) {
-                            user = member.user;
-                        }
-                    });
-                }
-            }
+        } else {
+            user = await client.utils.findUser(client, message.guild, args);
         }
 
         if (!user) 
