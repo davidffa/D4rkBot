@@ -57,9 +57,11 @@ module.exports = {
 
             collector.on('end', (_c, reason) => {
                 if (reason === 'time') {
-                    msg.delete();
+                    msg.reactions.cache.map(reaction => {
+                        reaction.users.remove(client.user.id);
+                    });
                 }
-            })
+            });
             return;
         }
 
