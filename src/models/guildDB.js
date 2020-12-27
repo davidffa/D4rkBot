@@ -20,6 +20,8 @@ const guildDB = new Schema({
     djrole: {
         type: String
     }
+}, { 
+    versionKey: false
 });
 
 module.exports = model("Guild", guildDB);
