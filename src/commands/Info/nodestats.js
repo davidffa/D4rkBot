@@ -4,7 +4,7 @@ const msToDate = require('../../utils/mstodate');
 module.exports = {
     name: 'nodestats',
     description: 'Informações sobre o node do lavalink',
-    aliases: ['lavalinkstats'], 
+    aliases: ['lavalinkstats', 'lavalink'], 
     category: 'Info',
     cooldown: 10,
     async execute(client, message) { 
