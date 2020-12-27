@@ -3,8 +3,8 @@ module.exports = {
     description: 'Lista de bans',
     category: 'Moderation',
     guildOnly: true,
-    cooldown: 3,
-    async execute(client, message) { 
+    cooldown: 10,
+    async execute(_client, message) { 
         if (!message.member.hasPermission('BAN_MEMBERS')) return message.reply(':x: Não tens permissão para ver a lista de membros banidos!');
         if (!message.guild.me.hasPermission('BAN_MEMBERS')) return message.channel.send(':x: Não tenho permissão para ver a lista de membros banidos!');
 
@@ -18,6 +18,6 @@ module.exports = {
             msg += `\`${user.user.tag}\`, `;
         });
 
-        message.channel.send(':bookmark_tabs: Lista de membros banidos:\n' + msg, { split: true });
+        message.channel.send(':bookmark_tabs: Lista de membros banidos:\n' + msg, { split: { maxLength: 3000, char: ' ' } });
     }
 };
