@@ -1,4 +1,4 @@
-module.exports = function msToDate(time) {
+module.exports = (time) => {
     time = Math.round(time / 1000)
     const s = time % 60,
     m = Math.floor((time / 60) % 60),

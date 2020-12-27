@@ -1,5 +1,9 @@
 const lavalink = require('../utils/lavalink');
 const activities = require('../utils/activities');
+const findUser = require('../utils/findUser');
+const levenshteinDistance = require('../utils/levenshteinDistance');
+const mstohour = require('../utils/mstohour');
+const mstodate = require('../utils/mstodate');
 
 const fs = require('fs');
 const path = require('path');
@@ -16,6 +20,15 @@ module.exports.run = async (client) => {
     client.searchMsgCollectors = new Map(); // Key: userID, Value: { MessageCollector, message }
     client.records = new Map(); // Key: guildID, Value: { userID, audioStream, timeout }
     lavalink.load(client);
+
+    const utils = {
+        findUser,
+        levenshteinDistance,
+        mstohour,
+        mstodate
+    }
+
+    client.utils = utils;
 
     const logPath = path.resolve(__dirname, '..', '..', 'logs', 'latest.txt')
 
