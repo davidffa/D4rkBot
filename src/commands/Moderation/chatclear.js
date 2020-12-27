@@ -34,12 +34,14 @@ module.exports = {
         message.channel.bulkDelete(parseInt(args[0])+1, { filterOld: true }).then(async msgs => {
             if (parseInt(args[0])+1 !== msgs.size) 
                 embed.setDescription(`<a:lab_verificado:643912897218740224> Limpas \`${msgs.size}\` mensagens\n
-                                      :x: Não consigo apagar mais mensagens! Só consigo apagar mensagens com data de envio menor que 2 semanas.`);
+                                      :warning: Não consigo apagar mais mensagens!`);
             else
                 embed.setDescription(`<a:lab_verificado:643912897218740224> Limpas \`${msgs.size}\` mensagens`);
             const msg = await message.channel.send(embed);  
 
-            msg.delete({ timeout: 10000 });
+            setTimeout(() => {
+                if (!msg.deleted) msg.delete();
+            }, 7000)
         });
     }
 }
