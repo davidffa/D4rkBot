@@ -9,7 +9,7 @@ const package = require('../../../package.json');
 module.exports = {
     name: 'botinfo',
     description: 'Informações sobre o bot',
-    aliases: ['info'],
+    aliases: ['info', 'bi'],
     category: 'Info',
     guildOnly: true,
     cooldown: 10,
