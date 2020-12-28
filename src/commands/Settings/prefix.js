@@ -18,9 +18,8 @@ module.exports = {
         const guild = message.guildDB;
 
         if (guild) {
-            await guildDB.updateOne({ guildID: message.guild.id }, {
-                prefix: args[0].trim() 
-            });
+            guild.prefix = args[0].trim();
+            await guild.save();
         }else {
             await guildDB.create({
                 guildID: message.guild.id,

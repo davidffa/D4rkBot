@@ -2,10 +2,10 @@ const guildDB = require('../../models/guildDB');
 
 module.exports = {
     name: 'djrole',
-    description: 'Avança para um tempo específico da música',
+    description: 'Seta o cargo de DJ',
     aliases: ['dj', 'cargodj'],
     category: 'Musica',
-    usage: '<Cargo>',
+    usage: '<Cargo/0>',
     guildOnly: true,
     cooldown: 5,
     async execute(_client, message, args, prefix) {
@@ -19,6 +19,12 @@ module.exports = {
                 return message.channel.send(`:x: Nenhum cargo de DJ setado. **Usa:** \`${prefix}djrole <Cargo> (0 para desativar)\`.`);
 
             const djrole = message.guild.roles.cache.get(guild.djrole);
+
+            if (!djrole) {
+                guild.djrole = null;
+                guild.save();
+                return message.channel.send(`:x: Nenhum cargo de DJ setado. **Usa:** \`${prefix}djrole <Cargo> (0 para desativar)\`.`);
+            }
             
             return message.channel.send(`<a:Labfm:482171966833426432> Cargo de DJ atual: \`${djrole.name}\`\n**Usa:** \`${prefix}djrole <Cargo> (0 para desativar)\`.`);
         }

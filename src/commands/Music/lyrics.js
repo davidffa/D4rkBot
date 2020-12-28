@@ -62,9 +62,7 @@ module.exports = {
                     msg.edit(embed);
 
                     if (message.guild.me.hasPermission('MANAGE_MESSAGES')) {
-                        msg.reactions.cache.map(reaction => {
-                            reaction.users.remove(message.author.id)
-                        });
+                        r.users.remove(message.author.id)
                     }
 
                     break;
@@ -76,10 +74,8 @@ module.exports = {
                         .setFooter(`Página ${page} de ${pages}`, message.author.displayAvatarURL({ dynamic: true }));
                     msg.edit(embed);
 
-                    if (message.guild.me.hasPermission('MANAGE_MESSAGES')) {
-                        msg.reactions.cache.map(reaction => {
-                            reaction.users.remove(message.author.id)
-                        });
+                    if (message.guild.me.hasPermission('MANAGE_MESSAGES')) {               
+                        r.users.remove(message.author.id)
                     }
 
                     break;
