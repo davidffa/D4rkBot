@@ -11,9 +11,9 @@ module.exports = {
     cooldown: 5,
     execute(client, message, args, prefix) {
         if (!message.member.hasPermission('MANAGE_MESSAGES'))
-            return message.channel.send(':x: Não tens permissão!');
+            return message.channel.send(':x: Precisas da permissão `MANAGE_MESSAGES` para usar este comando!');
 
-        if (!message.guild.member(client.user.id).hasPermission('MANAGE_MESSAGES'))
+        if (!message.guild.me.hasPermission('MANAGE_MESSAGES'))
             return message.channel.send(':x: Não tenho permissão para apagar mensagens!');
 
         if (!args.length)
