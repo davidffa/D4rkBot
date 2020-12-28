@@ -33,12 +33,12 @@ module.exports = {
     guildOnly: true,
     cooldown: 5,
     async execute(client, message, args) {
-        let user = message.mentions.users.first();
+        let user;
 
         if (!args.length) {
             user = message.author;
         } else {
-            user = await client.utils.findUser(client, message.guild, args);
+            user = message.mentions.users.first() || await client.utils.findUser(client, message.guild, args);
         }
 
         if (!user) return message.channel.send(':x: Utilizador não encontrado!');
