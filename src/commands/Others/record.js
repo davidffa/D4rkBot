@@ -30,6 +30,9 @@ module.exports = {
 
         const permissions = voiceChannel.permissionsFor(client.user);
 
+        if (!permissions.has('VIEW_CHANNEL'))
+            return message.channel.send(':x: Não tenho permissão para ver o teu canal de voz!');
+
         if (!permissions.has('CONNECT'))
             return message.channel.send(':x: Não tenho permissão para entrar no teu canal de voz!');
 
@@ -68,6 +71,15 @@ module.exports = {
         client.records.set(message.guild.id, { userID: message.author.id, audioStream, timeout });
 
         function saveRecord() {
+            if (fs.statSync(filePath).size === 0) {
+                message.channel.send(`:x: Gravação de áudio de ${message.member.displayName} vazia!`);
+                fs.unlinkSync(filePath);
+                message.guild.me.voice.channel.leave();
+    
+                clearTimeout(client.records.get(message.guild.id).timeout);
+                client.records.delete(message.guild.id);
+            }
+
             exec(`ffmpeg -f s16le -ar 48k -ac 2 -i ${filePath} ${mp3FilePath}`, async () => {
                 await message.channel.send(`:red_circle: Gravação de áudio de ${message.member.displayName} terminada!`, {
                     files: [{

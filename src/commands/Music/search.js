@@ -20,11 +20,17 @@ module.exports = {
 
         const permissions = voiceChannel.permissionsFor(client.user);
 
+        if (!permissions.has('VIEW_CHANNEL'))
+            return message.channel.send(':x: Não tenho permissão para ver o teu canal de voz!');
+
         if (!permissions.has('CONNECT'))
             return message.channel.send(':x: Não tenho permissão para entrar no teu canal de voz!');
 
         if (!permissions.has('SPEAK'))
             return message.channel.send(':x: Não tenho permissão para falar no teu canal de voz!');
+
+        if (client.records.get(message.guild.id)) 
+            return message.channel.send(':x: Não consigo tocar música enquanto gravo voz!');
 
         function createPlayer() {
             return client.music.create({
