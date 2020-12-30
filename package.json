@@ -1,6 +1,6 @@
 {
   "name": "d4rkbot",
-  "version": "3.4.8",
+  "version": "3.5.0",
   "description": "Bot para discord em NodeJS",
   "main": "index.js",
   "author": "D4rkB",
