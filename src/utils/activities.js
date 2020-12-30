@@ -1,4 +1,5 @@
 const mstodate = require('./mstodate');
+const botDB = require('../models/botDB');
 
 module.exports.load = (client) => {
     let id = 0;
@@ -23,6 +24,9 @@ module.exports.load = (client) => {
             case 5:
                 client.user.setActivity(`Online à ${mstodate(client.uptime)}`, { type: 'STREAMING' });
                 break;
+            case 6:
+                const { commands } = botDB.findOne({ botID: client.user.id });
+                client.user.setActivity(`${commands} comandos executados`, { type: 'WATCHING' });
             default:
                 id = -1;
                 break;
