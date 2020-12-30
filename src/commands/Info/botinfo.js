@@ -5,6 +5,7 @@ const msToDate = require('../../utils/mstodate');
 const moment = require('moment');
 moment.locale('pt-PT');
 const package = require('../../../package.json');
+const botDB = require('../../models/botDB');
 
 module.exports = {
     name: 'botinfo',
@@ -17,12 +18,13 @@ module.exports = {
         const cpu = osu.cpu;
         const cpuUsage = await cpu.usage();
         const cpuName = os.cpus()[0].model.split(' @')[0];
+        const { commands } = await botDB.findOne({ botID: client.user.id });
 
         const embed = new MessageEmbed()
             .setColor('RANDOM')
             .setTitle('Informações sobre mim')
             .setDescription('<a:lab_blobdance:643917533136814087> Adiciona me no teu servidor [aqui](https://discord.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)\n\n' +
-                            `Modelo da CPU: \`${cpuName}\``
+                            `Modelo da CPU: \`${cpuName}\`\nTotal de comandos usados: \`${commands}\``
             )
             .addField(':calendar: Criado em', `\`${moment(client.user.createdAt).format('L')} (${moment(client.user.createdAt).startOf('day').fromNow()})\``, true)
             .addField(':closed_book: Meu ID', '`499901597762060288`', true)

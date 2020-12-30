@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const guildDB = require('../models/guildDB');
+const botDB = require('../models/botDB');
 const fs = require('fs');
 
 const cooldowns = new Discord.Collection();
@@ -113,13 +114,18 @@ module.exports.run = async (client, message) => {
 
     try {
         command.execute(client, message, args, prefix);
-
+        
         //Logs
         if (!fs.existsSync('./logs'))
             fs.mkdirSync('./logs');
 
         if (message.channel.type === 'text') 
             fs.appendFileSync('./logs/latest.txt', `**Comando:** \`${commandName}\` executado no servidor \`${message.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.tag}\n\n`)
+    
+        //Cmd counter
+        const cmdsUsed = await botDB.findOne({ botID: client.user.id });
+        ++cmdsUsed.commands;
+        cmdsUsed.save();
     } catch (err) {
         message.channel.send(`:x: Ocorreu um erro ao executar o comando \`${commandName}\``);
         console.error(err.message);
