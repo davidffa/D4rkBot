@@ -1,10 +1,10 @@
 const mstodate = require('./mstodate');
 const botDB = require('../models/botDB');
 
-module.exports.load = async (client) => {
+module.exports.load = (client) => {
     let id = 0;
 
-    setInterval(() => {
+    setInterval(async () => {
         switch (id) {
             case 0:
                 client.user.setActivity('D4rkB', { type: 'WATCHING' });
