@@ -1,7 +1,7 @@
 const mstodate = require('./mstodate');
 const botDB = require('../models/botDB');
 
-module.exports.load = (client) => {
+module.exports.load = async (client) => {
     let id = 0;
 
     setInterval(() => {
