@@ -25,7 +25,7 @@ module.exports.load = (client) => {
                 client.user.setActivity(`Online à ${mstodate(client.uptime)}`, { type: 'STREAMING' });
                 break;
             case 6:
-                const { commands } = botDB.findOne({ botID: client.user.id });
+                const { commands } = await botDB.findOne({ botID: client.user.id });
                 client.user.setActivity(`${commands} comandos executados`, { type: 'WATCHING' });
             default:
                 id = -1;
