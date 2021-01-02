@@ -27,6 +27,7 @@ module.exports.load = (client) => {
             case 6:
                 const { commands } = await botDB.findOne({ botID: client.user.id });
                 client.user.setActivity(`${commands} comandos executados`, { type: 'WATCHING' });
+                break;
             default:
                 id = -1;
                 break;
