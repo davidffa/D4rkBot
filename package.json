@@ -23,7 +23,7 @@
     "erela.js-spotify": "^1.2.0",
     "erlpack": "discordapp/erlpack",
     "figlet": "^1.5.0",
-    "genius-lyrics-api": "^3.0.3",
+    "genius-lyrics-api": "^3.0.4",
     "mathjs": "^8.1.1",
     "moment": "^2.29.1",
     "mongoose": "^5.11.9",
