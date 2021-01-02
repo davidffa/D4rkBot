@@ -78,6 +78,7 @@ module.exports = {
     
                 clearTimeout(client.records.get(message.guild.id).timeout);
                 client.records.delete(message.guild.id);
+                return;
             }
 
             exec(`ffmpeg -f s16le -ar 48k -ac 2 -i ${filePath} ${mp3FilePath}`, async () => {
