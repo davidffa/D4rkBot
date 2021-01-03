@@ -29,7 +29,7 @@ module.exports = {
             matrix: function () { throw new Error(':x: A função matrix está desativada') }
         }, { override: true });
 
-        const expr = args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/'|\[|\]|\{|\}/g, '').toLowerCase();
+        const expr = args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/"|'|\[|\]|\{|\}/g, '').toLowerCase();
         let result;
 
         if (expr.length === 0)
