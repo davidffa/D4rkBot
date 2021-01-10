@@ -91,7 +91,7 @@ module.exports = {
         const attachment = new MessageAttachment(Buffer.from(img, 'base64'), 'render.png');
 
         const embed = new MessageEmbed()
-            .setTitle(args[0])
+            .setTitle(args[0].length > 150 ? `${args[0].slice(0, 150)}...` : args[0])
             .setColor('RANDOM')
             .setURL(finalURL)
             .setImage(`attachment://render.png`)
