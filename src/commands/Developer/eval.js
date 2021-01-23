@@ -1,6 +1,6 @@
 const { MessageAttachment } = require('discord.js');
 const { inspect } = require('util');
-const { Type } = require('@extreme_hero/deeptype');
+const { Type } = require('@anishshobith/deeptype');
 const fetch = require('node-fetch');
 
 module.exports = {
