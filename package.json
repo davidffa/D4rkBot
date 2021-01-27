@@ -4,14 +4,13 @@
   "description": "Bot para discord em NodeJS",
   "main": "index.js",
   "author": "D4rkB",
-  "license": "MIT",
   "engines": {
     "node": "14.15.4",
     "yarn": "1.22.5"
   },
   "dependencies": {
     "@anishshobith/deeptype": "^1.1.0",
-    "@discordjs/opus": "^0.3.3",
+    "@discordjs/opus": "^0.4.0",
     "@iamtraction/google-translate": "^1.1.2",
     "algorithmia": "^0.3.10",
     "bufferutil": "^4.0.3",
@@ -24,7 +23,7 @@
     "erlpack": "discordapp/erlpack",
     "figlet": "^1.5.0",
     "genius-lyrics-api": "^3.0.6",
-    "mathjs": "^9.0.0",
+    "mathjs": "^9.1.0",
     "moment": "^2.29.1",
     "mongoose": "^5.11.13",
     "node-fetch": "^2.6.1",
