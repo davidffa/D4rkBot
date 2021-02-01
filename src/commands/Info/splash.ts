@@ -10,7 +10,7 @@ class Splash extends Command {
             name: 'splash',
             description: 'Mostra a imagem do splash do servidor',
             category: 'Info',
-            aliases: ['serversplash', 'splashimage', 'discoverysplash'],
+            aliases: ['serversplash', 'splashimage'],
             cooldown: 3,
         });
     }
@@ -27,10 +27,10 @@ class Splash extends Command {
             return;
         }
 
-        const url = message.channel.guild.dynamicDiscoverySplashURL();
+        const url = message.channel.guild.dynamicSplashURL();
         
         const embed = new Embed()
-            .setTitle(`:frame_photo: Discovery Splash do servidor **${message.channel.guild.name}**`)
+            .setTitle(`:frame_photo: Splash do servidor **${message.channel.guild.name}**`)
             .setColor('RANDOM')
             .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
             .setImage(url)

@@ -36,7 +36,7 @@ class Serverinfo extends Command {
         };
 
         guild.members.forEach(member => {   
-            member.status && ++status[member.status];
+            member.status ? ++status[member.status] : ++status.offline;
         });
         
         const bots = guild.members.filter(m => m.bot).length;

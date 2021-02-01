@@ -128,7 +128,7 @@ class Userinfo extends Command {
                 userBadges.push('<:badgenitro:803666299556200478>')
                 userBadges.push('<:badgebooster:803666384373809233>');
             }else {
-                if (user.dynamicAvatarURL().endsWith('.gif')) {
+                if (user.dynamicAvatarURL().split('?')[0].endsWith('.gif')) {
                     userBadges.push('<:badgenitro:803666299556200478>')
                 }
             }

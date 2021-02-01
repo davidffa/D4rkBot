@@ -44,7 +44,7 @@ class Wiki extends Command {
             body: JSON.stringify(content)
         }).then(res => res.json()).then(r => r.result)
 
-        if (res.error) {
+        if (!res) {
             msg.edit(':x: Não encontrei nada na wikipedia.');
             return;
         }
