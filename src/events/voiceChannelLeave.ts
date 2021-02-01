@@ -26,7 +26,7 @@ module.exports = class {
             return;
         }
 
-        if (!oldChannel.voiceMembers.filter(m => !m.bot).length) {
+        if (!oldChannel.voiceMembers.filter(m => !m.bot).length && oldChannel.id !== process.env.VOICECHANNELID) {
             player.pause(true);
             const msg = await this.client.createMessage(player.textChannel as string, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.');
 
