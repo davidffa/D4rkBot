@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import Embed from '../../structures/Embed';
 
-import { Message, Invite } from 'eris';
+import { Message } from 'eris';
 
 class Channelinfo extends Command {
     constructor(client: Client) {
@@ -23,7 +23,7 @@ class Channelinfo extends Command {
         }
 
         const channel = args.length ? (message.channel.guild.channels.get(args[0])
-            || message.channel.guild.channels.find(ch => ch.name.includes(args[0]))) : message.channel;
+            || message.channel.guild.channels.find(ch => ch.name.includes(args.join(' ')))) : message.channel;
 
         if (!channel) {
             message.channel.createMessage(':x: Canal não encontrado!');
