@@ -41,7 +41,7 @@ class Nowplaying extends Command {
 
             ctx.font = 'bold 20px sans-serif';
             ctx.fillStyle = '#eee';
-            ctx.fillText(player.queue.current.title.slice(0, 30), 40, 270);
+            ctx.fillText(player.queue.current.title.slice(0, 28), 40, 270);
 
             if (player.queue.current.thumbnail) {
                 const buffer = await fetch(player.queue.current.thumbnail).then(res => res.buffer());
