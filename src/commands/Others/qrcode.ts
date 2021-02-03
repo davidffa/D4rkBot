@@ -89,6 +89,9 @@ class Isitup extends Command {
 
                 message.channel.createMessage({ embed: ebd });
                 break;
+            default:
+                message.channel.createMessage(`:x: **Use:** \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode <Criar/Ler> (<Texto>/[URL/Anexo])\``)
+                break;
         }
     }
 }
