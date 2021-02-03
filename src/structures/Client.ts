@@ -237,11 +237,13 @@ export default class D4rkClient extends Client {
             unlinkSync(logPath);
 
         setInterval(async (): Promise<void> => {
+            if (!existsSync(logPath)) return;
+            
             const buffer = readFileSync(logPath);
             
             await this.createMessage('775420724990705736',
                 `:bookmark_tabs: Log dos comandos.\nData: \`${moment(Date.now()).format('LLLL')}\``, {
-                    name: 'log',
+                    name: 'log.txt',
                     file: buffer
                 }
             );
