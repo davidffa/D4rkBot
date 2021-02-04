@@ -29,7 +29,7 @@ class Steam extends Command {
 
         const res = await provider.search(args.join(' '), 1, 'portuguese', 'pt');
 
-        if (!res) {
+        if (!res.length) {
             message.channel.createMessage(':x: Jogo não encontrado');
             return;
         }
