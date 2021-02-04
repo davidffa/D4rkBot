@@ -16,7 +16,7 @@ class Uptime extends Command {
     }
 
     execute(message: Message): void {
-        message.channel.createMessage(`<a:malakoi:478003266815262730> Estou online há \`${this.client.utils.msToDate(this.client.uptime)}\``)
+        message.channel.createMessage(`<a:malakoi:478003266815262730> Estou online há \`${this.client.utils.msToDate(process.uptime() * 1e3)}\``)
     }
 }
 
