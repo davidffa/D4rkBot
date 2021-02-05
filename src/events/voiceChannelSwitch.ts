@@ -13,7 +13,7 @@ module.exports = class {
         const player = this.client.music.players.get(member.guild.id);
         if (!player) return;
 
-        if (!oldChannel.voiceMembers.filter(m => !m.bot).length && newChannel.id !== player.voiceChannel) {
+        if (oldChannel.id === player.voiceChannel && !oldChannel.voiceMembers.filter(m => !m.bot).length && newChannel.id !== player.voiceChannel) {
             player.pause(true);
             const msg = await this.client.createMessage(player.textChannel as string, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.');
 
