@@ -37,7 +37,7 @@ class Help extends Command {
             .setTimestamp();
 
         if (!args.length) {
-            embed.setDescription(`Lista de todos os meus comandos [${this.client.commands.length}]:`);
+            embed.setDescription(`Lista de todos os meus comandos [${message.author.id === '334054158879686657' ? this.client.commands.length : this.client.commands.length - 3}]:`);
             commands.forEach(cmd => {
                 switch (cmd.category) {
                     case 'Moderation':
