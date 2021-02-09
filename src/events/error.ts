@@ -8,6 +8,10 @@ module.exports = class {
     }
 
     run(err: Error): void {
-        console.warn(`[Client Error] ${err.message}`);
+        if (err.message.includes('peer')) {
+            console.warn(`[Client Error] ${err.message}`);
+            return;
+        }
+        console.error(err);
     }
 }

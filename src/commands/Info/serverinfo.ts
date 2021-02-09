@@ -85,7 +85,7 @@ class Serverinfo extends Command {
             .addField(':id: ID', guild.id, true)
             .addField(':crown: Dono do servidor', `${this.client.users.get(guild.ownerID)?.username}#${this.client.users.get(guild.ownerID)?.discriminator}`, true)
             .addField(':map: Local', regions[guild.region] || guild.region, true)
-            .addField(':police_officer: Nível de verificação', verificationLevels[guild.mfaLevel], true)
+            .addField(':police_officer: Nível de verificação', verificationLevels[guild.verificationLevel], true)
             .addField('<:badgebooster:803666384373809233> Boost', `Nível: ${boostLevel}\nQuantidade: ${boostAmount}`, true)
             .addField(':calendar: Criado em', `${moment(guild.createdAt).format('L')} (${moment(guild.createdAt).startOf('day').fromNow()})`, true)
             .addField(':calendar: Entrada em', `${moment(message.member?.joinedAt).format('L')} (${moment(message.member?.joinedAt).startOf('day').fromNow()})`, true)

@@ -40,7 +40,7 @@ module.exports = class {
             return;
         }
 
-        if (!channel.permissionsOf(this.client.user.id).has('attachFiles')) return;
+        if (!channel.permissionsOf(this.client.user.id).has('sendMessages') || !channel.permissionsOf(this.client.user.id).has('attachFiles')) return;
 
         const canvas = Canvas.createCanvas(700, 250);
         const ctx = canvas.getContext('2d');
