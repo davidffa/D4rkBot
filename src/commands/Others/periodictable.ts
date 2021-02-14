@@ -20,7 +20,7 @@ class Periodictable extends Command {
     }
 
     execute(message: Message, args: Array<string>): void {
-        if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+        if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
             message.channel.createMessage(':x: Preciso da permissão `ATTACH_FILES` para executar este comando');
             return;
         }

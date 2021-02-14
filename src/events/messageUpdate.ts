@@ -10,7 +10,7 @@ module.exports = class {
     }
 
     run(message: Message, oldMessage: OldMessage) {
-        if (oldMessage.content === message.content) return;
+        if (!oldMessage || !message || oldMessage.content === message.content) return;
 
         this.client.emit('messageCreate', message);
     }

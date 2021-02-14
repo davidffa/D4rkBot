@@ -56,7 +56,7 @@ class Calc extends Command {
             return message.channel.createMessage(':x: Expressão inválida!');
         }
 
-        if (result === null || typeof result === 'function') return message.channel.createMessage(':x: Expressão inválida!');
+        if (result === undefined || result === null || typeof result === 'function') return message.channel.createMessage(':x: Expressão inválida!');
         if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
     
         const embed = new Embed()
