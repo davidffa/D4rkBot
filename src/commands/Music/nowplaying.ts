@@ -39,12 +39,13 @@ class Nowplaying extends Command {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-            ctx.font = 'bold 20px sans-serif';
+            ctx.font = 'bold 20px Arial';
             ctx.fillStyle = '#eee';
-            ctx.fillText(player.queue.current.title.slice(0, 28), 40, 270);
+            ctx.textAlign = 'center';
+            ctx.fillText(player.queue.current.title.slice(0, 30), 185, 270, 300);
 
-            if (player.queue.current.thumbnail) {
-                const buffer = await fetch(player.queue.current.thumbnail).then(res => res.buffer());
+            if (player.queue.current.displayThumbnail) {
+                const buffer = await fetch(player.queue.current.displayThumbnail('maxresdefault')).then(res => res.buffer());
 
                 const thumb = await Canvas.loadImage(buffer);
                 ctx.drawImage(thumb, 85, 25, 200, 200);
@@ -54,7 +55,8 @@ class Nowplaying extends Command {
 
             const positionPercent = player.position / (player.queue.current.duration as number);
 
-            ctx.font = 'bold 16px sans-serif';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'start';
             ctx.fillStyle = '#ddd';
             ctx.fillText(this.client.utils.msToHour(player.position), 15, 323);
             ctx.fillText(duration, canvas.width - ctx.measureText(duration).width - 15, 323);
@@ -67,8 +69,8 @@ class Nowplaying extends Command {
             ctx.stroke();
 
             const linearGradient = ctx.createLinearGradient(0, 0, 340, 0);
-            linearGradient.addColorStop(0, '#061e78');
-            linearGradient.addColorStop(1, '#0747e7');
+            linearGradient.addColorStop(0, '#6e0700');
+            linearGradient.addColorStop(1, '#db0e00');
 
             if (positionPercent) {
                 ctx.beginPath();
