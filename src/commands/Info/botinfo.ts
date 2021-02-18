@@ -2,14 +2,12 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import Embed from '../../structures/Embed';
 
-import { Message } from 'eris';
+import { Message, VERSION } from 'eris';
 
 import os from 'os';
 import osu from 'node-os-utils';
 import moment from 'moment';
 moment.locale('pt');
-
-const pckg = require('../../../package.json');
 
 class Botinfo extends Command {
     constructor(client: Client) {
@@ -53,7 +51,7 @@ class Botinfo extends Command {
             .addField(':ping_pong: Ping da API', `\`${Math.round(WSPing)}ms\``, true)
             .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}\``, true)
             .addField('<:lang_js:803678540528615424> Versão NodeJS', `\`${process.version}\``, true)
-            .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`${pckg.dependencies['eris'].replace(/\^/g, 'v')}\``, true)
+            .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
             .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)
             .addField('<a:loading:804026048647659540> CPU', `\`${cpuUsage}%\``, true)
             .addField('<:ram:751468688686841986> RAM', `\`${(process.memoryUsage().rss / 1024 / 1024).toFixed(0)}MB\``, true)
