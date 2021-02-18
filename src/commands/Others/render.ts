@@ -96,7 +96,7 @@ class Render extends Command {
             return;
         }
 
-        const img = await page.screenshot({ encoding: 'base64' });
+        const img = await page.screenshot({ encoding: 'base64' }) as string;
 
         const embed = new Embed()
             .setColor('RANDOM')
