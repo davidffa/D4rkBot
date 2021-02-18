@@ -39,13 +39,13 @@ class Enable extends Command {
                 return;
             }
 
-            guildData.disabledCmds.splice(guildData.disabledCmds.indexOf(command.name), 0);
+            guildData.disabledCmds.splice(guildData.disabledCmds.indexOf(command.name), 1);
         }
 
         const guildDBData = await this.client.guildDB.findOne({ guildID: message.guildID });
 
         if (guildDBData && guildDBData.disabledCmds) {
-            guildDBData.disabledCmds = guildDBData.disabledCmds.splice(guildDBData.disabledCmds.indexOf(command.name), 0);
+            guildDBData.disabledCmds = guildDBData.disabledCmds.splice(guildDBData.disabledCmds.indexOf(command.name), 1);
             guildDBData.save();
         }
 
