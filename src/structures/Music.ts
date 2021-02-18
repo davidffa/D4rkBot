@@ -89,7 +89,7 @@ export default class D4rkManager extends Manager {
                 .addField(":robot: Enviado por:", '`' + track.author + '`')
                 .addField(":watch: Duração:", '`' + this.client.utils.msToHour(track.duration) + '`')
                 .setURL(track.uri)
-                .setThumbnail(track.displayThumbnail())
+                .setThumbnail(track.displayThumbnail('maxresdefault'))
                 .setTimestamp()
                 .setFooter(`${requester.username}#${requester.discriminator}`, requester.dynamicAvatarURL());
         
