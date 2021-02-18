@@ -47,14 +47,16 @@ class Queue extends Command {
 
         const req = queue.current?.requester as User;
 
+        const desc = [
+            `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n`,
+            `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
+            `${getSongDetails(0, 10)}`
+        ];
+
         const embed = new Embed()
             .setColor('RANDOM')
             .setTitle(':bookmark_tabs: Lista de músicas')
-            .setDescription(`
-                <a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n
-                :alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}\n
-                ${getSongDetails(0, 9)}
-            `)
+            .setDescription(desc.join('\n'))
             .setTimestamp()
             .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
 
@@ -72,18 +74,21 @@ class Queue extends Command {
 
         collector.on('collect', (m, emoji) => {
             if (message.channel.type !== 0) return;
+
+            const newDesc = [
+                `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
+                `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
+                `${getSongDetails(0, 10)}`
+            ];
+
             switch (emoji.name) {
                 case '⬅️':
                     if (page === 1) return;
                     page--;
                     if (page === 1) {
-                        embed.setDescription(`
-                            <a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n
-                            :alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}\n
-                            ${getSongDetails(0, 9)}
-                        `)
+                        embed.setDescription(newDesc.join('\n'));
                     }else {
-                        embed.setDescription(getSongDetails((page - 1) * 9+1, page * 9))
+                        embed.setDescription(getSongDetails((page - 1) * 10+1, page * 10))
                         .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
                     }
 
@@ -96,7 +101,7 @@ class Queue extends Command {
                 case '➡️':
                     if (page === pages) return;
                     page++;
-                    embed.setDescription(getSongDetails((page - 1) * 9+1, page * 9))
+                    embed.setDescription(getSongDetails((page - 1) * 10+1, page * 10))
                         .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
 
                     m.edit({ embed });
