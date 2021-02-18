@@ -40,6 +40,11 @@ class Forceplay extends Command {
             return;
         }
 
+        if (player && player.queue.duration > 8.64e7) {
+            message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
+            return;
+        }
+
         const member = message.member;
         const voiceChannel = this.client.getChannel(voiceChannelID);
         if (!member || !voiceChannel || voiceChannel.type !== 2) return;

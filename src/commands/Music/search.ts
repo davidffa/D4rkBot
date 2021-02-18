@@ -27,7 +27,8 @@ class Search extends Command {
             return;
         }
 
-        const voiceChannelID = message.member?.voiceState.channelID
+        const voiceChannelID = message.member?.voiceState.channelID;
+        const currPlayer = this.client.music.players.get(message.guildID as string);
         
         if (!voiceChannelID) {
             message.channel.createMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
@@ -62,6 +63,11 @@ class Search extends Command {
 
         if (this.client.records.has(message.guildID as string)) {
             message.channel.createMessage(':x: Não consigo tocar música enquanto gravo voz!')
+            return;
+        }
+
+        if (currPlayer && currPlayer.queue.duration > 8.64e7) {
+            message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
             return;
         }
 
@@ -119,7 +125,7 @@ class Search extends Command {
                         return;
                     }
 
-                    const player = this.client.music.players.get(message.guildID as string) || createPlayer();
+                    const player = currPlayer || createPlayer();
 
                     if (player.state === 'DISCONNECTED') {
                         if (voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {

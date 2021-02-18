@@ -26,7 +26,8 @@ class Play extends Command {
             return;
         }
 
-        const voiceChannelID = message.member?.voiceState.channelID
+        const voiceChannelID = message.member?.voiceState.channelID;
+        const currPlayer = this.client.music.players.get(message.guildID as string);
         
         if (!voiceChannelID) {
             message.channel.createMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
@@ -40,7 +41,7 @@ class Play extends Command {
             return;
         }
 
-        if (this.client.music.players.get(message.guildID as string) && voiceChannelID !== this.client.music.players.get(message.guildID as string)?.voiceChannel) {
+        if (currPlayer && voiceChannelID !== currPlayer.voiceChannel) {
             message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
             return;
         }
@@ -67,6 +68,11 @@ class Play extends Command {
             return;
         }
 
+        if (currPlayer && currPlayer.queue.duration > 8.64e7) {
+            message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
+            return;
+        }
+
         const createPlayer = (): Player => {
             return this.client.music.create({
                 guild: message.guildID as string,
@@ -84,7 +90,7 @@ class Play extends Command {
             }else if (res.loadType === 'NO_MATCHES') {
                 message.channel.createMessage(':x: Nenhuma música encontrada.');
             }else {
-                const player = this.client.music.players.get(message.guildID as string) || createPlayer();
+                const player = currPlayer || createPlayer();
 
                 if (player.state === 'DISCONNECTED') {
                     if (voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
