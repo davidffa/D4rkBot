@@ -48,6 +48,7 @@
     "sbd": "^1.0.18",
     "steam-provider": "^0.3.2",
     "ts-node-dev": "^1.1.1",
+    "unicode-emoji-json": "^0.2.1",
     "xml2js": "^0.4.23",
     "zlib-sync": "^0.1.7"
   }
