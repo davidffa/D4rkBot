@@ -136,32 +136,26 @@ class Lyrics extends Command {
 
         collector.on('collect', (m, emoji) => {
             if (!res || message.channel.type !== 0) return;
+
+            if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+                m.removeReaction(emoji.name, message.author.id);
+            }
+            
             switch (emoji.name) {
                 case '⬅️':
                     if (page === 1) return;
                     page--;
-                    embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
-                        .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
-
-                    m.edit({ embed });
-
-                    if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                        m.removeReaction(emoji.name, message.author.id);
-                    }
                     break;
                 case '➡️':
                     if (page === pages) return;
                     page++;
-                    embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
-                        .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
-
-                    m.edit({ embed });
-
-                    if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                        m.removeReaction(emoji.name, message.author.id);
-                    }
                     break;
             }
+
+            embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
+                .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+
+            m.edit({ embed });
         })
     }
 }
