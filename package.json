@@ -16,7 +16,7 @@
   "devDependencies": {
     "@types/figlet": "^1.2.1",
     "@types/mathjs": "^6.0.11",
-    "@types/node": "^14.14.28",
+    "@types/node": "^14.14.31",
     "@types/node-fetch": "^2.5.8",
     "@types/node-os-utils": "^1.2.0",
     "@types/puppeteer": "^5.4.3",
