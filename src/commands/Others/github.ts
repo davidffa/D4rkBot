@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -37,7 +36,7 @@ class Github extends Command {
 
         const user = await res.json();
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle(`<:github:784791056670654465> Perfil do ${user.login}`)
             .setColor('RANDOM')
             .addField(':bust_in_silhouette: Nome', user.name || user.login, true)

@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -79,7 +78,7 @@ class Serverinfo extends Command {
             'southafrica': ':flag_za: África do Sul'
         }
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle(`:bookmark_tabs: Informações do servidor **${message.channel.guild.name}**`)
             .setColor('RANDOM')
             .addField(':id: ID', guild.id, true)

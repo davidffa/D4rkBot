@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -28,7 +27,7 @@ class Lavalink extends Command {
             return;
         }
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Status do Node do LavaLink')
             .addField(':id: Nome', `\`${node.options.identifier}\``, true)

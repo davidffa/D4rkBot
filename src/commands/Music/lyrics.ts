@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, Emoji, Member } from 'eris';
 import { ReactionCollector } from 'eris-collector';
@@ -30,7 +29,12 @@ class Lyrics extends Command {
         if (message.channel.type !== 0) return;
 
         if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+            return;
+        }
+
+        if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
+            message.channel.createMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
             return;
         }
 
@@ -88,7 +92,13 @@ class Lyrics extends Command {
                 return;
             }
 
-            res = await lyrics(player.queue.current.title);
+            const [ artist, title ] = player.queue.current.title.split('-');
+
+            if (title) {
+                res = await lyrics(title, artist);
+            }else {
+                res = await lyrics(player.queue.current.title);
+            }
         }else {
             const data = args.join(' ').split('-');
 
@@ -106,7 +116,7 @@ class Lyrics extends Command {
         let page = 1;
         const pages = Math.ceil(res.lyrics.length / 20);
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle(args.join(' '))
             .setDescription(res.lyrics.slice(0, 20).join('\n'))

@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -57,7 +56,7 @@ class Wiki extends Command {
 
         const summary = sbd.sentences(text).slice(0, 5).join('\n');
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle(`Wikipedia (${res.title})`)
             .setThumbnail(res.images.find((url: string) => url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')) || 'https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png')

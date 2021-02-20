@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, User } from 'eris';
 
@@ -38,7 +37,7 @@ class Avatar extends Command {
 
         const url = user.dynamicAvatarURL();
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle(`:frame_photo: Avatar de ${user.username}#${user.discriminator}`)
             .setColor('RANDOM')
             .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)

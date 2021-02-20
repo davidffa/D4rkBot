@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, User } from 'eris';
 
@@ -86,7 +85,7 @@ class Nowplaying extends Command {
                 file: canvas.toBuffer()
             });
         } else if (message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            const embed = new Embed()
+            const embed = new this.client.embed()
                 .setColor('RANDOM')
                 .setTitle('<a:disco:803678643661832233> A tocar')
                 .setTimestamp()

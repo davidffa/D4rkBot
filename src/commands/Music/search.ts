@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 import { MessageCollector } from 'eris-collector';
@@ -93,7 +92,7 @@ class Search extends Command {
 
                 desc += `Envie mensagem com o número da música, (0 para cancelar)`;
 
-                const embed = new Embed()
+                const embed = new this.client.embed()
                     .setColor('RANDOM')
                     .setTitle(':bookmark_tabs: Resultados da procura')
                     .setDescription(desc)

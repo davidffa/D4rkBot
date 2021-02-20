@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, User, Member } from 'eris';
 
@@ -58,7 +57,7 @@ class Userinfo extends Command {
         
         const member = message.channel.guild.members.get(user.id);
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle(`Informações de ${user.bot ? '<:bot:804028762307821578>' : ''}${(member && member.nick) || user.username}`)
             .setColor('RANDOM')
             .addField(':bookmark_tabs: Tag', `\`${user.username}#${user.discriminator}\``, true)

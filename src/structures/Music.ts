@@ -1,7 +1,7 @@
 import { Manager, NodeOptions } from 'erela.js';
 import Spotify from 'erela.js-spotify';
 import Client from '../structures/Client';
-import Embed from '../structures/Embed';
+
 import { User, Member } from 'eris';
 
 import { Timeouts, MsgCollectors } from '../typings/index';
@@ -82,7 +82,7 @@ export default class D4rkManager extends Manager {
 
             const requester = player.queue.current?.requester as User;
 
-            const embed = new Embed()
+            const embed = new this.client.embed()
                 .setColor('RANDOM')
                 .setTitle('<a:disco:803678643661832233> A Tocar')
                 .addField(":page_with_curl: Nome:", '`' + track.title + '`')
@@ -106,9 +106,12 @@ export default class D4rkManager extends Manager {
 
         this.on('trackError', (player, track, payload): void => {
             if (player.textChannel) {
-                this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error}\``)
+                if (payload.error === 'Track information is unavailable.') 
+                    this.client.createMessage(player.textChannel, `:x: Não consegui tocar a música ${track.title} devido à mesma ter restrição de idade`)
+                else 
+                    this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error}\``)
             }
-            console.error(`[Lavalink] Track Stuck on guild ${player.guild}. Error: ${payload.error}`);
+            console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
 
             /*** Heroku lavalink ***/
             if (player.guild === process.env.TESTGUILDID) {

@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, Emoji, Member } from 'eris';
 
@@ -39,7 +38,7 @@ class Logs extends Command {
         const welcomeChannel = message.channel.guild.channels.get(guildData?.welcomeChatID || '');
         const byeChannel = message.channel.guild.channels.get(guildData?.memberRemoveChatID || '');
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Configurar logs')
             .setDescription(`:one: Canal das mensagens de bem-vindo: \`${welcomeChannel ? `${welcomeChannel.name}` : 'Nenhum'}\`\n\n:two: Canal das mensagens de saídas de membros: \`${byeChannel ? `${byeChannel.name}` : 'Nenhum'}\``)

@@ -5,6 +5,7 @@ import { NodeOptions, VoicePacket } from 'erela.js';
 import moment from 'moment';
 moment.locale('pt');
 
+import Embed from './Embed';
 import Music from './Music';
 import levDistance from '../utils/levenshteinDistance';
 import msToHour from '../utils/msToHour';
@@ -25,6 +26,7 @@ export default class D4rkClient extends Client {
     lockedCmds: Array<string>;
     botDB: typeof botDatabase;
     guildDB: typeof guildDatabase;
+    embed: typeof Embed;
 
     constructor() {
         const clientOptions: ClientOptions = {
@@ -32,6 +34,7 @@ export default class D4rkClient extends Client {
             defaultImageSize: 2048,
             getAllUsers: true,
             restMode: true,
+            compress: true,
             intents: [
                 'guilds',
                 'guildMembers',
@@ -54,6 +57,7 @@ export default class D4rkClient extends Client {
         this.lockedCmds = [];
         this.botDB = botDatabase;
         this.guildDB = guildDatabase;
+        this.embed = Embed;
 
         const findUser = async (param: string, guild: Guild): Promise<User|undefined> => {
             let user;

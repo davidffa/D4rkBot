@@ -1,6 +1,6 @@
 import Command from '../structures/Command';
 import Client from '../structures/Client';
-import Embed from '../structures/Embed';
+
 import { Message, Emoji, Member } from 'eris';
 import { ReactionCollector } from 'eris-collector';
 
@@ -30,7 +30,7 @@ class Help extends Command {
 
         const commands = this.client.commands;
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Ajuda')
             .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())

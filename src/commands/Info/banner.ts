@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -29,7 +28,7 @@ class Banner extends Command {
 
         const url = message.channel.guild.dynamicBannerURL();
         
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle(`:frame_photo: Banner do servidor **${message.channel.guild.name}**`)
             .setColor('RANDOM')
             .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)

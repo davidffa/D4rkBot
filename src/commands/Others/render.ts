@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Emoji, Member, Message } from 'eris';
 import { ReactionCollector } from 'eris-collector';
@@ -98,7 +97,7 @@ class Render extends Command {
 
         const img = await page.screenshot({ encoding: 'base64' }) as string;
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Render')
             .setURL(finalURL)

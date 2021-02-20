@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -36,7 +35,7 @@ class Steam extends Command {
 
         const data = await provider.detail(res[0].id, 'portuguese', 'pt');
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Loja Steam')
             .setDescription(`**${data.name}**`)

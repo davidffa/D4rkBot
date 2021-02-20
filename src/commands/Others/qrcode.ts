@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -49,7 +48,7 @@ class Isitup extends Command {
                 const url = await QRCode.toDataURL(args.slice(1).join(' '));
                 const base64data = url.replace(/^data:image\/png;base64,/, '');
 
-                const embed = new Embed()
+                const embed = new this.client.embed()
                     .setTitle('<:qrcode:784833114761461800> QR Code')
                     .setColor('RANDOM')
                     .setImage('attachment://qr.png')
@@ -79,7 +78,7 @@ class Isitup extends Command {
                     return;
                 }
 
-                const ebd = new Embed()
+                const ebd = new this.client.embed()
                     .setTitle('<:qrcode:784833114761461800> Leitor de QR Code')
                     .setColor('RANDOM')
                     .setDescription(`:newspaper: **Texto:**\n\n\`\`\`\n${data}\`\`\``)

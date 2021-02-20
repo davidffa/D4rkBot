@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -33,7 +32,7 @@ class Translate extends Command {
                 to: args[0]
             });
 
-            const embed = new Embed()
+            const embed = new this.client.embed()
                 .setColor('RANDOM')
                 .setTitle('Tradutor')
                 .addField(`:bookmark: Texto de origem: (${res.from.language.iso})`, `\`\`\`${text}\`\`\``)

@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -59,7 +58,7 @@ class Calc extends Command {
         if (result === undefined || result === null || typeof result === 'function') return message.channel.createMessage(':x: Expressão inválida!');
         if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
     
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Calculadora')
             .addField(':inbox_tray: Expressão', `\`\`\`${args.join(' ')}\`\`\``)

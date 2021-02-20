@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, Invite } from 'eris';
 
@@ -27,7 +26,7 @@ class Inviteinfo extends Command {
                 return;
             }
 
-            const embed = new Embed()
+            const embed = new this.client.embed()
                 .setTitle('Invite Info')
                 .setColor('RANDOM')
                 .addField(':id: ID', `\`${invite.code}\``, true)

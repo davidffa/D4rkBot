@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Emoji, Member, Message, User } from 'eris';
 import { ReactionCollector } from 'eris-collector';
@@ -53,7 +52,7 @@ class Queue extends Command {
             `${getSongDetails(0, 10)}`
         ];
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle(':bookmark_tabs: Lista de músicas')
             .setDescription(desc.join('\n'))

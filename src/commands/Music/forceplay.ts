@@ -1,10 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
-
-import { Player } from 'erela.js';
 
 class Forceplay extends Command {
     constructor(client: Client) {
@@ -22,7 +19,7 @@ class Forceplay extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
         if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
@@ -75,7 +72,7 @@ class Forceplay extends Command {
 
                     player.stop();
     
-                    const embed = new Embed()
+                    const embed = new this.client.embed()
                         .setColor('RANDOM')
                         .setTitle('<a:disco:803678643661832233> Playlist Carregada')
                         .addField(":page_with_curl: Nome:", '`' + playlist?.name + '`')

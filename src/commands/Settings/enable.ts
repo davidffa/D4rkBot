@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -54,7 +53,7 @@ class Enable extends Command {
             return;
         }
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setDescription(`<:on:764478511875751937> O comando \`${args[0]}\` foi ativado com sucesso!`)
             .setTimestamp()

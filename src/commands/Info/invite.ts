@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -33,7 +32,7 @@ class Invite extends Command {
             'Servidor de Suporte -> https://discord.gg/dBQnxVCTEw'
         ]
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('Convite')
             .setDescription(embedRes.join('\n'))

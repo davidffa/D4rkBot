@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message, VERSION } from 'eris';
 
@@ -36,7 +35,7 @@ class Botinfo extends Command {
         const pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
 
         const WSPing = (this.client.shards.get(0)?.latency) || 0;
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('<a:blobdance:804026401849475094> Informações sobre mim')
             .setDescription('**[Convite](https://discord.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)**\n' +

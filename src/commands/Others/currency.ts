@@ -1,6 +1,5 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import Embed from '../../structures/Embed';
 
 import { Message } from 'eris';
 
@@ -46,7 +45,7 @@ class Currency extends Command {
             return;
         }
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setColor('RANDOM')
             .setDescription(`Fonte: [x-rates](https://www.x-rates.com/calculator/?from=${args[0]}&to=${args[1]}&amount=${args[2]})`)
             .setTitle('Conversor de Moeda')
