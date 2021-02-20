@@ -18,7 +18,7 @@ class Addemoji extends Command {
     }
 
     async execute(message: Message, args: Array<string>): Promise<void> {
-        if (message.channel.type !== 0 || !message.channel.permissionsOf(this.client.user.id).has('manageEmojis')) {
+        if (message.channel.type !== 0 || !message.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
             message.channel.createMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando');
             return;
         }
@@ -71,10 +71,6 @@ class Addemoji extends Command {
                 console.error(err);
             }
         }
-
-
-        return;
-
     }
 }
 
