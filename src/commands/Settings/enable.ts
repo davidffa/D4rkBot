@@ -45,18 +45,18 @@ class Enable extends Command {
         const guildDBData = await this.client.guildDB.findOne({ guildID: message.guildID });
 
         if (guildDBData && guildDBData.disabledCmds) {
-            guildDBData.disabledCmds = guildDBData.disabledCmds.splice(guildDBData.disabledCmds.indexOf(command.name), 1);
+            guildDBData.disabledCmds.splice(guildDBData.disabledCmds.indexOf(command.name), 1);
             guildDBData.save();
         }
 
         if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(`<:on:764478511875751937> O comando \`${args[0]}\` foi desativado com sucesso!`);
+            message.channel.createMessage(`<:on:764478511875751937> O comando \`${args[0]}\` foi ativado com sucesso!`);
             return;
         }
 
         const embed = new Embed()
             .setColor('RANDOM')
-            .setDescription(`<:on:764478511875751937> O comando \`${args[0]}\` foi desativado com sucesso!`)
+            .setDescription(`<:on:764478511875751937> O comando \`${args[0]}\` foi ativado com sucesso!`)
             .setTimestamp()
             .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
 
