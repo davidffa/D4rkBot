@@ -39,8 +39,8 @@ class Emoji extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
 
-        if (!message.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
-            message.channel.createMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando');
+        if (!message.channel.guild.members.get(this.client.user.id)?.permissions.has('embedLinks')) {
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
