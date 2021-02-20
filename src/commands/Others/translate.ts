@@ -14,6 +14,7 @@ class Translate extends Command {
             args: 2,
             usage: '<para> <texto>',
             category: 'Others',
+            aliases: ['traduzir'],
             dm: true,
             cooldown: 3
         });
