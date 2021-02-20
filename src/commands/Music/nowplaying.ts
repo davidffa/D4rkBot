@@ -48,7 +48,7 @@ class Nowplaying extends Command {
                 const buffer = await fetch(player.queue.current.displayThumbnail('maxresdefault')).then(res => res.buffer());
 
                 const thumb = await Canvas.loadImage(buffer);
-                ctx.drawImage(thumb, 85, 25, 200, 200);
+                ctx.drawImage(thumb, 70, 67, 240, 135);
             }
 
             const duration = this.client.utils.msToHour(player.queue.current.duration as number);
