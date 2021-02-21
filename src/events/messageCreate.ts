@@ -98,13 +98,13 @@ module.exports = class {
             return message.channel.createMessage(`:x: O comando \`${command.name}\` está desativado neste servidor.`);
 
         if (!this.client.cooldowns.has(command.name)) 
-            this.client.cooldowns.set(command.name, new Map());
+            this.client.cooldowns.set(command.name, new Map<string, number>());
 
         const now = Date.now();
-        const timestamps = this.client.cooldowns.get(command.name) as Map<string, number>;
+        const timestamps = this.client.cooldowns.get(command.name);
         const cooldownAmount = (command.cooldown || 3) * 1000;
 
-        if (timestamps.has(message.author.id) && message.author.id !== '334054158879686657') {
+        if (timestamps && timestamps.has(message.author.id) && message.author.id !== '334054158879686657') {
             const expirationTime = timestamps.get(message.author.id) as number + cooldownAmount;
 
             if (now < expirationTime) {
@@ -119,6 +119,11 @@ module.exports = class {
             if (command.usage) reply += `**Usa:** \`${prefix}${cmdName} ${command.usage}\``;
 
             return message.channel.createMessage(reply);
+        }
+
+        if (timestamps) {
+            timestamps.set(message.author.id, now);
+            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
         }
 
         try {
