@@ -11,7 +11,6 @@ class Ping extends Command {
             category: 'Info',
             aliases: ['latencia', 'latency'],
             dm: true,
-            usage: '[nome]',
             cooldown: 4
         });
     }
