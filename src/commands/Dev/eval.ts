@@ -108,7 +108,7 @@ class Eval extends Command {
 
             const filter = (_m: Message, emoji: Emoji, member: Member) => (emoji.id === '751062867444498432' || emoji.name === '📋') && member === message.member;
 
-            const collector = new ReactionCollector(this.client, msg, filter, { time: 3 * 60 * 1000 });
+            const collector = new ReactionCollector(this.client, msg, filter, { time: 3 * 60 * 1000, max: 1 });
                 
             collector.on('collect', async (m, emoji) => {
                 switch(emoji.name) {
