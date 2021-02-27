@@ -1,7 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 
-import { Message, User, Member } from 'eris';
+import { Message, User, Member, Constants } from 'eris';
 
 import moment from 'moment';
 moment.locale('pt');
@@ -82,22 +82,6 @@ class Userinfo extends Command {
             embed.addField(':trophy: Posição de entrada', `\`${pos}/${message.channel.guild.members.size}\``, true)
         }
 
-        const UserFlagsBitField = {
-            DISCORD_EMPLOYEE: 1 << 0,
-            PARTNERED_SERVER_OWNER: 1 << 1,
-            HYPESQUAD_EVENTS: 1 << 2,
-            BUGHUNTER_LEVEL_1: 1 << 3,
-            HOUSE_BRAVERY: 1 << 6,
-            HOUSE_BRILLIANCE: 1 << 7,
-            HOUSE_BALANCE: 1 << 8,
-            EARLY_SUPPORTER: 1 << 9,
-            TEAM_USER: 1 << 10,
-            SYSTEM: 1 << 12,
-            BUGHUNTER_LEVEL_2: 1 << 14,
-            VERIFIED_BOT: 1 << 16,
-            EARLY_VERIFIED_BOT_DEVELOPER: 1 << 17
-        }
-
         const BadgeEmojis: any = {
             DISCORD_EMPLOYEE: '<:staffbadge:803667272186462258>',
             PARTNERED_SERVER_OWNER: '<:partnerbadge:803667091429130260>',
@@ -117,11 +101,9 @@ class Userinfo extends Command {
         const flags = user.publicFlags;
 
         if (flags) {
-            const flagArray = Object.entries(UserFlagsBitField).filter(([,bit]) => (flags & bit) == bit).map(([field,]) => field);
+            const flagArray = Object.entries(Constants.UserFlags).filter(([,bit]) => (flags & bit) == bit).map(([field,]) => field);
     
-            const userBadges = flagArray.map(f => {
-                return BadgeEmojis[f];
-            });
+            const userBadges = flagArray.map(f => BadgeEmojis[f]);
 
             if (member?.premiumSince) {
                 userBadges.push('<:badgenitro:803666299556200478>')
