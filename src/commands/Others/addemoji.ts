@@ -10,7 +10,7 @@ class Addemoji extends Command {
         super(client, {
             name: 'addemoji',
             description: 'Adiciona um emoji no servidor',
-            usage: '<URL/Anexo> [nome]',
+            usage: '<URL/Anexo> <nome>',
             category: 'Others',
             cooldown: 4,
             args: 1
@@ -23,6 +23,8 @@ class Addemoji extends Command {
             return;
         }
 
+        const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
+
         let imageURL: string;
         let emojiName: string;
 
@@ -30,7 +32,15 @@ class Addemoji extends Command {
             imageURL = message.attachments[0].url;
             emojiName = args[0];
         }else {
+            if (!urlRegex.test(args[0])) {
+                message.channel.createMessage(':x: URL inválido!');
+                return;
+            }
             imageURL = args[0];
+            if (!args[1]) {
+                message.channel.createMessage(`:x: Argumentos em falta! **Use:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}addemoji <URL/Anexo> <nome>`);
+                return;
+            }
             emojiName = args[1];
         }
 
@@ -42,8 +52,8 @@ class Addemoji extends Command {
         const { buffer, type } = await fetch(imageURL).then(async (res) => {
             const buff = await res.buffer();
             const types = res.headers.get('content-type');
-            if (!types) {
 
+            if (!types || !(/image\/png|image\/jpeg|image\/jpg|image\/gif/g.test(types))) {
                 return { buffer: buff, type: null };
             }
             return { buffer: buff, type: types };
@@ -55,6 +65,13 @@ class Addemoji extends Command {
         }
 
         const base64 = `data:${type};base64,${buffer.toString('base64')}`;
+
+        const imgWeight = ((base64.length * (3/4)) - (base64.endsWith('==') ? 1 : 2)) / 1024;
+
+        if (imgWeight > 256) {
+            message.channel.createMessage(':x: A imagem não pode ser maior do que 256 KB.');
+            return;
+        }
 
         try {
             const res = await message.channel.guild.createEmoji({
