@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "repository": "https://github.com/davidffa/D4rkBot",
   "author": "David Amorim",
-  "license": "MIT",
+  "license": "Unlicense",
   "engines": {
-    "node": "14.15.5",
+    "node": "14.16.0",
     "yarn": "1.22.5"
   },
   "scripts": {
