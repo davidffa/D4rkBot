@@ -5,7 +5,7 @@ import { Message } from 'eris';
 
 import translate from '@iamtraction/google-translate';
 
-class Translate extends Command {
+export default class Translate extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'translate',
@@ -50,5 +50,3 @@ class Translate extends Command {
         } 
     }
 }
-
-module.exports = Translate;

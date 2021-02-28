@@ -13,7 +13,7 @@ interface LyricsRes {
     url: string;
 }
 
-class Lyrics extends Command {
+export default class Lyrics extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'lyrics',
@@ -159,5 +159,3 @@ class Lyrics extends Command {
         })
     }
 }
-
-module.exports = Lyrics;

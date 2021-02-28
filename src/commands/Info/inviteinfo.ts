@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message, Invite } from 'eris';
 
-class Inviteinfo extends Command {
+export default class Inviteinfo extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'inviteinfo',
@@ -47,5 +47,3 @@ class Inviteinfo extends Command {
         }
     }
 }
-
-module.exports = Inviteinfo;

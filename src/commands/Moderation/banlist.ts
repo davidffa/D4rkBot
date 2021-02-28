@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Banlist extends Command {
+export default class Banlist extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'banlist',
@@ -42,5 +42,3 @@ class Banlist extends Command {
         message.channel.createMessage(`:bookmark_tabs: Lista de membros banidos: \n${msg.slice(0, 1800)}${msg.length > 1800 ? '...' : ''}`);
     }
 }
-
-module.exports = Banlist;

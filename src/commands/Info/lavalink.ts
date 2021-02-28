@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Lavalink extends Command {
+export default class Lavalink extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'lavalink',
@@ -41,5 +41,3 @@ class Lavalink extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Lavalink;

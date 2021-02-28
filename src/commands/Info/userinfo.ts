@@ -6,7 +6,7 @@ import { Message, User, Member, Constants } from 'eris';
 import moment from 'moment';
 moment.locale('pt');
 
-class Userinfo extends Command {
+export default class Userinfo extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'userinfo',
@@ -122,5 +122,3 @@ class Userinfo extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Userinfo;

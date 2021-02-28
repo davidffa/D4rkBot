@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Loop extends Command {
+export default class Loop extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'loop',
@@ -71,5 +71,3 @@ class Loop extends Command {
         } else loop(args[0]);
     }
 }
-
-module.exports = Loop;

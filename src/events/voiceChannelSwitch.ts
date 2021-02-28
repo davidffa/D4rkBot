@@ -2,7 +2,7 @@ import Client from '../structures/Client';
 
 import { Member, VoiceChannel } from 'eris';
 
-module.exports = class {
+export default class VoiceChannelSwitch {
     client: Client;
 
     constructor(client: Client) {

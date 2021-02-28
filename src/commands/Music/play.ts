@@ -5,7 +5,7 @@ import { Message } from 'eris';
 
 import { Player } from 'erela.js';
 
-class Play extends Command {
+export default class Play extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'play',
@@ -140,5 +140,3 @@ class Play extends Command {
         }
     }
 }
-
-module.exports = Play;

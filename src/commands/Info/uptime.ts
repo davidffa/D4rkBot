@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Uptime extends Command {
+export default class Uptime extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'uptime',
@@ -19,5 +19,3 @@ class Uptime extends Command {
         message.channel.createMessage(`<a:malakoi:478003266815262730> Estou online há \`${this.client.utils.msToDate(process.uptime() * 1e3)}\``)
     }
 }
-
-module.exports = Uptime;

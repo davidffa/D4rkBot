@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Pause extends Command {
+export default class Pause extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'pause',
@@ -59,5 +59,3 @@ class Pause extends Command {
         } else pause();
     }
 }
-
-module.exports = Pause;

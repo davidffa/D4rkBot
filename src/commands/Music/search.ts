@@ -6,7 +6,7 @@ import { MessageCollector } from 'eris-collector';
 
 import { Player } from 'erela.js';
 
-class Search extends Command {
+export default class Search extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'search',
@@ -157,5 +157,3 @@ class Search extends Command {
         }
     }
 }
-
-module.exports = Search;

@@ -13,7 +13,7 @@ import { GuildCache } from '../../typings';
 
 import fetch from 'node-fetch';
 
-class Eval extends Command {
+export default class Eval extends Command {
     player: Player|null|undefined;
     guildCache: GuildCache|null|undefined;
     fetch: typeof fetch;
@@ -154,5 +154,3 @@ class Eval extends Command {
         }
     }
 }
-
-module.exports = Eval;

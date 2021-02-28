@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Setprefix extends Command {
+export default class Setprefix extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'setprefix',
@@ -47,5 +47,3 @@ class Setprefix extends Command {
         message.channel.createMessage(`<a:verificado:803678585008816198> Alteras-te o meu prefixo para \`${args[0].trim()}\``);
     }
 }
-
-module.exports = Setprefix;

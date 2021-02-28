@@ -2,7 +2,7 @@ import Client from '../structures/Client';
 
 import { Message, OldMessage } from 'eris';
 
-module.exports = class {
+export default class MessageUpdate {
     client: Client;
 
     constructor(client: Client) {

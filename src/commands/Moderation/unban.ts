@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Unban extends Command {
+export default class Unban extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'unban',
@@ -45,10 +45,8 @@ class Unban extends Command {
 
         message.channel.guild.unbanMember(member.user.id).then(() => {
             message.channel.createMessage(`<a:verificado:803678585008816198> Desbanis-te o \`${member.user.username}#${member.user.discriminator}\``);
-        }).catch(err => {
+        }).catch(() => {
             message.channel.createMessage(':x: Ocorreu um erro ao tentar desbanir esse membro.');
         });
     }
 }
-
-module.exports = Unban;

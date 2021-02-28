@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Kick extends Command {
+export default class Kick extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'kick',
@@ -58,5 +58,3 @@ class Kick extends Command {
         });
     }
 }
-
-module.exports = Kick;

@@ -7,7 +7,7 @@ import { ReactionCollector } from 'eris-collector';
 import fetch from 'node-fetch';
 import puppeteer from 'puppeteer';
 
-class Render extends Command {
+export default class Render extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'render',
@@ -130,5 +130,3 @@ class Render extends Command {
         });
     }
 }
-
-module.exports = Render;

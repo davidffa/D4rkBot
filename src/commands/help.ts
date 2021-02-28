@@ -4,7 +4,7 @@ import Client from '../structures/Client';
 import { Message, Emoji, Member } from 'eris';
 import { ReactionCollector } from 'eris-collector';
 
-class Help extends Command {
+export default class Help extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'help',
@@ -118,5 +118,3 @@ class Help extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Help;

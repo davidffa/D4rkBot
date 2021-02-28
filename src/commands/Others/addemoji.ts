@@ -5,7 +5,7 @@ import { Message } from 'eris';
 
 import fetch from 'node-fetch';
 
-class Addemoji extends Command {
+export default class Addemoji extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'addemoji',
@@ -90,5 +90,3 @@ class Addemoji extends Command {
         }
     }
 }
-
-module.exports = Addemoji;

@@ -1,12 +1,11 @@
 import Client from '../structures/Client';
-import Embed from '../structures/Embed';
 
 import { existsSync, mkdirSync, appendFileSync } from 'fs';
 
 import { Message, Emoji, Member } from 'eris';
 import { ReactionCollector } from 'eris-collector';
 
-module.exports = class {
+export default class MessageCreate {
     client: Client;
 
     constructor(client: Client) {
@@ -144,7 +143,7 @@ module.exports = class {
             console.error(err.message);
 
             if (message.channel.type === 0) {
-                const embed = new Embed()
+                const embed = new this.client.embed()
                     .setTitle(':x: Ocorreu um erro!')
                     .setColor('8B0000')
                     .setDescription(`Ocorreu um erro ao executar o comando \`${cmdName}\` no servidor \`${message.channel.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**Erro:** \`${err.message}\``)

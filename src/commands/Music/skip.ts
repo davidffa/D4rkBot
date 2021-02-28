@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Skip extends Command {
+export default class Skip extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'skip',
@@ -62,5 +62,3 @@ class Skip extends Command {
         }
     }
 }
-
-module.exports = Skip;

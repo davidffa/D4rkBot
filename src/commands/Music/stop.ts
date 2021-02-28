@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message, User } from 'eris';
 
-class Stop extends Command {
+export default class Stop extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'stop',
@@ -67,5 +67,3 @@ class Stop extends Command {
         }
     }
 }
-
-module.exports = Stop;

@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Splash extends Command {
+export default class Splash extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'splash',
@@ -39,5 +39,3 @@ class Splash extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Splash;

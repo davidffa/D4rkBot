@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Djrole extends Command {
+export default class Djrole extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'djrole',
@@ -91,5 +91,3 @@ class Djrole extends Command {
         message.channel.createMessage(`<a:disco:803678643661832233> Cargo \`${role.name}\` setado como DJ role`);
     }
 }
-
-module.exports = Djrole;

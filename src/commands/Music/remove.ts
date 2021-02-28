@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Remove extends Command {
+export default class Remove extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'remove',
@@ -71,5 +71,3 @@ class Remove extends Command {
         } else remove(parseInt(args[0]));
     }
 }
-
-module.exports = Remove;

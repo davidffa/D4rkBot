@@ -8,7 +8,7 @@ import fetch from 'node-fetch';
 import moment from 'moment';
 moment.locale('pt');
 
-class Github extends Command {
+export default class Github extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'github',
@@ -62,5 +62,3 @@ class Github extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Github;

@@ -1,9 +1,8 @@
 import Client from '../structures/Client';
-import Embed from '../structures/Embed';
 
 import { Guild } from 'eris';
 
-module.exports = class {
+export default class GuildCreate {
     client: Client;
 
     constructor(client: Client) {
@@ -20,7 +19,7 @@ module.exports = class {
             djRole: '',
         });
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle('<:badgebooster:803666384373809233> Entrei num novo servidor')
             .setColor('RANDOM')
             .addField('Nome', `\`${guild.name}\``, true)

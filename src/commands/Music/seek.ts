@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Seek extends Command {
+export default class Seek extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'seek',
@@ -91,5 +91,3 @@ class Seek extends Command {
         } else seek(args[0]);
     }
 }
-
-module.exports = Seek;

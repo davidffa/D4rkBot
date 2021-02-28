@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Ping extends Command {
+export default class Ping extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'ping',
@@ -50,5 +50,3 @@ class Ping extends Command {
         } 
     }
 }
-
-module.exports = Ping;

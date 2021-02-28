@@ -6,7 +6,7 @@ import { Message } from 'eris';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-class Periodictable extends Command {
+export default class Periodictable extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'periodictable',
@@ -46,5 +46,3 @@ class Periodictable extends Command {
         }
     }
 }
-
-module.exports = Periodictable;

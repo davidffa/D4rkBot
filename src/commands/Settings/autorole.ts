@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Autorole extends Command {
+export default class Autorole extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'autorole',
@@ -91,5 +91,3 @@ class Autorole extends Command {
         message.channel.createMessage(`<a:verificado:803678585008816198> Cargo \`${role.name}\` setado como cargo de autorole.${message.channel.permissionsOf(this.client.user.id).has('manageRoles') ? '' : ':warning: Não tenho permissão para alterar cargos no servidor!'}`);
     }
 }
-
-module.exports = Autorole;

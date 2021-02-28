@@ -1,9 +1,8 @@
 import Client from '../structures/Client';
-import Embed from '../structures/Embed';
 
 import { Guild } from 'eris';
 
-module.exports = class {
+export default class GuildDelete {
     client: Client;
 
     constructor(client: Client) {
@@ -14,7 +13,7 @@ module.exports = class {
         this.client.guildCache.delete(guild.id);
         this.client.guildDB.findOneAndDelete({ guildID: guild.id });
 
-        const embed = new Embed()
+        const embed = new this.client.embed()
             .setTitle(':frowning2: Saí de um servidor')
             .setColor('RANDOM')
             .addField('Nome', `\`${guild.name}\``, true)

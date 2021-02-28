@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Chatclear extends Command {
+export default class Chatclear extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'chatclear',
@@ -52,5 +52,3 @@ class Chatclear extends Command {
         });
     }
 }
-
-module.exports = Chatclear;

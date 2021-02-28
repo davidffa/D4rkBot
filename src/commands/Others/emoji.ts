@@ -24,7 +24,7 @@ interface GuildEmoji {
     name: string;
 }
 
-class Emoji extends Command {
+export default class Emoji extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'emoji',
@@ -212,5 +212,3 @@ class Emoji extends Command {
         });
     }
 }
-
-module.exports = Emoji;

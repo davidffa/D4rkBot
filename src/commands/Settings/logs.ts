@@ -5,7 +5,7 @@ import { Message, Emoji, Member } from 'eris';
 
 import { ReactionCollector, MessageCollector } from 'eris-collector';
 
-class Logs extends Command {
+export default class Logs extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'logs',
@@ -178,5 +178,3 @@ class Logs extends Command {
         });
     }
 }
-
-module.exports = Logs;

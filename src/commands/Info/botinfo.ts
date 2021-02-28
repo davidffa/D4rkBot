@@ -8,7 +8,7 @@ import osu from 'node-os-utils';
 import moment from 'moment';
 moment.locale('pt');
 
-class Botinfo extends Command {
+export default class Botinfo extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'botinfo',
@@ -39,7 +39,7 @@ class Botinfo extends Command {
             .setColor('RANDOM')
             .setTitle('<a:blobdance:804026401849475094> Informações sobre mim')
             .setDescription('**[Convite](https://discord.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)**\n' +
-                            '**[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)**\n\n_[Bot Parceiro](https://discord.gg/8BVcz4yb3G)_\n\n' +
+                            '**[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)**\n\n' +
                             `Modelo da CPU: \`${cpuName}\`\nTotal de comandos usados: \`${totalCmdsUsed}\``
             )
             .addField(':calendar: Criado em', `\`${moment(this.client.user.createdAt).format('L')} (${moment(this.client.user.createdAt).startOf('day').fromNow()})\``, true)
@@ -61,5 +61,3 @@ class Botinfo extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Botinfo;

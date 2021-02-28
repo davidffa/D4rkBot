@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Bassboost extends Command {
+export default class Bassboost extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'bassboost',
@@ -64,5 +64,3 @@ class Bassboost extends Command {
 
     }
 }
-
-module.exports = Bassboost;

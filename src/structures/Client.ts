@@ -92,11 +92,11 @@ export default class D4rkClient extends Client {
     loadCommands(): void {
         readdirSync('./src/commands').forEach(dir => {
             if (dir.endsWith('.ts')) {
-                const cmd = require(`../commands/${dir}`);
+                const cmd = require(`../commands/${dir}`).default;
                 this.commands.push(new cmd(this));
             }else {
                 readdirSync(`./src/commands/${dir}`).filter(file => file.endsWith('.ts')).forEach(file => {
-                    const command = require(`../commands/${dir}/${file}`);
+                    const command = require(`../commands/${dir}/${file}`).default;
                     this.commands.push(new command(this));
                 });
             }
@@ -105,7 +105,7 @@ export default class D4rkClient extends Client {
     
     loadEvents(): void {
         readdirSync('./src/events').filter(file => file.endsWith('.ts')).forEach(file => {
-            const event = new (require(`../events/${file}`))(this);
+            const event = new (require(`../events/${file}`).default)(this);
             const eventName = file.split('.')[0];
 
             if (eventName === 'ready') {

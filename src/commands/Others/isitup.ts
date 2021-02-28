@@ -5,7 +5,7 @@ import { Message } from 'eris';
 
 import fetch from 'node-fetch';
 
-class Isitup extends Command {
+export default class Isitup extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'isitup',
@@ -53,5 +53,3 @@ class Isitup extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Isitup;

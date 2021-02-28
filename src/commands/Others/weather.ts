@@ -22,7 +22,7 @@ interface WeatherInfo {
     skyText: string;
 }
 
-class Weather extends Command {
+export default class Weather extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'weather',
@@ -101,5 +101,3 @@ class Weather extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Weather;

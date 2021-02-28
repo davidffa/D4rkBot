@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message, User } from 'eris';
 
-class Avatar extends Command {
+export default class Avatar extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'avatar',
@@ -48,5 +48,3 @@ class Avatar extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Avatar;

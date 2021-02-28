@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Lock extends Command {
+export default class Lock extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'lock',
@@ -44,5 +44,3 @@ class Lock extends Command {
         channel.editPermission(message.guildID as string, (allow & (1 << 11)) == 1 << 11 ? allow - (1 << 11) : allow, deny + (1 << 11), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));   
     }
 }
-
-module.exports = Lock;

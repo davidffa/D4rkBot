@@ -7,7 +7,7 @@ import { ReactionCollector } from 'eris-collector';
 import fetch from 'node-fetch';
 import { exec } from 'child_process';
 
-class Shell extends Command {
+export default class Shell extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'shell',
@@ -116,5 +116,3 @@ class Shell extends Command {
         })
     }
 }
-
-module.exports = Shell;

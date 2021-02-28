@@ -6,7 +6,7 @@ import { Message } from 'eris';
 import QRCode from 'qrcode';
 import fetch from 'node-fetch';
 
-class Isitup extends Command {
+export default class Qrcode extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'qrcode',
@@ -94,5 +94,3 @@ class Isitup extends Command {
         }
     }
 }
-
-module.exports = Isitup;

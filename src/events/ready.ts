@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-module.exports = class {
+export default class Ready {
     client: Client;
 
     constructor(client: Client) {

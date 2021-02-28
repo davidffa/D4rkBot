@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Servericon extends Command {
+export default class Servericon extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'servericon',
@@ -40,5 +40,3 @@ class Servericon extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Servericon;

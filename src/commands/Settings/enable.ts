@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Enable extends Command {
+export default class Enable extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'enable',
@@ -62,5 +62,3 @@ class Enable extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Enable;

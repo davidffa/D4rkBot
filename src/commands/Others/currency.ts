@@ -6,7 +6,7 @@ import { Message } from 'eris';
 import fetch from 'node-fetch';
 import cio from 'cheerio';
 
-class Currency extends Command {
+export default class Currency extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'currency',
@@ -57,5 +57,3 @@ class Currency extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Currency;

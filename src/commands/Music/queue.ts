@@ -4,7 +4,7 @@ import Client from '../../structures/Client';
 import { Emoji, Member, Message, User } from 'eris';
 import { ReactionCollector } from 'eris-collector';
 
-class Queue extends Command {
+export default class Queue extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'queue',
@@ -113,5 +113,3 @@ class Queue extends Command {
         })
     }
 }
-
-module.exports = Queue;

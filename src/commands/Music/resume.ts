@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Resume extends Command {
+export default class Resume extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'resume',
@@ -59,5 +59,3 @@ class Resume extends Command {
         } else resume();
     }
 }
-
-module.exports = Resume;

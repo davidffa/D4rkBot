@@ -5,7 +5,7 @@ import { Message } from 'eris';
 
 import figlet from 'figlet';
 
-class Ascii extends Command {
+export default class Ascii extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'ascii',
@@ -37,5 +37,3 @@ class Ascii extends Command {
         })
     }
 }
-
-module.exports = Ascii;

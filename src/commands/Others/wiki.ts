@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 
 import sbd from 'sbd';
 
-class Wiki extends Command {
+export default class Wiki extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'wiki',
@@ -68,5 +68,3 @@ class Wiki extends Command {
         msg.edit({ content: '', embed });
     }
 }
-
-module.exports = Wiki;

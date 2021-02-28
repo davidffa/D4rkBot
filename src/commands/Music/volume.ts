@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Volume extends Command {
+export default class Volume extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'volume',
@@ -69,5 +69,3 @@ class Volume extends Command {
         } else setVolume(args[0]);
     }
 }
-
-module.exports = Volume;

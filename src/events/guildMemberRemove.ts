@@ -2,7 +2,7 @@ import Client from '../structures/Client';
 
 import { Guild, Member } from 'eris';
 
-module.exports = class {
+export default class GuildMemberRemove {
     client: Client;
 
     constructor(client: Client) {

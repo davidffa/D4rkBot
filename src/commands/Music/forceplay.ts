@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Forceplay extends Command {
+export default class Forceplay extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'forceplay',
@@ -99,5 +99,3 @@ class Forceplay extends Command {
         }
     }
 }
-
-module.exports = Forceplay;

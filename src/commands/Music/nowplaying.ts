@@ -7,7 +7,7 @@ import Canvas from 'canvas';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
 
-class Nowplaying extends Command {
+export default class Nowplaying extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'nowplaying',
@@ -100,5 +100,3 @@ class Nowplaying extends Command {
         }
     }
 }
-
-module.exports = Nowplaying;

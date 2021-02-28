@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Unlock extends Command {
+export default class Unlock extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'unlock',
@@ -45,5 +45,3 @@ class Unlock extends Command {
         message.channel.createMessage(':unlock: Canal desbloqueado!');
     }
 }
-
-module.exports = Unlock;

@@ -5,7 +5,7 @@ import { Guild, Member } from 'eris';
 import { resolve } from 'path';
 import Canvas, { Canvas as CanvasOptions } from 'canvas';
 
-module.exports = class {
+export default class GuildMemberAdd {
     client: Client;
 
     constructor(client: Client) {

@@ -6,7 +6,7 @@ import { Message } from 'eris';
 const steam = require('steam-provider');
 const provider = new steam.SteamProvider();
 
-class Steam extends Command {
+export default class Steam extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'steam',
@@ -54,5 +54,3 @@ class Steam extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Steam;

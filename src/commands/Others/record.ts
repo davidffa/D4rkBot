@@ -8,7 +8,7 @@ import { resolve } from 'path';
 
 import { exec } from 'child_process';
 
-class Record extends Command {
+export default class Record extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'record',
@@ -139,5 +139,3 @@ class Record extends Command {
         message.channel.createMessage(':red_circle: Gravação de áudio iniciada, execute o comando de novo para parar a gravação!\nTempo máximo: `2 minutos`')
     }
 }
-
-module.exports = Record;

@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class Shuffle extends Command {
+export default class Shuffle extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'shuffle',
@@ -59,5 +59,3 @@ class Shuffle extends Command {
         } else shuffle();
     }
 }
-
-module.exports = Shuffle;

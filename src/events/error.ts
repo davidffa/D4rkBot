@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-module.exports = class {
+export default class OnError {
     client: Client;
 
     constructor(client: Client) {
@@ -9,7 +9,7 @@ module.exports = class {
 
     run(err: Error): void {
         if (err.message.includes('peer')) {
-            console.warn(`[Client Error] ${err.message}`);
+            console.log(`[Client Error] ${err.message}`);
             return;
         }
         console.error(err);

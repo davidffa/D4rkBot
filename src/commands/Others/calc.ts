@@ -5,7 +5,7 @@ import { Message } from 'eris';
 
 import { create, all } from 'mathjs';
 
-class Calc extends Command {
+export default class Calc extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'calc',
@@ -69,5 +69,3 @@ class Calc extends Command {
         message.channel.createMessage({ embed });
     }
 }
-
-module.exports = Calc;

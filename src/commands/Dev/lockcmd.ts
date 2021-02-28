@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 
 import { Message } from 'eris';
 
-class LockCmd extends Command {
+export default class LockCmd extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'lockcmd',
@@ -40,5 +40,3 @@ class LockCmd extends Command {
         }
     }
 }
-
-module.exports = LockCmd;
