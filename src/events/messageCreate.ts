@@ -72,7 +72,7 @@ export default class MessageCreate {
             const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 10 * 1000 });
                 
             collector.on('collect', () => {
-                message.content = message.content.replace(cmdName, diduMean);
+                message.content = `${prefix}${diduMean}`;
                 this.client.emit('messageCreate', message);
                 msg.delete();
             });
