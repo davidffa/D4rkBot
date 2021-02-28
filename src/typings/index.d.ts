@@ -24,7 +24,7 @@ interface Utils {
 } 
 
 interface Timeouts {
-    timeout: ReturnType<typeof setTimeout>;
+    timeout: NodeJS.Timeout;
     message: Message;
 }
 
@@ -43,6 +43,6 @@ interface GuildCache {
 }
 
 interface Records {
-    timeout: ReturnType<typeof setTimeout>;
+    timeout: NodeJS.Timeout;
     users: Array<string>;
 }
