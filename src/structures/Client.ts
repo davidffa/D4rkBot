@@ -20,7 +20,6 @@ export default class D4rkClient extends Client {
     music: Music;
     utils: Utils;
     records: Map<string, Records>;
-    guildCache: Map<string, GuildCache>;
     cooldowns: Map<string, Map<string, number>>;
     commandsUsed: number;
     lockedCmds: Array<string>;
@@ -52,7 +51,6 @@ export default class D4rkClient extends Client {
 
         this.commands = [];
         this.records = new Map();
-        this.guildCache = new Map();
         this.cooldowns = new Map();
         this.lockedCmds = [];
         this.botDB = botDatabase;
@@ -144,15 +142,15 @@ export default class D4rkClient extends Client {
 
         this.guilds.forEach((guild): void => {
             const guildData = guildsDB.find(g => g.guildID === guild.id);
-            
-            this.guildCache.set(guild.id, {
+
+            guild.dbCache = {
                 prefix: guildData?.prefix || 'db.',
                 disabledCmds: guildData?.disabledCmds || [],
                 autoRole: guildData?.roleID || '',
                 welcomeChatID: guildData?.welcomeChatID || '',
                 memberRemoveChatID: guildData?.memberRemoveChatID || '',
                 djRole: guildData?.djrole || '',
-            })
+            };
         });
 
         const bot = await this.botDB.findOne({ botID: this.user.id });

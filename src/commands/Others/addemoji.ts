@@ -38,7 +38,7 @@ export default class Addemoji extends Command {
             }
             imageURL = args[0];
             if (!args[1]) {
-                message.channel.createMessage(`:x: Argumentos em falta! **Use:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}addemoji <URL/Anexo> <nome>`);
+                message.channel.createMessage(`:x: Argumentos em falta! **Use:** ${message.channel.guild.dbCache.prefix}addemoji <URL/Anexo> <nome>`);
                 return;
             }
             emojiName = args[1];

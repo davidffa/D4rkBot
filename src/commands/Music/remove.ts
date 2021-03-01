@@ -62,7 +62,7 @@ export default class Remove extends Command {
 
         const isDJ = await this.client.music.hasDJRole(member);
 
-        if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+        if (message.channel.guild.dbCache.djRole) {
             if (isDJ || (player.queue[parseInt(args[0])-1] && message.author === player.queue[parseInt(args[0])-1].requester) || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
                 remove(parseInt(args[0]));
                 return;

@@ -72,7 +72,7 @@ export default class Help extends Command {
             embed.addField(`> :information_source: Informação [${Info.length}]`, `\`\`\`${Info.join(' | ')}\`\`\``)
                 .addField(`> <a:disco:803678643661832233> Musica [${Music.length}]`, `\`\`\`${Music.join(' | ')}\`\`\``)
                 .addField(`> :books: Outros [${Others.length}]`, `\`\`\`${Others.join(' | ')}\`\`\``)
-                .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
+                .addField(`:thinking: Mais ajuda`, `Faz \`${(message.channel.type === 0 && message.channel.guild.dbCache.prefix) || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
                 .addField(`<:megathink:803675654376652880> Ainda mais ajuda`, '[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)')
             
             const msg = await message.channel.createMessage({ embed });
@@ -109,7 +109,7 @@ export default class Help extends Command {
         data.push(`**Nome:** ${cmd.name}`);
         data.push(`**Descriçao:** ${cmd.description}`);
         cmd.aliases && data.push(`**Alternativas:** ${cmd.aliases.join(', ')}`);
-        cmd.usage && data.push(`**Uso:** ${(message.guildID && this.client.guildCache.get(message.guildID)?.prefix) || 'db.'}${cmd.name} ${cmd.usage}`);
+        cmd.usage && data.push(`**Uso:** ${(message.channel.type === 0 && message.channel.guild.dbCache.prefix) || 'db.'}${cmd.name} ${cmd.usage}`);
 
         data.push(`**Cooldown:** ${cmd.cooldown || 3} segundo(s)`);
 

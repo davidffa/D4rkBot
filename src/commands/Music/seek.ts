@@ -82,7 +82,7 @@ export default class Seek extends Command {
 
         const isDJ = await this.client.music.hasDJRole(member);
 
-        if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+        if (message.channel.guild.dbCache.djRole) {
             if (isDJ || message.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
                 seek(args[0]);
                 return;

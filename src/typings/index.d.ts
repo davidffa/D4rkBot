@@ -46,3 +46,11 @@ interface Records {
     timeout: NodeJS.Timeout;
     users: Array<string>;
 }
+
+import 'eris';
+
+declare module 'eris' {
+    export interface Guild {
+        dbCache: GuildCache;
+    }
+}

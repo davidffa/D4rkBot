@@ -88,7 +88,7 @@ export default class Lyrics extends Command {
             const player = this.client.music.players.get(message.guildID as string);
 
             if (!player || !player.queue.current) {
-                message.channel.createMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
+                message.channel.createMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${message.channel.guild.dbCache.prefix}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
                 return;
             }
 

@@ -35,9 +35,9 @@ export default class Eval extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.author.id !== '334054158879686657') return;
         
-        if (message.guildID) {
-            this.player = this.client.music.get(message.guildID);
-            this.guildCache = this.client.guildCache.get(message.guildID);
+        if (message.channel.type === 0) {
+            this.player = this.client.music.get(message.channel.guild.id);
+            this.guildCache = message.channel.guild?.dbCache;
         }else { 
             this.player = null
             this.guildCache = null;

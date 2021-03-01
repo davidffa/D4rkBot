@@ -22,7 +22,7 @@ export default class Djrole extends Command {
             return;
         }
 
-        const data = this.client.guildCache.get(message.guildID as string);
+        const data = message.channel.guild.dbCache;
 
         if (!args.length) {
             if (!data?.djRole) {

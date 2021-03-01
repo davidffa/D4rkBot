@@ -55,7 +55,7 @@ export default class Stop extends Command {
         if (await this.client.music.hasDJRole(member)) {
             stop(true);
         }else {
-            if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+            if (message.channel.guild.dbCache.djRole) {
                 if (allQueueRequester(message.author) 
                     || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1
                     || (message.member && voiceChannel.permissionsOf(message.member).has('voiceMoveMembers'))) {

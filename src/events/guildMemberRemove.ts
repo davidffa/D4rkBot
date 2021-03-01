@@ -10,7 +10,7 @@ export default class GuildMemberRemove {
     }
 
     async run(guild: Guild, member: Member) {
-        const guildData = this.client.guildCache.get(guild.id);
+        const guildData = guild.dbCache;
         
         if (guildData && guildData.memberRemoveChatID) {
             const channel = guild.channels.get(guildData.memberRemoveChatID);

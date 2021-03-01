@@ -52,7 +52,7 @@ export default class Skip extends Command {
         if (await this.client.music.hasDJRole(member)) {
             skip(true);
         }else {
-            if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+            if (message.channel.guild.dbCache.djRole) {
                 if (message.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
                     skip(false);
                     return;

@@ -36,7 +36,7 @@ export default class Qrcode extends Command {
                 }
 
                 if (!args[1]) {
-                    message.channel.createMessage(`:x: **Use:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode criar <Texto>`);
+                    message.channel.createMessage(`:x: **Use:** ${(message.channel.type === 0 && message.channel.guild.dbCache.prefix) || 'db.'}qrcode criar <Texto>`);
                     return;
                 }
 
@@ -89,7 +89,7 @@ export default class Qrcode extends Command {
                 message.channel.createMessage({ embed: ebd });
                 break;
             default:
-                message.channel.createMessage(`:x: **Use:** \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode <Criar/Ler> (<Texto>/[URL/Anexo])\``)
+                message.channel.createMessage(`:x: **Use:** \`${(message.channel.type === 0 && message.channel.guild.dbCache.prefix) || 'db.'}qrcode <Criar/Ler> (<Texto>/[URL/Anexo])\``)
                 break;
         }
     }

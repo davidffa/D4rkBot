@@ -10,7 +10,6 @@ export default class GuildDelete {
     }
 
     async run(guild: Guild) {
-        this.client.guildCache.delete(guild.id);
         this.client.guildDB.findOneAndDelete({ guildID: guild.id });
 
         const embed = new this.client.embed()

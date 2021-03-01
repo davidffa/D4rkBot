@@ -135,7 +135,7 @@ export default class D4rkManager extends Manager {
     }
 
     async hasDJRole(member: Member): Promise<boolean> {
-        const guildData = this.client.guildCache.get(member.guild.id);
+        const guildData = member.guild.dbCache;
         
         if (guildData && guildData.djRole) {
             const djRoleID = guildData.djRole;

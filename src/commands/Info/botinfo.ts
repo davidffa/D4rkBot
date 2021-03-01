@@ -20,8 +20,10 @@ export default class Botinfo extends Command {
     }
 
     async execute(message: Message): Promise<void> {
-        if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+        if (message.channel.type !== 0) return;
+
+        if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
@@ -48,7 +50,7 @@ export default class Botinfo extends Command {
             .addField('<a:malakoi:478003266815262730> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)
             .addField(':desktop: Servidores em que estou', `\`${this.client.guilds.size}\``, true)
             .addField(':ping_pong: Ping da API', `\`${Math.round(WSPing)}ms\``, true)
-            .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}\``, true)
+            .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${message.channel.guild.dbCache.prefix}\``, true)
             .addField('<:lang_js:803678540528615424> Versão NodeJS', `\`${process.version}\``, true)
             .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
             .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)

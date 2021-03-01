@@ -28,7 +28,7 @@ export default class Setprefix extends Command {
             return;
         }
 
-        const guildData = this.client.guildCache.get(message.guildID as string);
+        const guildData = message.channel.guild.dbCache;
 
         if (guildData) guildData.prefix = args[0].trim();
 
