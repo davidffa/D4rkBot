@@ -214,7 +214,7 @@ export default class D4rkClient extends Client {
                     break;
                 case 6:
                     this.editStatus('online', {
-                        name: `Online há ${this.utils.msToDate(this.uptime)}`,
+                        name: `Online há ${this.utils.msToDate(process.uptime() * 1e3)}`,
                         type: 1
                     });
                     break;
