@@ -127,7 +127,7 @@ export default class Search extends Command {
                     const player = currPlayer || createPlayer();
 
                     if (player.state === 'DISCONNECTED') {
-                        if (voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
+                        if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
                             message.channel.createMessage(':x: O canal de voz está cheio!');
                             player.destroy();
                             return;
