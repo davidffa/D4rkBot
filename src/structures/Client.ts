@@ -22,6 +22,7 @@ export default class D4rkClient extends Client {
     records: Map<string, Records>;
     cooldowns: Map<string, Map<string, number>>;
     commandsUsed: number;
+    private lastCmdsUsed: number;
     lockedCmds: Array<string>;
     botDB: typeof botDatabase;
     guildDB: typeof guildDatabase;
@@ -154,21 +155,22 @@ export default class D4rkClient extends Client {
         });
 
         const bot = await this.botDB.findOne({ botID: this.user.id });
+        this.lastCmdsUsed = bot?.commands || 0;
         this.commandsUsed = bot?.commands || 0;
         if (bot?.lockedCmds) this.lockedCmds = bot.lockedCmds;
 
         //save total cmds used to database
         setInterval(async (): Promise<void> => {
-            const cmdsUsed = await this.botDB.findOne({ botID: this.user.id });
-            if (!cmdsUsed || !cmdsUsed.commands) return;
-
-            if (cmdsUsed.commands < this.commandsUsed) {
-                cmdsUsed.commands = this.commandsUsed;
-                cmdsUsed.save();
+            if (this.lastCmdsUsed < this.commandsUsed) {
+                await this.botDB.updateOne({
+                    botID: this.user.id
+                }, {
+                    commands: this.commandsUsed
+                });
             }
-        }, 3e5);
+        }, 5e3);
 
-        console.log('Bot cache carregada.');
+        console.log('Guild Cache carregada.');
     }
 
     loadStatus(): void {
