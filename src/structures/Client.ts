@@ -167,6 +167,7 @@ export default class D4rkClient extends Client {
                 }, {
                     commands: this.commandsUsed
                 });
+                this.lastCmdsUsed = this.commandsUsed;
             }
         }, 5e3);
 
