@@ -169,7 +169,7 @@ export default class D4rkClient extends Client {
                 });
                 this.lastCmdsUsed = this.commandsUsed;
             }
-        }, 5e3);
+        }, 3e5);
 
         console.log('Guild Cache carregada.');
     }
