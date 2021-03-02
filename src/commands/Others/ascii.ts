@@ -22,7 +22,7 @@ export default class Ascii extends Command {
     execute(message: Message, args: Array<string>): void {
         const text = args.join(' ');
 
-        if (args.length > 15) {
+        if (text.length > 15) {
             message.channel.createMessage(':x: Máximo de 15 caracteres permitido!');
             return;
         }
