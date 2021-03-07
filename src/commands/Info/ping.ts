@@ -7,7 +7,7 @@ export default class Ping extends Command {
     constructor(client: Client) {
         super(client, {
             name: 'ping',
-            description: 'Mostra o meu ping, o da API e o da Base de dados',
+            description: 'Mostra o ping de envio de mensagens, o da API e o da Base de dados',
             category: 'Info',
             aliases: ['latencia', 'latency'],
             dm: true,
@@ -29,14 +29,18 @@ export default class Ping extends Command {
         const WSPing = this.client.shards.get(0)?.latency || 0;
 
         const res = [
-            `<:bot:804028762307821578> \`${pingMsg}ms\``,
-            `:stopwatch: \`${Math.round(WSPing)}ms\``,
+            `:incoming_envelope: \`${pingMsg}ms\``,
+            `:heartbeat: \`${Math.round(WSPing)}ms\``,
             `<:MongoDB:773610222602158090> \`${pingDB}ms\``
-        ]
+        ];
+
+        const mediumPing = (pingMsg + WSPing + pingDB) / 3;
+
+        const color = mediumPing < 150 ? 0x2ecc71 : mediumPing < 300 ? 0xffff00 : 0xe74c3c;
 
         const embed = new this.client.embed()
             .setTitle('🏓 Pong')
-            .setColor('RANDOM')
+            .setColor(color)
             .setDescription(res.join('\n'))
             .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
             .setTimestamp();
