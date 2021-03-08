@@ -39,6 +39,16 @@ export default class Skip extends Command {
             player.stop();
 
             if (!player.queue[0]) {
+                if (player.textChannel) {
+                    const channel = this.client.getChannel(player.textChannel);
+                    if (channel.type !== 0) return;
+    
+                    if (player.lastPlayingMsgID) {
+                        const msg = channel.messages.get(player.lastPlayingMsgID);
+                        if (msg) msg.delete();
+                    }
+                }
+                
                 player.destroy();
                 message.channel.createMessage(':bookmark_tabs: A lista de músicas acabou!');
                 return;

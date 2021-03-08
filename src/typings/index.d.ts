@@ -54,3 +54,11 @@ declare module 'eris' {
         dbCache: GuildCache;
     }
 }
+
+import 'erela.js';
+
+declare module 'erela.js' {
+    export interface Player {
+        lastPlayingMsgID?: string;
+    }
+}

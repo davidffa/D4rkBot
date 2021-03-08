@@ -36,6 +36,15 @@ export default class Stop extends Command {
         if (voiceChannel.type !== 2) return;
 
         const stop = (dj: Boolean): void => {
+            if (player.textChannel) {
+                const channel = this.client.getChannel(player.textChannel);
+                if (channel.type !== 0) return;
+
+                if (player.lastPlayingMsgID) {
+                    const msg = channel.messages.get(player.lastPlayingMsgID);
+                    if (msg) msg.delete();
+                }
+            }
             player.destroy();
 
             message.channel.createMessage(dj ? ':stop_button:  Música parada por um DJ!' : ':stop_button: Música parada!');

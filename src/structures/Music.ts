@@ -68,7 +68,7 @@ export default class D4rkManager extends Manager {
             console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMOTIVO: ${reason.reason}`);
         });
 
-        this.on('trackStart', (player, track): void => {
+        this.on('trackStart', async (player, track): Promise<void> => {
             /*** Heroku lavalink ***/
             if (player.guild === process.env.TESTGUILDID) {
                 setTimeout(() => {
@@ -80,6 +80,15 @@ export default class D4rkManager extends Manager {
 
             if (!player.textChannel) return;
 
+            const channel = this.client.getChannel(player.textChannel);
+            if (channel.type !== 0) return;
+
+            if (player.lastPlayingMsgID) {
+                const msg = channel.messages.get(player.lastPlayingMsgID);
+
+                if (msg) msg.delete();
+            }
+            
             const requester = player.queue.current?.requester as User;
 
             const embed = new this.client.embed()
@@ -93,7 +102,7 @@ export default class D4rkManager extends Manager {
                 .setTimestamp()
                 .setFooter(`${requester.username}#${requester.discriminator}`, requester.dynamicAvatarURL());
         
-            this.client.createMessage(player.textChannel, { embed });
+            player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
         });
 
         this.on('trackStuck', (player, track): void => {
@@ -128,8 +137,16 @@ export default class D4rkManager extends Manager {
 
         this.on('queueEnd', (player): void => {
             if (player.textChannel) {
-                this.client.createMessage(player.textChannel, `:bookmark_tabs: A lista de músicas acabou!`);
+                const channel = this.client.getChannel(player.textChannel);
+                if (channel.type !== 0) return;
+
+                if (player.lastPlayingMsgID) {
+                    const msg = channel.messages.get(player.lastPlayingMsgID);
+                    if (msg) msg.delete();
+                }
                 player.destroy();
+
+                channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
             }
         });
     }
