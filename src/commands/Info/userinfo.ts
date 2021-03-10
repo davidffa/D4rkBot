@@ -95,7 +95,7 @@ export default class Userinfo extends Command {
             SYSTEM: '',
             BUGHUNTER_LEVEL_2: '<:BugHunterLvl2:803665318274400256>',
             VERIFIED_BOT: '<:vBot1:804393321862397952><:vBot2:804393321854140440>',
-            EARLY_VERIFIED_BOT_DEVELOPER: '<:dev_badge:803665036769230899>'  
+            VERIFIED_BOT_DEVELOPER: '<:dev_badge:803665036769230899>'  
         }
 
         const flags = user.publicFlags;
