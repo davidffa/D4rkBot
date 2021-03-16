@@ -1,6 +1,6 @@
 import { readdirSync, unlinkSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { Client, ClientOptions, User, Guild } from 'eris';
+import { Client, ClientOptions, User, Guild, Constants } from 'eris';
 import { NodeOptions, VoicePacket } from 'erela.js';
 import moment from 'moment';
 moment.locale('pt');
@@ -13,7 +13,7 @@ import msToDate from '../utils/msToDate';
 import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
 
-import { Command, Utils, GuildCache, Records } from '../typings/index';
+import { Command, Utils, Records } from '../typings/index';
 
 export default class D4rkClient extends Client {
     commands: Array<Command>;
@@ -31,7 +31,7 @@ export default class D4rkClient extends Client {
     constructor() {
         const clientOptions: ClientOptions = {
             defaultImageFormat: 'png',
-            defaultImageSize: 2048,
+            defaultImageSize: Constants.ImageSizeBoundaries.MAXIMUM,
             getAllUsers: true,
             restMode: true,
             compress: true,
