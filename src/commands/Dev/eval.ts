@@ -1,8 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import { ReactionCollector } from '../../structures/Collector';
 
-import { Message, Member, Emoji } from 'eris';
-import { ReactionCollector } from 'eris-collector';
+import { Message, User, Emoji } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -106,46 +106,46 @@ export default class Eval extends Command {
             msg.addReaction('x_:751062867444498432');
             msg.addReaction('📋');
 
-            const filter = (_m: Message, emoji: Emoji, member: Member) => (emoji.id === '751062867444498432' || emoji.name === '📋') && member === message.member;
+            const filter = (r: Emoji, u: User) => (r.id === '751062867444498432' || r.name === '📋') && u === message.author;
 
-            const collector = new ReactionCollector(this.client, msg, filter, { time: 3 * 60 * 1000, max: 1 });
-                
-            collector.on('collect', async (m, emoji) => {
-                switch(emoji.name) {
+            const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
+
+            collector.on('collect', async r => {
+                switch(r.name) {
                     case '📋':
                         const dmChannel = await message.author.getDMChannel();
-                        dmChannel.createMessage(m.content);
+                        dmChannel.createMessage(msg.content);
 
                         if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-                            m.removeReactions();
+                            msg.removeReactions();
                         else {
-                            m.removeReaction('x_:751062867444498432');
-                            m.removeReaction('📋');
+                            msg.removeReaction('x_:751062867444498432');
+                            msg.removeReaction('📋');
                         }  
         
-                        m.edit('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
+                        msg.edit('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
 
                         break;
                     case 'x_':
-                        if (m.attachments.length === 1) {
-                            m.delete();
+                        if (msg.attachments.length === 1) {
+                            msg.delete();
                             return;
                         }
         
                         if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-                            m.removeReactions();
+                            msg.removeReactions();
                         else {
-                            m.removeReaction('x_:751062867444498432');
-                            m.removeReaction('📋');
+                            msg.removeReaction('x_:751062867444498432');
+                            msg.removeReaction('📋');
                         }  
         
-                        m.edit('<a:verificado:803678585008816198> Resultado da eval fechado!');
+                        msg.edit('<a:verificado:803678585008816198> Resultado da eval fechado!');
                         break;
                 }
             });
 
-            collector.on('end', (_c, reason) => {
-                if (reason === 'time')
+            collector.on('end', reason => {
+                if (reason === 'Time')
                     msg.removeReaction('x_:751062867444498432');
                     msg.removeReaction('📋');
             });

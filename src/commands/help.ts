@@ -1,8 +1,8 @@
 import Command from '../structures/Command';
 import Client from '../structures/Client';
+import { ReactionCollector } from '../structures/Collector';
 
-import { Message, Emoji, Member } from 'eris';
-import { ReactionCollector } from 'eris-collector';
+import { Message, Emoji, User } from 'eris';
 
 export default class Help extends Command {
     constructor(client: Client) {
@@ -78,15 +78,15 @@ export default class Help extends Command {
             const msg = await message.channel.createMessage({ embed });
             await msg.addReaction('x_:751062867444498432');
 
-            const filter = (_m: Message, emoji: Emoji, member: Member) => emoji.id === '751062867444498432' && member === message.member;
+            const filter = (r: Emoji, user: User) => r.id === '751062867444498432' && user === message.author;
 
             const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
             
-            collector.on('collect', m => {
-                m.delete();
+            collector.on('collect', () => {
+                msg.delete();
             });
 
-            collector.on('end', (_c, reason) => {
+            collector.on('end', reason => {
                 if (reason === 'time')
                     msg.removeReaction('x_:751062867444498432');
             });

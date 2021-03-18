@@ -1,9 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import { ReactionCollector, MessageCollector } from '../../structures/Collector';
 
-import { Message, Emoji, Member } from 'eris';
-
-import { ReactionCollector, MessageCollector } from 'eris-collector';
+import { Message, Emoji, User } from 'eris';
 
 export default class Logs extends Command {
     constructor(client: Client) {
@@ -152,11 +151,11 @@ export default class Logs extends Command {
             });
         }
 
-        const filter = (_m: Message, emoji: Emoji, member: Member) => (emoji.name === '1⃣' || emoji.name === '2⃣') && member === message.member;
+        const filter = (r: Emoji, user: User) => (r.name === '1⃣' || r.name === '2⃣') && user === message.author;
         const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
-        collector.on('collect', async (_m, emoji) => {
-            switch (emoji.name) {
+        collector.on('collect', async r => {
+            switch (r.name) {
                 case '1⃣':
                     message.channel.createMessage('Escreva o ID ou o nome do canal para onde as mensagens de bem-vindo irão (Escreva 0 para desativar).');
                     welcomeMsgCollector();
@@ -170,7 +169,7 @@ export default class Logs extends Command {
             msg.removeReaction('2⃣');
         });
 
-        collector.on('end', (_c, reason) => {
+        collector.on('end', reason => {
             if (reason === 'time') {
                 msg.removeReaction('1⃣');
                 msg.removeReaction('2⃣');

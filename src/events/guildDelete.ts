@@ -25,5 +25,17 @@ export default class GuildDelete {
         const channel = await this.client.users.get('334054158879686657')?.getDMChannel();
         
         channel && this.client.createMessage(channel.id, { embed });
+
+        this.client.reactionCollectors.forEach(collector => {
+            if (collector.message.guildID === guild.id) {
+                collector.stop('Guild Delete');
+            }
+        });
+
+        this.client.messageCollectors.forEach(collector => {
+            if (collector.channel.type === 0 && collector.channel.guild.id === guild.id) {
+                collector.stop('Guild Delete');
+            }
+        })
     }
 }

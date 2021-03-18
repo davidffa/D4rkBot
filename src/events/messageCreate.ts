@@ -1,9 +1,9 @@
 import Client from '../structures/Client';
+import { ReactionCollector } from '../structures/Collector';
 
 import { existsSync, mkdirSync, appendFileSync } from 'fs';
 
-import { Message, Emoji, Member } from 'eris';
-import { ReactionCollector } from 'eris-collector';
+import { Message, Emoji, User } from 'eris';
 
 export default class MessageCreate {
     client: Client;
@@ -13,6 +13,12 @@ export default class MessageCreate {
     }
 
     async run(message: Message) {
+        this.client.messageCollectors.forEach(collector => {
+            if (collector.channel.id === message.channel.id) {
+                collector.collect(message);
+            }
+        })
+
         const prefix = (message.channel.type === 0 && message.channel.guild.dbCache.prefix) || 'db.';
         
         if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {
@@ -67,7 +73,7 @@ export default class MessageCreate {
             
             msg.addReaction('shell:777546055952498708');
 
-            const filter = (_m: Message, emoji: Emoji, member: Member) => emoji.id === '777546055952498708' && member === message.member;
+            const filter = (r: Emoji, user: User) => r.id === '777546055952498708' && user === message.author;
 
             const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 10 * 1000 });
                 
@@ -77,7 +83,7 @@ export default class MessageCreate {
                 msg.delete();
             });
 
-            collector.on('end', (_c, reason) => {
+            collector.on('end', reason => {
                 if (reason === 'time')
                     msg.delete();
             });

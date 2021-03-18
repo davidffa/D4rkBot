@@ -1,8 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import { ReactionCollector } from '../../structures/Collector';
 
-import { Message, Emoji, Member } from 'eris';
-import { ReactionCollector } from 'eris-collector';
+import { Message, Emoji, User } from 'eris';
 
 import fetch from 'node-fetch';
 import cio from 'cheerio';
@@ -130,18 +130,18 @@ export default class Lyrics extends Command {
         msg.addReaction('➡️');
 
         
-        const filter = (_m: Message, emoji: Emoji, member: Member) => (emoji.name === '⬅️' || emoji.name === '➡️') && member === message.member;
+        const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
 
         const collector = new ReactionCollector(this.client, msg, filter, { time: 10 * 60 * 1000 });
 
-        collector.on('collect', (m, emoji) => {
+        collector.on('collect', r => {
             if (!res || message.channel.type !== 0) return;
 
             if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                m.removeReaction(emoji.name, message.author.id);
+                msg.removeReaction(r.name, message.author.id);
             }
             
-            switch (emoji.name) {
+            switch (r.name) {
                 case '⬅️':
                     if (page === 1) return;
                     page--;
@@ -155,7 +155,7 @@ export default class Lyrics extends Command {
             embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
 
-            m.edit({ embed });
+            msg.edit({ embed });
         })
     }
 }

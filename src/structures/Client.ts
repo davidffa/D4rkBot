@@ -12,6 +12,7 @@ import msToHour from '../utils/msToHour';
 import msToDate from '../utils/msToDate';
 import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
+import { ReactionCollector, MessageCollector } from './Collector';
 
 import { Command, Utils, Records } from '../typings/index';
 
@@ -27,6 +28,8 @@ export default class D4rkClient extends Client {
     botDB: typeof botDatabase;
     guildDB: typeof guildDatabase;
     embed: typeof Embed;
+    reactionCollectors: Array<ReactionCollector>;
+    messageCollectors: Array<MessageCollector>;
 
     constructor() {
         const clientOptions: ClientOptions = {
@@ -57,6 +60,8 @@ export default class D4rkClient extends Client {
         this.botDB = botDatabase;
         this.guildDB = guildDatabase;
         this.embed = Embed;
+        this.reactionCollectors = [];
+        this.messageCollectors = [];
 
         const findUser = async (param: string, guild: Guild): Promise<User|undefined> => {
             let user;

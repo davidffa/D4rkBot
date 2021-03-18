@@ -1,8 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import { MessageCollector } from '../../structures/Collector';
 
 import { Message } from 'eris';
-import { MessageCollector } from 'eris-collector';
 
 import { Player } from 'erela.js';
 
@@ -143,7 +143,7 @@ export default class Search extends Command {
                         message.channel.createMessage(`:bookmark_tabs: Adicionado à lista \`${res.tracks[idx-1].title}\``);
                 });
 
-                collector.on('end', (_c, reason) => {
+                collector.on('end', reason => {
                     this.client.music.searchMsgCollectors.delete(message.author.id);
                     if (reason === 'time')
                         msg.edit({ content: ':x: Pesquisa cancelada!', embed: {} });

@@ -1,8 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import { ReactionCollector, MessageCollector } from '../../structures/Collector';
 
-import { Message, Member, Emoji as ErisEmoji } from 'eris';
-import { ReactionCollector, MessageCollector } from 'eris-collector';
+import { Message, User, Emoji as ErisEmoji } from 'eris';
 
 import fetch from 'node-fetch';
 
@@ -112,17 +112,17 @@ export default class Emoji extends Command {
                 msg.addReaction('⬅️');
                 msg.addReaction('➡️');
 
-                const filter = (_m: Message, emoji: ErisEmoji, member: Member) => (emoji.name === '⬅️' || emoji.name === '➡️') && member === message.member;
+                const filter = (r: ErisEmoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
                 const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
-                collector.on('collect', async (_m, emoji) => {
+                collector.on('collect', async r => {
                     if (msg.channel.type !== 0) return;
 
                     if (msg.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                        msg.removeReaction(emoji.name, message.author.id);
+                        msg.removeReaction(r.name, message.author.id);
                     }
 
-                    switch (emoji.name) {
+                    switch (r.name) {
                         case '⬅️':
                             if (page === 1) return;
                             page--;
