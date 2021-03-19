@@ -58,6 +58,16 @@ export class ReactionCollector extends EventEmitter3 {
     }
   }
 
+  remove(reaction: Emoji, user: User) {
+    if (this.filter && this.filter(reaction, user)) {
+      this.reactionCount++;
+      this.emit('remove', reaction, user);
+
+      if (this.options.max && this.reactionCount === this.options.max)
+        this.stop('Max');
+    }
+  }
+
   stop(reason: string = 'Manual') { 
     if (this.timeout) {
       clearTimeout(this.timeout);

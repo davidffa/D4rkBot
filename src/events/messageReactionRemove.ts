@@ -12,7 +12,9 @@ export default class MessageReactionRemove {
   run(message: Message, reaction: Emoji, userID: string) {
     this.client.reactionCollectors.forEach(collector => {
       if (collector.message.id === message.id) {
-        collector.emit('remove', reaction, this.client.users.get(userID));
+        const user = this.client.users.get(userID);
+        if (user)
+          collector.remove(reaction, user);
       }
     });
   }

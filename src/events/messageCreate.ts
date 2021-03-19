@@ -84,7 +84,7 @@ export default class MessageCreate {
             });
 
             collector.on('end', reason => {
-                if (reason === 'time')
+                if (reason === 'Time')
                     msg.delete();
             });
 
