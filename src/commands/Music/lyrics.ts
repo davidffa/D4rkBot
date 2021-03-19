@@ -132,15 +132,11 @@ export default class Lyrics extends Command {
         
         const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
 
-        const collector = new ReactionCollector(this.client, msg, filter, { time: 10 * 60 * 1000 });
+        const collector = new ReactionCollector(this.client, msg, filter, { time: 6 * 60 * 1000, max: 20 });
 
-        collector.on('collect', r => {
-            if (!res || message.channel.type !== 0) return;
+        const changePage = (r: Emoji): void => {
+            if (!res) return;
 
-            if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                msg.removeReaction(r.name, message.author.id);
-            }
-            
             switch (r.name) {
                 case '⬅️':
                     if (page === 1) return;
@@ -156,6 +152,28 @@ export default class Lyrics extends Command {
                 .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
 
             msg.edit({ embed });
-        })
+        }
+
+        collector.on('collect', r => {
+            if (message.channel.type !== 0) return;
+
+            if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+                msg.removeReaction(r.name, message.author.id);
+            }
+            
+            changePage(r);
+        });
+
+        collector.on('remove', r => {
+            if (message.channel.type !== 0) return;
+
+            if (!message.channel.permissionsOf(this.client.user.id).has('manageMessages'))
+                changePage(r);    
+        });
+
+        collector.on('end', () => {
+            msg.removeReaction('⬅️');
+            msg.removeReaction('➡️');
+        });
     }
 }
