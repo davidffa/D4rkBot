@@ -165,15 +165,12 @@ export default class Logs extends Command {
                     byeMsgCollector();
                     break;
             }
-            msg.removeReaction('1⃣');
-            msg.removeReaction('2⃣');
+            
         });
 
-        collector.on('end', reason => {
-            if (reason === 'time') {
-                msg.removeReaction('1⃣');
-                msg.removeReaction('2⃣');
-            }  
+        collector.on('end', () => {
+            msg.removeReaction('1⃣');
+            msg.removeReaction('2⃣');
         });
     }
 }

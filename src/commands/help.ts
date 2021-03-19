@@ -87,7 +87,7 @@ export default class Help extends Command {
             });
 
             collector.on('end', reason => {
-                if (reason === 'time')
+                if (reason === 'Time')
                     msg.removeReaction('x_:751062867444498432');
             });
 
