@@ -62,10 +62,13 @@ export default class Eval extends Command {
                 evaled = await evaled;
 
             const stop = process.hrtime(start);
+
+            const time = ((stop[0] * 1e9) + stop[1]) / 1e6;
+
             const response = [
                 `:outbox_tray: **Output** \`\`\`js\n${clean(inspect(evaled, { depth: 0 }))}\n\`\`\``,
                 `<:lang_js:803678540528615424> **Tipo** \`\`\`js\n${new Type(evaled).is}\n\`\`\``,
-                `:timer: **Tempo** \`\`\`${((stop[0] * 1e9) + stop[1]) / 1e6}ms \`\`\``
+                `:timer: **Tempo** \`\`\`${time > 1 ? `${time}ms` : `${time*1e3}μs`}\`\`\``
             ];
             
             const res = response.join('\n');
