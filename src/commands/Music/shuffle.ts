@@ -37,6 +37,10 @@ export default class Shuffle extends Command {
 
         const member = message.member;
         if (!member) return;
+        if (player.radio) {
+            message.channel.createMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+            return;
+        }
 
         const shuffle = (): void => {
             if (!player.queue.length) {

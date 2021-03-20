@@ -26,6 +26,11 @@ export default class Loop extends Command {
             return;
         }
 
+        if (player.radio) {
+            message.channel.createMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+            return;
+        }
+
         const voiceChannelID = message.member?.voiceState.channelID;
 
         if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {

@@ -29,6 +29,11 @@ export default class Forceplay extends Command {
             message.channel.createMessage(`:x: Não estou a tocar nada. **Usa:**\`${message.channel.guild.dbCache.prefix}play <Nome/URL>\``);
             return;
         }
+        
+        if (player.radio) {
+            message.channel.createMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+            return;
+        }
 
         const voiceChannelID = message.member?.voiceState.channelID;
         

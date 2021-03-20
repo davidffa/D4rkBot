@@ -28,6 +28,11 @@ export default class Nowplaying extends Command {
             return;
         }
 
+        if (player.radio) {
+            message.channel.createMessage(`:radio: A tocar a rádio ${player.radio}`);
+            return;
+        }
+
         if (message.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
             const canvas = Canvas.createCanvas(370, 410);
             const ctx = canvas.getContext('2d');

@@ -60,5 +60,6 @@ import 'erela.js';
 declare module 'erela.js' {
     export interface Player {
         lastPlayingMsgID?: string;
+        radio?: string;
     }
 }

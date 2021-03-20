@@ -25,8 +25,8 @@ export default class Seek extends Command {
             return;
         }
 
-        if (!args.length) {
-            message.channel.createMessage(`:speaker: Volume atual: \`${player.volume}\``);
+        if (player.radio) {
+            message.channel.createMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
             return;
         }
 

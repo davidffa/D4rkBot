@@ -67,7 +67,7 @@ export default class Play extends Command {
             return;
         }
 
-        if (currPlayer && currPlayer.queue.duration > 8.64e7) {
+        if (currPlayer && !currPlayer.radio && currPlayer.queue.duration > 8.64e7) {
             message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
             return;
         }
@@ -90,6 +90,11 @@ export default class Play extends Command {
                 message.channel.createMessage(':x: Nenhuma música encontrada.');
             }else {
                 const player = currPlayer || createPlayer();
+
+                if (player.radio) {
+                    player.stop();
+                    delete player.radio;
+                }
 
                 if (player.state === 'DISCONNECTED') {
                     if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {

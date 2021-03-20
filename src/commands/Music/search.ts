@@ -22,7 +22,7 @@ export default class Search extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
         if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
@@ -125,6 +125,11 @@ export default class Search extends Command {
                     }
 
                     const player = currPlayer || createPlayer();
+
+                    if (player.radio) {
+                        player.stop();
+                        delete player.radio;
+                    }
 
                     if (player.state === 'DISCONNECTED') {
                         if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {

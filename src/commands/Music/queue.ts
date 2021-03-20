@@ -28,6 +28,11 @@ export default class Queue extends Command {
             message.channel.createMessage(':x: Não estou a tocar nada de momento!');
             return;
         }
+
+        if (player.radio) {
+            message.channel.createMessage(`:radio: A tocar a rádio ${player.radio}`);
+            return;
+        }
         
         const queue = player.queue;
 
