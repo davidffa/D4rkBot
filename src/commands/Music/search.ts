@@ -65,7 +65,7 @@ export default class Search extends Command {
             return;
         }
 
-        if (currPlayer && currPlayer.queue.duration > 8.64e7) {
+        if (currPlayer && !currPlayer.radio && currPlayer.queue.duration > 8.64e7) {
             message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
             return;
         }
