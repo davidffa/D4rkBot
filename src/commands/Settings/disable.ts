@@ -38,7 +38,7 @@ export default class Disable extends Command {
             return;
         }
 
-        const guildData = message.channel.guild.dbCache;
+        const guildData = this.client.guildCache.get(message.guildID as string);
 
         if (guildData) {
             if (guildData.disabledCmds.includes(command.name)) {

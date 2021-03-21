@@ -50,7 +50,7 @@ export default class Resume extends Command {
 
         const isDJ = await this.client.music.hasDJRole(member);
 
-        if (message.channel.guild.dbCache.djRole) {
+        if (this.client.guildCache.get(message.guildID as string)?.djRole) {
             if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
                 resume();
                 return;

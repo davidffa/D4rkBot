@@ -11,6 +11,7 @@ export default class GuildDelete {
 
     async run(guild: Guild) {
         this.client.guildDB.findOneAndDelete({ guildID: guild.id });
+        this.client.guildCache.delete(guild.id);
 
         const embed = new this.client.embed()
             .setTitle(':frowning2: Saí de um servidor')

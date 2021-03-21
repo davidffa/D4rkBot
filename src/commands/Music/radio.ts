@@ -87,7 +87,7 @@ export default class Radio extends Command {
     let player = this.client.music.players.get(message.guildID as string);
 
     if (player && !player.radio) {
-      if (message.channel.guild.dbCache.djRole) {
+      if (this.client.guildCache.get(message.guildID as string)?.djRole) {
         if (voiceChannel.voiceMembers.filter(m => !m.bot).length !== 1
           && (message.member && !await this.client.music.hasDJRole(message.member) && !voiceChannel.permissionsOf(message.member).has('voiceMoveMembers'))) {
             message.channel.createMessage(':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode usar este comando!');

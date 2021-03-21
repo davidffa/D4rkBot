@@ -21,7 +21,7 @@ export default class Autorole extends Command {
             return;
         }
 
-        const data = message.channel.guild.dbCache;
+        const data = this.client.guildCache.get(message.guildID as string);
 
         if (!args.length) {
             if (!data?.autoRole) {

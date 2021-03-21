@@ -37,7 +37,7 @@ export default class Eval extends Command {
         
         if (message.channel.type === 0) {
             this.player = this.client.music.get(message.channel.guild.id);
-            this.guildCache = message.channel.guild?.dbCache;
+            this.guildCache = this.client.guildCache.get(message.guildID as string);
         }else { 
             this.player = null
             this.guildCache = null;

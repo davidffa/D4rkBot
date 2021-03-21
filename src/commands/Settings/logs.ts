@@ -33,7 +33,7 @@ export default class Logs extends Command {
             return;
         }
 
-        const guildData = message.channel.guild.dbCache;
+        const guildData = this.client.guildCache.get(message.guildID as string);
         const welcomeChannel = message.channel.guild.channels.get(guildData?.welcomeChatID || '');
         const byeChannel = message.channel.guild.channels.get(guildData?.memberRemoveChatID || '');
 

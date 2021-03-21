@@ -14,7 +14,7 @@ import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
 import { ReactionCollector, MessageCollector } from './Collector';
 
-import { Command, Utils, Records } from '../typings/index';
+import { Command, Utils, Records, GuildCache } from '../typings/index';
 
 export default class D4rkClient extends Client {
     commands: Array<Command>;
@@ -22,6 +22,7 @@ export default class D4rkClient extends Client {
     utils: Utils;
     records: Map<string, Records>;
     cooldowns: Map<string, Map<string, number>>;
+    guildCache: Map<string, GuildCache>; 
     commandsUsed: number;
     private lastCmdsUsed: number;
     lockedCmds: Array<string>;
@@ -56,6 +57,7 @@ export default class D4rkClient extends Client {
         this.commands = [];
         this.records = new Map();
         this.cooldowns = new Map();
+        this.guildCache = new Map();
         this.lockedCmds = [];
         this.botDB = botDatabase;
         this.guildDB = guildDatabase;
@@ -173,14 +175,14 @@ export default class D4rkClient extends Client {
         this.guilds.forEach((guild): void => {
             const guildData = guildsDB.find(g => g.guildID === guild.id);
 
-            guild.dbCache = {
+            this.guildCache.set(guild.id, {
                 prefix: guildData?.prefix || 'db.',
                 disabledCmds: guildData?.disabledCmds || [],
                 autoRole: guildData?.roleID || '',
                 welcomeChatID: guildData?.welcomeChatID || '',
                 memberRemoveChatID: guildData?.memberRemoveChatID || '',
                 djRole: guildData?.djrole || '',
-            };
+            });
         });
 
         const bot = await this.botDB.findOne({ botID: this.user.id });

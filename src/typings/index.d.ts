@@ -47,14 +47,6 @@ interface Records {
     users: Array<string>;
 }
 
-import 'eris';
-
-declare module 'eris' {
-    export interface Guild {
-        dbCache: GuildCache;
-    }
-}
-
 import 'erela.js';
 
 declare module 'erela.js' {

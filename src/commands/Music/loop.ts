@@ -61,13 +61,13 @@ export default class Loop extends Command {
                 else
                     message.channel.createMessage('<a:disco:803678643661832233> Loop da queue desativado!');
             }else {
-                message.channel.createMessage(`:x: **Usa:** \`${message.channel.type === 0 && message.channel.guild.dbCache.prefix}loop <track/queue>\``);
+                message.channel.createMessage(`:x: **Usa:** \`${this.client.guildCache.get(message.guildID as string)?.prefix}loop <track/queue>\``);
             }
         }
 
         const isDJ = await this.client.music.hasDJRole(member);
 
-        if (message.channel.guild.dbCache.djRole) {
+        if (this.client.guildCache.get(message.guildID as string)?.djRole) {
             if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
                 loop(args[0]);
                 return;

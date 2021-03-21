@@ -26,7 +26,7 @@ export default class Forceplay extends Command {
         const player = this.client.music.players.get(message.guildID as string);
 
         if (!player) {
-            message.channel.createMessage(`:x: Não estou a tocar nada. **Usa:**\`${message.channel.guild.dbCache.prefix}play <Nome/URL>\``);
+            message.channel.createMessage(`:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(message.guildID as string)}play <Nome/URL>\``);
             return;
         }
         
@@ -53,7 +53,7 @@ export default class Forceplay extends Command {
 
         const isDJ = await this.client.music.hasDJRole(member)
 
-        if (message.channel.guild.dbCache.djRole) {
+        if (this.client.guildCache.get(message.guildID as string)?.djRole) {
             if (!isDJ && voiceChannel.voiceMembers.filter(m => !m.bot).length > 1) {
                 message.channel.createMessage(':x: Apenas alguém com o cargo DJ pode usar este comando!');
                 return;

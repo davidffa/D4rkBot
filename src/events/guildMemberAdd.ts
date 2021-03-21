@@ -13,7 +13,7 @@ export default class GuildMemberAdd {
     }
 
     async run(guild: Guild, member: Member): Promise<void> {
-        const guildData = member.guild.dbCache;
+        const guildData = this.client.guildCache.get(guild.id);
 
         if (!guildData) return;
 

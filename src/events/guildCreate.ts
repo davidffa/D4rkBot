@@ -10,14 +10,14 @@ export default class GuildCreate {
     }
 
     async run(guild: Guild) {
-        guild.dbCache = {
+        this.client.guildCache.set(guild.id, {
             prefix: 'db.',
             disabledCmds: [],
             autoRole: '',
             welcomeChatID: '',
             memberRemoveChatID: '',
             djRole: '',
-        };
+        });
 
         const embed = new this.client.embed()
             .setTitle('<:badgebooster:803666384373809233> Entrei num novo servidor')
