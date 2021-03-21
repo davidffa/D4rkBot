@@ -1,6 +1,6 @@
 import { readdirSync, unlinkSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { Client, ClientOptions, User, Guild, Constants } from 'eris';
+import { Client, ClientOptions, Member, User, Guild, Constants } from 'eris';
 import { NodeOptions, VoicePacket } from 'erela.js';
 import moment from 'moment';
 moment.locale('pt');
@@ -64,7 +64,7 @@ export default class D4rkClient extends Client {
         this.messageCollectors = [];
 
         const findUser = async (param: string, guild: Guild): Promise<User|undefined> => {
-            let user;
+            let user: User|undefined;
 
             if (Number(param) && (param.length >= 17 && param.length <= 19)) {
                 try {
@@ -77,10 +77,34 @@ export default class D4rkClient extends Client {
             }
 
             if (!user) {
+                let startsWith = false;
+                const lowerCaseParam = param.toLowerCase();
+    
+                for (const m of guild.members.values()) {
+                    if (m.nick === param || m.username === param) {
+                        user = m.user;
+                        break;
+                    }
+    
+                    if ((m.nick && m.nick.startsWith(lowerCaseParam)) || m.username.toLowerCase().startsWith(lowerCaseParam)) {
+                        user = m.user;
+                        startsWith = true;
+                        continue;
+                    }
+    
+                    if (!startsWith && (m.nick && m.nick.toLowerCase().includes(lowerCaseParam)) || m.username.toLowerCase().includes(lowerCaseParam)) {
+                        user = m.user;
+                    }
+                }
+            }
+
+            /*
+            if (!user) {
                 user = guild.members.find(m => (m.nick && m.nick === param) || (m.username === param))?.user
                     || guild.members.find(m => (m.nick && m.nick.toLowerCase().startsWith(param.toLowerCase())) || (m.username.toLowerCase().startsWith(param.toLowerCase())))?.user
                     || guild.members.find(m => (m.nick && m.nick.toLowerCase().includes(param.toLowerCase())) || (m.username.toLowerCase().includes(param.toLowerCase())))?.user
             }
+            */
 
             return user;
         }
