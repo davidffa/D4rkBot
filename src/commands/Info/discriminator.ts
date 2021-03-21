@@ -37,6 +37,6 @@ export default class Discriminator extends Command {
       return;
     }
 
-    message.channel.createMessage(`<:chat:804050576647913522> Membros com o discriminator **${discrimin}**:\n\`\`\`\n${members.slice(0, 20).join('\n')}${members.length > 20 ? `\nMais ${members.length - 20} resultados encontrados` : ''}\`\`\``);
+    message.channel.createMessage(`<:chat:804050576647913522> Membros com o discriminator **${discrimin}**:\n\`\`\`\n${members.slice(0, 30).join('\n')}${members.length > 30 ? `\n\nMais ${members.length - 30} resultados encontrados` : ''}\`\`\``);
   }
 }
