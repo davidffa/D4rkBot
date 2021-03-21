@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Guild, Member } from 'eris';
+import { Guild, Member, Role } from 'eris';
 
 import { resolve } from 'path';
 import Canvas, { Canvas as CanvasOptions } from 'canvas';
@@ -17,7 +17,20 @@ export default class GuildMemberAdd {
 
         if (!guildData) return;
 
-        if (guildData.autoRole) member.addRole(guildData.autoRole, 'Autorole').catch(() => {});
+        let botHighestRole = guild.roles.get(guild.id);
+        const targetRole = guild.roles.get(guildData.autoRole);
+
+        guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
+            const role = guild.roles.get(roleID);
+            if (!role) return;
+            if (!botHighestRole || role.position > botHighestRole.position) {
+                botHighestRole = role;
+            }
+        });
+
+        if (botHighestRole && targetRole && botHighestRole.position > targetRole.position) {
+            if (guildData.autoRole) member.addRole(guildData.autoRole, 'Autorole').catch(() => {});
+        }
 
         if (!guildData.welcomeChatID) return;
 

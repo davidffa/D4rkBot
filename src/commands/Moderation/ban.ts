@@ -1,7 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 
-import { Message } from 'eris';
+import { Message, Role } from 'eris';
 
 export default class Ban extends Command {
     constructor(client: Client) {
@@ -32,7 +32,7 @@ export default class Ban extends Command {
         let user = message.mentions[0];
 
         if (!user) {
-            if (Number(args[0])  && (args[0].length === 17 || args[0].length === 18 || args[0].length === 19)) {
+            if (Number(args[0]) && (args[0].length >= 17 || args[0].length <= 19)) {
                 try {
                     user = this.client.users.get(args[0]) || await this.client.getRESTUser(args[0]);
                 }catch {}
@@ -55,6 +55,48 @@ export default class Ban extends Command {
             if (member.id === message.channel.guild.ownerID) {
                 message.channel.createMessage(':x: Não consigo banir o dono do servidor!');
                 return;
+            }
+
+            const guild = message.channel.guild;
+
+            let botHighestRole = message.channel.guild.roles.get(message.guildID as string) as Role;
+            let memberHighestRole = message.channel.guild.roles.get(message.guildID as string) as Role;
+            let targetHighestRole = message.channel.guild.roles.get(message.guildID as string) as Role;
+
+            member.roles.forEach(roleID => {
+                const role = guild.roles.get(roleID);
+                if (!role) return;
+                if (!targetHighestRole || role.position > targetHighestRole.position) {
+                    targetHighestRole = role;
+                }
+            });
+
+            message.channel.guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
+                const role = guild.roles.get(roleID);
+                if (!role) return;
+                if (!botHighestRole || role.position > botHighestRole.position) {
+                    botHighestRole = role;
+                }
+            });
+
+            if (botHighestRole.position <= targetHighestRole.position) {
+                message.channel.createMessage(':x: O cargo mais alto desse membro é superior ao meu cargo mais alto!');
+                return;
+            }
+
+            if (message.author.id !== message.channel.guild.ownerID) {
+                message.member.roles.forEach(roleID => {
+                    const role = guild.roles.get(roleID);
+                    if (!role) return;
+                    if (!memberHighestRole || role.position > memberHighestRole.position) {
+                        memberHighestRole = role;
+                    }
+                });
+    
+                if (memberHighestRole.position <= targetHighestRole.position) {
+                    message.channel.createMessage(':x: O cargo mais alto desse membro é superior ao teu cargo mais alto!');
+                    return;
+                }
             }
         }
 
