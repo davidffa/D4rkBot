@@ -8,7 +8,7 @@ export default class Command implements CommandOptions {
     description: string;
     aliases?: Array<string>;
     usage?: string;
-    category?: string;
+    category?: 'Moderation' | 'Settings' | 'Dev' | 'Info' | 'Others' | 'Music';
     dm: boolean;
     args?: number;
     cooldown: number;
