@@ -86,7 +86,7 @@ export default class Radio extends Command {
 
     let player = this.client.music.players.get(message.guildID as string);
 
-    if (player) {
+    if (player && !player.radio) {
       if (message.channel.guild.dbCache.djRole) {
         if (voiceChannel.voiceMembers.filter(m => !m.bot).length !== 1
           && (message.member && !await this.client.music.hasDJRole(message.member) && !voiceChannel.permissionsOf(message.member).has('voiceMoveMembers'))) {
