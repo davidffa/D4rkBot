@@ -41,6 +41,6 @@ export default class Lock extends Command {
         const deny = permissions.deny;
 
         await message.channel.createMessage(':lock: Canal bloqueado!');
-        channel.editPermission(message.guildID as string, (allow & (1 << 11)) == 1 << 11 ? allow - (1 << 11) : allow, deny + (1 << 11), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));   
+        channel.editPermission(message.guildID as string, allow & ~(1 << 11), deny | (1 << 11), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));   
     }
 }

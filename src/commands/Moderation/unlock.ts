@@ -40,7 +40,7 @@ export default class Unlock extends Command {
         const allow = permissions.allow;
         const deny = permissions.deny;
 
-        await channel.editPermission(message.guildID as string, allow + (1 << 11), (deny & (1 << 11)) == 1 << 11 ? deny - (1 << 11) : deny, 'role', 'Lock cmd' || args.join(' ').slice(0, 50));
+        await channel.editPermission(message.guildID as string, allow | (1 << 11), deny & ~(1 << 11), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));
 
         message.channel.createMessage(':unlock: Canal desbloqueado!');
     }
