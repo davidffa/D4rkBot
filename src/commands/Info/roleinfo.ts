@@ -43,7 +43,7 @@ export default class RoleInfo extends Command {
       .addField('@ Mencionável', `\`${role.mentionable ? 'Sim' : 'Não'}\``, true)
       .addField(':military_medal: Posição', `\`${role.position}\``, true)
       .addField(':beginner: Hoist', `\`${role.hoist ? 'Sim' : 'Não'}\``, true)
-      .addField(':busts_in_silhouette: Managed', `\`${role.managed ? 'Sim' : 'Não'}\``, true)
+      .addField(':busts_in_silhouette: Gerenciado', `\`${role.managed ? 'Sim' : 'Não'}\``, true)
       .addField(':8ball: Permissões', `\`\`\`\n${Object.keys(role.permissions.json).length ? Object.keys(role.permissions.json).join(', ') : 'Nenhuma'}\`\`\``)
       .setColor(role.color)
       .setTimestamp()
