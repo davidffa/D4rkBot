@@ -86,6 +86,11 @@ export default class Radio extends Command {
 
     let player = this.client.music.players.get(message.guildID as string);
 
+    if (player && player.radio === radio[0]) {
+      message.channel.createMessage(':x: Essa rádio já está a tocar!');
+      return;
+    }
+
     if (player && !player.radio) {
       if (this.client.guildCache.get(message.guildID as string)?.djRole) {
         if (voiceChannel.voiceMembers.filter(m => !m.bot).length !== 1
@@ -126,6 +131,8 @@ export default class Radio extends Command {
         player.queue.clear();
         player.stop();
       }
+
+      player.setTextChannel(message.channel.id);
      
       player.queue.add(res.tracks[0]);
 
