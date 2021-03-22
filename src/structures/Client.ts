@@ -1,6 +1,6 @@
 import { readdirSync, unlinkSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { Client, ClientOptions, Member, User, Guild, Constants } from 'eris';
+import { Client, ClientOptions, User, Guild, Constants } from 'eris';
 import { NodeOptions, VoicePacket } from 'erela.js';
 import moment from 'moment';
 moment.locale('pt');
@@ -12,6 +12,7 @@ import msToHour from '../utils/msToHour';
 import msToDate from '../utils/msToDate';
 import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
+import userDatabase from '../models/userDB';
 import { ReactionCollector, MessageCollector } from './Collector';
 
 import { Command, Utils, Records, GuildCache } from '../typings/index';
@@ -28,6 +29,7 @@ export default class D4rkClient extends Client {
     lockedCmds: Array<string>;
     botDB: typeof botDatabase;
     guildDB: typeof guildDatabase;
+    userDB: typeof userDatabase;
     embed: typeof Embed;
     reactionCollectors: Array<ReactionCollector>;
     messageCollectors: Array<MessageCollector>;
@@ -61,6 +63,7 @@ export default class D4rkClient extends Client {
         this.lockedCmds = [];
         this.botDB = botDatabase;
         this.guildDB = guildDatabase;
+        this.userDB = userDatabase;
         this.embed = Embed;
         this.reactionCollectors = [];
         this.messageCollectors = [];
@@ -83,7 +86,7 @@ export default class D4rkClient extends Client {
                 const lowerCaseParam = param.toLowerCase();
     
                 for (const m of guild.members.values()) {
-                    if (m.nick === param || m.username === param) {
+                    if ((m.nick && (m.nick === param || m.nick.toLowerCase() === param.toLowerCase())) || m.username === param || m.username.toLowerCase() === param.toLowerCase()) {
                         user = m.user;
                         break;
                     }
