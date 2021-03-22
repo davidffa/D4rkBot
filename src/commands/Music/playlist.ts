@@ -358,7 +358,7 @@ export default class PlayList extends Command {
 
           player.queue.add(song);
 
-          if (!player.playing && i === 1) 
+          if (!player.playing && i === 0) 
             player.play();
 
           if (i === songs.length-1) {
