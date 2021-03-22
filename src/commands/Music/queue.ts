@@ -54,7 +54,7 @@ export default class Queue extends Command {
         const desc = [
             `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n`,
             `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
-            `${getSongDetails(0, 10)}`
+            `${getSongDetails(0, 9)}`
         ];
 
         const embed = new this.client.embed()
@@ -82,7 +82,7 @@ export default class Queue extends Command {
             const newDesc = [
                 `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
                 `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
-                `${getSongDetails(0, 10)}`
+                `${getSongDetails(0, 9)}`
             ];
 
             switch (r.name) {
@@ -92,7 +92,7 @@ export default class Queue extends Command {
                     if (page === 1) {
                         embed.setDescription(newDesc.join('\n'));
                     }else {
-                        embed.setDescription(getSongDetails((page - 1) * 10+1, page * 10))
+                        embed.setDescription(getSongDetails((page - 1) * 9+1, page * 10))
                         .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
                     }
 
@@ -105,7 +105,7 @@ export default class Queue extends Command {
                 case '➡️':
                     if (page === pages) return;
                     page++;
-                    embed.setDescription(getSongDetails((page - 1) * 10+1, page * 10))
+                    embed.setDescription(getSongDetails((page - 1) * 9+1, page * 10))
                         .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
 
                     msg.edit({ embed });
