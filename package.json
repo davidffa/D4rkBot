@@ -1,6 +1,6 @@
 {
   "name": "d4rkbot",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Discord Bot made with typescript and eris",
   "main": "src/index.ts",
   "repository": "https://github.com/davidffa/D4rkBot",
