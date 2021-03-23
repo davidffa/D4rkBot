@@ -1,7 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 
-import { Message } from 'eris';
+import { Message, VoiceChannel } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -21,56 +21,16 @@ export default class Play extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
         if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
-        const voiceChannelID = message.member?.voiceState.channelID;
         const currPlayer = this.client.music.players.get(message.guildID as string);
         
-        if (!voiceChannelID) {
-            message.channel.createMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
-            return;
-        }
+        if (!this.client.music.canPlay(message, currPlayer)) return;
 
-        const voiceChannel = this.client.getChannel(voiceChannelID);
-        
-        if (voiceChannel.type !== 2) {
-            message.channel.createMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
-            return;
-        }
-
-        if (currPlayer && voiceChannelID !== currPlayer.voiceChannel) {
-            message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
-            return;
-        }
-
-        const permissions = voiceChannel.permissionsOf(this.client.user.id);
-        
-        if (!permissions.has('readMessages')) {
-            message.channel.createMessage(':x: Não tenho permissão para ver o teu canal de voz!');
-            return;
-        }
-
-        if (!permissions.has('voiceConnect')) {
-            message.channel.createMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
-            return;
-        }
-
-        if (!permissions.has('voiceSpeak')) {
-            message.channel.createMessage(':x: Não tenho permissão para falar no teu canal de voz!');
-            return;
-        }
-
-        if (this.client.records.has(message.guildID as string)) {
-            message.channel.createMessage(':x: Não consigo tocar música enquanto gravo voz!')
-            return;
-        }
-
-        if (currPlayer && !currPlayer.radio && currPlayer.queue.duration > 8.64e7) {
-            message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
-            return;
-        }
+        const voiceChannelID = message.member?.voiceState.channelID as string;
+        const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
         const createPlayer = (): Player => {
             return this.client.music.create({
