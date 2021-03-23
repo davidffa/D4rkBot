@@ -52,6 +52,6 @@ import 'erela.js';
 declare module 'erela.js' {
     export interface Player {
         lastPlayingMsgID?: string;
-        radio?: 'M80' | 'CidadeFM' | 'RFM' | 'RadioComercial';
+        radio?: string;
     }
 }
