@@ -1,7 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import { ReactionCollector } from '../../structures/Collector';
 
-import { Message } from 'eris';
+import { Message, Emoji, User, VoiceChannel } from 'eris';
 
 import { Track, UnresolvedTrack, TrackUtils } from 'erela.js';
 
@@ -24,21 +25,22 @@ export default class PlayList extends Command {
     const prefix = this.client.guildCache.get(message.guildID as string)?.prefix || 'db.';
     let player = this.client.music.players.get(message.guildID as string);
 
-    if (!args.length || ['ajuda', 'help'].includes(args[0]) || !['add', 'detalhes', 'details', 'adicionar', 'criar', 'create', 'delete', 'remove', 'remover', 'apagar', 'excluir', 'tocar', 'play', 'listar', 'lista', 'list'].includes(args[0])) {
+    if (!args.length || ['ajuda', 'help'].includes(args[0]) || !['renomear', 'rename', 'add', 'detalhes', 'details', 'adicionar', 'criar', 'create', 'delete', 'remove', 'remover', 'apagar', 'excluir', 'tocar', 'play', 'listar', 'lista', 'list'].includes(args[0])) {
       const help = [
-        `${prefix}playlist criar <Nome> - Cria uma playlist`,
-        `${prefix}playlist apagar <Nome> - Apaga uma playlist`,
-        `${prefix}playlist detalhes <Nome> - Lista todas as músicas de uma PlayList`,
-        `${prefix}playlist listar - Lista de todas as tuas playlists`,
-        `${prefix}playlist adicionar <Nome> [Nome da música] - Adiciona a uma playlist a música que está a tocar ou uma música específica`,
-        `${prefix}playlist remover <Nome> <Número da música> - Remove uma música da playlist`,
-        `${prefix}playlist tocar <Nome> - Adiciona à queue todas as músicas de uma playlist`,
+        `# ${prefix}playlist criar <Nome> - Cria uma playlist`,
+        `# ${prefix}playlist apagar <Nome> - Apaga uma playlist`,
+        `# ${prefix}playlist renomear <Nome Antigo> <Nome Novo> - Renomeia uma playlist`,
+        `# ${prefix}playlist detalhes <Nome> - Lista todas as músicas de uma PlayList`,
+        `# ${prefix}playlist listar - Lista de todas as tuas playlists`,
+        `# ${prefix}playlist adicionar <Nome> [Nome da música] - Adiciona a uma playlist a música que está a tocar ou uma música específica`,
+        `# ${prefix}playlist remover <Nome> <Número da música> - Remove uma música da playlist`,
+        `# ${prefix}playlist tocar <Nome> - Adiciona à queue todas as músicas de uma playlist`
       ];
       
       const embed = new this.client.embed()
         .setTitle('Ajuda do comando PlayList')
         .setColor('RANDOM')
-        .setDescription(`\`\`\`md\n${help.join('\n-----------------------------------\n')}\n-----------------------------------\`\`\``)
+        .setDescription(`\`\`\`md\n${help.join('\n─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n')}\n\`\`\``)
         .setTimestamp()
         .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
       
@@ -91,6 +93,36 @@ export default class PlayList extends Command {
         message.channel.createMessage('<a:disco:803678643661832233> Playlist criada com sucesso!');
         break;
 
+      case 'rename':
+      case 'renomear':
+        if (!args[1] || !args[2]) {
+          message.channel.createMessage(`:x: **Usa:** ${prefix}playlist renomear <Nome Antigo> <Nome Novo>`,);
+          return;
+        }
+
+        if (args[2].length > 32) {
+          message.channel.createMessage(':x: O nome da playlist não pode ter mais de 32 caracteres!');
+          return;
+        }
+
+        if (!playlists || !playlists.length) {
+          message.channel.createMessage(':x: Não tens nenhuma playlist!');
+          return;
+        }
+
+        const rPlaylist = playlists.find(it => it.name === args[1]);
+
+        if (!rPlaylist) {
+          message.channel.createMessage(':x: Não tens nenhuma playlist com esse nome!');
+          return;
+        }
+
+        rPlaylist.name = args[2];
+        userData && await userData.save();
+
+        message.channel.createMessage('<a:verificado:803678585008816198> Playlist renomeada com sucesso!');
+        break;
+
       case 'delete':
       case 'apagar':
       case 'excluir':
@@ -138,6 +170,11 @@ export default class PlayList extends Command {
           return;
         }
 
+        if (!args[1]) {
+          message.channel.createMessage(`:x: **Usa:** ${prefix}playlist detalhes <Nome da playlist>`);
+          return;
+        }
+
         const playlist = playlists.find(it => it.name === args[1]);
 
         if (!playlist) {
@@ -153,11 +190,60 @@ export default class PlayList extends Command {
         const detailEmbed = new this.client.embed()
           .setTitle('<a:disco:803678643661832233> Lista de Músicas')
           .setColor('RANDOM')
-          .setDescription(`**${playlist.name}** - \`${playlist.songs.length}\` músicas\n\n${playlist.songs.map((s, idx) => `${idx+1}º - [${s.name}](${s.url})`).join('\n')}`)
+          .setDescription(`**${playlist.name}** - \`${playlist.songs.length}\` músicas\n\n${playlist.songs.slice(0, 10).map((s, idx) => `${idx+1}º - [${s.name}](${s.url})`).join('\n')}`)
           .setTimestamp()
           .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+
+        const msg = await message.channel.createMessage({ embed: detailEmbed });
+
+        if (playlist.songs.length <= 10) return;
+
+        let page = 1;
+        const pages = Math.ceil(playlist.songs.length / 10);
+
+        msg.addReaction('⬅️');
+        msg.addReaction('➡️');
         
-        message.channel.createMessage({ embed: detailEmbed });
+        const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
+
+        const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
+
+        collector.on('collect', r => {
+          if (message.channel.type !== 0) return;
+          if (!playlist || !playlist.songs) return;
+
+          switch (r.name) {
+            case '⬅️':
+              if (page === 1) return;
+              page--;
+              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx+((page-1)*10)+1}º - [${s.name}](${s.url})`).join('\n'))
+                .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+
+              msg.edit({ embed: detailEmbed });
+
+              if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+                msg.removeReaction(r.name, message.author.id);
+              }
+              break;
+            case '➡️':
+              if (page === pages) return;
+              page++;
+              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx+((page-1)*10)+1}º - [${s.name}](${s.url})`).join('\n'))
+                .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+
+              msg.edit({ embed: detailEmbed });
+
+              if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+                msg.removeReaction(r.name, message.author.id);
+              }
+              break;
+            }
+        });
+
+        collector.on('end', () => {
+          msg.removeReaction('⬅️');
+          msg.removeReaction('➡️')
+        })
         break;
 
       case 'remove':
@@ -207,8 +293,8 @@ export default class PlayList extends Command {
           return;
         }
 
-        if (pl.songs && pl.songs.length >= 50) {
-          message.channel.createMessage(':x: Não podes ter uma playlist com mais de 50 músicas');
+        if (pl.songs && pl.songs.length >= 60) {
+          message.channel.createMessage(':x: Não podes ter uma playlist com mais de 60 músicas');
           return;
         }
 
@@ -280,51 +366,10 @@ export default class PlayList extends Command {
           return;
         }
 
-        const voiceChannelID = message.member?.voiceState.channelID;
-  
-        if (!voiceChannelID) {
-          message.channel.createMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
-          return;
-        }
-  
-        const voiceChannel = this.client.getChannel(voiceChannelID);
-                
-        if (voiceChannel.type !== 2) {
-          message.channel.createMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
-          return;
-        }
-    
-        const permissions = voiceChannel.permissionsOf(this.client.user.id);
-                
-        if (!permissions.has('readMessages')) {
-          message.channel.createMessage(':x: Não tenho permissão para ver o teu canal de voz!');
-          return;
-        }
-    
-        if (!permissions.has('voiceConnect')) {
-          message.channel.createMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
-          return;
-        }
-    
-        if (!permissions.has('voiceSpeak')) {
-          message.channel.createMessage(':x: Não tenho permissão para falar no teu canal de voz!');
-          return;
-        }
-    
-        if (this.client.records.has(message.guildID as string)) {
-          message.channel.createMessage(':x: Não consigo tocar música enquanto gravo voz!')
-          return;
-        }
+        if (!this.client.music.canPlay(message, player)) return;
 
-        if (player && voiceChannelID !== player.voiceChannel) {
-          message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
-          return;
-        }
-
-        if (player && !player.radio && player.queue.duration > 8.64e7) {
-          message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
-          return
-        }
+        const voiceChannelID = message.member?.voiceState.channelID as string;
+        const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
     
         player = this.client.music.create({
           guild: message.guildID as string,
