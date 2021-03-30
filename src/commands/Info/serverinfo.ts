@@ -21,7 +21,7 @@ export default class Serverinfo extends Command {
         if (message.channel.type !== 0) return;
         
         if(!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
@@ -34,17 +34,27 @@ export default class Serverinfo extends Command {
             offline: 0
         };
 
+        const channels = {
+            text: 0,
+            voice: 0,
+            category: 0,
+            news: 0,
+            store: 0
+        }
+
         guild.members.forEach(member => {   
             member.status ? ++status[member.status] : ++status.offline;
         });
         
         const bots = guild.members.filter(m => m.bot).length;
 
-        const textChannels = guild.channels.filter(ch => ch.type === 0).length;
-        const voiceChannels = guild.channels.filter(ch => ch.type === 2).length;
-        const categories = guild.channels.filter(ch => ch.type === 4).length;
-        const newsChannels = guild.channels.filter(ch => ch.type === 5).length;
-        const storeChannels = guild.channels.filter(ch => ch.type === 6).length;
+        guild.channels.forEach(ch => {
+            if (ch.type === 0) ++channels.text;
+            else if (ch.type === 2) ++channels.voice;
+            else if (ch.type === 4) ++channels.category;
+            else if (ch.type === 5) ++channels.news;
+            else if (ch.type === 6) ++channels.store;
+        })
 
         const boostAmount = guild.premiumSubscriptionCount;
         const boostLevel = guild.premiumTier;
@@ -91,7 +101,7 @@ export default class Serverinfo extends Command {
             .addField(`:grinning: Emojis [${emojis}]`, `Estáticos: ${staticEmojis}\nAnimados: ${animatedEmojis}`, true)
             .addField(`<:followers:784795303156908032> Cargos:`, `${guild.roles.size}`, true)
             .addField(`:man: Membros [${guild.members.size}]`, `<:online:804049640437448714> Online: ${status.online}\n<:idle:804049737383673899> Ausente: ${status.idle}\n<:dnd:804049759328403486> Ocupado: ${status.dnd}\n<:offline:804049815713480715> Offline: ${status.offline}\n<:bot:804028762307821578> Bots: ${bots}`, true)
-            .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${textChannels}\n:microphone2: Voz: ${voiceChannels}\n:loudspeaker: Anúncios: ${newsChannels}\n:shopping_bags: Loja: ${storeChannels}\n:diamond_shape_with_a_dot_inside: Categorias: ${categories}`, true)
+            .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n:loudspeaker: Anúncios: ${channels.news}\n:shopping_bags: Loja: ${channels.store}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
             .setThumbnail(message.channel.guild.dynamicIconURL())
             .setImage(message.channel.guild.dynamicBannerURL())
             .setTimestamp()
