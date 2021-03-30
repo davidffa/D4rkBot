@@ -14,7 +14,7 @@
     "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/index.ts"
   },
   "devDependencies": {
-    "@types/figlet": "^1.2.1",
+    "@types/figlet": "^1.5.0",
     "@types/mathjs": "^6.0.11",
     "@types/node": "^14.14.37",
     "@types/node-fetch": "^2.5.8",
