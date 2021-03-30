@@ -69,7 +69,7 @@ export default class Eval extends Command {
             const response = [
                 `:outbox_tray: **Output** \`\`\`js\n${clean(inspect(evaled, { depth: 0 }))}\n\`\`\``,
                 `<:lang_js:803678540528615424> **Tipo** \`\`\`js\n${new Type(evaled).is}\n\`\`\``,
-                `:timer: **Tempo** \`\`\`${time > 1 ? `${time}ms` : `${time*1e3}μs`}\`\`\``
+                `:timer: **Tempo** \`\`\`${time > 1 ? `${time}ms` : `${(time*1e3).toFixed(3)}μs`}\`\`\``
             ];
             
             const res = response.join('\n');
