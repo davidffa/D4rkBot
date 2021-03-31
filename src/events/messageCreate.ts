@@ -19,6 +19,8 @@ export default class MessageCreate {
             }
         });
 
+        if (message.author.bot) return;
+
         const prefix = (message.channel.type === 0 && (this.client.guildCache.get(message.guildID as string)?.prefix)) || 'db.';
         
         if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {
@@ -30,7 +32,7 @@ export default class MessageCreate {
             }
         }
 
-        if (!message.content.startsWith(prefix) || message.author.bot) return;
+        if (!message.content.startsWith(prefix)) return;
 
         const args = message.content.slice(prefix.length).split(/ +/);
         const cmdName = args.shift()?.toLowerCase();
