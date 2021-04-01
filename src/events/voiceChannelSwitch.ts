@@ -11,7 +11,7 @@ export default class VoiceChannelSwitch {
 
     async run(member: Member, newChannel: VoiceChannel, oldChannel: VoiceChannel): Promise<void> {
         const player = this.client.music.players.get(member.guild.id);
-        if (!player) return;
+        if (!player || member.bot) return;
 
         if (oldChannel.id === player.voiceChannel && !oldChannel.voiceMembers.filter(m => !m.bot).length && newChannel.id !== player.voiceChannel) {
             player.pause(true);

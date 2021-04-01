@@ -11,7 +11,7 @@ export default class VoiceChannelJoin {
 
     async run(member: Member, newChannel: VoiceChannel): Promise<void> {
         const player = this.client.music.players.get(member.guild.id);
-        if (!player) return;
+        if (!player || member.bot) return;
 
         if (this.client.music.channelTimeouts.has(member.guild.id) && newChannel.id === player.voiceChannel) {
             player.pause(false);
