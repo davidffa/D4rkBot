@@ -5,7 +5,6 @@ import { ReactionCollector } from '../../structures/Collector';
 import { Emoji, User, Message } from 'eris';
 
 import fetch from 'node-fetch';
-import puppeteer from 'puppeteer';
 
 export default class Render extends Command {
     constructor(client: Client) {
@@ -71,31 +70,7 @@ export default class Render extends Command {
             return;
         }
 
-        const browser = await puppeteer.launch({
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-            ]
-        });
-
-        const page = await browser.newPage();
-
-        await page.setViewport({
-            width: 1920,
-            height: 1080,
-            deviceScaleFactor: 1
-        });
-
-        try { 
-            await waitMsg.edit('<a:loading2:805088089319407667> A renderizar a página...');
-            await page.goto(finalURL);
-        }catch (err) {
-            waitMsg.edit(':x: Site inválido');
-            browser.close();
-            return;
-        }
-
-        const img = await page.screenshot({ encoding: 'base64' }) as string;
+        waitMsg.edit('<a:loading2:805088089319407667> A renderizar a página...');
 
         const embed = new this.client.embed()
             .setColor('RANDOM')
@@ -105,12 +80,25 @@ export default class Render extends Command {
             .setTimestamp()
             .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
 
+        const res = await fetch(`${process.env.RENDERAPIURL}`, {
+            method: 'POST',
+            headers: {
+                Authorization: process.env.RENDERAPITOKEN as string,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: finalURL })
+        }).then(r => r.json());
+
+        if (res.error) {
+            waitMsg.edit(':x: Site inválido');
+            return;
+        }
+
         waitMsg.delete();
-        browser.close();
 
         const msg = await message.channel.createMessage({ embed }, {
             name: 'render.png',
-            file: Buffer.from(img, 'base64')
+            file: Buffer.from(res.img, 'base64')
         });
 
         await msg.addReaction('x_:751062867444498432');
