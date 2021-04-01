@@ -65,9 +65,9 @@ export default class Record extends Command {
             }
 
             if (data.users.length === 1) {
-                cmd = `ffmpeg -f s16le -ar 48k -ac 2 -i ${getFilePath(`${message.guildID}-${data.users[0]}.pcm`)} ${getFilePath(`${message.guildID}.mp3`)}`;
+                cmd = `ffmpeg -f s16le -ar 48k -ac 2 -i "${getFilePath(`${message.guildID}-${data.users[0]}.pcm`)}" "${getFilePath(`${message.guildID}.mp3`)}"`;
             }else {
-                cmd = `ffmpeg ${data.users.map(u => `-f s16le -ar 48k -ac 2 -i ${getFilePath(`${message.guildID}-${u}.pcm`)}`).join(' ')} -filter_complex amix=inputs=${data.users.length}:duration=longest ${getFilePath(`${message.guildID}.mp3`)}`;
+                cmd = `ffmpeg ${data.users.map(u => `-f s16le -ar 48k -ac 2 -i "${getFilePath(`${message.guildID}-${u}.pcm`)}"`).join(' ')} -filter_complex amix=inputs=${data.users.length}:duration=longest "${getFilePath(`${message.guildID}.mp3`)}"`;
             }
 
             exec(cmd, async () => {
