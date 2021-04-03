@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import Filters from '../../structures/Filters';
 
 import { Message } from 'eris';
 
@@ -106,6 +107,7 @@ export default class Radio extends Command {
         textChannel: message.channel.id,
         selfDeafen: true
       })
+      player.filters = new Filters(player);
     }
 
     try {

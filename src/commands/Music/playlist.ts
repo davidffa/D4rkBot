@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import Filters from '../../structures/Filters';
 import { ReactionCollector } from '../../structures/Collector';
 
 import { Message, Emoji, User, VoiceChannel } from 'eris';
@@ -377,6 +378,8 @@ export default class PlayList extends Command {
           textChannel: message.channel.id,
           selfDeafen: true
         });
+
+        player.filters = new Filters(player);
 
         if (player.state === 'DISCONNECTED') {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {

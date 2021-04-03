@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import Filters from '../../structures/Filters';
 
 import { Message, VoiceChannel } from 'eris';
 
@@ -33,12 +34,15 @@ export default class Play extends Command {
         const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
         const createPlayer = (): Player => {
-            return this.client.music.create({
+            const player = this.client.music.create({
                 guild: message.guildID as string,
                 voiceChannel: voiceChannelID,
                 textChannel: message.channel.id,
                 selfDeafen: true
-            })
+            });
+
+            player.filters = new Filters(player);
+            return player;
         }
 
         try {

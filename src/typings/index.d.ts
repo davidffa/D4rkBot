@@ -17,11 +17,11 @@ interface Command extends CommandOptions {
 }
 
 interface Utils {
-    findUser: (param: string, guild: Guild) => Promise<User|undefined>;
+    findUser: (param: string, guild: Guild) => Promise<User | undefined>;
     levenshteinDistance: (src: string, target: string) => number;
     msToHour: (time: number) => string;
     msToDate: (time: number) => string;
-} 
+}
 
 interface Timeouts {
     timeout: NodeJS.Timeout;
@@ -49,9 +49,53 @@ interface Records {
 
 import 'erela.js';
 
+interface Timescale {
+    pitch: number;
+    rate?: number;
+    speed?: number;
+}
+
+interface Bands {
+    band: number;
+    gain: number;
+}
+
+type Equalizer = Bands[];
+
+interface Tremolo {
+    depth: number;
+    frequency: number;
+}
+
+interface Karaoke {
+    level: number;
+    monoLevel: number;
+    filterBand: number;
+    filterWidth: number;
+}
+
+interface Filter {
+    timescale?: Timescale;
+    equalizer?: Equalizer;
+    tremolo?: Tremolo;
+    karaoke?: Karaoke;
+}
+
+type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave';
+
+interface Filters {
+    effects: Effect[];
+    clearFilters(): this;
+    setFilters(filter: Filter): this;
+    addEffect(effect: Effect): this;
+    removeEffect(effect: Effect): this;
+}
+
 declare module 'erela.js' {
     export interface Player {
         lastPlayingMsgID?: string;
         radio?: string;
+        djTableOpen?: boolean;
+        filters: Filters;
     }
 }
