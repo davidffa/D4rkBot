@@ -26,16 +26,17 @@ export default class PlayList extends Command {
     const prefix = this.client.guildCache.get(message.guildID as string)?.prefix || 'db.';
     let player = this.client.music.players.get(message.guildID as string);
 
-    if (!args.length || ['ajuda', 'help'].includes(args[0]) || !['renomear', 'rename', 'add', 'detalhes', 'details', 'adicionar', 'criar', 'create', 'delete', 'remove', 'remover', 'apagar', 'excluir', 'tocar', 'play', 'listar', 'lista', 'list'].includes(args[0])) {
+    if (!args.length || ['ajuda', 'help'].includes(args[0]) || !['shuffle', 'embaralhar', 'renomear', 'rename', 'add', 'detalhes', 'details', 'adicionar', 'criar', 'create', 'delete', 'remove', 'remover', 'apagar', 'excluir', 'tocar', 'play', 'listar', 'lista', 'list'].includes(args[0])) {
       const help = [
         `# ${prefix}playlist criar <Nome> - Cria uma playlist`,
         `# ${prefix}playlist apagar <Nome> - Apaga uma playlist`,
         `# ${prefix}playlist renomear <Nome Antigo> <Nome Novo> - Renomeia uma playlist`,
-        `# ${prefix}playlist detalhes <Nome> - Lista todas as músicas de uma PlayList`,
+        `# ${prefix}playlist detalhes <Nome> - Lista todas as músicas de uma playlist`,
+        `# ${prefix}playlist shuffle <Nome> - Embaralha as músicas de uma playlist`,
         `# ${prefix}playlist listar - Lista de todas as tuas playlists`,
         `# ${prefix}playlist adicionar <Nome> [Nome da música] - Adiciona a uma playlist a música que está a tocar ou uma música específica`,
         `# ${prefix}playlist remover <Nome> <Número da música> - Remove uma música da playlist`,
-        `# ${prefix}playlist tocar <Nome> - Adiciona à queue todas as músicas de uma playlist`
+        `# ${prefix}playlist tocar <Nome> - Adiciona à queue todas as músicas de uma playlist`,      
       ];
       
       const embed = new this.client.embed()
@@ -345,7 +346,30 @@ export default class PlayList extends Command {
         
         message.channel.createMessage(`<a:disco:803678643661832233> Música \`${track.title}\` adicionada à playlist!`);
         break;
+      case 'shuffle':
+      case 'embaralhar':
+        if (!args[1]) {
+          message.channel.createMessage(`:x: **Usa:** ${prefix}playlist shuffle <Nome da PlayList>`);
+          return;
+        }
 
+        const plToShuffle = playlists?.find(playlist => playlist.name === args[1]);
+
+        if (!plToShuffle) {
+          message.channel.createMessage(':x: Playlist não encontrada');
+          return;
+        }
+
+        if (!plToShuffle.songs || !plToShuffle.songs.length) {
+          message.channel.createMessage(':x: Essa playlist não tem músicas!');
+          return;
+        }
+
+        plToShuffle.songs = plToShuffle.songs.sort(() => Math.random() - 0.5);
+        userData && userData.save();
+
+        message.channel.createMessage('<a:verificado:803678585008816198> Playlist embaralhada com sucesso!');
+        break;
       case 'play':
       case 'tocar':
         if (!args[1]) {
