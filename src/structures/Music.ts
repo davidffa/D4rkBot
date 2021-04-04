@@ -155,6 +155,12 @@ export default class D4rkManager extends Manager {
                 channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
             }
         });
+
+        this.on('playerDestroy', (player) => {
+            if (player.djTableMsg) {
+                player.djTableMsg.delete();
+            }
+        });
     }
 
     async hasDJRole(member: Member): Promise<boolean> {
