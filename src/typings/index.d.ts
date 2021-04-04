@@ -95,7 +95,7 @@ declare module 'erela.js' {
     export interface Player {
         lastPlayingMsgID?: string;
         radio?: string;
-        djTableOpen?: boolean;
+        djTableMsg?: Message;
         filters: Filters;
     }
 }

@@ -4,7 +4,7 @@ import Client from '../../structures/Client';
 import { Effect } from '../../typings/index';
 
 import { Emoji, Message, User } from 'eris';
-import { MessageCollector, ReactionCollector } from '../../structures/Collector';
+import { ReactionCollector } from '../../structures/Collector';
 
 export default class Djtable extends Command {
   constructor(client: Client) {
@@ -42,65 +42,69 @@ export default class Djtable extends Command {
     if (!member) return;
 
     const sendFilterMessage = async (): Promise<void> => {
-      if (player.djTableOpen) {
+      if (player.djTableMsg) {
         message.channel.createMessage(':x: Já existe uma mesa de DJ aberta!');
         return;
       }
-
-      player.djTableOpen = true;
       const effects: Effect[] = ['bass', 'pop', 'soft', 'treblebass', 'nightcore', 'vaporwave'];
 
       const embed = new this.client.embed()
         .setTitle('<a:disco:803678643661832233> Mesa de DJ')
         .setColor('RANDOM')
-        .setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}\n\n\nReage no <:x_:751062867444498432> para fechar a mesa de DJ`)
+        .setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}`)
+        .setThumbnail('https://i.pinimg.com/564x/a3/a9/29/a3a929cc8d09e88815b89bc071ff4d8d.jpg')
         .setTimestamp()
         .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
 
-      const m = await message.channel.createMessage({ embed });
-      m.addReaction('x_:751062867444498432');
+      const msg = await message.channel.createMessage({ embed });
+      player.djTableMsg = msg;
+      msg.addReaction('0️⃣');
+      msg.addReaction('1️⃣');
+      msg.addReaction('2️⃣');
+      msg.addReaction('3️⃣');
+      msg.addReaction('4️⃣');
+      msg.addReaction('5️⃣');
+      msg.addReaction('6️⃣');
+      msg.addReaction('x_:751062867444498432');
 
-      const filter = (m: Message) => m.author.id === message.author.id && parseInt(m.content) >= 0 && parseInt(m.content) <= 6;
-      const collector = new MessageCollector(this.client, message.channel, filter, { max: 10, time: 30000 });
+      const filter = (r: Emoji, u: User) => (r.name === '0️⃣' || r.name === '1️⃣' || r.name === '2️⃣' ||
+        r.name === '3️⃣' || r.name === '4️⃣' || r.name === '5️⃣' || r.name === '6️⃣' ||r.id === '751062867444498432') && u === message.author;
 
-      const reactFilter = (r: Emoji, u: User) => (r.id === '751062867444498432') && u === message.author;
-      const reactCollector = new ReactionCollector(this.client, m, reactFilter, { max: 1 });
-      
-      collector.on('collect', msg => {
-        const i = parseInt(msg.content);
-        if (i === 0) {
-          player.filters.clearFilters();
-          embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}\n\n\nReage no <:x_:751062867444498432> para fechar a mesa de DJ`);
-          m.edit({ embed });
-          message.channel.createMessage('<a:disco:803678643661832233> Filtros removidos!');
-          return;
+      const collector = new ReactionCollector(this.client, msg, filter, { max: 20, time: 120000 });
+
+      collector.on('collect', r => {
+        switch (r.name) {
+          case '0️⃣':
+            player.filters.clearFilters();
+            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}`);
+            msg.edit({ embed });
+            break;
+          case 'x_':
+            collector.stop('Close');
+            break;
+          default:
+            const i = parseInt(r.name.replace(/\uFE0F\u20E3/, ''))
+            if (!player.filters.effects.includes(effects[i-1])) {
+              player.filters.addEffect(effects[i-1]);
+            }else {
+              player.filters.removeEffect(effects[i-1]);
+            }
+    
+            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}`);
+            msg.edit({ embed });
+            break;
         }
-
-        if (!player.filters.effects.includes(effects[i-1])) {
-          player.filters.addEffect(effects[i-1]);
-          message.channel.createMessage(`<a:disco:803678643661832233> Efeito ${effects[i-1]} adicionado!`);
-        }else {
-          player.filters.removeEffect(effects[i-1]);
-          message.channel.createMessage(`<a:disco:803678643661832233> Efeito ${effects[i-1]} removido!`);
-        }
-
-        embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}\n\n\nReage no <:x_:751062867444498432> para fechar a mesa de DJ`);
-        m.edit({ embed });
       });
 
-      collector.on('end', reason => {
-        if (reason === 'Force') return;
-        m.edit({ content: '<a:disco:803678643661832233> Mesa de DJ fechada!', embed: {} });
-        delete player.djTableOpen;
-        reactCollector.stop();
-        m.removeReaction('x_:751062867444498432', this.client.user.id);
+      collector.on('remove', r => {
+        collector.emit('collect', r, message.author);
       });
 
-      reactCollector.on('collect', () => {
-        collector.stop('Force');
-        m.edit({ content: '<a:disco:803678643661832233> Mesa de DJ fechada!', embed: {} });
-        delete player.djTableOpen;
-        m.removeReaction('x_:751062867444498432', this.client.user.id);
+      collector.on('end', () => {
+        delete player.djTableMsg;
+
+        msg.delete();
+        msg.channel.createMessage('<a:disco:803678643661832233> Mesa de DJ fechada!');
       });
     }
 

@@ -80,7 +80,6 @@ export default class Filters {
   }
 
   clearFilters(): this {
-    if (!this.effects.length) return this;
     this.effects = [];
     const packet = {
       op: 'filters',
