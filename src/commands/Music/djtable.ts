@@ -114,7 +114,7 @@ export default class Djtable extends Command {
         sendFilterMessage();
         return;
       }
-      message.channel.createMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ pode usar a mesa de DJ na música!');
+      message.channel.createMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ pode usar a mesa de DJ!');
     } else sendFilterMessage();
   }
 }
