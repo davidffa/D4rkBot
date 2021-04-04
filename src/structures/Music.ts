@@ -138,7 +138,7 @@ export default class D4rkManager extends Manager {
                 return;
             }
             /*** End ***/
-            this.destroy(player.guild);
+            player.stop();
         });
 
         this.on('queueEnd', (player): void => {
