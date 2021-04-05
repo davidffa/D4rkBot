@@ -32,7 +32,7 @@ export default class Isitup extends Command {
     const body = await fetch(`https://isitup.org/${url}.json`).then(res => res.json()).catch(err => null);
 
     if (!body) {
-      message.channel.createMessage(':x: Ocorreu um erro!');
+      message.channel.createMessage(':x: Site inválido!');
       return;
     }
 
