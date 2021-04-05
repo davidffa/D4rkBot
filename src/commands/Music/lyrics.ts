@@ -28,12 +28,12 @@ export default class Lyrics extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
 
-        if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+        if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
             message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
-        if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
+        if (!message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
             message.channel.createMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
             return;
         }

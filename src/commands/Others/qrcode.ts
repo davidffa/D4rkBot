@@ -22,7 +22,7 @@ export default class Qrcode extends Command {
 
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
@@ -31,7 +31,7 @@ export default class Qrcode extends Command {
             case 'create':
             case 'c':
                 if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
-                    message.channel.createMessage(':x: Preciso da permissão `ATTACH_FILES` para executar este comando');
+                    message.channel.createMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
                     return;
                 }
 

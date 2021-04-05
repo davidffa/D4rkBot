@@ -29,11 +29,6 @@ export default class Forceplay extends Command {
             message.channel.createMessage(`:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(message.guildID as string)}play <Nome/URL>\``);
             return;
         }
-        
-        if (player.radio) {
-            message.channel.createMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
-            return;
-        }
 
         const voiceChannelID = message.member?.voiceState.channelID;
         
@@ -42,7 +37,7 @@ export default class Forceplay extends Command {
             return;
         }
 
-        if (player && player.queue.duration > 8.64e7) {
+        if (!player.radio && player.queue.duration > 8.64e7) {
             message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
             return;
         }

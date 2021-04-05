@@ -28,12 +28,12 @@ export default class Render extends Command {
         }
 
         if (!message.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
-            message.channel.createMessage(':x: Preciso da permissão `ATTACH_FILES` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
             return;
         }
 
         if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 

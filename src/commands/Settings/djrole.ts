@@ -17,10 +17,6 @@ export default class Djrole extends Command {
 
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
-        if (!message.member?.permissions.has('manageRoles') && message.author.id !== '334054158879686657') {
-            message.channel.createMessage(':x: Precisas da permissão `MANAGE_ROLES` para usar este comando.');
-            return;
-        }
 
         const data = this.client.guildCache.get(message.guildID as string);
 
@@ -45,6 +41,11 @@ export default class Djrole extends Command {
             }
 
             message.channel.createMessage(`<a:disco:803678643661832233> Cargo de DJ atual: \`${djrole.name}\`\n**Usa:** \`${data.prefix || 'db.'}djrole <Cargo> (0 para desativar)\``);
+            return;
+        }
+
+        if (!message.member?.permissions.has('manageRoles') && message.author.id !== '334054158879686657') {
+            message.channel.createMessage(':x: Precisas da permissão `Gerenciar Cargos` para usar este comando.');
             return;
         }
 

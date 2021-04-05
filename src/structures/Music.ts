@@ -3,7 +3,7 @@ import Spotify from 'erela.js-spotify';
 import Client from '../structures/Client';
 
 import { User, Member, Message } from 'eris';
-import { Player } from 'erela.js';
+import { Player, Node } from 'erela.js';
 
 import { Timeouts, MsgCollectors } from '../typings/index';
 
@@ -41,32 +41,36 @@ export default class D4rkManager extends Manager {
                 selfMute: true
             });
 
-            player.connect();
-            
-            const { tracks } = await this.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', this.client.user);
+            const search = await this.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', this.client.user);
 
-            player.queue.add(tracks[0]);
+            if (search.loadType !== 'TRACK_LOADED') {
+                setTimeout(() => loadTestServerMusic(), 4e3);
+            }
+
+            player.connect();
+            player.queue.add(search.tracks[0]);
 
             if (!player.playing) player.play();
         }
 
         this.on('nodeConnect', async (node): Promise<void> => {
-            console.log(`${node.options.identifier} do LavaLink com o IP ${node.options.host}:${node.options.port} conectado!`);
+            console.log(`${node.options.identifier} do Lavalink (wss://${node.options.host}:${node.options.port}) conectado!`);
 
             //Heroku lavalink
             loadTestServerMusic();
         });
         
         this.on('nodeReconnect', (node): void => {
-            console.log(`${node.options.identifier} do LavaLink com o IP ${node.options.host}:${node.options.port} re-conectado!`);
+            console.log(`A reconectar ao node ${node.options.identifier} (wss://${node.options.host}:${node.options.port})...`);
         });
 
         this.on('nodeError', (node, error): void => {
             console.log(`Ocorreu um erro no Node ${node.options.identifier}. Erro: ${error.message}`);
+            if (error.message.startsWith('Unable to connect after')) this.reconnect();
         });
 
         this.on('nodeDisconnect', (node, reason): void => {
-            console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMOTIVO: ${reason.reason}`);
+            console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason ? reason.reason : reason ? reason : 'Desconhecido'}`);
         });
 
         this.on('trackStart', async (player, track): Promise<void> => {
@@ -114,18 +118,14 @@ export default class D4rkManager extends Manager {
         this.on('trackStuck', (player, track): void => {
             if (player.textChannel) {
                 this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}.`);
-                this.destroy(player.guild);
+                player.stop();
             }
             console.error(`[Lavalink] Track Stuck on guild ${player.guild}. Music title: ${track.title}`);
         });
 
         this.on('trackError', (player, track, payload): void => {
-            if (player.textChannel) {
-                if (payload.error === 'Track information is unavailable.') 
-                    this.client.createMessage(player.textChannel, `:x: Não consegui tocar a música ${track.title} devido à mesma ter restrição de idade`)
-                else 
-                    this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error}\``)
-            }
+            player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error ? payload.error : 'Desconhecido'}\``);
+
             console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
 
             /*** Heroku lavalink ***/
@@ -187,7 +187,6 @@ export default class D4rkManager extends Manager {
                 return false;
             }
         }
-        
         return false;
     }
 
@@ -242,5 +241,23 @@ export default class D4rkManager extends Manager {
 
     init() {
         return super.init(this.client.user.id);
+    }
+
+    reconnect() { 
+        this.destroyNode('Node 1');
+
+        this.nodes.set('Node 1', 
+            new Node({ 
+                identifier: 'Node 1',
+                host: process.env.LAVALINKHOST as string,
+                port: Number(process.env.LAVALINKPORT),
+                password: process.env.LAVALINKPASSWORD as string,
+                retryAmount: 10,
+                retryDelay: 3000,
+                secure: false
+            })
+        );
+
+        this.nodes.first()?.connect();
     }
 }

@@ -23,7 +23,7 @@ export default class Lavalink extends Command {
         }
 
         if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 

@@ -32,7 +32,7 @@ export default class Lock extends Command {
 
         const permissions = channel.permissionOverwrites.get(message.guildID as string);
 
-        if (!permissions || (permissions.deny & (1 << 11)) == 1 << 11) {
+        if (!permissions || (permissions.deny & (1n << 11n)) == 1n << 11n) {
             message.channel.createMessage(':x: O canal já está bloqueado!');
             return;
         }
@@ -41,6 +41,6 @@ export default class Lock extends Command {
         const deny = permissions.deny;
 
         await message.channel.createMessage(':lock: Canal bloqueado!');
-        channel.editPermission(message.guildID as string, allow & ~(1 << 11), deny | (1 << 11), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));   
+        channel.editPermission(message.guildID as string, allow & ~(1n << 11n), deny | (1n << 11n), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));   
     }
 }

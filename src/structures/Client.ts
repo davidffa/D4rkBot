@@ -68,8 +68,8 @@ export default class D4rkClient extends Client {
         this.reactionCollectors = [];
         this.messageCollectors = [];
 
-        const findUser = async (param: string, guild: Guild): Promise<User|undefined> => {
-            let user: User|undefined;
+        const findUser = async (param: string, guild: Guild): Promise<User|null> => {
+            let user: User|null|undefined;
 
             if (Number(param) && (param.length >= 17 && param.length <= 19)) {
                 try {
@@ -102,16 +102,7 @@ export default class D4rkClient extends Client {
                     }
                 }
             }
-
-            /*
-            if (!user) {
-                user = guild.members.find(m => (m.nick && m.nick === param) || (m.username === param))?.user
-                    || guild.members.find(m => (m.nick && m.nick.toLowerCase().startsWith(param.toLowerCase())) || (m.username.toLowerCase().startsWith(param.toLowerCase())))?.user
-                    || guild.members.find(m => (m.nick && m.nick.toLowerCase().includes(param.toLowerCase())) || (m.username.toLowerCase().includes(param.toLowerCase())))?.user
-            }
-            */
-
-            return user;
+            return user || null;
         }
         
         this.utils = {
@@ -160,8 +151,8 @@ export default class D4rkClient extends Client {
                 host: process.env.LAVALINKHOST as string,
                 port: Number(process.env.LAVALINKPORT),
                 password: process.env.LAVALINKPASSWORD as string,
-                retryAmount: 50,
-                retryDelay: 5000,
+                retryAmount: 10,
+                retryDelay: 3000,
                 secure: false
             }
         ];

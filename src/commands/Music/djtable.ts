@@ -20,6 +20,16 @@ export default class Djtable extends Command {
   async execute(message: Message): Promise<void> {
     if (message.channel.type !== 0) return;
 
+    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      return;
+    }
+
+    if (!message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
+      message.channel.createMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+      return;
+    }
+
     const player = this.client.music.players.get(message.guildID as string);
 
     if (!player) {

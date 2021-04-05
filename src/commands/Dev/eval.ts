@@ -48,7 +48,6 @@ export default class Eval extends Command {
                 text = text
                     .replace(/`/g, `\`${String.fromCharCode(8203)}`)
                     .replace(/@/g, `@${String.fromCharCode(8203)}`)
-                    .replace(new RegExp(this.client.token as string, 'gi'), '****')
                     .replace(new RegExp(process.env.TOKEN as string, 'gi'), '****');
             }
             return text;

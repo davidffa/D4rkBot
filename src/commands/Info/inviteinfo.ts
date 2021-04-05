@@ -1,7 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 
-import { Message, Invite } from 'eris';
+import { Message } from 'eris';
 
 export default class Inviteinfo extends Command {
     constructor(client: Client) {
@@ -19,7 +19,7 @@ export default class Inviteinfo extends Command {
 
     async execute(message: Message, args: Array<string>): Promise<void> {
         try { 
-            const invite = await this.client.getInvite(args[0], true) as Invite;
+            const invite = await this.client.getInvite(args[0], true);
 
             if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
                 message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');

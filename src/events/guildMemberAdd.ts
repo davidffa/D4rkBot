@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Guild, Member, Role } from 'eris';
+import { Guild, Member } from 'eris';
 
 import { resolve } from 'path';
 import Canvas, { Canvas as CanvasOptions } from 'canvas';

@@ -34,7 +34,8 @@ export default class Channelinfo extends Command {
             2: 'Voz',
             4: 'Categoria',
             5: 'Anúncios',
-            6: 'Loja'
+            6: 'Loja',
+            13: 'Estágio'
         }
 
         const embed = new this.client.embed()

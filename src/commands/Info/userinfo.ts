@@ -39,7 +39,7 @@ export default class Userinfo extends Command {
     async execute(message: Message, args: Array<string>): Promise<void> {
         if (message.channel.type !== 0) return;
         if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-            message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+            message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
             return;
         }
 
@@ -108,10 +108,8 @@ export default class Userinfo extends Command {
             if (member?.premiumSince) {
                 userBadges.push('<:badgenitro:803666299556200478>')
                 userBadges.push('<:badgebooster:803666384373809233>');
-            }else {
-                if (user.dynamicAvatarURL().split('?')[0].endsWith('.gif')) {
-                    userBadges.push('<:badgenitro:803666299556200478>')
-                }
+            }else if (user.avatar && user.avatar.startsWith('a_')) {
+                userBadges.push('<:badgenitro:803666299556200478>')
             }
 
             if (userBadges) {
