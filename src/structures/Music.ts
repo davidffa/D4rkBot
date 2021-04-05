@@ -70,7 +70,7 @@ export default class D4rkManager extends Manager {
     });
 
     this.on('nodeDisconnect', (node, reason): void => {
-      console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason ? reason.reason : reason ? reason : 'Desconhecido'}`);
+      console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason ? reason.reason : reason.code ? reason.code : 'Desconhecido'}`);
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
