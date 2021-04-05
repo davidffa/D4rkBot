@@ -49,7 +49,32 @@ export default class Channelinfo extends Command {
             .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
             .setTimestamp();
 
-        channel.parentID && embed.addField(':flag_white: Categoria', `\`${message.channel.guild.channels.get(channel.parentID)?.name}\``, true)
+        if (channel.type === 2 || channel.type === 13) {
+            const regions: any = {
+                'brazil': ':flag_br: Brasil',
+                'europe': ':flag_eu: Europa',
+                'hong-kong': ':flag_hk: Hong-Kong',
+                'japan': ':flag_jp: Japão',
+                'india': ':flag_in: Índia',
+                'russia': ':flag_ru: Rússia',
+                'singapore': ':flag_sg: Singapura',
+                'sydney': ':flag_au: Sydney',
+                'us-south': ':flag_us: Sul dos Estados Unidos',
+                'us-east': ':flag_us: Este dos Estados Unidos',
+                'us-central': ':flag_us: Centro dos Estados Unidos',
+                'us-west': ':flag_us: Oeste dos Estados Unidos',
+                'southafrica': ':flag_za: África do Sul',
+            }
+            embed.addField(':notes: Taxa de bits', `\`${channel.bitrate}\``, true);
+            embed.addField(':map: Região', `\`${channel.rtcRegion ? regions[channel.rtcRegion] : 'Auto'}\``, true);
+            embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 1 ? 'Auto' : '720p'}\``, true);
+        }
+
+        channel.parentID && embed.addField(':flag_white: Categoria', `\`${message.channel.guild.channels.get(channel.parentID)?.name}\``, true);
+
+        if (channel.type === 0 || channel.type === 5) {
+            embed.addField(':question: Tópico', `\`${channel.topic ? channel.topic : 'Nenhum'}\``, true);
+        }
         message.channel.createMessage({ embed });
     }
 }
