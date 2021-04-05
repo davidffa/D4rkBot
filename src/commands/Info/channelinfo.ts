@@ -51,29 +51,29 @@ export default class Channelinfo extends Command {
 
     if (channel.type === 2 || channel.type === 13) {
       const regions: any = {
-        'brazil': ':flag_br: Brasil',
-        'europe': ':flag_eu: Europa',
-        'hong-kong': ':flag_hk: Hong-Kong',
-        'japan': ':flag_jp: Japão',
-        'india': ':flag_in: Índia',
-        'russia': ':flag_ru: Rússia',
-        'singapore': ':flag_sg: Singapura',
-        'sydney': ':flag_au: Sydney',
-        'us-south': ':flag_us: Sul dos Estados Unidos',
-        'us-east': ':flag_us: Este dos Estados Unidos',
-        'us-central': ':flag_us: Centro dos Estados Unidos',
-        'us-west': ':flag_us: Oeste dos Estados Unidos',
-        'southafrica': ':flag_za: África do Sul',
+        'brazil': ':flag_br:',
+        'europe': ':flag_eu:',
+        'hong-kong': ':flag_hk:',
+        'japan': ':flag_jp:',
+        'india': ':flag_in:',
+        'russia': ':flag_ru:',
+        'singapore': ':flag_sg:',
+        'sydney': ':flag_au:',
+        'us-south': ':flag_us:',
+        'us-east': ':flag_us:',
+        'us-central': ':flag_us:',
+        'us-west': ':flag_us:',
+        'southafrica': ':flag_za:',
       }
       embed.addField(':notes: Taxa de bits', `\`${channel.bitrate}\``, true);
-      embed.addField(':map: Região', `\`${channel.rtcRegion ? regions[channel.rtcRegion] : 'Auto'}\``, true);
-      embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 1 ? 'Auto' : '720p'}\``, true);
+      embed.addField(':map: Região', `${channel.rtcRegion ? regions[channel.rtcRegion] : '`Auto`'}`, true);
+      embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 2 ? '720p' : 'Auto'}\``, true);
     }
 
     channel.parentID && embed.addField(':flag_white: Categoria', `\`${message.channel.guild.channels.get(channel.parentID)?.name}\``, true);
 
     if (channel.type === 0 || channel.type === 5) {
-      embed.addField(':question: Tópico', `\`${channel.topic ? channel.topic : 'Nenhum'}\``, true);
+      embed.addField(':question: Tópico', `\`\`\`${channel.topic ? channel.topic : 'Nenhum'}\`\`\``, true);
     }
     message.channel.createMessage({ embed });
   }
