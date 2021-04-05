@@ -80,7 +80,7 @@ export default class Djtable extends Command {
       const filter = (r: Emoji, u: User) => (r.name === '0️⃣' || r.name === '1️⃣' || r.name === '2️⃣' ||
         r.name === '3️⃣' || r.name === '4️⃣' || r.name === '5️⃣' || r.name === '6️⃣' ||r.id === '751062867444498432') && u === message.author;
 
-      const collector = new ReactionCollector(this.client, msg, filter, { max: 20, time: 120000 });
+      const collector = new ReactionCollector(this.client, msg, filter, { max: 20, time: 90000 });
 
       collector.on('collect', r => {
         switch (r.name) {
