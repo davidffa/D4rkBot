@@ -97,5 +97,6 @@ declare module 'erela.js' {
     radio?: string;
     djTableMsg?: Message;
     filters: Filters;
+    reconnect?: boolean;
   }
 }

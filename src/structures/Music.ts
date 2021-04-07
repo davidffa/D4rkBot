@@ -33,7 +33,7 @@ export default class D4rkManager extends Manager {
     this.searchMsgCollectors = new Map();
 
     const loadTestServerMusic = async (): Promise<void> => {
-      const player = this.create({
+      const player = this.players.get(process.env.TESTGUILDID as string) || this.create({
         guild: process.env.TESTGUILDID as string,
         voiceChannel: process.env.VOICECHANNELID as string,
         textChannel: process.env.TEXTCHANNELID as string,
@@ -41,20 +41,29 @@ export default class D4rkManager extends Manager {
         selfMute: true
       });
 
-      const search = await this.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', this.client.user);
+      if (!player.queue.current) {
+        const search = await this.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', this.client.user);
 
-      if (search.loadType !== 'TRACK_LOADED') {
-        setTimeout(() => loadTestServerMusic(), 4e3);
+        if (search.loadType !== 'TRACK_LOADED') {
+          setTimeout(() => loadTestServerMusic(), 3e3);
+          return;
+        }
+        
+        player.queue.add(search.tracks[0]);
       }
 
       player.connect();
-      player.queue.add(search.tracks[0]);
-
-      if (!player.playing) player.play();
+      player.play();
     }
 
     this.on('nodeConnect', async (node): Promise<void> => {
       console.log(`${node.options.identifier} do Lavalink (wss://${node.options.host}:${node.options.port}) conectado!`);
+
+      this.players.forEach(player => {
+        player.connect();
+        player.play({ startTime: player.position });
+        player.reconnect = true;
+      });
 
       //Heroku lavalink
       loadTestServerMusic();
@@ -82,6 +91,11 @@ export default class D4rkManager extends Manager {
         return;
       }
       /*** End ***/
+
+      if (player.reconnect) {
+        delete player.reconnect;
+        return;
+      }
 
       if (!player.textChannel) return;
 
