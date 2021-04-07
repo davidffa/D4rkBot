@@ -42,7 +42,7 @@ export default class D4rkManager extends Manager {
       });
 
       if (!player.queue.current) {
-        const search = await this.search('https://www.youtube.com/watch?v=KMU0tzLwhbE', this.client.user);
+        const search = await this.search('https://soundcloud.com/leather-corduroys/08-developers', this.client.user);
 
         if (search.loadType !== 'TRACK_LOADED') {
           setTimeout(() => loadTestServerMusic(), 3e3);
@@ -59,11 +59,13 @@ export default class D4rkManager extends Manager {
     this.on('nodeConnect', async (node): Promise<void> => {
       console.log(`${node.options.identifier} do Lavalink (wss://${node.options.host}:${node.options.port}) conectado!`);
 
-      this.players.forEach(player => {
+      for (const player of this.players.values()) {
+        if (player.guild === process.env.TESTGUILDID) continue;
+        const position = player.position;
         player.connect();
-        player.play({ startTime: player.position });
+        player.play({ startTime: position });
         player.reconnect = true;
-      });
+      }
 
       //Heroku lavalink
       loadTestServerMusic();
