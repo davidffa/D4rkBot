@@ -4,7 +4,6 @@ import Client from '../../structures/Client';
 import { Message, VERSION } from 'eris';
 
 import os from 'os';
-import osu from 'node-os-utils';
 import moment from 'moment';
 moment.locale('pt');
 
@@ -27,7 +26,7 @@ export default class Botinfo extends Command {
       return;
     }
 
-    const cpuUsage = await osu.cpu.usage();
+    const cpuUsage = await getCpuUsage();
     const cpuName = os.cpus()[0].model;
     const totalCmdsUsed = this.client.commandsUsed;
 
@@ -62,4 +61,39 @@ export default class Botinfo extends Command {
 
     message.channel.createMessage({ embed });
   }
+}
+
+const cpuAverage = () => {
+  let totalIdle = 0;
+  let totalTick = 0;
+  const cpus = os.cpus();
+
+  for (var i = 0, len = cpus.length; i < len; i++) {
+    const cpu = cpus[i];
+    const cpuTimes = cpu.times as any;
+    for (const type in cpuTimes) {
+      totalTick += cpuTimes[type];
+    }
+    totalIdle += cpuTimes.idle;
+  }
+
+  return {
+    avgIdle: (totalIdle / cpus.length),
+    avgTotal: (totalTick / cpus.length)
+  }
+}
+
+const getCpuUsage = async () => {
+  return new Promise((resolve) => {
+    const startMeasure = cpuAverage();
+
+    setTimeout(() => {
+      const endMeasure = cpuAverage();
+      const idleDifference = endMeasure.avgIdle - startMeasure.avgIdle;
+      const totalDifference = endMeasure.avgTotal - startMeasure.avgTotal;
+      const cpuPercentage = (10000 - Math.round(10000 * idleDifference / totalDifference)) / 100;
+
+      resolve(cpuPercentage);
+    }, 1000);
+  })
 }
