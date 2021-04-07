@@ -63,7 +63,8 @@ export default class D4rkManager extends Manager {
         if (player.guild === process.env.TESTGUILDID) continue;
         const position = player.position;
         player.connect();
-        player.play({ startTime: position });
+        player.seek(position);
+        player.play();
         player.reconnect = true;
       }
 
