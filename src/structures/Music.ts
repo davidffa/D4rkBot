@@ -7,10 +7,18 @@ import { Player, Node } from 'erela.js';
 
 import { Timeouts, MsgCollectors } from '../typings/index';
 
+interface HeartBeats {
+  lastheartbeatSent: number;
+  lastheartbeatAck: number;
+  heartbeatInterval: ReturnType<typeof setInterval>;
+  ping: number;
+}
+
 export default class D4rkManager extends Manager {
   client: Client;
   channelTimeouts: Map<string, Timeouts>;
   searchMsgCollectors: Map<string, MsgCollectors>;
+  heartbeats: Map<string, HeartBeats>;
 
   constructor(client: Client, nodes: NodeOptions[]) {
     super({
@@ -31,36 +39,12 @@ export default class D4rkManager extends Manager {
     this.client = client;
     this.channelTimeouts = new Map();
     this.searchMsgCollectors = new Map();
-
-    const loadTestServerMusic = async (): Promise<void> => {
-      const player = this.players.get(process.env.TESTGUILDID as string) || this.create({
-        guild: process.env.TESTGUILDID as string,
-        voiceChannel: process.env.VOICECHANNELID as string,
-        textChannel: process.env.TEXTCHANNELID as string,
-        selfDeafen: true,
-        selfMute: true
-      });
-
-      if (!player.queue.current) {
-        const search = await this.search('https://soundcloud.com/leather-corduroys/08-developers', this.client.user);
-
-        if (search.loadType !== 'TRACK_LOADED') {
-          setTimeout(() => loadTestServerMusic(), 3e3);
-          return;
-        }
-        
-        player.queue.add(search.tracks[0]);
-      }
-
-      player.connect();
-      player.play();
-    }
+    this.heartbeats = new Map();
 
     this.on('nodeConnect', async (node): Promise<void> => {
       console.log(`${node.options.identifier} do Lavalink (wss://${node.options.host}:${node.options.port}) conectado!`);
 
       for (const player of this.players.values()) {
-        if (player.guild === process.env.TESTGUILDID) continue;
         const position = player.position;
         player.connect();
         player.seek(position);
@@ -68,8 +52,28 @@ export default class D4rkManager extends Manager {
         player.reconnect = true;
       }
 
-      //Heroku lavalink
-      loadTestServerMusic();
+      //Send an heartbeat to lavalink to prevent error H15 (WebSocket idle) on heroku
+
+      this.heartbeats.set(node.options.identifier as string, {} as HeartBeats);
+      const heartbeats = this.heartbeats.get(node.options.identifier as string);
+      if (!heartbeats) return;
+
+      node.send({ 
+        op: 'heartbeat'
+      });
+
+      heartbeats.heartbeatInterval = setInterval(() => {
+        if (heartbeats.lastheartbeatSent > heartbeats.lastheartbeatAck) {
+          clearInterval(heartbeats.heartbeatInterval);
+          return;
+        }
+        node.send({ 
+          op: 'heartbeat'
+        });
+        heartbeats.lastheartbeatSent = Date.now();
+      }, 45000);
+
+      /*** END ***/
     });
 
     this.on('nodeReconnect', (node): void => {
@@ -77,24 +81,32 @@ export default class D4rkManager extends Manager {
     });
 
     this.on('nodeError', (node, error): void => {
+      /*** Receive the heartbeat acknowledge ***/
+      if (error && error.message.includes('Unexpected op "heartbeatAck"')) {
+        const data = this.heartbeats.get('Node 1');
+        if (data) {
+          data.lastheartbeatAck = Date.now();
+          data.ping = data.lastheartbeatAck - data.lastheartbeatSent;
+        }
+        return;
+      }
+      /*** END ***/
       console.log(`Ocorreu um erro no Node ${node.options.identifier}. Erro: ${error.message}`);
       if (error.message.startsWith('Unable to connect after')) this.reconnect();
     });
 
     this.on('nodeDisconnect', (node, reason): void => {
       console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason ? reason.reason : reason.code ? reason.code : 'Desconhecido'}`);
+
+      const data = this.heartbeats.get(node.options.identifier as string);
+
+      if (data) {
+        clearInterval(data.heartbeatInterval);
+        this.heartbeats.delete(node.options.identifier as string);
+      }
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
-      /*** Heroku lavalink ***/
-      if (player.guild === process.env.TESTGUILDID) {
-        setTimeout(() => {
-          player.pause(true);
-        }, 3000);
-        return;
-      }
-      /*** End ***/
-
       if (player.reconnect) {
         delete player.reconnect;
         return;
@@ -144,17 +156,6 @@ export default class D4rkManager extends Manager {
       player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error ? payload.error : 'Desconhecido'}\``);
 
       console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
-
-      /*** Heroku lavalink ***/
-      if (player.guild === process.env.TESTGUILDID) {
-        this.destroy(player.guild);
-
-        setTimeout(() => {
-          loadTestServerMusic();
-        }, 5000);
-        return;
-      }
-      /*** End ***/
       player.stop();
     });
 

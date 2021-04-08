@@ -33,8 +33,9 @@ export default class Lavalink extends Command {
       .addField(':id: Nome', `\`${node.options.identifier}\``, true)
       .addField(':calendar: Players a tocar', `\`${node.stats.players}\``, true)
       .addField('<a:malakoi:478003266815262730> Uptime', `\`${this.client.utils.msToDate(node.stats.uptime)}\``, true)
-      .addField('<a:carregando:488783607352131585> CPU', `Cores: \`${node.stats.cpu.cores}\`\nLavalink: \`${node.stats.cpu.lavalinkLoad.toFixed(2)}%\`\nSistema: \`${node.stats.cpu.systemLoad.toFixed(2)}%\``, true)
+      .addField('<a:carregando:488783607352131585> CPU', `Cores: \`${node.stats.cpu.cores}\`\nLavalink: \`${~~(node.stats.cpu.lavalinkLoad * 100)}%\`\nSistema: \`${~~(node.stats.cpu.systemLoad * 100)}%\``, true)
       .addField('<:ram:751468688686841986> RAM', `\`${(node.stats.memory.used / 1024 / 1024).toFixed(0)}MB\``, true)
+      .addField(':ping_pong: Ping', `\`${this.client.music.heartbeats.get(node.options.identifier as string)?.ping || 0}ms\``, true)
       .setTimestamp()
       .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
 

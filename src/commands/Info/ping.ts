@@ -28,10 +28,13 @@ export default class Ping extends Command {
     const pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
     const WSPing = this.client.shards.get(0)?.latency || 0;
 
+    const pingLavalink = this.client.music.heartbeats.get(this.client.music.nodes.first()?.options.identifier as string)?.ping;
+
     const res = [
       `:incoming_envelope: \`${pingMsg}ms\``,
       `:heartbeat: \`${Math.round(WSPing)}ms\``,
-      `<:MongoDB:773610222602158090> \`${pingDB}ms\``
+      `<:MongoDB:773610222602158090> \`${pingDB}ms\``,
+      `<:lavalink:829751857483350058> \`${pingLavalink || 0}ms\``
     ];
 
     const mediumPing = (pingMsg + WSPing + pingDB) / 3;
