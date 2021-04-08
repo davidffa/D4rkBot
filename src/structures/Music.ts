@@ -61,6 +61,7 @@ export default class D4rkManager extends Manager {
       node.send({ 
         op: 'heartbeat'
       });
+      heartbeats.lastheartbeatSent = Date.now();
 
       heartbeats.heartbeatInterval = setInterval(() => {
         if (heartbeats.lastheartbeatSent > heartbeats.lastheartbeatAck) {
