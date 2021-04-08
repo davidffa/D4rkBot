@@ -103,7 +103,7 @@ export default class Serverinfo extends Command {
       .addField(`:grinning: Emojis [${emojis}]`, `Estáticos: ${staticEmojis}\nAnimados: ${animatedEmojis}`, true)
       .addField(`<:followers:784795303156908032> Cargos:`, `${guild.roles.size}`, true)
       .addField(`:man: Membros [${guild.members.size}]`, `<:online:804049640437448714> Online: ${status.online}\n<:idle:804049737383673899> Ausente: ${status.idle}\n<:dnd:804049759328403486> Ocupado: ${status.dnd}\n<:offline:804049815713480715> Offline: ${status.offline}\n<:bot:804028762307821578> Bots: ${bots}`, true)
-      .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Estágio: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:shopping_bags: Loja: ${channels.store}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
+      .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Palco: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:shopping_bags: Loja: ${channels.store}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
       .setThumbnail(message.channel.guild.dynamicIconURL())
       .setImage(message.channel.guild.dynamicBannerURL())
       .setTimestamp()
