@@ -24,6 +24,10 @@ export default class Filters {
     }
 
     if (filter.timescale) {
+      if (this.player.queue.current?.isStream) {
+        filter.timescale.rate = 1.0;
+        filter.timescale.speed = 1.0;
+      }
       this.timescale = {
         pitch: filter.timescale.pitch || 1.0,
         rate: filter.timescale.rate || this.timescale?.rate || 1.0,
