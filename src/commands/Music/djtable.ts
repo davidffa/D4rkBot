@@ -61,20 +61,20 @@ export default class Djtable extends Command {
       const embed = new this.client.embed()
         .setTitle('<a:disco:803678643661832233> Mesa de DJ')
         .setColor('RANDOM')
-        .setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}`)
+        .setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`)
         .setThumbnail('https://i.pinimg.com/564x/a3/a9/29/a3a929cc8d09e88815b89bc071ff4d8d.jpg')
         .setTimestamp()
         .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
 
       const msg = await message.channel.createMessage({ embed });
       player.djTableMsg = msg;
-      msg.addReaction('0️⃣');
       msg.addReaction('1️⃣');
       msg.addReaction('2️⃣');
       msg.addReaction('3️⃣');
       msg.addReaction('4️⃣');
       msg.addReaction('5️⃣');
       msg.addReaction('6️⃣');
+      msg.addReaction('0️⃣');
       msg.addReaction('x_:751062867444498432');
 
       const filter = (r: Emoji, u: User) => (r.name === '0️⃣' || r.name === '1️⃣' || r.name === '2️⃣' ||
@@ -86,7 +86,7 @@ export default class Djtable extends Command {
         switch (r.name) {
           case '0️⃣':
             player.filters.clearFilters();
-            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}`);
+            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
             msg.edit({ embed });
             break;
           case 'x_':
@@ -100,7 +100,7 @@ export default class Djtable extends Command {
               player.filters.removeEffect(effects[i-1]);
             }
     
-            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? 'ON' : 'OFF'}]**`).join('\n')}`);
+            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx+1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.filters.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
             msg.edit({ embed });
             break;
         }
