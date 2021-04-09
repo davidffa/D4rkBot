@@ -98,5 +98,6 @@ declare module 'erela.js' {
     djTableMsg?: Message;
     filters: Filters;
     reconnect?: boolean;
+    errorCount?: number;
   }
 }

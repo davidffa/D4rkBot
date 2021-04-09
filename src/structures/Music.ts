@@ -155,8 +155,17 @@ export default class D4rkManager extends Manager {
 
     this.on('trackError', (player, track, payload): void => {
       player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error ? payload.error : 'Desconhecido'}\``);
-
       console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
+
+      if (!player.errorCount) {
+        player.errorCount = 0;
+      }else ++player.errorCount;
+
+      if (player.errorCount > 5) {
+        player.destroy();
+        return;
+      }
+      
       player.stop();
     });
 
