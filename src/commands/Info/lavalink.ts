@@ -7,7 +7,7 @@ export default class Lavalink extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'lavalink',
-      description: 'Link do meu convite.',
+      description: 'Mostra o status do node do lavalink.',
       aliases: ['nodestats', 'lavalinkstats', 'lavalinknodestats'],
       category: 'Info',
       cooldown: 10,
