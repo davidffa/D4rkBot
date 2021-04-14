@@ -37,7 +37,7 @@ export default class Github extends Command {
     const user = await res.json();
 
     const embed = new this.client.embed()
-      .setTitle(`<:github:784791056670654465> Perfil do ${user.login}`)
+      .setTitle(`<:github:784791056670654465> Perfil de ${user.login}`)
       .setColor('RANDOM')
       .addField(':bust_in_silhouette: Nome', user.name || user.login, true)
       .addField(':id: ID', user.id, true)
