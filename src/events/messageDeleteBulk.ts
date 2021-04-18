@@ -15,12 +15,14 @@ export default class MessageDeleteBulk {
     
     const collectors: ReactionCollector[] = [];
 
-    this.client.reactionCollectors.forEach(collector => {
+    for (const collector of this.client.reactionCollectors) {
       if (msgIDs.includes(collector.message.id)) {
         collectors.push(collector);
       }
-    });
+    };
 
-    collectors.forEach(c => c.stop('Message Delete'));
+    for (const c of collectors) {
+      c.stop('Message Delete');
+    }
   }
 }

@@ -10,16 +10,16 @@ export default class ChannelDelete {
     }
 
     run(channel: Channel) {
-      this.client.reactionCollectors.forEach(collector => {
+      for (const collector of this.client.reactionCollectors) {
         if (collector.message.channel.id === channel.id) {
           collector.stop('Channel Delete')
         }
-      });
+      };
 
-      this.client.messageCollectors.forEach(collector => {
+      for (const collector of this.client.messageCollectors) {
         if (collector.channel.id === channel.id) {
           collector.stop('Channel Delete')
         }
-      });
+      };
     }
 }

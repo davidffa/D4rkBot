@@ -10,10 +10,10 @@ export default class MessageDelete {
   }
 
   run(message: Message) {
-    this.client.reactionCollectors.forEach(collector => {
+    for (const collector of this.client.reactionCollectors) {
       if (collector.message.id === message.id) {
         collector.stop('Message Delete');
       }
-    });
+    };
   }
 }

@@ -27,16 +27,16 @@ export default class GuildDelete {
 
     channel && this.client.createMessage(channel.id, { embed });
 
-    this.client.reactionCollectors.forEach(collector => {
+    for (const collector of this.client.reactionCollectors) {
       if (collector.message.guildID === guild.id) {
         collector.stop('Guild Delete');
       }
-    });
+    };
 
-    this.client.messageCollectors.forEach(collector => {
+    for (const collector of this.client.messageCollectors) {
       if (collector.channel.type === 0 && collector.channel.guild.id === guild.id) {
         collector.stop('Guild Delete');
       }
-    })
+    }
   }
 }

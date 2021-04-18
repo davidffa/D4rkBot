@@ -13,11 +13,11 @@ export default class MessageCreate {
   }
 
   async run(message: Message) {
-    this.client.messageCollectors.forEach(collector => {
+    for (const collector of this.client.messageCollectors) {
       if (collector.channel.id === message.channel.id) {
         collector.collect(message);
       }
-    });
+    };
 
     if (message.author.bot) return;
 
