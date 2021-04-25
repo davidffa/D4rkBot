@@ -42,7 +42,7 @@ export default class D4rkManager extends Manager {
     this.heartbeats = new Map();
 
     this.on('nodeConnect', async (node): Promise<void> => {
-      console.log(`${node.options.identifier} do Lavalink (wss://${node.options.host}:${node.options.port}) conectado!`);
+      console.log(`${node.options.identifier} do Lavalink (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
 
       for (const player of this.players.values()) {
         const position = player.position;

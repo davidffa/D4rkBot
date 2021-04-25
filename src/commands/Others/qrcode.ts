@@ -12,7 +12,7 @@ export default class Qrcode extends Command {
       name: 'qrcode',
       description: 'Cria ou lê um código QR',
       args: 1,
-      usage: '<Criar/Ler> (<Texto>/[URL/Anexo])',
+      usage: '<Criar/Ler> <Texto>|<URL/Anexo>',
       category: 'Others',
       aliases: ['qr'],
       dm: true,
@@ -36,7 +36,7 @@ export default class Qrcode extends Command {
         }
 
         if (!args[1]) {
-          message.channel.createMessage(`:x: **Use:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode criar <Texto>`);
+          message.channel.createMessage(`:x: **Usa:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode criar <Texto>`);
           return;
         }
 
@@ -66,7 +66,12 @@ export default class Qrcode extends Command {
       case 'read':
       case 'r':
       case 'l':
-        const qrURL = args[1] || message.attachments[0].url;
+        const qrURL = args[1] || message.attachments[0]?.url;
+
+        if (!qrURL) {
+          message.channel.createMessage(`:x: **Usa:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode ler <URL/Anexo>`);
+          return;
+        }
 
         const data = await fetch(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`)
           .then(res => res.json())
@@ -89,7 +94,7 @@ export default class Qrcode extends Command {
         message.channel.createMessage({ embed: ebd });
         break;
       default:
-        message.channel.createMessage(`:x: **Use:** \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode <Criar/Ler> (<Texto>/[URL/Anexo])\``)
+        message.channel.createMessage(`:x: **Usa:** \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}qrcode <Criar/Ler> <Texto>|<URL/Anexo>\``)
         break;
     }
   }
