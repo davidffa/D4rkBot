@@ -118,6 +118,7 @@ export default class Filters {
         ]
       });
       delete this.equalizer;
+      this.player.bands.fill(0);
     }
 
     if (this.tremolo) {
