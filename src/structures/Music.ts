@@ -4,6 +4,7 @@ import Client from '../structures/Client';
 
 import { User, Member, Message } from 'eris';
 import { Player, Node } from 'erela.js';
+import fetch from 'node-fetch';
 
 import { Timeouts, MsgCollectors } from '../typings/index';
 
@@ -153,8 +154,30 @@ export default class D4rkManager extends Manager {
       console.error(`[Lavalink] Track Stuck on guild ${player.guild}. Music title: ${track.title}`);
     });
 
-    this.on('trackError', (player, track, payload): void => {
-      player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error ? payload.error : 'Desconhecido'}\``);
+    this.on('trackError', async (player, track, payload): Promise<void> => {
+      if (payload.error && payload.error.includes('429')) {
+        if (player.textChannel) {
+          const appName = process.env.LAVALINKHOST?.split('.')[0];
+
+          if (appName && !Number(appName)) {
+            const status = await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
+              method: 'DELETE',
+              headers: {
+                'Accept': 'application/vnd.heroku+json; version=3',
+                'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
+              }
+            }).then(r => r.status);
+  
+            if (status === 202) {
+              this.client.createMessage(player.textChannel, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
+            }else {
+              this.client.createMessage(player.textChannel, ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
+            }
+            return;
+          }
+        }
+      }
+      player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error || 'Desconhecido'}\``);
       console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
 
       if (!player.errorCount) {
