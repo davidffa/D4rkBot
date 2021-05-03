@@ -46,6 +46,5 @@ export default class Restart extends Command {
     }else {
       message.channel.createMessage(':x: Não foi possível reiniciar essa aplicação!');
     }
-    console.log(res);
   }
 }
