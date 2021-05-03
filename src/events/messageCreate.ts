@@ -152,7 +152,7 @@ export default class MessageCreate {
         mkdirSync('./logs');
 
       if (message.channel.type === 0)
-        appendFileSync('./logs/log.txt', `**Comando:** \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.username}#${message.author.discriminator}\n\n`);
+        appendFileSync('./logs/log.txt', `**Comando:** \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.username}#${message.author.discriminator}(${message.author.id})\n\n`);
       else
         appendFileSync('./logs/log.txt', `**Comando:** \`${cmdName}\` executado no DM.\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.username}#${message.author.discriminator}\n\n`);
 
