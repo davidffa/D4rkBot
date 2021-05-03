@@ -26,6 +26,10 @@ export default class MessageCreate {
     if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {
       if (message.channel.type === 0) {
         if (!message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
+        if (this.client.blacklist.includes(message.author.id)) {
+          message.channel.createMessage(':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>');
+          return;
+        }
         return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention} O meu prefixo neste servidor é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`)
       } else {
         return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention} O meu prefixo é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`)
@@ -33,6 +37,13 @@ export default class MessageCreate {
     }
 
     if (!message.content.startsWith(prefix)) return;
+
+    if (this.client.blacklist.includes(message.author.id)) {
+      if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('sendMessages')) {
+        message.channel.createMessage(':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>');
+      }
+      return;
+    }
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const cmdName = args.shift()?.toLowerCase();

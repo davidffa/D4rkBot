@@ -23,6 +23,7 @@ export default class D4rkClient extends Client {
   utils: Utils;
   records: Map<string, Records>;
   cooldowns: Map<string, Map<string, number>>;
+  blacklist: Array<string>;
   guildCache: Map<string, GuildCache>;
   commandsUsed: number;
   private lastCmdsUsed: number;
@@ -179,7 +180,18 @@ export default class D4rkClient extends Client {
       });
     });
 
-    const bot = await this.botDB.findOne({ botID: this.user.id });
+    let bot = await this.botDB.findOne({ botID: this.user.id });
+
+    if (!bot) {
+      bot = await this.botDB.create({ botID: this.user.id });
+    }
+    
+    if (!bot.blacklist) {
+      bot.blacklist = [];
+      bot.save();
+    }
+
+    this.blacklist = [...bot?.blacklist] || [];
     this.lastCmdsUsed = bot?.commands || 0;
     this.commandsUsed = bot?.commands || 0;
     if (bot?.lockedCmds) this.lockedCmds = bot.lockedCmds;

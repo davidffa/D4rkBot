@@ -4,6 +4,7 @@ interface BotDB extends Document {
   botID: string;
   commands?: number;
   lockedCmds?: Array<string>;
+  blacklist?: Array<string>;
 }
 
 const botDB: Schema = new Schema({
@@ -15,6 +16,9 @@ const botDB: Schema = new Schema({
     type: Number
   },
   lockedCmds: {
+    type: Array
+  },
+  blacklist: {
     type: Array
   }
 }, {

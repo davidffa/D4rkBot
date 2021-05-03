@@ -12,6 +12,8 @@ export default class MessageUpdate {
   run(message: Message, oldMessage: OldMessage) {
     if (!oldMessage || !message || oldMessage.content === message.content) return;
 
+    if (this.client.blacklist.includes(message.author.id)) return;
+
     this.client.emit('messageCreate', message);
   }
 }
