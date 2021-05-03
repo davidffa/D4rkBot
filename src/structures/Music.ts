@@ -79,7 +79,7 @@ export default class D4rkManager extends Manager {
     });
 
     this.on('nodeReconnect', (node): void => {
-      console.log(`A reconectar ao node ${node.options.identifier} (wss://${node.options.host}:${node.options.port})...`);
+      console.log(`A reconectar ao node ${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port})...`);
     });
 
     this.on('nodeError', (node, error): void => {
