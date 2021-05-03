@@ -76,7 +76,7 @@ export default class Forceplay extends Command {
             .setColor('RANDOM')
             .setTitle('<a:disco:803678643661832233> Playlist Carregada')
             .addField(":page_with_curl: Nome:", '`' + playlist?.name + '`')
-            .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + res.tracks.length + '`')
+            .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
             .addField(':watch: Duração', `\`${this.client.utils.msToHour(res.playlist?.duration || 0)}\``)
             .setTimestamp()
             .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());

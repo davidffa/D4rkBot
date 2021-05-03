@@ -16,6 +16,6 @@ export default class Uptime extends Command {
   }
 
   execute(message: Message): void {
-    message.channel.createMessage(`<a:malakoi:478003266815262730> Estou online há \`${this.client.utils.msToDate(process.uptime() * 1e3)}\``)
+    message.channel.createMessage(`<a:infinity:838759634361253929> Estou online há \`${this.client.utils.msToDate(process.uptime() * 1e3)}\``)
   }
 }

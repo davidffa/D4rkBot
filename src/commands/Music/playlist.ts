@@ -438,7 +438,7 @@ export default class PlayList extends Command {
               .setColor('RANDOM')
               .setTitle('<a:disco:803678643661832233> Playlist Carregada')
               .addField(":page_with_curl: Nome:", '`' + list.name + '`')
-              .addField("<a:malakoi:478003266815262730> Quantidade de músicas:", '`' + songs.length + '`')
+              .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + songs.length + '`')
               .setTimestamp()
               .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
               
