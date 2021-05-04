@@ -705,10 +705,10 @@ erela.js@^2.2.0, erela.js@^2.3.3:
     petitio "^1.1.0"
     ws "^7.3.1"
 
-eris@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/eris/-/eris-0.15.0.tgz#d0744d993d508b2951bc6d0ab380ae39b63c0666"
-  integrity sha512-muBdi5XyMXdxFQ8xUG6yofq40/Z02CHlqJP7zIdHhpdDiHvFM/mybGiFAHuoSYcsVTTvEfbUaAJ+SDEmMjARYw==
+eris@^0.15.1:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/eris/-/eris-0.15.1.tgz#6b44e6d4675c271def7484725a0edede9e798960"
+  integrity sha512-IQ3BPW6OjgFoqjdh+irPOa1jFlkotk+WNu2GQQ7QAQfbzQEPZgn+F+hpOxfMUXPHOZMX4sPKLkVDkMHAssBYhw==
   dependencies:
     ws "^7.2.1"
   optionalDependencies:
@@ -1507,9 +1507,9 @@ osenv@^0.1.4:
     os-tmpdir "^1.0.0"
 
 p-cancelable@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-2.1.0.tgz#4d51c3b91f483d02a0d300765321fca393d758dd"
-  integrity sha512-HAZyB3ZodPo+BDpb4/Iu7Jv4P6cSazBz9ZM0ChhEXp70scx834aWCEjQRwgt41UzzejUAPdbqqONfRWTPYrPAQ==
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-2.1.1.tgz#aab7fbd416582fa32a3db49859c122487c5ed2cf"
+  integrity sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg==
 
 p-limit@^2.0.0:
   version "2.3.0"
