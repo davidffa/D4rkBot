@@ -88,7 +88,7 @@ export default class Lyrics extends Command {
       const player = this.client.music.players.get(message.guildID as string);
 
       if (!player || !player.queue.current) {
-        message.channel.createMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(message.guildID as string)?.prefix}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
+        message.channel.createMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
         return;
       }
 
@@ -109,7 +109,11 @@ export default class Lyrics extends Command {
     }
 
     if (!res) {
-      message.channel.createMessage(':x: Não encontrei nenhum resultado.');
+      if (args.join(' ').split('-').length === 1) {
+        message.channel.createMessage(`:x: Não encontrei nenhum resultado.\nExperimenta usar \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}lyrics <Nome da música> - <Artista>\``);
+      }else {
+        message.channel.createMessage(':x: Não encontrei nenhum resultado.');
+      }
       return;
     }
 
@@ -128,7 +132,6 @@ export default class Lyrics extends Command {
     const msg = await message.channel.createMessage({ embed });
     msg.addReaction('⬅️');
     msg.addReaction('➡️');
-
 
     const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
 
