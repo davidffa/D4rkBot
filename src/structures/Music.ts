@@ -5,6 +5,7 @@ import Client from '../structures/Client';
 import { User, Member, Message } from 'eris';
 import { Player, Node } from 'erela.js';
 import fetch from 'node-fetch';
+import { Parser } from 'xml2js';
 
 import { Timeouts, MsgCollectors } from '../typings/index';
 
@@ -288,6 +289,29 @@ export default class D4rkManager extends Manager {
       return false;
     }
     return true;
+  }
+
+  async getRadioNowPlaying(radio: string) {
+    let artist, songTitle;
+    const xmlParser = new Parser();
+
+    if (['CidadeHipHop', 'CidadeFM', 'RadioComercial', 'M80'].includes(radio)) {
+      const xml = await fetch(`https://${radio === 'M80' ? 'm80' : radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.text());
+
+      const text = await xmlParser.parseStringPromise(xml).then(t => t.RadioInfo.Table[0]);
+
+      artist = text['DB_DALET_ARTIST_NAME'][0];
+      songTitle = text['DB_DALET_TITLE_NAME'][0];
+    }else if (radio === 'RFM') {
+      const xml = await fetch('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer()).then(buffer => buffer.toString('utf16le'));
+
+      const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
+        
+      artist = text.artist[0];
+      songTitle = text.name[0];
+    }
+
+    return { artist, songTitle };
   }
 
   init() {
