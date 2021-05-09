@@ -32,9 +32,10 @@ export default class Nowplaying extends Command {
 
     if (player.radio) {
       let artist, songTitle;
+      const xmlParser = new Parser();
+      
       if (['CidadeHipHop', 'CidadeFM', 'RadioComercial', 'M80'].includes(player.radio)) {
         const xml = await fetch(`https://${player.radio === 'M80' ? 'm80' : player.radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${player.radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.text());
-        const xmlParser = new Parser();
 
         const text = await xmlParser.parseStringPromise(xml).then(t => t.RadioInfo.Table[0]);
 
@@ -42,7 +43,6 @@ export default class Nowplaying extends Command {
         songTitle = text['DB_DALET_TITLE_NAME'][0];
       }else if (player.radio === 'RFM') {
         const xml = await fetch('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer()).then(buffer => buffer.toString('utf16le'));
-        const xmlParser = new Parser();
 
         const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
         
