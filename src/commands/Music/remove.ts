@@ -67,7 +67,7 @@ export default class Remove extends Command {
         message.channel.createMessage(':x: Não há músicas na queue');
         return;
       }
-      if (isDJ || (!player.queue[parseInt(args[0]) - 1] && message.author === player.queue[parseInt(args[0]) - 1].requester) || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
+      if (isDJ || (player.queue[parseInt(args[0]) - 1] && message.author === player.queue[parseInt(args[0]) - 1].requester) || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         remove(parseInt(args[0]));
         return;
       }
