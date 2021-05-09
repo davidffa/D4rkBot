@@ -83,6 +83,7 @@ export default class Lyrics extends Command {
     }
 
     let res: LyricsRes | null;
+    let artist, title;
 
     if (!args.length) {
       const player = this.client.music.players.get(message.guildID as string);
@@ -92,8 +93,16 @@ export default class Lyrics extends Command {
         return;
       }
 
-      const [artist, title] = player.queue.current.title.split('-');
-
+      if (player.radio) {
+        const np = await this.client.music.getRadioNowPlaying(player.radio);
+        artist = np.artist;
+        title = np.songTitle;
+      }else {
+        const titleArr = player.queue.current.title.split('-');
+        artist = titleArr[0];
+        title = titleArr[1];
+      }
+      
       if (title) {
         res = await lyrics(title, artist);
       } else {
@@ -122,7 +131,7 @@ export default class Lyrics extends Command {
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
-      .setTitle(args.join(' '))
+      .setTitle(args.join(' ') || `${artist} - ${title}`)
       .setDescription(res.lyrics.slice(0, 20).join('\n'))
       .setThumbnail(res.albumArt)
       .setURL(res.url)
