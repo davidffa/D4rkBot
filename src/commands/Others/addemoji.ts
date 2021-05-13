@@ -19,9 +19,14 @@ export default class Addemoji extends Command {
 
   async execute(message: Message, args: Array<string>): Promise<void> {
     if (message.channel.type !== 0 || !message.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
-      message.channel.createMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando');
+      message.channel.createMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando!');
       return;
     }
+
+    if (!message.member?.permissions.has('manageEmojis')) {
+      message.channel.createMessage(':x: Precisas da permissão `Gerir Emojis` para executar este comando!')
+      return;
+    } 
 
     const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
 
