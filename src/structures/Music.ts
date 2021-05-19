@@ -60,20 +60,20 @@ export default class D4rkManager extends Manager {
       const heartbeats = this.heartbeats.get(node.options.identifier as string);
       if (!heartbeats) return;
 
-      node.send({ 
-        op: 'heartbeat'
-      });
-      heartbeats.lastheartbeatSent = Date.now();
+      const sendPing = () => {
+        node.send({ 
+          op: 'ping'
+        });
+        heartbeats.lastheartbeatSent = Date.now();
+      }
 
+      sendPing();
       heartbeats.heartbeatInterval = setInterval(() => {
         if (heartbeats.lastheartbeatSent > heartbeats.lastheartbeatAck) {
           clearInterval(heartbeats.heartbeatInterval);
           return;
         }
-        node.send({ 
-          op: 'heartbeat'
-        });
-        heartbeats.lastheartbeatSent = Date.now();
+        sendPing();
       }, 45000);
 
       /*** END ***/
@@ -85,7 +85,7 @@ export default class D4rkManager extends Manager {
 
     this.on('nodeError', (node, error): void => {
       /*** Receive the heartbeat acknowledge ***/
-      if (error && error.message.includes('Unexpected op "heartbeatAck"')) {
+      if (error && error.message.includes('"pong"')) {
         const data = this.heartbeats.get('Node 1');
         if (data) {
           data.lastheartbeatAck = Date.now();
@@ -174,6 +174,7 @@ export default class D4rkManager extends Manager {
             }else {
               this.client.createMessage(player.textChannel, ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
             }
+            player.destroy();
             return;
           }
         }
