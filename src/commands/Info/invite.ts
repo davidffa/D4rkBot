@@ -1,13 +1,12 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Invite extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'invite',
-      description: 'Link do meu convite.',
+      description: 'Envia o link do meu convite.',
       aliases: ['inv', 'convite'],
       category: 'Info',
       cooldown: 3,
@@ -15,7 +14,7 @@ export default class Invite extends Command {
     });
   }
 
-  execute(message: Message): void {
+  execute(ctx: CommandContext): void {
     const embedRes = [
       '<a:blobdance:804026401849475094> **Adicione-me ao seu servidor usando um dos convites abaixo**\n',
       '[Com permissão de administrador](https://discord.com/oauth2/authorize?client_id=499901597762060288&scope=bot&permissions=8)',
@@ -36,13 +35,13 @@ export default class Invite extends Command {
       .setColor('RANDOM')
       .setTitle('Convite')
       .setDescription(embedRes.join('\n'))
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
       .setTimestamp();
 
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(res.join('\n'))
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(res.join('\n'))
     } else {
-      message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
     }
   }
 }

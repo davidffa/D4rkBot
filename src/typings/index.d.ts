@@ -1,5 +1,6 @@
-import { Message, User, Guild } from 'eris';
+import { Message, User, Guild, AllowedMentions, EmbedOptions, MessageFile } from 'eris';
 import { MessageCollector } from 'eris-collector';
+import CommandContext from '../structures/CommandContext';
 
 interface CommandOptions {
   name: string;
@@ -13,7 +14,7 @@ interface CommandOptions {
 }
 
 interface Command extends CommandOptions {
-  execute: (message: Message, args: Array<string>) => void;
+  execute: (ctx: CommandContext) => void;
 }
 
 interface Utils {
@@ -45,6 +46,49 @@ interface GuildCache {
 interface Records {
   timeout: NodeJS.Timeout;
   users: Array<string>;
+}
+
+interface InteractionOptions {
+  name: string;
+  value: string;
+  type: number;
+  options?: InteractionOptions[];
+}
+
+interface InteractionData {
+  id: string;
+  name: string;
+  options?: InteractionOptions[];
+}
+
+interface InteractionPacket {
+  application_id: string;
+  channel_id: string;
+  id: string;
+  guild_id: string;
+
+  data: InteractionData;
+
+  member: { user: { id: string; }}; //dont need more stuff (for now)
+
+  token: string;
+  type: number;
+  version: number;
+}
+
+interface InteractionApplicationCommandCallbackData {
+  tts?: boolean;
+  content?: string;
+  embeds?: EmbedOptions[];
+  allowed_mentions?: AllowedMentions;
+  flags?: number;
+}
+
+interface IEditInteractionData {
+  [key: string]: string;
+  content?: string;
+  embeds?: EmbedOptions[];
+  file?: MessageFile;
 }
 
 import 'erela.js';

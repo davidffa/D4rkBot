@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector, MessageCollector } from '../../structures/Collector';
 
 import { Message, Emoji, User } from 'eris';
@@ -8,53 +9,53 @@ export default class Logs extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'logs',
-      description: 'Configura os canais onde irei enviar as logs (mensagem bem-vindo etc)',
+      description: 'Configura os canais onde irei enviar as logs (mensagem bem-vindo etc).',
       category: 'Settings',
       aliases: ['setlogs', 'configlogs'],
       cooldown: 5,
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!message.channel.permissionsOf(message.author.id).has('manageMessages') && message.author.id !== '334054158879686657') {
-      message.channel.createMessage(':x: Precisas da permissão `Gerenciar Mensagens` para usar este comando!');
+    if (!ctx.channel.permissionsOf(ctx.author.id).has('manageMessages') && ctx.author.id !== '334054158879686657') {
+      ctx.sendMessage(':x: Precisas da permissão `Gerenciar Mensagens` para usar este comando!');
       return;
     }
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      message.channel.createMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
+      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
       return;
     }
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Inserir Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Inserir Links` para executar este comando');
       return;
     }
 
-    const guildData = this.client.guildCache.get(message.guildID as string);
-    const welcomeChannel = message.channel.guild.channels.get(guildData?.welcomeChatID || '');
-    const byeChannel = message.channel.guild.channels.get(guildData?.memberRemoveChatID || '');
+    const guildData = this.client.guildCache.get(ctx.msg.guildID as string);
+    const welcomeChannel = ctx.guild.channels.get(guildData?.welcomeChatID || '');
+    const byeChannel = ctx.guild.channels.get(guildData?.memberRemoveChatID || '');
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTitle('Configurar logs')
       .setDescription(`:one: Canal das mensagens de bem-vindo: \`${welcomeChannel ? `${welcomeChannel.name}` : 'Nenhum'}\`\n\n:two: Canal das mensagens de saídas de membros: \`${byeChannel ? `${byeChannel.name}` : 'Nenhum'}\``)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await message.channel.createMessage({ embed });
-    msg.addReaction('1⃣');
-    msg.addReaction('2⃣');
+    await ctx.sendMessage({ embed });
+    ctx.sentMsg.addReaction('1⃣');
+    ctx.sentMsg.addReaction('2⃣');
 
     const welcomeMsgCollector = (): void => {
-      const filter = (m: Message) => m.author.id === message.author.id;
-      const collector = new MessageCollector(this.client, message.channel, filter, { max: 1, time: 20000 });
+      const filter = (m: Message) => m.author.id === ctx.author.id;
+      const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
 
       collector.on('collect', async (m) => {
         if (m.channel.type !== 0) return;
-        msg.delete().catch(() => { });
+        ctx.sentMsg.delete().catch(() => { });
 
         if (!guildData) return;
 
@@ -68,7 +69,7 @@ export default class Logs extends Command {
             guildDBData.save();
           }
 
-          message.channel.createMessage('<a:verificado:803678585008816198> Logs de bem-vindo desativadas!');
+          ctx.sendMessage('<a:verificado:803678585008816198> Logs de bem-vindo desativadas!');
           return;
         }
 
@@ -91,22 +92,22 @@ export default class Logs extends Command {
           guildDBData.save();
         } else {
           this.client.guildDB.create({
-            guildID: message.guildID,
+            guildID: ctx.msg.guildID,
             welcomeChatID: channel.id
           });
         }
 
-        message.channel.createMessage(`<a:verificado:803678585008816198> Canal de bem-vindo setado para \`${channel.name}\`.`);
+        ctx.sendMessage(`<a:verificado:803678585008816198> Canal de bem-vindo setado para \`${channel.name}\`.`);
       });
     }
 
     const byeMsgCollector = (): void => {
-      const filter = (m: Message) => m.author.id === message.author.id;
-      const collector = new MessageCollector(this.client, message.channel, filter, { max: 1, time: 20000 });
+      const filter = (m: Message) => m.author.id === ctx.author.id;
+      const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
 
       collector.on('collect', async (m) => {
         if (m.channel.type !== 0) return;
-        msg.delete().catch(() => { });
+        ctx.sentMsg.delete().catch(() => { });
         if (!guildData) return;
 
         if (m.content === '0') {
@@ -119,7 +120,7 @@ export default class Logs extends Command {
             guildDBData.save();
           }
 
-          message.channel.createMessage('<a:verificado:803678585008816198> Logs de bem-vindo desativadas!');
+          ctx.sendMessage('<a:verificado:803678585008816198> Logs de bem-vindo desativadas!');
           return;
         }
 
@@ -142,26 +143,26 @@ export default class Logs extends Command {
           guildDBData.save();
         } else {
           this.client.guildDB.create({
-            guildID: message.guildID,
+            guildID: ctx.msg.guildID,
             memberRemoveChatID: channel.id
           });
         }
 
-        message.channel.createMessage(`<a:verificado:803678585008816198> Canal de saídas de membros setado para \`${channel.name}\`.`);
+        ctx.sendMessage(`<a:verificado:803678585008816198> Canal de saídas de membros setado para \`${channel.name}\`.`);
       });
     }
 
-    const filter = (r: Emoji, user: User) => (r.name === '1⃣' || r.name === '2⃣') && user === message.author;
-    const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
+    const filter = (r: Emoji, user: User) => (r.name === '1⃣' || r.name === '2⃣') && user === ctx.author;
+    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { max: 1, time: 3 * 60 * 1000 });
 
     collector.on('collect', async r => {
       switch (r.name) {
         case '1⃣':
-          message.channel.createMessage('Escreva o ID ou o nome do canal para onde as mensagens de bem-vindo irão (Escreva 0 para desativar).');
+          ctx.sendMessage('Escreva o ID ou o nome do canal para onde as mensagens de bem-vindo irão (Escreva 0 para desativar).');
           welcomeMsgCollector();
           break;
         case '2⃣':
-          message.channel.createMessage('Escreva o ID ou o nome do canal para onde as mensagens de saída de membros irão (Escreva 0 para desativar).');
+          ctx.sendMessage('Escreva o ID ou o nome do canal para onde as mensagens de saída de membros irão (Escreva 0 para desativar).');
           byeMsgCollector();
           break;
       }
@@ -169,8 +170,8 @@ export default class Logs extends Command {
     });
 
     collector.on('end', () => {
-      msg.removeReaction('1⃣');
-      msg.removeReaction('2⃣');
+      ctx.sentMsg.removeReaction('1⃣');
+      ctx.sentMsg.removeReaction('2⃣');
     });
   }
 }

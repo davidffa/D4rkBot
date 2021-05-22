@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import Filters from '../../structures/Filters';
 
 import { Message } from 'eris';
@@ -8,17 +9,17 @@ export default class Radio extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'radio',
-      description: 'Toca uma estação de rádio',
+      description: 'Toca uma estação de rádio.',
       usage: '[Nome da Estação]',
       cooldown: 5,
       category: 'Music'
     });
   }
 
-  async execute(message: Message, args: string[]): Promise<void> {
-    if (message.channel.type !== 0) return;
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
     
@@ -30,7 +31,7 @@ export default class Radio extends Command {
       RadioComercial: 'https://mcrscast1.mcr.iol.pt/comercial'
     };
 
-    const radio = Object.entries(radios).find(([radio]) => radio.toLowerCase() === args?.join('').toLowerCase());
+    const radio = Object.entries(radios).find(([radio]) => radio.toLowerCase() === ctx.args?.join('').toLowerCase());
 
     if (!radio) {
       const embed = new this.client.embed()
@@ -38,84 +39,84 @@ export default class Radio extends Command {
         .setColor('RANDOM')
         .setDescription(Object.keys(radios).join(', '))
         .setTimestamp()
-        .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
-    const currPlayer = this.client.music.players.get(message.guildID as string);
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const currPlayer = this.client.music.players.get(ctx.msg.guildID as string);
         
     if (!voiceChannelID) {
-      message.channel.createMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
       return;
     }
 
     const voiceChannel = this.client.getChannel(voiceChannelID);
         
     if (voiceChannel.type !== 2) {
-      message.channel.createMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
+      ctx.sendMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
       return;
     }
 
     if (currPlayer && voiceChannelID !== currPlayer.voiceChannel) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
       return;
     }
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
         
     if (!permissions.has('readMessages')) {
-      message.channel.createMessage(':x: Não tenho permissão para ver o teu canal de voz!');
+      ctx.sendMessage(':x: Não tenho permissão para ver o teu canal de voz!');
       return;
     }
 
     if (!permissions.has('voiceConnect')) {
-      message.channel.createMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
+      ctx.sendMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
       return;
     }
 
     if (!permissions.has('voiceSpeak')) {
-      message.channel.createMessage(':x: Não tenho permissão para falar no teu canal de voz!');
+      ctx.sendMessage(':x: Não tenho permissão para falar no teu canal de voz!');
       return;
     }
 
-    if (this.client.records.has(message.guildID as string)) {
-      message.channel.createMessage(':x: Não consigo tocar rádio enquanto gravo voz!')
+    if (this.client.records.has(ctx.msg.guildID as string)) {
+      ctx.sendMessage(':x: Não consigo tocar rádio enquanto gravo voz!')
       return;
     }
 
-    let player = this.client.music.players.get(message.guildID as string);
+    let player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (player && player.radio === radio[0]) {
-      message.channel.createMessage(':x: Essa rádio já está a tocar!');
+      ctx.sendMessage(':x: Essa rádio já está a tocar!');
       return;
     }
 
     if (player && !player.radio) {
-      if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+      if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
         if (voiceChannel.voiceMembers.filter(m => !m.bot).length !== 1
-          && (message.member && !await this.client.music.hasDJRole(message.member) && !voiceChannel.permissionsOf(message.member).has('voiceMoveMembers'))) {
-            message.channel.createMessage(':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode usar este comando!');
+          && (ctx.msg.member && !await this.client.music.hasDJRole(ctx.msg.member) && !voiceChannel.permissionsOf(ctx.msg.member).has('voiceMoveMembers'))) {
+            ctx.sendMessage(':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode usar este comando!');
             return;
         }
       }
     }else {
       player = this.client.music.create({
-        guild: message.guildID as string,
+        guild: ctx.msg.guildID as string,
         voiceChannel: voiceChannelID,
-        textChannel: message.channel.id,
+        textChannel: ctx.channel.id,
         selfDeafen: true
       })
       player.filters = new Filters(player);
     }
 
     try {
-      const res = await this.client.music.search(radio[1], message.author);
+      const res = await this.client.music.search(radio[1], ctx.author);
 
       if (res.loadType !== 'TRACK_LOADED') {
-        message.channel.createMessage(':x: Ocorreu um erro ao tocar a rádio.');
+        ctx.sendMessage(':x: Ocorreu um erro ao tocar a rádio.');
         player.destroy();
         return;
       }
@@ -123,7 +124,7 @@ export default class Radio extends Command {
       if (player.state === 'DISCONNECTED') {
         if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') 
           && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-            message.channel.createMessage(':x: O canal de voz está cheio!');
+            ctx.sendMessage(':x: O canal de voz está cheio!');
             player.destroy();
             return;
         }
@@ -135,7 +136,7 @@ export default class Radio extends Command {
         player.stop();
       }
 
-      player.setTextChannel(message.channel.id);
+      player.setTextChannel(ctx.channel.id);
      
       player.queue.add(res.tracks[0]);
 
@@ -147,7 +148,7 @@ export default class Radio extends Command {
     }catch (err) {
       console.error(err);
       player.destroy();
-      message.channel.createMessage(':x: Ocorreu um erro ao tocar a rádio.');
+      ctx.sendMessage(':x: Ocorreu um erro ao tocar a rádio.');
     }
   }
 }

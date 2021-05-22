@@ -1,5 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
+
 import { ReactionCollector } from '../../structures/Collector';
 
 import { Message, User, Emoji } from 'eris';
@@ -32,12 +34,12 @@ export default class Eval extends Command {
     this.fetch = fetch;
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.author.id !== '334054158879686657') return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.author.id !== '334054158879686657' || !ctx.guild) return;
 
-    if (message.channel.type === 0) {
-      this.player = this.client.music.get(message.channel.guild.id);
-      this.guildCache = this.client.guildCache.get(message.guildID as string);
+    if (ctx.channel.type === 0) {
+      this.player = this.client.music.get(ctx.guild.id);
+      this.guildCache = this.client.guildCache.get(ctx.guild.id);
     } else {
       this.player = null
       this.guildCache = null;
@@ -55,7 +57,7 @@ export default class Eval extends Command {
 
     try {
       const start = process.hrtime();
-      const code = args.join(' ');
+      const code = ctx.args.join(' ');
       let evaled = eval(code);
 
       if (evaled instanceof Promise)
@@ -73,10 +75,8 @@ export default class Eval extends Command {
 
       const res = response.join('\n');
 
-      let msg: Message;
-
       if (res.length < 2e3) {
-        msg = await message.channel.createMessage(res);
+        await ctx.sendMessage(res);
       } else {
         const body = {
           files: [{
@@ -95,65 +95,65 @@ export default class Eval extends Command {
         }).then(res => res.json());
 
         if (bin.key) {
-          msg = await message.channel.createMessage(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`);
+          await ctx.sendMessage(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`);
         } else {
-          msg = await message.channel.createMessage(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', {
+          await ctx.sendMessage(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', {
             name: 'eval.txt',
             file: Buffer.from(res)
           });
         }
       }
 
-      if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('addReactions')) return;
+      if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) return;
 
-      msg.addReaction('x_:751062867444498432');
-      msg.addReaction('📋');
+      ctx.sentMsg.addReaction('x_:751062867444498432');
+      ctx.sentMsg.addReaction('📋');
 
-      const filter = (r: Emoji, u: User) => (r.id === '751062867444498432' || r.name === '📋') && u === message.author;
+      const filter = (r: Emoji, u: User) => (r.id === '751062867444498432' || r.name === '📋') && u === ctx.author;
 
-      const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
+      const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { max: 1, time: 3 * 60 * 1000 });
 
       collector.on('collect', async r => {
         switch (r.name) {
           case '📋':
-            const dmChannel = await message.author.getDMChannel();
-            dmChannel.createMessage(msg.content);
+            const dmChannel = await ctx.author.getDMChannel();
+            dmChannel.createMessage(ctx.sentMsg.content);
 
-            if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              msg.removeReactions();
+            if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
+              ctx.sentMsg.removeReactions();
             else {
-              msg.removeReaction('x_:751062867444498432');
-              msg.removeReaction('📋');
+              ctx.sentMsg.removeReaction('x_:751062867444498432');
+              ctx.sentMsg.removeReaction('📋');
             }
 
-            msg.edit('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
+            ctx.editMessage('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
 
             break;
           case 'x_':
-            if (msg.attachments.length === 1) {
-              msg.delete();
+            if (ctx.msg instanceof Message && ctx.msg.attachments.length === 1) {
+              ctx.sentMsg.delete();
               return;
             }
 
-            if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              msg.removeReactions();
+            if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
+              ctx.sentMsg.removeReactions();
             else {
-              msg.removeReaction('x_:751062867444498432');
-              msg.removeReaction('📋');
+              ctx.sentMsg.removeReaction('x_:751062867444498432');
+              ctx.sentMsg.removeReaction('📋');
             }
 
-            msg.edit('<a:verificado:803678585008816198> Resultado da eval fechado!');
+            ctx.editMessage('<a:verificado:803678585008816198> Resultado da eval fechado!');
             break;
         }
       });
 
       collector.on('end', reason => {
         if (reason === 'Time')
-          msg.removeReaction('x_:751062867444498432');
-        msg.removeReaction('📋');
+          ctx.sentMsg.removeReaction('x_:751062867444498432');
+        ctx.sentMsg.removeReaction('📋');
       });
     } catch (err) {
-      message.channel.createMessage(`:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``)
+      ctx.sendMessage(`:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``)
     }
   }
 }

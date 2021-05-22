@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
@@ -12,7 +11,7 @@ export default class Github extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'github',
-      description: 'Informações sobre algum perfil do github',
+      description: 'Informações sobre algum perfil do github.',
       args: 1,
       usage: '<Nome>',
       category: 'Others',
@@ -21,16 +20,16 @@ export default class Github extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const res = await fetch(`https://api.github.com/users/${args[0]}`);
+    const res = await fetch(`https://api.github.com/users/${ctx.args[0]}`);
 
     if (res.status !== 200) {
-      message.channel.createMessage(':x: Perfil não encontrado');
+      ctx.sendMessage(':x: Perfil não encontrado');
       return;
     }
 
@@ -47,7 +46,7 @@ export default class Github extends Command {
       .setThumbnail(`${user.avatar_url}${Math.floor(Math.random() * 10000)}`)
       .setURL(user.html_url)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
     user.email && embed.addField(':e_mail: Email', user.email, true);
     user.company && embed.addField(':classical_building: Empresa', user.company, true);
@@ -59,6 +58,6 @@ export default class Github extends Command {
 
     user.bio && embed.addField(':bookmark_tabs: Biografia', `\n\`\`\`${user.bio}\`\`\``);
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

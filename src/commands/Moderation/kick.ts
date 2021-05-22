@@ -7,7 +7,7 @@ export default class Kick extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'kick',
-      description: 'Expulsa alguém do servidor',
+      description: 'Expulsa alguém do servidor.',
       category: 'Moderation',
       aliases: ['av'],
       usage: '<@User/ID> [motivo]',

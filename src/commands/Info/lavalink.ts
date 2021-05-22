@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Lavalink extends Command {
   constructor(client: Client) {
@@ -14,16 +13,16 @@ export default class Lavalink extends Command {
     });
   }
 
-  execute(message: Message): void {
+  execute(ctx: CommandContext): void {
     const node = this.client.music.nodes.first();
 
     if (!node) {
-      message.channel.createMessage(':warning: Não existem nodes do lavalink disponíveis.');
+      ctx.sendMessage(':warning: Não existem nodes do lavalink disponíveis.');
       return;
     }
 
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
@@ -37,8 +36,8 @@ export default class Lavalink extends Command {
       .addField('<:ram:751468688686841986> RAM', `\`${(node.stats.memory.used / 1024 / 1024).toFixed(0)}MB\``, true)
       .addField(':ping_pong: Ping', `\`${this.client.music.heartbeats.get(node.options.identifier as string)?.ping || 0}ms\``, true)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
   }
 }

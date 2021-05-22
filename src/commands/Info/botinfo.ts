@@ -1,7 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
-import { Message, VERSION } from 'eris';
+import { VERSION } from 'eris';
 
 import os from 'os';
 import moment from 'moment';
@@ -11,18 +12,18 @@ export default class Botinfo extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'botinfo',
-      description: 'Informações sobre mim',
+      description: 'Informações sobre mim.',
       category: 'Info',
       aliases: ['info', 'bi'],
       cooldown: 10
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
@@ -49,7 +50,7 @@ export default class Botinfo extends Command {
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)
       .addField(':desktop: Servidores em que estou', `\`${this.client.guilds.size}\``, true)
       .addField(':ping_pong: Ping da API', `\`${Math.round(WSPing)}ms\``, true)
-      .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${this.client.guildCache.get(message.guildID as string)?.prefix}\``, true)
+      .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${this.client.guildCache.get(ctx.guild.id)?.prefix}\``, true)
       .addField('<:lang_js:803678540528615424> Versão NodeJS', `\`${process.version}\``, true)
       .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
       .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)
@@ -57,9 +58,9 @@ export default class Botinfo extends Command {
       .addField('<:ram:751468688686841986> RAM', `\`${(process.memoryUsage().rss / 1024 / 1024).toFixed(0)}MB\``, true)
       .setThumbnail(this.client.user.dynamicAvatarURL())
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }
 

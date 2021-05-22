@@ -1,13 +1,14 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
-import { Message, User } from 'eris';
+import { User, Message } from 'eris';
 
 export default class Avatar extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'avatar',
-      description: 'Mostra o teu avatar ou de outra pessoa em uma imagem grande',
+      description: 'Mostra o teu avatar ou de outra pessoa em uma imagem grande.',
       category: 'Info',
       aliases: ['av'],
       dm: true,
@@ -15,23 +16,23 @@ export default class Avatar extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    let user: User;
+    let user: User | null;
 
-    if (!args.length || message.channel.type === 1) {
-      user = message.author;
+    if (!ctx.args.length || ctx.channel.type === 1) {
+      user = ctx.author;
     } else {
-      user = message.mentions[0] ||
-        (message.channel.type === 0 && await this.client.utils.findUser(args.join(' '), message.channel.guild));
+      user = (ctx.msg instanceof Message && ctx.msg.mentions[0]) ||
+        (ctx.guild && await this.client.utils.findUser(ctx.args.join(' '), ctx.guild));
     }
 
     if (!user) {
-      message.channel.createMessage(':x: Utilizador não encontrado!');
+      ctx.sendMessage(':x: Utilizador não encontrado!');
       return;
     }
 
@@ -43,8 +44,8 @@ export default class Avatar extends Command {
       .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
       .setImage(url)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

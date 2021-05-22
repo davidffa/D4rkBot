@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Pause extends Command {
   constructor(client: Client) {
@@ -14,20 +13,20 @@ export default class Pause extends Command {
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
       return;
     }
 
@@ -35,27 +34,27 @@ export default class Pause extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = message.member;
+    const member = ctx.msg.member;
     if (!member) return;
 
     const pause = (): void => {
       if (player.paused) {
-        message.channel.createMessage(':x: A música já está pausada!');
+        ctx.sendMessage(':x: A música já está pausada!');
         return;
       }
 
       player.pause(true);
-      message.channel.createMessage(':pause_button: Música pausada!');
+      ctx.sendMessage(':pause_button: Música pausada!');
     }
 
     const isDJ = await this.client.music.hasDJRole(member)
 
-    if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
       if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         pause();
         return;
       }
-      message.channel.createMessage(':x: Apenas alguém com o cargo DJ pode pausar a música!');
+      ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode pausar a música!');
     } else pause();
   }
 }

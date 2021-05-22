@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Servericon extends Command {
   constructor(client: Client) {
@@ -14,29 +13,29 @@ export default class Servericon extends Command {
     });
   }
 
-  execute(message: Message): void {
-    if (message.channel.type !== 0) return;
+  execute(ctx: CommandContext): void {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
       return;
     }
 
-    if (!message.channel.guild.icon) {
-      message.channel.createMessage(':x: Este servidor não tem icon.');
+    if (!ctx.guild.icon) {
+      ctx.sendMessage(':x: Este servidor não tem icon.');
       return;
     }
 
-    const url = message.channel.guild.dynamicIconURL();
+    const url = ctx.guild.dynamicIconURL();
 
     const embed = new this.client.embed()
-      .setTitle(`:frame_photo: Icon do servidor **${message.channel.guild.name}**`)
+      .setTitle(`:frame_photo: Icon do servidor **${ctx.guild.name}**`)
       .setColor('RANDOM')
       .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
       .setImage(url)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

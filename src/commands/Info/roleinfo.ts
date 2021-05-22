@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import moment from 'moment';
 moment.locale('pt');
@@ -10,7 +9,7 @@ export default class RoleInfo extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'roleinfo',
-      description: 'Informação sobre um cargo no servidor',
+      description: 'Informação sobre um cargo no servidor.',
       usage: '<Cargo>',
       args: 1,
       cooldown: 4,
@@ -18,21 +17,21 @@ export default class RoleInfo extends Command {
     });
   }
 
-  execute(message: Message, args: string[]): void {
-    if (message.channel.type !== 0) return;
+  execute(ctx: CommandContext): void {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const role = message.channel.guild.roles.get(args[0])
-      || message.channel.guild.roles.find(r => r.name === args[0])
-      || message.channel.guild.roles.find(r => r.name.includes(args[0]))
-      || message.channel.guild.roles.find(r => r.name.toLowerCase().includes(args[0].toLowerCase()));
+    const role = ctx.guild.roles.get(ctx.args[0])
+      || ctx.guild.roles.find(r => r.name === ctx.args[0])
+      || ctx.guild.roles.find(r => r.name.includes(ctx.args[0]))
+      || ctx.guild.roles.find(r => r.name.toLowerCase().includes(ctx.args[0].toLowerCase()));
 
     if (!role) {
-      message.channel.createMessage(':x: Cargo não encontrado!');
+      ctx.sendMessage(':x: Cargo não encontrado!');
       return;
     }
 
@@ -47,8 +46,8 @@ export default class RoleInfo extends Command {
       .addField(':8ball: Permissões', `\`\`\`\n${Object.keys(role.permissions.json).length ? Object.keys(role.permissions.json).join(', ') : 'Nenhuma'}\`\`\``)
       .setColor(role.color)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

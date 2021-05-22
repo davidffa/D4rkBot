@@ -1,13 +1,12 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Channelinfo extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'channelinfo',
-      description: 'Mostra informações sobre um canal de voz do servidor',
+      description: 'Mostra informações sobre um canal do servidor.',
       category: 'Info',
       aliases: ['chinfo'],
       usage: '[ID do canal/Nome]',
@@ -15,17 +14,18 @@ export default class Channelinfo extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0 || !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (!ctx.guild) return;
+    if (ctx.channel.type !== 0 || !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');
       return;
     }
 
-    const channel = args.length ? (message.channel.guild.channels.get(args[0])
-      || message.channel.guild.channels.find(ch => ch.name.includes(args.join(' ')))) : message.channel;
+    const channel = ctx.args.length ? (ctx.guild.channels.get(ctx.args[0])
+      || ctx.guild.channels.find(ch => ch.name.includes(ctx.args.join(' ')))) : ctx.channel;
 
     if (!channel) {
-      message.channel.createMessage(':x: Canal não encontrado!');
+      ctx.sendMessage(':x: Canal não encontrado!');
       return;
     }
 
@@ -46,7 +46,7 @@ export default class Channelinfo extends Command {
       .addField(':diamond_shape_with_a_dot_inside: Tipo', `\`${channelTypes[channel.type]}\``, true)
       .addField(':underage: NSFW', `\`${channel.nsfw ? 'Sim' : 'Não'}\``, true)
       .addField(':trophy: Posição', `\`${channel.position}\``, true)
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
       .setTimestamp();
 
     if (channel.type === 2 || channel.type === 13) {
@@ -70,11 +70,11 @@ export default class Channelinfo extends Command {
       embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 2 ? '720p' : 'Auto'}\``, true);
     }
 
-    channel.parentID && embed.addField(':flag_white: Categoria', `\`${message.channel.guild.channels.get(channel.parentID)?.name}\``, true);
+    channel.parentID && embed.addField(':flag_white: Categoria', `\`${ctx.guild.channels.get(channel.parentID)?.name}\``, true);
 
     if (channel.type === 0 || channel.type === 5) {
       embed.addField(':question: Tópico', `\`\`\`${channel.topic ? channel.topic : 'Nenhum'}\`\`\``, true);
     }
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import moment from 'moment';
 moment.locale('pt');
@@ -17,15 +16,15 @@ export default class Serverinfo extends Command {
     });
   }
 
-  execute(message: Message): void {
-    if (message.channel.type !== 0) return;
+  execute(ctx: CommandContext): void {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const guild = message.channel.guild;
+    const guild = ctx.guild;
 
     const status = {
       online: 0,
@@ -91,7 +90,7 @@ export default class Serverinfo extends Command {
     }
 
     const embed = new this.client.embed()
-      .setTitle(`:bookmark_tabs: Informações do servidor **${message.channel.guild.name}**`)
+      .setTitle(`:bookmark_tabs: Informações do servidor **${guild.name}**`)
       .setColor('RANDOM')
       .addField(':id: ID', guild.id, true)
       .addField(':crown: Dono do servidor', `${this.client.users.get(guild.ownerID)?.mention || guild.ownerID}`, true)
@@ -100,16 +99,16 @@ export default class Serverinfo extends Command {
       .addField(':police_officer: Nível de verificação', verificationLevels[guild.verificationLevel], true)
       .addField(`<:followers:784795303156908032> Cargos:`, `${guild.roles.size}`, true)
       .addField(':calendar: Criado em', `${moment(guild.createdAt).format('L')} (${moment(guild.createdAt).startOf('day').fromNow()})`, true)
-      .addField(':calendar: Entrada em', `${moment(message.member?.joinedAt).format('L')} (${moment(message.member?.joinedAt).startOf('day').fromNow()})`, true)
+      .addField(':calendar: Entrada em', `${moment(ctx.msg.member?.joinedAt).format('L')} (${moment(ctx.msg.member?.joinedAt).startOf('day').fromNow()})`, true)
       .addField('<:badgebooster:803666384373809233> Boost', `Nível: ${boostLevel}\nQuantidade: ${boostAmount}`, true)
       .addField(`:man: Membros [${guild.members.size}]`, `<:online:804049640437448714> Online: ${status.online}\n<:idle:804049737383673899> Ausente: ${status.idle}\n<:dnd:804049759328403486> Ocupado: ${status.dnd}\n<:offline:804049815713480715> Offline: ${status.offline}\n<:bot:804028762307821578> Bots: ${bots}`, true)
       .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Palco: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:shopping_bags: Loja: ${channels.store}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
       .addField(`:grinning: Emojis [${emojis}]`, `Estáticos: ${staticEmojis}\nAnimados: ${animatedEmojis}`, true)
-      .setThumbnail(message.channel.guild.dynamicIconURL())
-      .setImage(message.channel.guild.dynamicBannerURL())
+      .setThumbnail(guild.dynamicIconURL())
+      .setImage(guild.dynamicBannerURL())
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

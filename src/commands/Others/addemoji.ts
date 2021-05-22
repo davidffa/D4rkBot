@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
 import { Message } from 'eris';
 
@@ -9,7 +10,7 @@ export default class Addemoji extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'addemoji',
-      description: 'Adiciona um emoji no servidor',
+      description: 'Adiciona um emoji no servidor.',
       usage: '<URL/Anexo> <nome>',
       category: 'Others',
       cooldown: 4,
@@ -17,14 +18,15 @@ export default class Addemoji extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0 || !message.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
-      message.channel.createMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando!');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (!ctx.guild) return;
+    if (ctx.channel.type !== 0 || !ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
+      ctx.sendMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando!');
       return;
     }
 
-    if (!message.member?.permissions.has('manageEmojis')) {
-      message.channel.createMessage(':x: Precisas da permissão `Gerir Emojis` para executar este comando!')
+    if (!ctx.msg.member?.permissions.has('manageEmojis')) {
+      ctx.sendMessage(':x: Precisas da permissão `Gerir Emojis` para executar este comando!')
       return;
     } 
 
@@ -33,24 +35,24 @@ export default class Addemoji extends Command {
     let imageURL: string;
     let emojiName: string;
 
-    if (message.attachments.length) {
-      imageURL = message.attachments[0].url;
-      emojiName = args[0];
+    if (ctx.msg instanceof Message && ctx.msg.attachments.length) {
+      imageURL = ctx.msg.attachments[0].url;
+      emojiName = ctx.args[0];
     } else {
-      if (!urlRegex.test(args[0])) {
-        message.channel.createMessage(':x: URL inválido!');
+      if (!urlRegex.test(ctx.args[0])) {
+        ctx.sendMessage(':x: URL inválido!');
         return;
       }
-      imageURL = args[0];
-      if (!args[1]) {
-        message.channel.createMessage(`:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(message.guildID as string)?.prefix}addemoji <URL/Anexo> <nome>\``);
+      imageURL = ctx.args[0];
+      if (!ctx.args[1]) {
+        ctx.sendMessage(`:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}addemoji <URL/Anexo> <nome>\``);
         return;
       }
-      emojiName = args[1];
+      emojiName = ctx.args[1];
     }
 
     if (emojiName.length < 2 || emojiName.length > 32) {
-      message.channel.createMessage(':x: O nome do emoji tem de ter entre 2 e 32 caracteres.');
+      ctx.sendMessage(':x: O nome do emoji tem de ter entre 2 e 32 caracteres.');
       return;
     }
 
@@ -65,7 +67,7 @@ export default class Addemoji extends Command {
     });
 
     if (!type) {
-      message.channel.createMessage(':x: Imagem inválida!');
+      ctx.sendMessage(':x: Imagem inválida!');
       return;
     }
 
@@ -74,22 +76,22 @@ export default class Addemoji extends Command {
     const imgWeight = ((base64.length * (3 / 4)) - (base64.endsWith('==') ? 1 : 2)) / 1024;
 
     if (imgWeight > 256) {
-      message.channel.createMessage(':x: A imagem não pode ser maior do que 256 KB.');
+      ctx.sendMessage(':x: A imagem não pode ser maior do que 256 KB.');
       return;
     }
 
     try {
-      const res = await message.channel.guild.createEmoji({
+      const res = await ctx.guild.createEmoji({
         image: base64,
         name: emojiName
       });
 
-      message.channel.createMessage(`Emoji ${res.animated ? '<a:' : '<:'}${res.name}:${res.id}> adicionado.`);
+      ctx.sendMessage(`Emoji ${res.animated ? '<a:' : '<:'}${res.name}:${res.id}> adicionado.`);
     } catch (err) {
       if (err.message.includes('image: File cannot be larger than 256.0 kb')) {
-        message.channel.createMessage(':x: A imagem não pode ser maior do que 256 KB.');
+        ctx.sendMessage(':x: A imagem não pode ser maior do que 256 KB.');
       } else {
-        message.channel.createMessage(':x: Ocorreu um erro ao enviar o emoji.');
+        ctx.sendMessage(':x: Ocorreu um erro ao enviar o emoji.');
         console.error(err);
       }
     }

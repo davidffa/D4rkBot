@@ -1,8 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import Filters from '../../structures/Filters';
 
-import { Message, VoiceChannel } from 'eris';
+import {  VoiceChannel } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -19,25 +20,25 @@ export default class Play extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const currPlayer = this.client.music.players.get(message.guildID as string);
+    const currPlayer = this.client.music.players.get(ctx.guild.id as string);
 
-    if (!this.client.music.canPlay(message, currPlayer)) return;
+    if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = message.member?.voiceState.channelID as string;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID as string;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
       const player = this.client.music.create({
-        guild: message.guildID as string,
+        guild: ctx.guild?.id as string,
         voiceChannel: voiceChannelID,
-        textChannel: message.channel.id,
+        textChannel: ctx.channel.id,
         selfDeafen: true
       });
 
@@ -46,12 +47,12 @@ export default class Play extends Command {
     }
 
     try {
-      const res = await this.client.music.search(args.join(' '), message.author);
+      const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
 
       if (res.loadType === 'LOAD_FAILED') {
-        message.channel.createMessage(':x: Falha ao carregar a música.');
+        ctx.sendMessage(':x: Falha ao carregar a música.');
       } else if (res.loadType === 'NO_MATCHES') {
-        message.channel.createMessage(':x: Nenhuma música encontrada.');
+        ctx.sendMessage(':x: Nenhuma música encontrada.');
       } else {
         const player = currPlayer || createPlayer();
 
@@ -62,7 +63,7 @@ export default class Play extends Command {
 
         if (player.state === 'DISCONNECTED') {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-            message.channel.createMessage(':x: O canal de voz está cheio!');
+            ctx.sendMessage(':x: O canal de voz está cheio!');
             player.destroy();
             return;
           }
@@ -85,27 +86,27 @@ export default class Play extends Command {
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
             .addField(':watch: Duração', `\`${this.client.utils.msToHour(res.playlist?.duration || 0)}\``)
             .setTimestamp()
-            .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+            .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
           const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 
-          urlRegex.test(args[0]) && embed.setURL(args[0]);
+          urlRegex.test(ctx.args[0]) && embed.setURL(ctx.args[0]);
 
-          message.channel.createMessage({ embed });
+          ctx.sendMessage({ embed });
         } else {
           const tracks = res.tracks;
 
           player.queue.add(tracks[0]);
 
+          ctx.sendMessage(`:bookmark_tabs: Adicionado à lista \`${tracks[0].title}\``);
+
           if (!player.playing)
             player.play();
-          else
-            message.channel.createMessage(`:bookmark_tabs: Adicionado à lista \`${tracks[0].title}\``);
         }
       }
     } catch (err) {
       console.error(err);
-      message.channel.createMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.sendMessage(':x: Ocorreu um erro ao procurar a música.');
     }
   }
 }

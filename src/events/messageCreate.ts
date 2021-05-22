@@ -1,5 +1,6 @@
 import Client from '../structures/Client';
 import { ReactionCollector } from '../structures/Collector';
+import CommandContext from '../structures/CommandContext';
 
 import { existsSync, mkdirSync, appendFileSync } from 'fs';
 
@@ -18,6 +19,14 @@ export default class MessageCreate {
         collector.collect(message);
       }
     };
+
+    if (message.interaction) {
+      const interactionCtx = this.client.interactions.get(message.interaction.id);
+
+      if (interactionCtx) {
+        interactionCtx.sentMsg = message;
+      }
+    }
 
     if (message.author.bot) return;
 
@@ -145,7 +154,8 @@ export default class MessageCreate {
     }
 
     try {
-      command.execute(message, args);
+      const ctx = new CommandContext(this.client, message, args);
+      command.execute(ctx);
 
       //Logs
       if (!existsSync('./logs'))

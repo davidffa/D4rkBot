@@ -1,33 +1,34 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
-import { Message, User } from 'eris';
+import { User } from 'eris';
 
 export default class Stop extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'stop',
-      description: 'Pula a música atual.',
+      description: 'Para de tocar música e limpa a lista de músicas.',
       category: 'Music',
       aliases: ['parar', 'disconnect', 'desconectar', 'leave', 'sair', 'quit'],
       cooldown: 4,
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
       return;
     }
 
@@ -47,7 +48,7 @@ export default class Stop extends Command {
       }
       player.destroy();
 
-      message.channel.createMessage(dj ? ':stop_button:  Música parada por um DJ!' : ':stop_button: Música parada!');
+      ctx.sendMessage(dj ? ':stop_button:  Música parada por um DJ!' : ':stop_button: Música parada!');
     }
 
     const allQueueRequester = (user: User): boolean => {
@@ -58,20 +59,20 @@ export default class Stop extends Command {
       return true;
     }
 
-    const member = message.member
+    const member = ctx.msg.member
     if (!member) return;
 
     if (await this.client.music.hasDJRole(member)) {
       stop(true);
     } else {
-      if (this.client.guildCache.get(message.guildID as string)?.djRole) {
-        if (allQueueRequester(message.author)
+      if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+        if (allQueueRequester(ctx.author)
           || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1
-          || (message.member && voiceChannel.permissionsOf(message.member).has('voiceMoveMembers'))) {
+          || (ctx.msg.member && voiceChannel.permissionsOf(ctx.msg.member).has('voiceMoveMembers'))) {
           stop(false);
           return;
         }
-        message.channel.createMessage(':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode parar o player!');
+        ctx.sendMessage(':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode parar o player!');
       } else stop(false);
     }
   }

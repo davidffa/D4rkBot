@@ -1,8 +1,9 @@
 import Command from '../structures/Command';
 import Client from '../structures/Client';
+import CommandContext from '../structures/CommandContext';
 import { ReactionCollector } from '../structures/Collector';
 
-import { Message, Emoji, User } from 'eris';
+import { Emoji, User } from 'eris';
 
 export default class Help extends Command {
   constructor(client: Client) {
@@ -15,9 +16,9 @@ export default class Help extends Command {
     })
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
@@ -33,11 +34,11 @@ export default class Help extends Command {
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTitle('Ajuda')
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
       .setTimestamp();
 
-    if (!args.length) {
-      embed.setDescription(`Lista de todos os meus comandos [${message.author.id === '334054158879686657' ? this.client.commands.length : this.client.commands.length - 3}]:`);
+    if (!ctx.args.length) {
+      embed.setDescription(`Lista de todos os meus comandos [${ctx.author.id === '334054158879686657' ? this.client.commands.length : this.client.commands.length - 3}]:`);
       commands.forEach(cmd => {
         switch (cmd.category) {
           case 'Moderation':
@@ -47,7 +48,7 @@ export default class Help extends Command {
             Settings.push(cmd.name);
             break;
           case 'Dev':
-            message.author.id === '334054158879686657' && Dev.push(cmd.name);
+            ctx.author.id === '334054158879686657' && Dev.push(cmd.name);
             break;
           case 'Info':
             Info.push(cmd.name);
@@ -67,40 +68,40 @@ export default class Help extends Command {
       embed.addField(`> :cop: Moderação [${Mod.length}]`, `\`\`\`${Mod.join(' | ')}\`\`\``)
         .addField(`> :gear: Definições [${Settings.length}]`, `\`\`\`${Settings.join(' | ')}\`\`\``);
 
-      message.author.id === '334054158879686657' && embed.addField(`> <:lang_js:803678540528615424> Desenvolvedor [${Dev.length}]`, `\`\`\`${Dev.join(' | ')}\`\`\``);
+      ctx.author.id === '334054158879686657' && embed.addField(`> <:lang_js:803678540528615424> Desenvolvedor [${Dev.length}]`, `\`\`\`${Dev.join(' | ')}\`\`\``);
 
       embed.addField(`> :information_source: Informação [${Info.length}]`, `\`\`\`${Info.join(' | ')}\`\`\``)
         .addField(`> <a:disco:803678643661832233> Musica [${Music.length}]`, `\`\`\`${Music.join(' | ')}\`\`\``)
         .addField(`> :books: Outros [${Others.length}]`, `\`\`\`${Others.join(' | ')}\`\`\``)
-        .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
+        .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
         .addField(`<:megathink:803675654376652880> Ainda mais ajuda`, '[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)')
 
-      const msg = await message.channel.createMessage({ embed });
-      await msg.addReaction('x_:751062867444498432');
+      await ctx.sendMessage({ embed });
+      await ctx.sentMsg.addReaction('x_:751062867444498432');
 
-      const filter = (r: Emoji, user: User) => r.id === '751062867444498432' && user === message.author;
+      const filter = (r: Emoji, user: User) => r.id === '751062867444498432' && user === ctx.author;
 
-      const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
+      const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 5 * 60 * 1000 });
 
       collector.on('collect', () => {
-        msg.delete();
+        ctx.sentMsg.delete();
       });
 
       collector.on('end', reason => {
         if (reason === 'Time')
-          msg.removeReaction('x_:751062867444498432');
+        ctx.sentMsg.removeReaction('x_:751062867444498432');
       });
 
       return;
     }
 
-    const name = args[0].toLowerCase();
-    const cmd = commands.filter(c => message.author.id === '334054158879686657' || c.category !== 'Dev').find(c => c.name === name || c.aliases?.includes(name));
+    const name = ctx.args[0].toLowerCase();
+    const cmd = commands.filter(c => ctx.author.id === '334054158879686657' || c.category !== 'Dev').find(c => c.name === name || c.aliases?.includes(name));
 
     if (!cmd) {
       embed.setTitle('Comando não encontrado')
       embed.setDescription(`:x: Não tenho nenhum comando com o nome \`${name}\``);
-      message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
       return;
     }
 
@@ -109,12 +110,12 @@ export default class Help extends Command {
     data.push(`**Nome:** ${cmd.name}`);
     data.push(`**Descriçao:** ${cmd.description}`);
     cmd.aliases && data.push(`**Alternativas:** ${cmd.aliases.join(', ')}`);
-    cmd.usage && data.push(`**Uso:** ${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}${cmd.name} ${cmd.usage}`);
+    cmd.usage && data.push(`**Uso:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}${cmd.name} ${cmd.usage}`);
 
     data.push(`**Cooldown:** ${cmd.cooldown || 3} segundo(s)`);
 
-    embed.setTitle(`Ajuda do comando ${args[0]}`)
+    embed.setTitle(`Ajuda do comando ${ctx.args[0]}`)
     embed.setDescription(data.join('\n'))
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

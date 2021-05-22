@@ -1,13 +1,12 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Inviteinfo extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'inviteinfo',
-      description: 'Mostra informações sobre um convite de um servidor',
+      description: 'Mostra informações sobre um convite de um servidor.',
       category: 'Info',
       aliases: ['invinfo'],
       dm: true,
@@ -17,12 +16,12 @@ export default class Inviteinfo extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
+  async execute(ctx: CommandContext): Promise<void> {
     try {
-      const invite = await this.client.getInvite(args[0], true);
+      const invite = await this.client.getInvite(ctx.args[0], true);
 
-      if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-        message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');
+      if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+        ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');
         return;
       }
 
@@ -32,7 +31,7 @@ export default class Inviteinfo extends Command {
         .addField(':id: ID', `\`${invite.code}\``, true)
         .addField(':desktop: Servidor', `\`${invite.guild?.name} (${invite.guild?.id})\``, true)
         .setURL(`https://discord.gg/${invite.code}`)
-        .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
         .setTimestamp();
 
       invite.inviter && embed.addField(':man_shrugging: Quem convidou', `\`${invite.inviter?.username} (${invite.inviter?.id})\``, true)
@@ -41,9 +40,9 @@ export default class Inviteinfo extends Command {
         .addField('<:followers:784795303156908032> Total de membros (aproximado)', `\`${invite.memberCount}\``, true)
 
       invite.guild?.iconURL && embed.setThumbnail(invite.guild.dynamicIconURL())
-      message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
     } catch (_) {
-      message.channel.createMessage(':x: Convite inválido!');
+      ctx.sendMessage(':x: Convite inválido!');
     }
   }
 }

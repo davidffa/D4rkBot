@@ -5,6 +5,7 @@ import { NodeOptions, VoicePacket } from 'erela.js';
 import moment from 'moment';
 moment.locale('pt');
 
+import CommandContext from './CommandContext';
 import Embed from './Embed';
 import Music from './Music';
 import levDistance from '../utils/levenshteinDistance';
@@ -34,6 +35,7 @@ export default class D4rkClient extends Client {
   embed: typeof Embed;
   reactionCollectors: Array<ReactionCollector>;
   messageCollectors: Array<MessageCollector>;
+  interactions: Map<string, CommandContext>;
 
   constructor() {
     const clientOptions: ClientOptions = {
@@ -68,6 +70,7 @@ export default class D4rkClient extends Client {
     this.embed = Embed;
     this.reactionCollectors = [];
     this.messageCollectors = [];
+    this.interactions = new Map();
 
     const findUser = async (param: string, guild: Guild): Promise<User | null> => {
       let user: User | null | undefined;

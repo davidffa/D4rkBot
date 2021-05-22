@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Ping extends Command {
   constructor(client: Client) {
@@ -15,7 +14,7 @@ export default class Ping extends Command {
     });
   }
 
-  async execute(message: Message) {
+  async execute(ctx: CommandContext) {
     const startDB = process.hrtime();
     await this.client.botDB.findOne({ botID: this.client.user.id });
     const stopDB = process.hrtime(startDB);
@@ -39,15 +38,15 @@ export default class Ping extends Command {
       .setTitle('🏓 Pong')
       .setColor(color)
       .setDescription(res.join('\n'))
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
       .setTimestamp();
 
-    if (message.channel.type === 0) {
-      if (message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-        message.channel.createMessage({ embed });
+    if (ctx.channel.type === 0) {
+      if (ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+        ctx.sendMessage({ embed });
       } else {
-        message.channel.createMessage(res.join('\n'));
+        ctx.sendMessage(res.join('\n'));
       }
-    }
+    }else ctx.sendMessage({ embed })
   }
 }

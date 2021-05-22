@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Shuffle extends Command {
   constructor(client: Client) {
@@ -14,20 +13,20 @@ export default class Shuffle extends Command {
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
       return;
     }
 
@@ -35,31 +34,31 @@ export default class Shuffle extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = message.member;
+    const member = ctx.msg.member;
     if (!member) return;
     if (player.radio) {
-      message.channel.createMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+      ctx.sendMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
       return;
     }
 
     const shuffle = (): void => {
       if (!player.queue.length) {
-        message.channel.createMessage(':x: A queue está vazia!');
+        ctx.sendMessage(':x: A queue está vazia!');
         return;
       }
       player.queue.shuffle();
 
-      message.channel.createMessage('<a:disco:803678643661832233> Lista de músicas embaralhada!');
+      ctx.sendMessage('<a:disco:803678643661832233> Lista de músicas embaralhada!');
     }
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
       if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         shuffle();
         return;
       }
-      message.channel.createMessage(':x: Apenas alguém com o cargo DJ pode embaralhar a lista de músicas!');
+      ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode embaralhar a lista de músicas!');
     } else shuffle();
   }
 }

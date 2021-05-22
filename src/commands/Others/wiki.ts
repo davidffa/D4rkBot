@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
 import { Message } from 'eris';
 
@@ -11,7 +12,7 @@ export default class Wiki extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'wiki',
-      description: 'Pesquisa algo na wikipedia',
+      description: 'Pesquisa algo na wikipedia.',
       aliases: ['wikipedia'],
       category: 'Others',
       args: 1,
@@ -21,16 +22,20 @@ export default class Wiki extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const msg = await message.channel.createMessage('<a:loading2:805088089319407667> A procurar...');
+    if (ctx.msg instanceof Message) {
+      await ctx.sendMessage('<a:loading2:805088089319407667> A procurar...');
+    }else {
+      await ctx.waitInteraction();
+    }
 
     const content = {
-      articleName: args.join(' '),
+      articleName: ctx.args.join(' '),
       lang: 'pt'
     }
 
@@ -44,7 +49,7 @@ export default class Wiki extends Command {
     }).then(res => res.json()).then(r => r.result)
 
     if (!res) {
-      msg.edit(':x: Não encontrei nada na wikipedia.');
+      ctx.editMessage(':x: Não encontrei nada na wikipedia.');
       return;
     }
 
@@ -63,8 +68,8 @@ export default class Wiki extends Command {
       .setDescription(summary)
       .setURL(res.url)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    msg.edit({ content: '', embed });
+    ctx.editMessage({ content: '', embed });
   }
 }

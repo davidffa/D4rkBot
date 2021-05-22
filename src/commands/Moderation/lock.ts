@@ -1,13 +1,12 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Lock extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'lock',
-      description: 'Proibe o envio de mensagens do cargo @everyone no canal em que o comando foi executado',
+      description: 'Proibe o envio de mensagens do cargo @everyone no canal em que o comando foi executado.',
       category: 'Moderation',
       cooldown: 4,
       aliases: ['lockchat', 'lockchannel'],
@@ -15,32 +14,32 @@ export default class Lock extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const channel = message.channel;
+    const channel = ctx.channel;
 
-    if (!channel.permissionsOf(message.author.id).has('manageChannels')) {
-      message.channel.createMessage(':x: Não tens permissão para alterar as permissões deste canal.');
+    if (!channel.permissionsOf(ctx.author.id).has('manageChannels')) {
+      ctx.sendMessage(':x: Não tens permissão para alterar as permissões deste canal.');
       return;
     }
 
     if (!channel.permissionsOf(this.client.user.id).has('manageChannels')) {
-      message.channel.createMessage(':x: Não tenho permissão para alterar as permissões deste canal!');
+      ctx.sendMessage(':x: Não tenho permissão para alterar as permissões deste canal!');
       return;
     }
 
-    const permissions = channel.permissionOverwrites.get(message.guildID as string);
+    const permissions = channel.permissionOverwrites.get(ctx.msg.guildID as string);
 
     if (!permissions || (permissions.deny & (1n << 11n)) == 1n << 11n) {
-      message.channel.createMessage(':x: O canal já está bloqueado!');
+      ctx.sendMessage(':x: O canal já está bloqueado!');
       return;
     }
 
     const allow = permissions.allow;
     const deny = permissions.deny;
 
-    await message.channel.createMessage(':lock: Canal bloqueado!');
-    channel.editPermission(message.guildID as string, allow & ~(1n << 11n), deny | (1n << 11n), 'role', 'Lock cmd' || args.join(' ').slice(0, 50));
+    await ctx.sendMessage(':lock: Canal bloqueado!');
+    channel.editPermission(ctx.msg.guildID as string, allow & ~(1n << 11n), deny | (1n << 11n), 'role', 'Lock cmd' || ctx.args.join(' ').slice(0, 50));
   }
 }

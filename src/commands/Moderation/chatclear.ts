@@ -1,13 +1,12 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Chatclear extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'chatclear',
-      description: 'Limpa mensagens num canal de texto',
+      description: 'Limpa mensagens num canal de texto.',
       category: 'Moderation',
       cooldown: 4,
       usage: '<Número de mensagens>',
@@ -16,38 +15,38 @@ export default class Chatclear extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const channel = message.channel;
+    const channel = ctx.channel;
 
-    if (!channel.permissionsOf(message.author.id).has('manageMessages')) {
-      message.channel.createMessage(':x: Não tens permissão para apagar mensagens.');
+    if (!channel.permissionsOf(ctx.author.id).has('manageMessages')) {
+      ctx.sendMessage(':x: Não tens permissão para apagar mensagens.');
       return;
     }
 
     if (!channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-      message.channel.createMessage(':x: Não tenho permissão para apagar mensagens!');
+      ctx.sendMessage(':x: Não tenho permissão para apagar mensagens!');
       return;
     }
 
-    if (!parseInt(args[0])) {
-      message.channel.createMessage(':x: Número inválido!');
+    if (!parseInt(ctx.args[0])) {
+      ctx.sendMessage(':x: Número inválido!');
       return;
     }
 
-    channel.purge(parseInt(args[0]) + 1).then(async msgs => {
-      if (parseInt(args[0]) + 1 !== msgs) {
-        const msg = await message.channel.createMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(args[0])}\` mensagens`);
+    channel.purge(parseInt(ctx.args[0]) + 1).then(async msgs => {
+      if (parseInt(ctx.args[0]) + 1 !== msgs) {
+        await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(ctx.args[0])}\` mensagens`);
         setTimeout(() => {
-          msg.delete().catch(() => { });
+          ctx.sentMsg.delete().catch(() => { });
         }, 7e3);
         return;
       }
 
-      const msg = await message.channel.createMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens`);
+      await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens`);
       setTimeout(() => {
-        msg.delete().catch(() => { });
+        ctx.sentMsg.delete().catch(() => { });
       }, 7e3);
     });
   }

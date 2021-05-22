@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
 import { Emoji, User, Message } from 'eris';
@@ -10,7 +11,7 @@ export default class Render extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'render',
-      description: 'Renderiza uma página web',
+      description: 'Renderiza uma página web.',
       args: 1,
       usage: '<URL>',
       category: 'Others',
@@ -19,30 +20,40 @@ export default class Render extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    if (!message.channel.nsfw && message.author.id !== '334054158879686657') {
-      message.channel.createMessage(':x: Só podes usar este comando em um canal NSFW.');
+    if (!ctx.channel.nsfw && ctx.author.id !== '334054158879686657') {
+      ctx.sendMessage(':x: Só podes usar este comando em um canal NSFW.');
       return;
     }
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
       return;
     }
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const waitMsg = await message.channel.createMessage('<a:loading2:805088089319407667> A verificar se o URL é válido...');
+    let waitMsg: Message | undefined;
 
-    let url = args[0];
+    if (!(ctx.msg instanceof Message)) {
+      ctx.waitInteraction();
+    }else {
+      waitMsg = await ctx.sendMessage('<a:loading2:805088089319407667> A verificar se o URL é válido...');
+    }
 
-    if (!args[0].startsWith('http'))
-      url = 'http://' + args[0];
+    let url = ctx.args[0];
+
+    
+
+    if (!ctx.args[0].startsWith('http'))
+      url = 'http://' + ctx.args[0];
+
+      console.log(url);
 
     const exists = async (): Promise<string | null> => {
       return new Promise(async (resolve) => {
@@ -66,11 +77,15 @@ export default class Render extends Command {
     const finalURL = await exists();
 
     if (!finalURL) {
-      waitMsg.edit(`:x: ${message.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
+      if (!(ctx.msg instanceof Message)) {
+        ctx.editMessage(`:x: ${ctx.msg.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
+      }else {
+        waitMsg?.edit(`:x: ${ctx.msg.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
+      }
       return;
     }
 
-    waitMsg.edit('<a:loading2:805088089319407667> A renderizar a página...');
+    if (ctx.msg instanceof Message) waitMsg?.edit('<a:loading2:805088089319407667> A renderizar a página...');
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
@@ -78,7 +93,7 @@ export default class Render extends Command {
       .setURL(finalURL)
       .setImage('attachment://render.png')
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
     const res = await fetch(`${process.env.RENDERAPIURL}`, {
       method: 'POST',
@@ -90,31 +105,39 @@ export default class Render extends Command {
     }).then(r => r.json());
 
     if (res.error) {
-      waitMsg.edit(':x: Site inválido');
+      if (!(ctx.msg instanceof Message)) {
+        ctx.editMessage(':x: Site inválido');
+      }else {
+        waitMsg?.edit(':x: Site inválido');
+      }
       return;
     }
 
-    waitMsg.delete();
+    if (ctx.msg instanceof Message) {
+      waitMsg?.delete();
+      await ctx.sendMessage({ embed }, {
+        name: 'render.png',
+        file: Buffer.from(res.img, 'base64')
+      });
+    }else {
+      await ctx.editMessage({ embed }, {
+        name: 'render.png',
+        file: Buffer.from(res.img, 'base64')
+      });
+    }
 
-    const msg = await message.channel.createMessage({ embed }, {
-      name: 'render.png',
-      file: Buffer.from(res.img, 'base64')
-    });
+    await ctx.sentMsg.addReaction('x_:751062867444498432');
 
-    await msg.addReaction('x_:751062867444498432');
-
-    const filter = (r: Emoji, user: User) => (r.id === '751062867444498432') && user === message.author;
-
-    const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 5 * 60 * 1000 });
+    const filter = (r: Emoji, user: User) => (r.id === '751062867444498432') && user === ctx.author;
+    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { max: 1, time: 5 * 60 * 1000 });
 
     collector.on('collect', () => {
-      msg.delete();
-      message.channel.createMessage('<a:verificado:803678585008816198> Render fechada.');
+      ctx.sentMsg.delete();
     });
 
     collector.on('end', reason => {
       if (reason === 'Time')
-        msg.removeReaction('x_:751062867444498432');
+        ctx.sentMsg.removeReaction('x_:751062867444498432');
     });
   }
 }

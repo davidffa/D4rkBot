@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector, MessageCollector } from '../../structures/Collector';
 
 import { Message, User, Emoji as ErisEmoji } from 'eris';
@@ -28,7 +29,7 @@ export default class Emoji extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'emoji',
-      description: 'Procura emojis e obtém informação sobre eles',
+      description: 'Procura emojis e obtém informação sobre eles ou lista todos os emojis do servidor.',
       usage: '[nome]',
       category: 'Others',
       aliases: ['searchemoji', 'emojis', 'procuraremoji', 'emojiinfo'],
@@ -36,28 +37,28 @@ export default class Emoji extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      message.channel.createMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
+      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
       return;
     }
 
-    if (args[0]) {
-      const unicodeEmojiInfo: UnicodeEmojiInfo | undefined = require('unicode-emoji-json')[args[0]];
+    if (ctx.args[0]) {
+      const unicodeEmojiInfo: UnicodeEmojiInfo | undefined = require('unicode-emoji-json')[ctx.args[0]];
 
       if (unicodeEmojiInfo) {
         const emojiAPIInfo = await fetch(`https://emoji-api.com/emojis?search=${unicodeEmojiInfo.slug}&access_key=${process.env.EMOJIAPIKEY}`).then(res => res.json());
 
         const embed = new this.client.embed()
           .setColor('RANDOM')
-          .setDescription(`Informação do emoji \`${args[0]}\``)
+          .setDescription(`Informação do emoji \`${ctx.args[0]}\``)
           .setTitle(':grinning: Emoji Info')
           .addField(':bookmark_tabs: Nome', `\`${unicodeEmojiInfo.name}\``, true)
           .addField(':newspaper:  Slug', `\`${unicodeEmojiInfo.slug}\``, true)
@@ -65,7 +66,7 @@ export default class Emoji extends Command {
           .addField(':link: Versão do emoji', `\`${unicodeEmojiInfo.emoji_version}\``, true)
           .addField(':pushpin: Versão de unicode', `\`${unicodeEmojiInfo.unicode_version}\``, true)
           .setTimestamp()
-          .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
         if (emojiAPIInfo) {
           const emoji = emojiAPIInfo[0];
@@ -80,20 +81,20 @@ export default class Emoji extends Command {
 
         embed.addField(`:handshake: Suporte para tom de pele`, `\`${unicodeEmojiInfo.skin_tone_support ? 'Sim' : 'Não'}\``, true);
 
-        message.channel.createMessage({ embed });
+        ctx.sendMessage({ embed });
         return;
       }
     }
 
-    if (!message.channel.guild.emojis.length) {
-      message.channel.createMessage(':x: Este servidor não tem emojis :frowning2:.');
+    if (!ctx.channel.guild.emojis.length) {
+      ctx.sendMessage(':x: Este servidor não tem emojis :frowning2:.');
       return;
     }
 
-    if (!args.length) {
+    if (!ctx.args.length) {
       const emojiList: Array<string> = [];
 
-      message.channel.guild.emojis.forEach((emoji: GuildEmoji) => {
+      ctx.guild.emojis.forEach((emoji: GuildEmoji) => {
         emoji.animated ? emojiList.push(`<a:${emoji.name}:${emoji.id}>`) : emojiList.push(`<:${emoji.name}:${emoji.id}>`);
       });
 
@@ -104,22 +105,22 @@ export default class Emoji extends Command {
         .setColor('RANDOM')
         .setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice(0, 30).join(' | ')}`)
         .setTimestamp()
-        .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+        .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-      const msg = await message.channel.createMessage({ embed });
+      const msg = await ctx.sendMessage({ embed });
 
       if (emojiList.length > 30) {
-        msg.addReaction('⬅️');
-        msg.addReaction('➡️');
+        ctx.sentMsg.addReaction('⬅️');
+        ctx.sentMsg.addReaction('➡️');
 
-        const filter = (r: ErisEmoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
-        const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
+        const filter = (r: ErisEmoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
+        const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 5 * 60 * 1000 });
 
         collector.on('collect', async r => {
-          if (msg.channel.type !== 0) return;
+          if (ctx.sentMsg.channel.type !== 0) return;
 
-          if (msg.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            msg.removeReaction(r.name, message.author.id);
+          if (ctx.sentMsg.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+            ctx.sentMsg.removeReaction(r.name, ctx.author.id);
           }
 
           switch (r.name) {
@@ -134,8 +135,8 @@ export default class Emoji extends Command {
           }
 
           embed.setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice((page - 1) * 30, page * 30).join(' | ')}`)
-            .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
-          msg.edit({ embed });
+            .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+          ctx.editMessage({ embed });
         });
       }
       return;
@@ -156,16 +157,16 @@ export default class Emoji extends Command {
         .setURL(url)
         .setThumbnail(url)
         .setTimestamp()
-        .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
     }
 
-    if (args[0].split(':').length === 3) {
-      const e = message.channel.guild.emojis.find((emoji: GuildEmoji) => emoji.id === args[0].split(':')[2].slice(0, -1));
+    if (ctx.args[0].split(':').length === 3) {
+      const e = ctx.guild.emojis.find((emoji: GuildEmoji) => emoji.id === ctx.args[0].split(':')[2].slice(0, -1));
 
       if (!e) {
-        message.channel.createMessage(':x: Não encontrei esse emoji!');
+        ctx.sendMessage(':x: Não encontrei esse emoji!');
         return;
       }
       getEmojiInfo(e);
@@ -174,14 +175,14 @@ export default class Emoji extends Command {
 
     const emojiList: Array<GuildEmoji> = [];
 
-    message.channel.guild.emojis.forEach((emoji: GuildEmoji) => {
-      if (emoji.name.includes(args[0]) || emoji.id === args[0]) {
+    ctx.channel.guild.emojis.forEach((emoji: GuildEmoji) => {
+      if (emoji.name.includes(ctx.args[0]) || emoji.id === ctx.args[0]) {
         emojiList.push(emoji);
       }
     });
 
     if (!emojiList.length) {
-      message.channel.createMessage(':x: Não encontrei esse emoji!');
+      ctx.sendMessage(':x: Não encontrei esse emoji!');
       return;
     }
 
@@ -199,15 +200,15 @@ export default class Emoji extends Command {
       .setColor('RANDOM')
       .setDescription(`${emojiStringList.join('\n')}\nEscreve um número de **1** a **${emojiList.length >= 20 ? '20' : emojiList.length}** para obter informação sobre esse emoji`)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await message.channel.createMessage({ embed });
+    await ctx.sendMessage({ embed });
 
-    const filter = (m: Message) => m.author.id === message.author.id && parseInt(m.content) >= 1 && parseInt(m.content) <= 20;
-    const collector = new MessageCollector(this.client, message.channel, filter, { max: 1, time: 20000 });
+    const filter = (m: Message) => m.author.id === ctx.author.id && parseInt(m.content) >= 1 && parseInt(m.content) <= 20;
+    const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
 
     collector.on('collect', m => {
-      msg.delete();
+      ctx.sentMsg.delete();
       getEmojiInfo(emojiList[Number(m.content) - 1]);
     });
   }

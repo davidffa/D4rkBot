@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
@@ -9,7 +8,7 @@ export default class Docs extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'docs',
-      description: 'Procura algo na documentação do Eris',
+      description: 'Procura algo na documentação do Eris.',
       args: 1,
       usage: '<Procura>',
       category: 'Others',
@@ -18,19 +17,19 @@ export default class Docs extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const res = await fetch(`${process.env.ERISDOCSAPIURL}/docs?token=${process.env.ERISDOCSAPITOKEN}&search=${encodeURIComponent(args.join(' '))}`).then(r => r.json());
+    const res = await fetch(`${process.env.ERISDOCSAPIURL}/docs?token=${process.env.ERISDOCSAPITOKEN}&search=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
 
     if (res.error) {
-      message.channel.createMessage(':x: Nada encontrado nas docs!');
+      ctx.sendMessage(':x: Nada encontrado nas docs!');
       return;
     }
 
-    message.channel.createMessage({ embed: res });
+    ctx.sendMessage({ embed: res });
   }
 }

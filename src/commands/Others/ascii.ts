@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import figlet from 'figlet';
 
@@ -9,7 +8,7 @@ export default class Ascii extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'ascii',
-      description: 'Torna uma frase numa ascii art',
+      description: 'Torna uma frase numa ascii art.',
       args: 1,
       usage: '<Texto>',
       category: 'Others',
@@ -19,21 +18,21 @@ export default class Ascii extends Command {
     });
   }
 
-  execute(message: Message, args: Array<string>): void {
-    const text = args.join(' ');
+  execute(ctx: CommandContext): void {
+    const text = ctx.args.join(' ');
 
     if (text.length > 15) {
-      message.channel.createMessage(':x: Máximo de 15 caracteres permitido!');
+      ctx.sendMessage(':x: Máximo de 15 caracteres permitido!');
       return;
     }
 
     figlet(text, (err, data) => {
       if (err || !data) {
-        message.channel.createMessage(':x: Conteúdo inválido.');
+        ctx.sendMessage(':x: Conteúdo inválido.');
         return;
       }
 
-      message.channel.createMessage(`\`\`\`\n${data}\`\`\``);
+      ctx.sendMessage(`\`\`\`\n${data}\`\`\``);
     })
   }
 }

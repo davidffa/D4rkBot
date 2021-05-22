@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
 import { Emoji, Message, User } from 'eris';
@@ -15,22 +16,22 @@ export default class Queue extends Command {
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
       return;
     }
 
     if (player.radio) {
-      message.channel.createMessage(`:radio: A tocar a rádio ${player.radio}`);
+      ctx.sendMessage(`:radio: A tocar a rádio ${player.radio}`);
       return;
     }
 
@@ -62,22 +63,22 @@ export default class Queue extends Command {
       .setTitle(':bookmark_tabs: Lista de músicas')
       .setDescription(desc.join('\n'))
       .setTimestamp()
-      .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+      .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await message.channel.createMessage({ embed });
+    await ctx.sendMessage({ embed });
 
     if (queue.size <= 10) return;
 
-    msg.addReaction('⬅️');
-    msg.addReaction('➡️');
+    ctx.sentMsg.addReaction('⬅️');
+    ctx.sentMsg.addReaction('➡️');
 
 
-    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
+    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
 
-    const collector = new ReactionCollector(this.client, msg, filter, { time: 10 * 60 * 1000 });
+    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 10 * 60 * 1000 });
 
     collector.on('collect', r => {
-      if (message.channel.type !== 0) return;
+      if (ctx.channel.type !== 0) return;
 
       const newDesc = [
         `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
@@ -93,25 +94,25 @@ export default class Queue extends Command {
             embed.setDescription(newDesc.join('\n'));
           } else {
             embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
-              .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+              .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
           }
 
-          msg.edit({ embed });
+          ctx.editMessage({ embed });
 
-          if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            msg.removeReaction(r.name, message.author.id);
+          if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+            ctx.sentMsg.removeReaction(r.name, ctx.author.id);
           }
           break;
         case '➡️':
           if (page === pages) return;
           page++;
           embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
-            .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+            .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-          msg.edit({ embed });
+          ctx.editMessage({ embed });
 
-          if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            msg.removeReaction(r.name, message.author.id);
+          if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+            ctx.sentMsg.removeReaction(r.name, ctx.author.id);
           }
           break;
       }

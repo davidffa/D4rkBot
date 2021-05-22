@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Resume extends Command {
   constructor(client: Client) {
@@ -14,20 +13,20 @@ export default class Resume extends Command {
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
       return;
     }
 
@@ -35,27 +34,27 @@ export default class Resume extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = message.member;
+    const member = ctx.msg.member;
     if (!member) return;
 
     const resume = (): void => {
       if (!player.paused) {
-        message.channel.createMessage(':x: A música já está a tocar!');
+        ctx.sendMessage(':x: A música já está a tocar!');
         return;
       }
 
       player.pause(false);
-      message.channel.createMessage(':play_pause: Música retomada!');
+      ctx.sendMessage(':play_pause: Música retomada!');
     }
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
       if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         resume();
         return;
       }
-      message.channel.createMessage(':x: Apenas alguém com o cargo DJ pode retomar a música!');
+      ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode retomar a música!');
     } else resume();
   }
 }

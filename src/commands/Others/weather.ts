@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
@@ -26,7 +25,7 @@ export default class Weather extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'weather',
-      description: 'Obtém dados sobre a meteorologia atual numa cidade',
+      description: 'Obtém dados sobre a meteorologia atual numa cidade.',
       args: 1,
       usage: '<cidade>',
       category: 'Others',
@@ -36,18 +35,18 @@ export default class Weather extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
     const xmlParser = new xml2js.Parser({ charkey: 'C$', attrkey: 'A$', explicitArray: true });
 
-    const res = await fetch(`http://weather.service.msn.com/find.aspx?src=outlook&weadegreetype=C&culture=pt-PT&weasearchstr=${args.join(' ')}`).then(res => res.text());
+    const res = await fetch(`http://weather.service.msn.com/find.aspx?src=outlook&weadegreetype=C&culture=pt-PT&weasearchstr=${ctx.args.join(' ')}`).then(res => res.text());
 
     if (!res) {
-      message.channel.createMessage(':x: Ocorreu um erro ao obter os dados meteorológicos');
+      ctx.sendMessage(':x: Ocorreu um erro ao obter os dados meteorológicos');
       return;
     }
 
@@ -79,7 +78,7 @@ export default class Weather extends Command {
     });
 
     if (!weather) {
-      message.channel.createMessage(':x: Cidade não encontrada!');
+      ctx.sendMessage(':x: Cidade não encontrada!');
       return;
     }
 
@@ -96,8 +95,8 @@ export default class Weather extends Command {
       .addField(':map: Coordenadas', `Latitude: \`${weather.lat}\`\nLongitude: \`${weather.long}\``, true)
       .setThumbnail(weather.imageURL)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+      ctx.sendMessage({ embed });
   }
 }

@@ -1,8 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
-import { Message, Emoji, User } from 'eris';
+import { Emoji, User } from 'eris';
 
 import fetch from 'node-fetch';
 import cio from 'cheerio';
@@ -25,16 +26,16 @@ export default class Lyrics extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    if (!message.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      message.channel.createMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
+      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
       return;
     }
 
@@ -85,11 +86,11 @@ export default class Lyrics extends Command {
     let res: LyricsRes | null;
     let artist, title;
 
-    if (!args.length) {
-      const player = this.client.music.players.get(message.guildID as string);
+    if (!ctx.args.length) {
+      const player = this.client.music.players.get(ctx.msg.guildID as string);
 
       if (!player || !player.queue.current) {
-        message.channel.createMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
+        ctx.sendMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(ctx.msg.guildID as string)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
         return;
       }
 
@@ -109,7 +110,7 @@ export default class Lyrics extends Command {
         res = await lyrics(player.queue.current.title);
       }
     } else {
-      const data = args.join(' ').split('-');
+      const data = ctx.args.join(' ').split('-');
 
       if (data.length === 1)
         res = await lyrics(data[0].trim());
@@ -118,10 +119,10 @@ export default class Lyrics extends Command {
     }
 
     if (!res) {
-      if (args.join(' ').split('-').length === 1) {
-        message.channel.createMessage(`:x: Não encontrei nenhum resultado.\nExperimenta usar \`${this.client.guildCache.get(message.guildID as string)?.prefix || 'db.'}lyrics <Nome da música> - <Artista>\``);
+      if (ctx.args.join(' ').split('-').length === 1) {
+        ctx.sendMessage(`:x: Não encontrei nenhum resultado.\nExperimenta usar \`${this.client.guildCache.get(ctx.msg.guildID as string)?.prefix || 'db.'}lyrics <Nome da música> - <Artista>\``);
       }else {
-        message.channel.createMessage(':x: Não encontrei nenhum resultado.');
+        ctx.sendMessage(':x: Não encontrei nenhum resultado.');
       }
       return;
     }
@@ -131,20 +132,20 @@ export default class Lyrics extends Command {
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
-      .setTitle(args.join(' ') || `${artist} - ${title}`)
+      .setTitle(ctx.args.join(' ') || `${artist} - ${title}`)
       .setDescription(res.lyrics.slice(0, 20).join('\n'))
       .setThumbnail(res.albumArt)
       .setURL(res.url)
       .setTimestamp()
-      .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+      .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await message.channel.createMessage({ embed });
-    msg.addReaction('⬅️');
-    msg.addReaction('➡️');
+    await ctx.sendMessage({ embed });
+    ctx.sentMsg.addReaction('⬅️');
+    ctx.sentMsg.addReaction('➡️');
 
-    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === message.author;
+    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
 
-    const collector = new ReactionCollector(this.client, msg, filter, { time: 6 * 60 * 1000, max: 20 });
+    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 6 * 60 * 1000, max: 20 });
 
     const changePage = (r: Emoji): void => {
       if (!res) return;
@@ -161,31 +162,31 @@ export default class Lyrics extends Command {
       }
 
       embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
-        .setFooter(`Página ${page} de ${pages}`, message.author.dynamicAvatarURL());
+        .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-      msg.edit({ embed });
+      ctx.editMessage({ embed });
     }
 
     collector.on('collect', r => {
-      if (message.channel.type !== 0) return;
+      if (ctx.channel.type !== 0) return;
 
-      if (message.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-        msg.removeReaction(r.name, message.author.id);
+      if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+        ctx.sentMsg.removeReaction(r.name, ctx.author.id);
       }
 
       changePage(r);
     });
 
     collector.on('remove', r => {
-      if (message.channel.type !== 0) return;
+      if (ctx.channel.type !== 0) return;
 
-      if (!message.channel.permissionsOf(this.client.user.id).has('manageMessages'))
+      if (!ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
         changePage(r);
     });
 
     collector.on('end', () => {
-      msg.removeReaction('⬅️');
-      msg.removeReaction('➡️');
+      ctx.sentMsg.removeReaction('⬅️');
+      ctx.sentMsg.removeReaction('➡️');
     });
   }
 }

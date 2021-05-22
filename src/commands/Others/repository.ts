@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
@@ -12,7 +11,7 @@ export default class Repository extends Command {
   constructor(client: Client) {
       super(client, {
           name: 'repository',
-          description: 'Informações sobre algum repositório do github',
+          description: 'Informações sobre algum repositório do github.',
           args: 2,
           usage: '<Dono> <Nome do repositório>',
           category: 'Others',
@@ -22,16 +21,16 @@ export default class Repository extends Command {
       });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
         
-    const res = await fetch(`https://api.github.com/repos/${args[0]}/${args[1]}`);
+    const res = await fetch(`https://api.github.com/repos/${ctx.args[0]}/${ctx.args[1]}`);
 
     if (res.status !== 200) {
-      message.channel.createMessage(':x: Repositório não encontrado');
+      ctx.sendMessage(':x: Repositório não encontrado');
       return;
     }
 
@@ -49,7 +48,7 @@ export default class Repository extends Command {
       .setThumbnail(`${repo.owner.avatar_url}${Math.floor(Math.random() * 10000)}`)
       .setURL(repo.html_url)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
       repo.language && embed.addField(':gear: Linguagem', repo.language, true);
       repo.license && repo.license.name && embed.addField(':newspaper: Licença', repo.license.name, true)
@@ -59,6 +58,6 @@ export default class Repository extends Command {
 
       embed.addField(':bookmark_tabs: Descrição', `\`\`\`\n${repo.description}\`\`\``);
 
-      message.channel.createMessage({ embed });
-    }
+    ctx.sendMessage({ embed });
+  }
 }

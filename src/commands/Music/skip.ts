@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
 import { Message } from 'eris';
 
@@ -14,20 +15,20 @@ export default class Skip extends Command {
     });
   }
 
-  async execute(message: Message): Promise<void> {
-    if (message.channel.type !== 0) return;
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
       return;
     }
 
@@ -50,24 +51,24 @@ export default class Skip extends Command {
         }
 
         player.destroy();
-        message.channel.createMessage(':bookmark_tabs: A lista de músicas acabou!');
+        ctx.sendMessage(':bookmark_tabs: A lista de músicas acabou!');
         return;
       }
-      message.channel.createMessage(dj ? ':fast_forward: Música pulada por um DJ!' : ':fast_forward: Música pulada!');
+      ctx.sendMessage(dj ? ':fast_forward: Música pulada por um DJ!' : ':fast_forward: Música pulada!');
     }
 
-    const member = message.member
+    const member = ctx.msg.member
     if (!member) return;
 
     if (await this.client.music.hasDJRole(member)) {
       skip(true);
     } else {
-      if (this.client.guildCache.get(message.guildID as string)?.djRole) {
-        if (message.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
+      if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+        if (ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
           skip(false);
           return;
         }
-        message.channel.createMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ a pode pular!');
+        ctx.sendMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ a pode pular!');
       } else skip(false);
     }
   }

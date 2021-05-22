@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Forceplay extends Command {
   constructor(client: Client) {
@@ -16,52 +15,52 @@ export default class Forceplay extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const player = this.client.music.players.get(message.guildID as string);
+    const player = this.client.music.players.get(ctx.msg.guildID as string);
 
     if (!player) {
-      message.channel.createMessage(`:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(message.guildID as string)}play <Nome/URL>\``);
+      ctx.sendMessage(`:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(ctx.msg.guildID as string)}play <Nome/URL>\``);
       return;
     }
 
-    const voiceChannelID = message.member?.voiceState.channelID;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
       return;
     }
 
     if (!player.radio && player.queue.duration > 8.64e7) {
-      message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
+      ctx.sendMessage(':x: A queue tem a duração superior a 24 horas!')
       return;
     }
 
-    const member = message.member;
+    const member = ctx.msg.member;
     const voiceChannel = this.client.getChannel(voiceChannelID);
     if (!member || !voiceChannel || voiceChannel.type !== 2) return;
 
     const isDJ = await this.client.music.hasDJRole(member)
 
-    if (this.client.guildCache.get(message.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
       if (!isDJ && voiceChannel.voiceMembers.filter(m => !m.bot).length > 1) {
-        message.channel.createMessage(':x: Apenas alguém com o cargo DJ pode usar este comando!');
+        ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode usar este comando!');
         return;
       }
     }
 
     try {
-      const res = await this.client.music.search(args.join(' '), message.author);
+      const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
 
       if (res.loadType === 'LOAD_FAILED') {
-        message.channel.createMessage(':x: Falha ao carregar a música.');
+        ctx.sendMessage(':x: Falha ao carregar a música.');
       } else if (res.loadType === 'NO_MATCHES') {
-        message.channel.createMessage(':x: Nenhuma música encontrada.');
+        ctx.sendMessage(':x: Nenhuma música encontrada.');
       } else {
         if (res.loadType === 'PLAYLIST_LOADED') {
           const playlist = res.playlist;
@@ -79,13 +78,13 @@ export default class Forceplay extends Command {
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
             .addField(':watch: Duração', `\`${this.client.utils.msToHour(res.playlist?.duration || 0)}\``)
             .setTimestamp()
-            .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+            .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
           const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 
-          urlRegex.test(args[0]) && embed.setURL(args[0]);
+          urlRegex.test(ctx.args[0]) && embed.setURL(ctx.args[0]);
 
-          message.channel.createMessage({ embed });
+          ctx.sendMessage({ embed });
         } else {
           const tracks = res.tracks;
 
@@ -95,7 +94,7 @@ export default class Forceplay extends Command {
       }
     } catch (err) {
       console.error(err);
-      message.channel.createMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.sendMessage(':x: Ocorreu um erro ao procurar a música.');
     }
   }
 }

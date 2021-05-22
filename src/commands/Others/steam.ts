@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 const steam = require('steam-provider');
 const provider = new steam.SteamProvider();
@@ -10,7 +9,7 @@ export default class Steam extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'steam',
-      description: 'Informações sobre um jogo da steam',
+      description: 'Informações sobre um jogo da steam.',
       args: 1,
       aliases: ['steamgame'],
       usage: '<Jogo>',
@@ -20,16 +19,16 @@ export default class Steam extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const res = await provider.search(args.join(' '), 1, 'portuguese', 'pt');
+    const res = await provider.search(ctx.args.join(' '), 1, 'portuguese', 'pt');
 
     if (!res.length) {
-      message.channel.createMessage(':x: Jogo não encontrado');
+      ctx.sendMessage(':x: Jogo não encontrado');
       return;
     }
 
@@ -49,8 +48,8 @@ export default class Steam extends Command {
       .addField('Publicador(es)', `\`${data.otherData.publisher.join(', ')}\``, true)
       .setImage(data.otherData.imageUrl)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 import { create, all } from 'mathjs';
 
@@ -9,7 +8,7 @@ export default class Calc extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'calc',
-      description: 'Calcula uma expressão matemática',
+      description: 'Calcula uma expressão matemática.',
       args: 1,
       usage: '<Expressão Matemática>',
       category: 'Others',
@@ -19,9 +18,9 @@ export default class Calc extends Command {
     });
   }
 
-  execute(message: Message, args: Array<string>) {
-    if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  execute(ctx: CommandContext) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
@@ -43,29 +42,29 @@ export default class Calc extends Command {
       'matrix': function () { throw new Error() }
     }, { override: true });
 
-    const expr = args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/"|'|\[|\]|\{|\}/g, '').toLowerCase();
+    const expr = ctx.args.join(' ').replace(/π/g, 'pi').replace(/÷|:/g, '/').replace(/×/g, '*').replace(/\*\*/g, '^').replace(/"|'|\[|\]|\{|\}/g, '').toLowerCase();
     let result;
 
     if (!expr.length)
-      return message.channel.createMessage(':x: Expressão inválida!');
+      return ctx.sendMessage(':x: Expressão inválida!');
 
     try {
       result = limitedEvaluate && limitedEvaluate(expr);
     } catch (err) {
-      return message.channel.createMessage(':x: Expressão inválida!');
+      return ctx.sendMessage(':x: Expressão inválida!');
     }
 
-    if (result === undefined || result === null || typeof result === 'function') return message.channel.createMessage(':x: Expressão inválida!');
+    if (result === undefined || result === null || typeof result === 'function') return ctx.sendMessage(':x: Expressão inválida!');
     if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTitle('Calculadora')
-      .addField(':inbox_tray: Expressão', `\`\`\`${args.join(' ')}\`\`\``)
+      .addField(':inbox_tray: Expressão', `\`\`\`${ctx.args.join(' ')}\`\`\``)
       .addField(':outbox_tray: Resultado', `\`\`\`${result}\`\`\``)
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

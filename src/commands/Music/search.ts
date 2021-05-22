@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 import Filters from '../../structures/Filters';
 import { MessageCollector } from '../../structures/Collector';
 
@@ -20,25 +21,25 @@ export default class Search extends Command {
     });
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    const currPlayer = this.client.music.players.get(message.guildID as string);
+    const currPlayer = this.client.music.players.get(ctx.msg.guildID as string);
 
-    if (!this.client.music.canPlay(message, currPlayer)) return;
+    if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = message.member?.voiceState.channelID as string;
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID as string;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
       const player = this.client.music.create({
-        guild: message.guildID as string,
+        guild: ctx.msg.guildID as string,
         voiceChannel: voiceChannelID,
-        textChannel: message.channel.id,
+        textChannel: ctx.msg.channel.id,
         selfDeafen: true
       });
 
@@ -47,7 +48,7 @@ export default class Search extends Command {
     }
 
     try {
-      const res = await this.client.music.search(args.join(' '), message.author);
+      const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
 
       if (res.loadType === 'SEARCH_RESULT') {
         const resLength = res.tracks.length >= 10 ? 10 : res.tracks.length;
@@ -63,31 +64,31 @@ export default class Search extends Command {
           .setColor('RANDOM')
           .setTitle(':bookmark_tabs: Resultados da procura')
           .setDescription(desc)
-          .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+          .setAuthor(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
           .setTimestamp();
 
-        const msg = await message.channel.createMessage({ embed });
+        await ctx.sendMessage({ embed });
 
-        const searchCollector = this.client.music.searchMsgCollectors.get(message.author.id);
+        const searchCollector = this.client.music.searchMsgCollectors.get(ctx.author.id);
 
         if (searchCollector) {
           searchCollector.message.edit({ content: ':x: Pesquisa cancelada!', embed: {} });
           searchCollector.messageCollector.stop('New Search');
-          this.client.music.searchMsgCollectors.delete(message.author.id);
+          this.client.music.searchMsgCollectors.delete(ctx.author.id);
         }
 
-        const filter = (m: Message) => m.author.id === message.author.id && parseInt(m.content) >= 0 && parseInt(m.content) <= resLength;
-        const collector = new MessageCollector(this.client, message.channel, filter, { max: 1, time: 20000 });
+        const filter = (m: Message) => m.author.id === ctx.author.id && parseInt(m.content) >= 0 && parseInt(m.content) <= resLength;
+        const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
 
-        this.client.music.searchMsgCollectors.set(message.author.id, { message: msg, messageCollector: collector });
+        this.client.music.searchMsgCollectors.set(ctx.author.id, { message: ctx.sentMsg, messageCollector: collector });
 
         collector.on('collect', m => {
-          msg.delete().catch(() => { });
+          ctx.sentMsg.delete().catch(() => { });
 
           const idx = parseInt(m.content);
 
           if (idx === 0) {
-            message.channel.createMessage(':x: Pesquisa cancelada!');
+            ctx.sendMessage(':x: Pesquisa cancelada!');
             return;
           }
 
@@ -100,7 +101,7 @@ export default class Search extends Command {
 
           if (player.state === 'DISCONNECTED') {
             if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-              message.channel.createMessage(':x: O canal de voz está cheio!');
+              ctx.sendMessage(':x: O canal de voz está cheio!');
               player.destroy();
               return;
             }
@@ -112,20 +113,20 @@ export default class Search extends Command {
           if (!player.playing)
             player.play()
           else
-            message.channel.createMessage(`:bookmark_tabs: Adicionado à lista \`${res.tracks[idx - 1].title}\``);
+            ctx.sendMessage(`:bookmark_tabs: Adicionado à lista \`${res.tracks[idx - 1].title}\``);
         });
 
         collector.on('end', reason => {
-          this.client.music.searchMsgCollectors.delete(message.author.id);
+          this.client.music.searchMsgCollectors.delete(ctx.author.id);
           if (reason === 'time')
-            msg.edit({ content: ':x: Pesquisa cancelada!', embed: {} });
+            ctx.editMessage({ content: ':x: Pesquisa cancelada!', embed: {} });
         });
       } else {
-        message.channel.createMessage(':x: Não encontrei nenhum resultado!');
+        ctx.sendMessage(':x: Não encontrei nenhum resultado!');
       }
     } catch (err) {
       console.error(err);
-      message.channel.createMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.sendMessage(':x: Ocorreu um erro ao procurar a música.');
     }
   }
 }

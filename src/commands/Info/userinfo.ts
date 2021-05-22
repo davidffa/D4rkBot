@@ -1,5 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
+import CommandContext from '../../structures/CommandContext';
 
 import { Message, User, Member, Constants } from 'eris';
 
@@ -36,26 +37,26 @@ export default class Userinfo extends Command {
     return res.join(' - ');
   }
 
-  async execute(message: Message, args: Array<string>): Promise<void> {
-    if (message.channel.type !== 0) return;
-    if (!message.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      message.channel.createMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+  async execute(ctx: CommandContext): Promise<void> {
+    if (ctx.channel.type !== 0 || !ctx.guild) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
 
-    let user: User;
+    let user: User | null;
 
-    if (!args.length)
-      user = message.author;
+    if (!ctx.args.length)
+      user = ctx.author;
     else
-      user = message.mentions[0] || await this.client.utils.findUser(args.join(' '), message.channel.guild);
+      user = (ctx.msg instanceof Message && ctx.msg.mentions[0] ) || await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
 
     if (!user) {
-      message.channel.createMessage(':x: Utilizador não encontrado.');
+      ctx.sendMessage(':x: Utilizador não encontrado.');
       return;
     }
 
-    const member = message.channel.guild.members.get(user.id);
+    const member = ctx.guild.members.get(user.id);
 
     const embed = new this.client.embed()
       .setTitle(`Informações de ${user.bot ? '<:bot:804028762307821578>' : ''}${(member && member.nick) || user.username}`)
@@ -65,7 +66,7 @@ export default class Userinfo extends Command {
       .addField(':calendar: Conta criada em', `\`${moment(user.createdAt).format('L')} (${moment(user.createdAt).startOf('day').fromNow()})\``, true)
       .setThumbnail(user.dynamicAvatarURL())
       .setTimestamp()
-      .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
     if (member) {
       embed.addField(':calendar: Entrada no servidor', `\`${moment(member.joinedAt).format('L')} (${moment(member.joinedAt).startOf('day').fromNow()})\``, true)
@@ -77,9 +78,9 @@ export default class Userinfo extends Command {
         embed.addField('Dispositivos :technologist:', devices, true);
       }
 
-      const pos = message.channel.guild.members.map(m => { return { id: m.id, joinedAt: m.joinedAt } }).sort((a, b) => a.joinedAt - b.joinedAt).findIndex(m => m.id === member.id) + 1;
+      const pos = ctx.guild.members.map(m => { return { id: m.id, joinedAt: m.joinedAt } }).sort((a, b) => a.joinedAt - b.joinedAt).findIndex(m => m.id === member.id) + 1;
 
-      embed.addField(':trophy: Posição de entrada', `\`${pos}/${message.channel.guild.members.size}\``, true)
+      embed.addField(':trophy: Posição de entrada', `\`${pos}/${ctx.guild.members.size}\``, true)
     }
 
     const BadgeEmojis: any = {
@@ -117,6 +118,6 @@ export default class Userinfo extends Command {
       }
     }
 
-    message.channel.createMessage({ embed });
+    ctx.sendMessage({ embed });
   }
 }

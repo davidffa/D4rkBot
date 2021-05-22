@@ -1,9 +1,11 @@
-import { Manager, NodeOptions } from 'erela.js';
-import Spotify from 'erela.js-spotify';
 import Client from '../structures/Client';
+import CommandContext from '../structures/CommandContext';
 
 import { User, Member, Message } from 'eris';
 import { Player, Node } from 'erela.js';
+import { Manager, NodeOptions } from 'erela.js';
+import Spotify from 'erela.js-spotify';
+
 import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
 
@@ -243,50 +245,50 @@ export default class D4rkManager extends Manager {
     return false;
   }
 
-  canPlay(message: Message, player?: Player | undefined): boolean {
-    const voiceChannelID = message.member?.voiceState.channelID;
+  canPlay(ctx: CommandContext, player?: Player | undefined): boolean {
+    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
 
     if (!voiceChannelID) {
-      message.channel.createMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
+      ctx.sendMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
       return false;
     }
 
     const voiceChannel = this.client.getChannel(voiceChannelID);
 
     if (voiceChannel.type !== 2) {
-      message.channel.createMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
+      ctx.sendMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
       return false;
     }
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
     if (!permissions.has('readMessages')) {
-      message.channel.createMessage(':x: Não tenho permissão para ver o teu canal de voz!');
+      ctx.sendMessage(':x: Não tenho permissão para ver o teu canal de voz!');
       return false;
     }
 
     if (!permissions.has('voiceConnect')) {
-      message.channel.createMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
+      ctx.sendMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
       return false;
     }
 
     if (!permissions.has('voiceSpeak')) {
-      message.channel.createMessage(':x: Não tenho permissão para falar no teu canal de voz!');
+      ctx.sendMessage(':x: Não tenho permissão para falar no teu canal de voz!');
       return false;
     }
 
-    if (this.client.records.has(message.guildID as string)) {
-      message.channel.createMessage(':x: Não consigo tocar música enquanto gravo voz!')
+    if (this.client.records.has(ctx.guild?.id as string)) {
+      ctx.sendMessage(':x: Não consigo tocar música enquanto gravo voz!')
       return false;
     }
 
     if (player && voiceChannelID !== player.voiceChannel) {
-      message.channel.createMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
+      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
       return false;
     }
 
     if (player && !player.radio && player.queue.duration > 8.64e7) {
-      message.channel.createMessage(':x: A queue tem a duração superior a 24 horas!')
+      ctx.sendMessage(':x: A queue tem a duração superior a 24 horas!')
       return false;
     }
     return true;

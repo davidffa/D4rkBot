@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-
-import { Message } from 'eris';
+import CommandContext from '../../structures/CommandContext';
 
 export default class Uptime extends Command {
   constructor(client: Client) {
@@ -15,7 +14,7 @@ export default class Uptime extends Command {
     });
   }
 
-  execute(message: Message): void {
-    message.channel.createMessage(`<a:infinity:838759634361253929> Estou online há \`${this.client.utils.msToDate(process.uptime() * 1e3)}\``)
+  execute(ctx: CommandContext): void {
+    ctx.sendMessage(`<a:infinity:838759634361253929> Estou online há \`${this.client.utils.msToDate(process.uptime() * 1e3)}\``)
   }
 }
