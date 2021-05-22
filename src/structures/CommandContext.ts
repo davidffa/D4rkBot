@@ -67,7 +67,7 @@ export default class CommandContext {
       }
       Object.assign(data, content);
     }else {
-      return Promise.reject('No conten provided');
+      return Promise.reject('No content provided');
     }
 
     await this.client.requestHandler.request('PATCH', `/webhooks/${this.client.user.id}/${this.msg.token}/messages/@original`, true, data, file)
