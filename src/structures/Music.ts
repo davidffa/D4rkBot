@@ -135,18 +135,15 @@ export default class D4rkManager extends Manager {
         .setTimestamp()
         .setFooter(`${requester.username}#${requester.discriminator}`, requester.dynamicAvatarURL());
 
-      if (player.radio) {
-        embed.setTitle(`<a:disco:803678643661832233> A Tocar a rádio ${player.radio}`)
-      } else {
+      if (!player.radio) {
         embed.setTitle('<a:disco:803678643661832233> A Tocar')
           .addField(":page_with_curl: Nome:", '`' + track.title + '`')
           .addField(":robot: Enviado por:", '`' + track.author + '`')
           .addField(":watch: Duração:", '`' + this.client.utils.msToHour(track.duration) + '`')
           .setURL(track.uri)
           .setThumbnail(track.displayThumbnail('maxresdefault'))
+          player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
       }
-
-      player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
     });
 
     this.on('trackStuck', (player, track): void => {

@@ -145,6 +145,12 @@ export default class Radio extends Command {
 
       player.radio = radio[0];
 
+      const embed = new this.client.embed()
+        .setTitle(`<a:disco:803678643661832233> A Tocar a rádio ${player.radio}`)
+        .setColor('RANDOM')
+        .setTimestamp()
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      ctx.sendMessage({ embed });
     }catch (err) {
       console.error(err);
       player.destroy();
