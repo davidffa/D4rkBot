@@ -94,7 +94,7 @@ export default class Nowplaying extends Command {
         canvasCtx.stroke();
       }
 
-      ctx.sendMessage('', {
+      ctx.sendMessage(`<a:disco:803678643661832233> A tocar ${player.queue.current.title}`, {
         name: 'nowplaying.png',
         file: canvas.toBuffer()
       });
