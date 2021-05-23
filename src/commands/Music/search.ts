@@ -88,7 +88,7 @@ export default class Search extends Command {
           const idx = parseInt(m.content);
 
           if (idx === 0) {
-            ctx.sendMessage(':x: Pesquisa cancelada!');
+            ctx.channel.createMessage(':x: Pesquisa cancelada!');
             return;
           }
 
@@ -101,7 +101,7 @@ export default class Search extends Command {
 
           if (player.state === 'DISCONNECTED') {
             if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-              ctx.sendMessage(':x: O canal de voz está cheio!');
+              ctx.channel.createMessage(':x: O canal de voz está cheio!');
               player.destroy();
               return;
             }
@@ -113,7 +113,7 @@ export default class Search extends Command {
           if (!player.playing)
             player.play()
           else
-            ctx.sendMessage(`:bookmark_tabs: Adicionado à lista \`${res.tracks[idx - 1].title}\``);
+            ctx.channel.createMessage(`:bookmark_tabs: Adicionado à lista \`${res.tracks[idx - 1].title}\``);
         });
 
         collector.on('end', reason => {
@@ -122,11 +122,11 @@ export default class Search extends Command {
             ctx.editMessage({ content: ':x: Pesquisa cancelada!', embed: {} });
         });
       } else {
-        ctx.sendMessage(':x: Não encontrei nenhum resultado!');
+        ctx.channel.createMessage(':x: Não encontrei nenhum resultado!');
       }
     } catch (err) {
       console.error(err);
-      ctx.sendMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.channel.createMessage(':x: Ocorreu um erro ao procurar a música.');
     }
   }
 }
