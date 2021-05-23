@@ -25,6 +25,7 @@ export default class MessageCreate {
 
       if (interactionCtx) {
         interactionCtx.sentMsg = message;
+        this.client.interactions.delete(message.interaction.id);
       }
     }
 
