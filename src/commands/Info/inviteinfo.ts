@@ -18,7 +18,8 @@ export default class Inviteinfo extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     try {
-      const invite = await this.client.getInvite(ctx.args[0], true);
+      const arr = ctx.args[0].split('/');
+      const invite = await this.client.getInvite(arr[arr.length-1], true);
 
       if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
         ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');
