@@ -3,6 +3,8 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
+import zlib from 'zlib-sync';
+
 import { Emoji, User, Message } from 'eris';
 
 import fetch from 'node-fetch';
@@ -53,8 +55,6 @@ export default class Render extends Command {
     if (!ctx.args[0].startsWith('http'))
       url = 'http://' + ctx.args[0];
 
-      console.log(url);
-
     const exists = async (): Promise<string | null> => {
       return new Promise(async (resolve) => {
         setTimeout(() => {
@@ -102,9 +102,24 @@ export default class Render extends Command {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ url: finalURL })
-    }).then(r => r.json());
+    }).then(r => {
+      if (r.status !== 200) return null;
+      return r.buffer();
+    });
 
-    if (res.error) {
+    if (!res) {
+      if (!(ctx.msg instanceof Message)) {
+        ctx.editMessage(':x: Site inválido');
+      }else {
+        waitMsg?.edit(':x: Site inválido');
+      }
+      return;
+    }
+
+    const inflate = new zlib.Inflate();
+    inflate.push(res, zlib.Z_SYNC_FLUSH);
+
+    if (!inflate.result) {
       if (!(ctx.msg instanceof Message)) {
         ctx.editMessage(':x: Site inválido');
       }else {
@@ -117,12 +132,12 @@ export default class Render extends Command {
       waitMsg?.delete();
       await ctx.sendMessage({ embed }, {
         name: 'render.png',
-        file: Buffer.from(res.img, 'base64')
+        file: inflate.result
       });
     }else {
       await ctx.editMessage({ embed }, {
         name: 'render.png',
-        file: Buffer.from(res.img, 'base64')
+        file: inflate.result
       });
     }
 
