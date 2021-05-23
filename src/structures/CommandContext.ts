@@ -23,7 +23,7 @@ export default class CommandContext {
     }
   }
 
-  async sendMessage(content: MessageContent, file?: MessageFile) {
+  async sendMessage(content: MessageContent, file?: MessageFile): Promise<Message<TextableChannel>> {
     if (this.msg instanceof Message) {
       this.sentMsg = await this.msg.channel.createMessage(content, file);
       return this.sentMsg;
@@ -49,6 +49,8 @@ export default class CommandContext {
     }
 
     await this.client.requestHandler.request('POST', `/interactions/${this.msg.id}/${this.msg.token}/callback`, true, cb, file);
+    this.sentMsg = await this.client.requestHandler.request('GET', `/webhooks/${this.client.user.id}/${this.msg.token}/messages/@original`, true).then((message: any) => new Message(message, this.client));
+    return this.sentMsg;
   }
 
   async editMessage(content: MessageContent, file?: MessageFile) {

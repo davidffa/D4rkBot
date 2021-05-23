@@ -18,15 +18,6 @@ export default class MessageCreate {
       if (collector.channel.id === message.channel.id) {
         collector.collect(message);
       }
-    };
-
-    if (message.interaction) {
-      const interactionCtx = this.client.interactions.get(message.interaction.id);
-
-      if (interactionCtx) {
-        interactionCtx.sentMsg = message;
-        this.client.interactions.delete(message.interaction.id);
-      }
     }
 
     if (message.author.bot) return;

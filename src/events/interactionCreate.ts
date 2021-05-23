@@ -39,7 +39,6 @@ export default class InteractionCreate {
     }
     
     try {
-      this.client.interactions.set(interaction.id, ctx);
       cmd.execute(ctx);
 
       //Logs
