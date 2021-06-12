@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/figlet": "^1.5.1",
-    "@types/node": "^15.12.1",
+    "@types/node": "^15.12.2",
     "@types/node-fetch": "^2.5.10",
     "@types/puppeteer": "^5.4.3",
     "@types/qrcode": "^1.4.0",
@@ -28,11 +28,11 @@
   },
   "dependencies": {
     "@anishshobith/deeptype": "^1.1.0",
-    "@discordjs/opus": "^0.5.0",
+    "@discordjs/opus": "^0.5.3",
     "@iamtraction/google-translate": "^1.1.2",
     "bufferutil": "^4.0.3",
     "canvas": "^2.8.0",
-    "cheerio": "^1.0.0-rc.9",
+    "cheerio": "^1.0.0-rc.10",
     "dotenv": "^10.0.0",
     "erela.js": "^2.3.3",
     "erela.js-spotify": "^1.2.0",
