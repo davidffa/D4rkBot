@@ -26,6 +26,11 @@ export default class Translate extends Command {
 
     const text = ctx.args.slice(1).join(' ');
 
+    if (text.length > 1e3) {
+      ctx.sendMessage(':x: O texto a traduzir só pode ter no máximo 1000 caracteres.')
+      return;
+    }
+
     try {
       const res = await translate(text, {
         to: ctx.args[0]
