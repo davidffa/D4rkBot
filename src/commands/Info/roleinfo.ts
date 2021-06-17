@@ -25,10 +25,12 @@ export default class RoleInfo extends Command {
       return;
     }
 
-    const role = ctx.guild.roles.get(ctx.args[0])
-      || ctx.guild.roles.find(r => r.name === ctx.args[0])
-      || ctx.guild.roles.find(r => r.name.includes(ctx.args[0]))
-      || ctx.guild.roles.find(r => r.name.toLowerCase().includes(ctx.args[0].toLowerCase()));
+    const query = args.join(' ');
+
+    const role = ctx.guild.roles.get(query)
+      || ctx.guild.roles.find(r => r.name === query)
+      || ctx.guild.roles.find(r => r.name.includes(query))
+      || ctx.guild.roles.find(r => r.name.toLowerCase().includes(query.toLowerCase()));
 
     if (!role) {
       ctx.sendMessage(':x: Cargo não encontrado!');
