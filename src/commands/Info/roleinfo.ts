@@ -25,7 +25,7 @@ export default class RoleInfo extends Command {
       return;
     }
 
-    const query = args.join(' ');
+    const query = ctx.args.join(' ');
 
     const role = ctx.guild.roles.get(query)
       || ctx.guild.roles.find(r => r.name === query)
