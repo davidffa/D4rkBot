@@ -56,7 +56,7 @@ export default class Repository extends Command {
       embed.addField(':calendar: Criado em', `${moment(repo.created_at).format('L')} (${moment(repo.created_at).startOf('day').fromNow()})`, true);
       embed.addField(':calendar: Último push', `${moment(repo.pushed_at).format('L')} (${moment(repo.pushed_at).startOf('day').fromNow()})`, true);
 
-      embed.addField(':bookmark_tabs: Descrição', `\`\`\`\n${repo.description}\`\`\``);
+      repo.description && embed.addField(':bookmark_tabs: Descrição', `\`\`\`\n${repo.description}\`\`\``);
 
     ctx.sendMessage({ embed });
   }
