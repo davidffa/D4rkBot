@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/figlet": "^1.5.1",
-    "@types/node": "^15.12.4",
+    "@types/node": "^15.12.5",
     "@types/node-fetch": "^2.5.10",
     "@types/puppeteer": "^5.4.3",
     "@types/qrcode": "^1.4.0",
@@ -42,7 +42,7 @@
     "figlet": "^1.5.0",
     "mathjs": "^9.4.3",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.14",
+    "mongoose": "^5.13.0",
     "node-fetch": "^2.6.1",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
