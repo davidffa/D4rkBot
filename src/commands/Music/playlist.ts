@@ -99,7 +99,7 @@ export default class PlayList extends Command {
       case 'rename':
       case 'renomear':
         if (!ctx.args[1] || !ctx.args[2]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist renomear <Nome Antigo> <Nome Novo>`,);
+          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist renomear <Nome Antigo> <Nome Novo>`);
           return;
         }
 
