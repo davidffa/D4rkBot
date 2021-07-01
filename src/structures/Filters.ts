@@ -85,61 +85,17 @@ export default class Filters {
 
   clearFilters(): this {
     this.effects = [];
+
+    delete this.equalizer;
+    delete this.tremolo;
+    delete this.karaoke;
+    delete this.timescale;
+    this.player.bands.fill(0);
+
     const packet = {
       op: 'filters',
       guildId: this.player.guild,
     }
-
-    if (this.timescale) {
-      Object.assign(packet, {
-        timescale: { pitch: 1.0, rate: 1.0, speed: 1.0 }
-      });
-      delete this.timescale;
-    }
-
-    if (this.equalizer) {
-      Object.assign(packet, {
-        equalizer: [
-          { band: 0, gain: 0 },
-          { band: 1, gain: 0 },
-          { band: 2, gain: 0 },
-          { band: 3, gain: 0 },
-          { band: 4, gain: 0 },
-          { band: 5, gain: 0 },
-          { band: 6, gain: 0 },
-          { band: 7, gain: 0 },
-          { band: 8, gain: 0 },
-          { band: 9, gain: 0 },
-          { band: 10, gain: 0 },
-          { band: 11, gain: 0 },
-          { band: 12, gain: 0 },
-          { band: 13, gain: 0 },
-          { band: 14, gain: 0 }
-        ]
-      });
-      delete this.equalizer;
-      this.player.bands.fill(0);
-    }
-
-    if (this.tremolo) {
-      Object.assign(packet, {
-        tremolo: { depth: 0.5, frequency: 2.0 }
-      });
-      delete this.tremolo;
-    }
-
-    if (this.karaoke) {
-      Object.assign(packet, {
-        karaoke: { level: 1.0, monoLevel: 1.0, filterBand: 220.0, filterWidth: 100.0 }
-      });
-      delete this.karaoke;
-    }
-
-    this.effects = [];
-    
-    delete this.equalizer;
-    delete this.tremolo;
-    delete this.karaoke;
 
     this.player.node.send(packet);
     return this;
