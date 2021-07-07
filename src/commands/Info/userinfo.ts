@@ -4,9 +4,6 @@ import CommandContext from '../../structures/CommandContext';
 
 import { Message, User, Member, Constants } from 'eris';
 
-import moment from 'moment';
-moment.locale('pt');
-
 export default class Userinfo extends Command {
   constructor(client: Client) {
     super(client, {
@@ -63,13 +60,13 @@ export default class Userinfo extends Command {
       .setColor('RANDOM')
       .addField(':bookmark_tabs: Tag', `\`${user.username}#${user.discriminator}\``, true)
       .addField(':id: ID', `\`${user.id}\``, true)
-      .addField(':calendar: Conta criada em', `\`${moment(user.createdAt).format('L')} (${moment(user.createdAt).startOf('day').fromNow()})\``, true)
+      .addField(':calendar: Conta criada em', `<t:${Math.floor(user.createdAt / 1e3)}:d> (<t:${Math.floor(user.createdAt / 1e3)}:R>)`, true)
       .setThumbnail(user.dynamicAvatarURL())
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
     if (member) {
-      embed.addField(':calendar: Entrada no servidor', `\`${moment(member.joinedAt).format('L')} (${moment(member.joinedAt).startOf('day').fromNow()})\``, true)
+      embed.addField(':calendar: Entrada no servidor', `<t:${Math.floor(member.joinedAt / 1e3)}:d> (<t:${Math.floor(member.joinedAt / 1e3)}:R>)`, true)
         .addField(':shrug: Status', `\`${this.getStatus(member.status)}\``, true)
 
       const devices = this.getDevice(member);

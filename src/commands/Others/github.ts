@@ -4,9 +4,6 @@ import CommandContext from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
-import moment from 'moment';
-moment.locale('pt');
-
 export default class Github extends Command {
   constructor(client: Client) {
     super(client, {
@@ -53,8 +50,8 @@ export default class Github extends Command {
     user.twitter_username && embed.addField('<:twitter:785165170547753002> Twitter', `[@${user.twitter_username}](https://twitter.com/${user.twitter_username})`, true);
     user.location && embed.addField(':map: Localização', user.location, true);
 
-    embed.addField(':calendar: Criado em', `${moment(user.created_at).format('L')} (${moment(user.created_at).startOf('day').fromNow()})`, true);
-    embed.addField(':calendar: Atualizado em', `${moment(user.updated_at).format('L')} (${moment(user.updated_at).startOf('day').fromNow()})`, true);
+    embed.addField(':calendar: Criado em', `<t:${Math.floor(new Date(user.created_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(user.created_at).getTime() / 1e3)}:R>)`, true);
+    embed.addField(':calendar: Atualizado em', `<t:${Math.floor(new Date(user.updated_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(user.updated_at).getTime() / 1e3)}:R>)`, true);
 
     user.bio && embed.addField(':bookmark_tabs: Biografia', `\n\`\`\`${user.bio}\`\`\``);
 

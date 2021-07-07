@@ -2,9 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import moment from 'moment';
-moment.locale('pt');
-
 export default class RoleInfo extends Command {
   constructor(client: Client) {
     super(client, {
@@ -40,7 +37,7 @@ export default class RoleInfo extends Command {
     const embed = new this.client.embed()
       .setTitle(`Informações do cargo ${role.name}`)
       .addField(':id: ID', `\`${role.id}\``, true)
-      .addField(':calendar: Criado em', `\`${moment(role.createdAt).format('L')} (${moment(role.createdAt).startOf('day').fromNow()})\``, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(role.createdAt / 1e3)}:d> (<t:${Math.floor(role.createdAt / 1e3)}:R>)`, true)
       .addField('@ Mencionável', `\`${role.mentionable ? 'Sim' : 'Não'}\``, true)
       .addField(':military_medal: Posição', `\`${role.position}\``, true)
       .addField(':beginner: Separado', `\`${role.hoist ? 'Sim' : 'Não'}\``, true)

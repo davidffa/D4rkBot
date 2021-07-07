@@ -7,9 +7,6 @@ import { Message, User, Emoji as ErisEmoji } from 'eris';
 
 import fetch from 'node-fetch';
 
-import moment from 'moment';
-moment.locale('pt');
-
 interface UnicodeEmojiInfo {
   name: string;
   slug: string;
@@ -150,7 +147,7 @@ export default class Emoji extends Command {
         .setTitle(':grinning: Emoji Info')
         .setColor('RANDOM')
         .addField('Animado:', `\`${emoji.animated ? 'Sim' : 'Não'}\``, true)
-        .addField('Adicionado em:', `\`${moment(createdAt).format('L')}\``, true)
+        .addField('Adicionado em:', `<t:${Math.floor(createdAt / 1e3)}:d>`, true)
         .addField('ID:', `\`${emoji.id}\``, true)
         .addField('Nome:', `\`${emoji.name}\``, true)
         .addField('Identificador:', `\`${emoji.animated ? `<a:${emoji.name}:${emoji.id}>` : `<:${emoji.name}:${emoji.id}>`}\``, true)

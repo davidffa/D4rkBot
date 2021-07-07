@@ -2,8 +2,6 @@ import { readdirSync, unlinkSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { Client, ClientOptions, User, Guild, Constants } from 'eris';
 import { NodeOptions, VoicePacket } from 'erela.js';
-import moment from 'moment';
-moment.locale('pt');
 
 import Embed from './Embed';
 import Music from './Music';
@@ -284,7 +282,7 @@ export default class D4rkClient extends Client {
       const buffer = readFileSync(logPath);
 
       await this.createMessage('775420724990705736',
-        `:bookmark_tabs: Log dos comandos.\nData: \`${moment(Date.now()).format('LLLL')}\``, {
+        `:bookmark_tabs: Log dos comandos.\nData: <t:${Math.floor(Date.now() / 1e3)}>`, {
         name: 'log.txt',
         file: buffer
       }

@@ -2,9 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import moment from 'moment';
-moment.locale('pt');
-
 export default class Discriminator extends Command {
   constructor(client: Client) {
     super(client, {

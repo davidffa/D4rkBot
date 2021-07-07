@@ -5,8 +5,6 @@ import CommandContext from '../../structures/CommandContext';
 import { VERSION } from 'eris';
 
 import os from 'os';
-import moment from 'moment';
-moment.locale('pt');
 
 export default class Botinfo extends Command {
   constructor(client: Client) {
@@ -44,7 +42,7 @@ export default class Botinfo extends Command {
         '**[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)**\n\n' +
         `Modelo da CPU: \`${cpuName}\`\nTotal de comandos usados: \`${totalCmdsUsed}\``
       )
-      .addField(':calendar: Criado em', `\`${moment(this.client.user.createdAt).format('L')} (${moment(this.client.user.createdAt).startOf('day').fromNow()})\``, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt / 1e3))}:R>)`, true)
       .addField(':id: Meu ID', '`499901597762060288`', true)
       .addField(':man: Dono', '`D4rkB#2408`', true)
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)

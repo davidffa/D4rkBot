@@ -2,9 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import moment from 'moment';
-moment.locale('pt');
-
 export default class Serverinfo extends Command {
   constructor(client: Client) {
     super(client, {
@@ -98,8 +95,8 @@ export default class Serverinfo extends Command {
       .addField(':underage: NSFW', guild.nsfw ? 'Sim' : 'Não', true)
       .addField(':police_officer: Nível de verificação', verificationLevels[guild.verificationLevel], true)
       .addField(`<:followers:784795303156908032> Cargos:`, `${guild.roles.size}`, true)
-      .addField(':calendar: Criado em', `${moment(guild.createdAt).format('L')} (${moment(guild.createdAt).startOf('day').fromNow()})`, true)
-      .addField(':calendar: Entrada em', `${moment(ctx.msg.member?.joinedAt).format('L')} (${moment(ctx.msg.member?.joinedAt).startOf('day').fromNow()})`, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(guild.createdAt / 1e3)}:d> (<t:${Math.floor(guild.createdAt / 1e3)}:R>)`, true)
+      .addField(':calendar: Entrada em', `<t:${Math.floor(ctx.msg.member?.joinedAt as number / 1e3)}:d> (<t:${Math.floor(ctx.msg.member?.joinedAt as number / 1e3)}:R>)`, true)
       .addField('<:badgebooster:803666384373809233> Boost', `Nível: ${boostLevel}\nQuantidade: ${boostAmount}`, true)
       .addField(`:man: Membros [${guild.members.size}]`, `<:online:804049640437448714> Online: ${status.online}\n<:idle:804049737383673899> Ausente: ${status.idle}\n<:dnd:804049759328403486> Ocupado: ${status.dnd}\n<:offline:804049815713480715> Offline: ${status.offline}\n<:bot:804028762307821578> Bots: ${bots}`, true)
       .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Palco: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:shopping_bags: Loja: ${channels.store}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)

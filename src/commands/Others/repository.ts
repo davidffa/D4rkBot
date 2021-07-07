@@ -4,9 +4,6 @@ import CommandContext from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
-import moment from 'moment';
-moment.locale('pt');
-
 export default class Repository extends Command {
   constructor(client: Client) {
       super(client, {
@@ -53,8 +50,8 @@ export default class Repository extends Command {
       repo.language && embed.addField(':gear: Linguagem', repo.language, true);
       repo.license && repo.license.name && embed.addField(':newspaper: Licença', repo.license.name, true)
 
-      embed.addField(':calendar: Criado em', `${moment(repo.created_at).format('L')} (${moment(repo.created_at).startOf('day').fromNow()})`, true);
-      embed.addField(':calendar: Último push', `${moment(repo.pushed_at).format('L')} (${moment(repo.pushed_at).startOf('day').fromNow()})`, true);
+      embed.addField(':calendar: Criado em', `<t:${Math.floor(new Date(repo.created_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(repo.created_at).getTime() / 1e3)}:R>)`, true);
+      embed.addField(':calendar: Último push', `<t:${Math.floor(new Date(repo.pushed_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(repo.pushed_at).getTime() / 1e3)}:R>)`, true);
 
       repo.description && embed.addField(':bookmark_tabs: Descrição', `\`\`\`\n${repo.description}\`\`\``);
 
