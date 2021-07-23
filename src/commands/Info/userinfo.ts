@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message, User, Member, Constants } from 'eris';
+import { User, Member, Constants } from 'eris';
 
 export default class Userinfo extends Command {
   constructor(client: Client) {
@@ -46,7 +46,7 @@ export default class Userinfo extends Command {
     if (!ctx.args.length)
       user = ctx.author;
     else
-      user = (ctx.msg instanceof Message && ctx.msg.mentions[0] ) || await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
+      user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
 
     if (!user) {
       ctx.sendMessage(':x: Utilizador não encontrado.');

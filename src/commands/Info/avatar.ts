@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { User, Message } from 'eris';
+import { User } from 'eris';
 
 export default class Avatar extends Command {
   constructor(client: Client) {
@@ -27,8 +27,7 @@ export default class Avatar extends Command {
     if (!ctx.args.length || ctx.channel.type === 1) {
       user = ctx.author;
     } else {
-      user = (ctx.msg instanceof Message && ctx.msg.mentions[0]) ||
-        (ctx.guild && await this.client.utils.findUser(ctx.args.join(' '), ctx.guild));
+      user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild)
     }
 
     if (!user) {
