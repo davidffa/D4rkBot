@@ -17,11 +17,11 @@
     "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/index.ts"
   },
   "devDependencies": {
-    "@types/figlet": "^1.5.2",
-    "@types/node": "^16.0.0",
-    "@types/node-fetch": "^2.5.11",
-    "@types/puppeteer": "^5.4.3",
-    "@types/qrcode": "^1.4.0",
+    "@types/figlet": "^1.5.4",
+    "@types/node": "^16.4.1",
+    "@types/node-fetch": "^2.5.12",
+    "@types/puppeteer": "^5.4.4",
+    "@types/qrcode": "^1.4.1",
     "@types/sbd": "^1.0.2",
     "@types/xml2js": "^0.4.9",
     "typescript": "^4.3.5"
@@ -40,7 +40,7 @@
     "eventemitter3": "^4.0.7",
     "figlet": "^1.5.0",
     "mathjs": "^9.4.4",
-    "mongoose": "^5.13.2",
+    "mongoose": "^5.13.3",
     "node-fetch": "^2.6.1",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
