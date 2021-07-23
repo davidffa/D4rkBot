@@ -16,14 +16,20 @@ export default class Banner extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type !== 0) return;
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      return;
+    }
+
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+      ctx.sendMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
       return;
     }
 
     let userID: string | null;
 
-    if (!ctx.args.length || ctx.channel.type === 1) {
+    if (!ctx.args.length) {
       userID = ctx.author.id;
     } else {
       userID = (await this.client.utils.findUser(ctx.args.join(' '), ctx.guild))?.id ?? null;
@@ -48,12 +54,12 @@ export default class Banner extends Command {
     const embed = new this.client.embed()
       .setTitle(`:frame_photo: Banner de ${user.username}#${user.discriminator}`)
       .setColor(user.accent_color ? user.accent_color : 'RANDOM')
-      .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
       .setImage(url)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
     if (user.banner) {
+      embed.setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`);
       ctx.sendMessage({ embed });
     }else {
       const canvas = Canvas.createCanvas(600, 240);
