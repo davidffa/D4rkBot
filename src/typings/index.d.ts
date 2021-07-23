@@ -18,7 +18,7 @@ interface Command extends CommandOptions {
 }
 
 interface Utils {
-  findUser: (param: string, guild: Guild) => Promise<User | null>;
+  findUser: (param: string, guild: Guild | null) => Promise<User | null>;
   levenshteinDistance: (src: string, target: string) => number;
   msToHour: (time: number) => string;
   msToDate: (time: number) => string;

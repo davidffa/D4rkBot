@@ -67,14 +67,22 @@ export default class D4rkClient extends Client {
     this.reactionCollectors = [];
     this.messageCollectors = [];
 
-    const findUser = async (param: string, guild: Guild): Promise<User | null> => {
+    const findUser = async (param: string, guild: Guild | null): Promise<User | null> => {
       let user: User | null | undefined;
 
-      if (Number(param) && (param.length >= 17 && param.length <= 19)) {
+      if (/<@!?\d{17,18}>/.test(param)) {
+        const matched = param.match(/\d{17,18}/)?.[0]
+
+        if (matched) param = matched
+      }
+
+      if (/\d{17,18}/.test(param)) {
         try {
           user = this.users.get(param) || await this.getRESTUser(param);
         } catch { }
       }
+
+      if (!guild) return null;
 
       if (!user && /^#?[0-9]{4}$/g.test(param)) {
         user = guild.members.find(m => m.user.discriminator === param.replace(/#/, ''))?.user;
