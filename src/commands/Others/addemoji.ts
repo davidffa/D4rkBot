@@ -32,7 +32,7 @@ export default class Addemoji extends Command {
     
     if (/<a?:.{2,32}:\d{17,18}>/.test(ctx.args[0])) {
       const id = ctx.args[0].match(/\d{17,18}/)?.[0] as string;
-      ctx.args[0] = `https://cdn.discordapp.com/emojis/${id}${/^<a/.test(ctx.args[0]) ? '.gif' : '.png'}}`;
+      ctx.args[0] = `https://cdn.discordapp.com/emojis/${id}${/^<a/.test(ctx.args[0]) ? '.gif' : '.png'}`;
     }
 
     const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
