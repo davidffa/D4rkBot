@@ -110,6 +110,8 @@ export default class Userinfo extends Command {
         userBadges.push('<:badgenitro:803666299556200478>')
       }
 
+      if ((flags & 1 << 18) == 1 << 18) userBadges.push('<:DiscordCertifiedModerator:863424954371932180>');
+
       if (userBadges) {
         embed.addField('Emblemas :medal:', userBadges.join(' '), true);
       }
