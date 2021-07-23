@@ -51,6 +51,7 @@ export default class D4rkClient extends Client {
         'directMessages',
         'directMessageReactions'
       ],
+      messageLimit: 40
     }
 
     super(process.env.TOKEN as string, clientOptions);
