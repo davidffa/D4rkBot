@@ -28,7 +28,12 @@ export default class Addemoji extends Command {
     if (!ctx.msg.member?.permissions.has('manageEmojis')) {
       ctx.sendMessage(':x: Precisas da permissão `Gerir Emojis` para executar este comando!')
       return;
-    } 
+    }
+    
+    if (/<a?:.{2,32}:\d{17,18}>/.test(ctx.args[0])) {
+      const id = ctx.args[0].match(/\d{17,18}/)?.[0] as string;
+      ctx.args[0] = `https://cdn.discordapp.com/emojis/${id}${/^<a/.test(ctx.args[0]) ? '.gif' : '.png'}}`;
+    }
 
     const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
 
@@ -45,7 +50,7 @@ export default class Addemoji extends Command {
       }
       imageURL = ctx.args[0];
       if (!ctx.args[1]) {
-        ctx.sendMessage(`:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}addemoji <URL/Anexo> <nome>\``);
+        ctx.sendMessage(`:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}addemoji <URL/Anexo/Emoji> <nome>\``);
         return;
       }
       emojiName = ctx.args[1];
