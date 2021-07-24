@@ -42,7 +42,7 @@ export default class Banner extends Command {
 
     const user: any = await this.client.requestHandler.request('GET', `/users/${userID}`, true);
 
-    if (!user.banner && !user.banner_color) {
+    if (!user.banner && !user.accent_color) {
       ctx.sendMessage(':x: Esse utilizador não tem banner!');
       return;
     }
@@ -53,7 +53,7 @@ export default class Banner extends Command {
 
     const embed = new this.client.embed()
       .setTitle(`:frame_photo: Banner de ${user.username}#${user.discriminator}`)
-      .setColor(user.accent_color ? user.accent_color : 'RANDOM')
+      .setColor(user.accent_color ?? 'RANDOM')
       .setImage(url)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
@@ -65,7 +65,7 @@ export default class Banner extends Command {
       const canvas = Canvas.createCanvas(600, 240);
       const canvasCtx = canvas.getContext('2d');
 
-      canvasCtx.fillStyle = user.banner_color;
+      canvasCtx.fillStyle = `#${(user.accent_color >>> 0).toString(16)}`;
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.sendMessage({ embed }, {
