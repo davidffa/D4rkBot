@@ -12,12 +12,9 @@ export default class Embed {
   title?: string;
   url?: string;
 
-  constructor() {
-    this.fields = [];
-  }
-
   addField(name: string, value: string, inline = false): this {
-    this.fields?.push({ name, value, inline });
+    if (!this.fields) this.fields = [];
+    this.fields.push({ name, value, inline });
     return this;
   }
 
@@ -33,7 +30,7 @@ export default class Embed {
 
   setColor(color: number | string): this {
     if (color === 'RANDOM') {
-      this.color = Math.floor(Math.random() * (0xffffff + 1));
+      this.color = ~~(Math.random() * (0xffffff + 1));
     } else {
       this.color = Number(color);
     }
