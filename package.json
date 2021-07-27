@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.4.1",
+    "@types/node": "^16.4.3",
     "@types/node-fetch": "^2.5.12",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode": "^1.4.1",
