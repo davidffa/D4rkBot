@@ -38,7 +38,7 @@ export default class Lavalink extends Command {
     }
 
     const startLL = process.hrtime();
-    const res = await fetch(`http://${process.env.LAVALINKHOST}:${process.env.LAVALINKPORT}/version`, {
+    const res = await fetch(`http://${process.env.LAVALINKHOST}:${process.env.LAVALINKPORT}/versions`, {
       headers: { Authorization: process.env.LAVALINKPASSWORD as string }
     });
     const stopLL = process.hrtime(startLL);
