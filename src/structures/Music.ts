@@ -11,18 +11,10 @@ import { Parser } from 'xml2js';
 
 import { Timeouts, MsgCollectors } from '../typings/index';
 
-interface HeartBeats {
-  lastheartbeatSent: number;
-  lastheartbeatAck: number;
-  heartbeatInterval: ReturnType<typeof setInterval>;
-  ping: number;
-}
-
 export default class D4rkManager extends Manager {
   client: Client;
   channelTimeouts: Map<string, Timeouts>;
   searchMsgCollectors: Map<string, MsgCollectors>;
-  heartbeats: Map<string, HeartBeats>;
 
   constructor(client: Client, nodes: NodeOptions[]) {
     super({
@@ -43,7 +35,6 @@ export default class D4rkManager extends Manager {
     this.client = client;
     this.channelTimeouts = new Map();
     this.searchMsgCollectors = new Map();
-    this.heartbeats = new Map();
 
     this.on('nodeConnect', async (node): Promise<void> => {
       console.log(`${node.options.identifier} do Lavalink (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
@@ -55,30 +46,6 @@ export default class D4rkManager extends Manager {
         player.play();
         player.reconnect = true;
       }
-
-      //Send an heartbeat to lavalink to prevent error H15 (WebSocket idle) on heroku
-
-      this.heartbeats.set(node.options.identifier as string, {} as HeartBeats);
-      const heartbeats = this.heartbeats.get(node.options.identifier as string);
-      if (!heartbeats) return;
-
-      const sendPing = () => {
-        node.send({ 
-          op: 'ping'
-        });
-        heartbeats.lastheartbeatSent = Date.now();
-      }
-
-      sendPing();
-      heartbeats.heartbeatInterval = setInterval(() => {
-        if (heartbeats.lastheartbeatSent > heartbeats.lastheartbeatAck) {
-          clearInterval(heartbeats.heartbeatInterval);
-          return;
-        }
-        sendPing();
-      }, 45000);
-
-      /*** END ***/
     });
 
     this.on('nodeReconnect', (node): void => {
@@ -86,29 +53,12 @@ export default class D4rkManager extends Manager {
     });
 
     this.on('nodeError', (node, error): void => {
-      /*** Receive the heartbeat acknowledge ***/
-      if (error && error.message.includes('"pong"')) {
-        const data = this.heartbeats.get('Node 1');
-        if (data) {
-          data.lastheartbeatAck = Date.now();
-          data.ping = data.lastheartbeatAck - data.lastheartbeatSent;
-        }
-        return;
-      }
-      /*** END ***/
       console.log(`Ocorreu um erro no Node ${node.options.identifier}. Erro: ${error.message}`);
       if (error.message.startsWith('Unable to connect after')) this.reconnect();
     });
 
     this.on('nodeDisconnect', (node, reason): void => {
       console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason ? reason.reason : reason.code ? reason.code : 'Desconhecido'}`);
-
-      const data = this.heartbeats.get(node.options.identifier as string);
-
-      if (data) {
-        clearInterval(data.heartbeatInterval);
-        this.heartbeats.delete(node.options.identifier as string);
-      }
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {

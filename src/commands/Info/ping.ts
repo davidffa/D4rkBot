@@ -2,6 +2,8 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
+import fetch from 'node-fetch';
+
 export default class Ping extends Command {
   constructor(client: Client) {
     super(client, {
@@ -19,16 +21,22 @@ export default class Ping extends Command {
     await this.client.botDB.findOne({ botID: this.client.user.id });
     const stopDB = process.hrtime(startDB);
 
+    const startLL = process.hrtime();
+    await fetch(`http://${process.env.LAVALINKHOST}:${process.env.LAVALINKPORT}/version`, {
+      headers: { Authorization: process.env.LAVALINKPASSWORD as string }
+    });
+    const stopLL = process.hrtime(startLL);
+
     const restPing = this.client.requestHandler.latencyRef.latency;
     const pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
-    const WSPing = this.client.shards.get(0)?.latency || 0;
-    const pingLavalink = this.client.music.heartbeats.get(this.client.music.nodes.first()?.options.identifier as string)?.ping;
+    const WSPing = this.client.shards.get(0)?.latency ?? 0;
+    const lavalinkPing = Math.round(((stopLL[0] * 1e9) + stopLL[1]) / 1e6);
 
     const res = [
       `:incoming_envelope: \`${restPing}ms\``,
       `:heartbeat: \`${Math.round(WSPing)}ms\``,
       `<:MongoDB:773610222602158090> \`${pingDB}ms\``,
-      `<:lavalink:829751857483350058> \`${pingLavalink || 0}ms\``
+      `<:lavalink:829751857483350058> \`${lavalinkPing}ms\``
     ];
 
     const avgPing = (restPing + WSPing + pingDB) / 3;
