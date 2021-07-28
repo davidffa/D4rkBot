@@ -95,13 +95,10 @@ export default class Render extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    const res = await fetch(`${process.env.RENDERAPIURL}`, {
-      method: 'POST',
+    const res = await fetch(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
       headers: {
         Authorization: process.env.RENDERAPITOKEN as string,
-        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ url: finalURL })
     }).then(r => {
       if (r.status !== 200) return null;
       return r.buffer();
