@@ -5,12 +5,12 @@ import CommandContext from '../../structures/CommandContext';
 import fetch from 'node-fetch';
 
 interface LavalinkVersions {
-  Lavaplayer: string;
+  LAVAPLAYER: string;
   JVM: string;
-  Build: string;
-  BuildTime: number;
-  Spring: string;
-  Kotlin: string;
+  BUILD: string;
+  BUILDTIME: number;
+  SPRING: string;
+  KOTLIN: string;
 }
 
 export default class Lavalink extends Command {
@@ -56,9 +56,8 @@ export default class Lavalink extends Command {
       .addField('<a:carregando:869622946233221160> CPU', `Cores: \`${node.stats.cpu.cores}\`\nLavalink: \`${~~(node.stats.cpu.lavalinkLoad * 100)}%\`\nSistema: \`${~~(node.stats.cpu.systemLoad * 100)}%\``, true)
       .addField('<:ram:751468688686841986> RAM', `\`${(node.stats.memory.used / 1024 / 1024).toFixed(0)}MB\``, true)
       .addField(':ping_pong: Ping', `\`${lavalinkPing}ms\``, true)
-      .addField(':information_source: Versões', `Lavaplayer: \`${versions.Lavaplayer}\`\nBuild: \`${versions.Build}\`\nBuild em: <t:${Math.floor(versions.BuildTime / 1000)}:d>`, true)
-      .addField('\u200B', `<:spring:869617355498610708> \`${versions.Spring}\`\n<:kotlin:856168010004037702> \`${versions.Kotlin}\`\n<:java:869621849045229608> \`${versions.JVM}\``, true)      
-      .addField('\u200B', '\u200B', true)
+      .addField(':information_source: Versões', `Lavaplayer: \`${versions.LAVAPLAYER}\`\nBuild: \`${versions.BUILD}\`\nBuild em: <t:${Math.floor(versions.BUILDTIME / 1000)}:d>`, true)
+      .addField('\u200B', `<:spring:869617355498610708> \`${versions.SPRING}\`\n<:kotlin:856168010004037702> \`${versions.KOTLIN}\`\n<:java:869621849045229608> \`${versions.JVM}\``, true)      
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
