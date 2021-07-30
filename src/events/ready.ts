@@ -8,6 +8,7 @@ export default class Ready {
   }
 
   async run() {
+    // Bot started
     console.log('D4rkBot iniciado');
     console.log(`Utilizadores: ${this.client.users.size}\nServidores: ${this.client.guilds.size}`);
 
