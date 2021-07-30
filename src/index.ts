@@ -17,5 +17,5 @@ connect(process.env.MONGODBURI as string, {
 
 client.loadCommands();
 client.loadEvents();
-
+// Start the bot
 client.connect();
