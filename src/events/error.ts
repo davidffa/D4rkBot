@@ -8,6 +8,7 @@ export default class OnError {
   }
 
   run(err: Error): void {
+    // Errors...
     if (err.message.includes('peer')) {
       console.log(`[Client Error] ${err.message}`);
       return;
