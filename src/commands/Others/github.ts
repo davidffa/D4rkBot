@@ -23,7 +23,7 @@ export default class Github extends Command {
       return;
     }
 
-    const res = await fetch(`https://api.github.com/users/${ctx.args[0]}`);
+    const res = await fetch(`https://api.github.com/users/${encodeURIComponent(ctx.args[0])}`);
 
     if (res.status !== 200) {
       ctx.sendMessage(':x: Perfil não encontrado');

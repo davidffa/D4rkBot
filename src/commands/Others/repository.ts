@@ -24,7 +24,7 @@ export default class Repository extends Command {
       return;
     }
         
-    const res = await fetch(`https://api.github.com/repos/${ctx.args[0]}/${ctx.args[1]}`);
+    const res = await fetch(`https://api.github.com/repos/${encodeURIComponent(ctx.args[0])}/${encodeURIComponent(ctx.args[1])}`);
 
     if (res.status !== 200) {
       ctx.sendMessage(':x: Repositório não encontrado');
