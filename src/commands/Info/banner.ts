@@ -65,7 +65,7 @@ export default class Banner extends Command {
       const canvas = Canvas.createCanvas(600, 240);
       const canvasCtx = canvas.getContext('2d');
 
-      canvasCtx.fillStyle = `#${(user.accent_color >>> 0).toString(16)}`;
+      canvasCtx.fillStyle = `#${(user.accent_color >>> 0).toString(16).padStart(6, '0')}`;
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.sendMessage({ embed }, {
