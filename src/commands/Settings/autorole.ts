@@ -88,6 +88,16 @@ export default class Autorole extends Command {
       });
     }
 
-    ctx.sendMessage(`<a:verificado:803678585008816198> Cargo \`${role.name}\` setado como cargo de autorole.${ctx.channel.permissionsOf(this.client.user.id).has('manageRoles') ? '' : ':warning: Não tenho permissão para alterar cargos no servidor!'}`);
+    let botHighestRole = ctx.guild.roles.get(ctx.guild.id);
+
+    ctx.guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
+      const r = ctx.guild?.roles.get(roleID);
+      if (!r) return;
+      if (!botHighestRole || r.position > botHighestRole.position) {
+        botHighestRole = r;
+      }
+    });
+
+    ctx.sendMessage(`<a:verificado:803678585008816198> Cargo \`${role.name}\` setado como cargo de autorole.${ctx.channel.permissionsOf(this.client.user.id).has('manageRoles') ? '' : '\n:warning: Não tenho permissão para alterar cargos no servidor!'}${(botHighestRole && botHighestRole.position <= role.position) ? '\n:warning: Esse cargo está numa posição superior ao meu cargo mais alto!' : ''}`);
   }
 }
