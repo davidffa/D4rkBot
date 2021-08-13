@@ -10,7 +10,7 @@
   "author": "David Amorim",
   "license": "MIT",
   "engines": {
-    "node": "14.17.4",
+    "node": "14.17.5",
     "yarn": "1.22.5"
   },
   "scripts": {
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.4.11",
+    "@types/node": "^16.6.1",
     "@types/node-fetch": "^2.5.12",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode": "^1.4.1",
@@ -38,9 +38,9 @@
     "erela.js-spotify": "^1.2.0",
     "eris": "^0.15.1",
     "eventemitter3": "^4.0.7",
-    "figlet": "^1.5.0",
+    "figlet": "^1.5.2",
     "mathjs": "^9.4.4",
-    "mongoose": "^5.13.5",
+    "mongoose": "^5.13.7",
     "node-fetch": "^2.6.1",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
