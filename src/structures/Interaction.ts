@@ -22,7 +22,7 @@ export default class Interaction {
     this.client = client;
 
     this.guildID = interaction.guild_id;
-    
+
     const channel = this.client.getChannel(interaction.channel_id);
     const user = this.client.users.get(interaction.member.user.id);
 
@@ -46,15 +46,15 @@ export default class Interaction {
     this.args = [];
 
     if (interaction.data.options?.[0].type === 1) {
-      this.args.push(interaction.data.options?.[0]?.name as string);
+      this.args.push(interaction.data.options[0].name.trim());
 
       if (interaction.data.options?.[0].options) {
         for (const val of interaction.data.options?.[0].options) {
-          this.args.push(val.value);
+          this.args.push(val.value.trim());
         }
       }
-    }else {
-      this.args = interaction.data.options?.map(ops => ops.value) || [];
+    } else {
+      this.args = interaction.data.options?.map(ops => ops.value.trim()) ?? [];
     }
   }
 }
