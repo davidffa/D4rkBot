@@ -31,13 +31,13 @@ export default class Lock extends Command {
 
     const permissions = channel.permissionOverwrites.get(ctx.msg.guildID as string);
 
-    if (!permissions || (permissions.deny & (1n << 11n)) == 1n << 11n) {
+    if (permissions && (permissions.deny & 1n << 11n) == 1n << 11n) {
       ctx.sendMessage(':x: O canal já está bloqueado!');
       return;
     }
 
-    const allow = permissions.allow;
-    const deny = permissions.deny;
+    const allow = permissions?.allow ?? 0n;
+    const deny = permissions?.deny ?? 0n;
 
     await ctx.sendMessage(':lock: Canal bloqueado!');
     channel.editPermission(ctx.msg.guildID as string, allow & ~(1n << 11n), deny | (1n << 11n), 'role', 'Lock cmd' || ctx.args.join(' ').slice(0, 50));
