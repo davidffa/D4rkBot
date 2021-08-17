@@ -46,15 +46,15 @@ export default class Interaction {
     this.args = [];
 
     if (interaction.data.options?.[0].type === 1) {
-      this.args.push(interaction.data.options[0].name.trim());
+      this.args.push(interaction.data.options[0].name.toString().trim());
 
       if (interaction.data.options?.[0].options) {
         for (const val of interaction.data.options?.[0].options) {
-          this.args.push(val.value.trim());
+          this.args.push(val.value.toString().trim());
         }
       }
     } else {
-      this.args = interaction.data.options?.map(ops => ops.value.trim()) ?? [];
+      this.args = interaction.data.options?.map(ops => ops.value.toString().trim()) ?? [];
     }
   }
 }
