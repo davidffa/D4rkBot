@@ -1,9 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import Filters from '../../structures/Filters';
 
-import {  VoiceChannel } from 'eris';
+import { VoiceChannel } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -42,7 +41,7 @@ export default class Play extends Command {
         selfDeafen: true
       });
 
-      player.filters = new Filters(player);
+      player.effects = [];
       return player;
     }
 
@@ -105,8 +104,7 @@ export default class Play extends Command {
         }
       }
     } catch (err) {
-      console.error(err);
-      ctx.sendMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.sendMessage(`:x: Ocorreu um erro ao procurar a música.\nErro: \`${err.message}\``);
     }
   }
 }

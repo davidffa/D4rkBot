@@ -1,10 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import Filters from '../../structures/Filters';
 import { ReactionCollector } from '../../structures/Collector';
 
-import { Message, Emoji, User, VoiceChannel } from 'eris';
+import { Emoji, User, VoiceChannel } from 'eris';
 
 import { Track, UnresolvedTrack, TrackUtils } from 'erela.js';
 
@@ -37,16 +36,16 @@ export default class PlayList extends Command {
         `# ${prefix}playlist listar - Lista de todas as tuas playlists`,
         `# ${prefix}playlist adicionar <Nome> [Nome da música] - Adiciona a uma playlist a música que está a tocar ou uma música específica`,
         `# ${prefix}playlist remover <Nome> <Número da música> - Remove uma música da playlist`,
-        `# ${prefix}playlist tocar <Nome> - Adiciona à queue todas as músicas de uma playlist`,      
+        `# ${prefix}playlist tocar <Nome> - Adiciona à queue todas as músicas de uma playlist`,
       ];
-      
+
       const embed = new this.client.embed()
         .setTitle('Ajuda do comando PlayList')
         .setColor('RANDOM')
         .setDescription(`\`\`\`md\n${help.join('\n─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n')}\n\`\`\``)
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
-      
+
       ctx.sendMessage({ embed });
       return;
     }
@@ -79,12 +78,12 @@ export default class PlayList extends Command {
             return;
           }
 
-          await this.client.userDB.updateOne({ 
+          await this.client.userDB.updateOne({
             _id: ctx.author.id
-          }, { 
+          }, {
             $push: { playlists: { name: ctx.args[1] } }
           });
-        }else {
+        } else {
           await this.client.userDB.create({
             _id: ctx.author.id,
             playlists: [
@@ -162,7 +161,7 @@ export default class PlayList extends Command {
           .setDescription(`${playlists.map(p => `${p.name} - \`${(p.songs && p.songs.length) || 0}\` músicas`).join('\n')}`)
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
-        
+
         ctx.sendMessage({ embed: listEmbed });
         break;
 
@@ -193,7 +192,7 @@ export default class PlayList extends Command {
         const detailEmbed = new this.client.embed()
           .setTitle('<a:disco:803678643661832233> Lista de Músicas')
           .setColor('RANDOM')
-          .setDescription(`**${playlist.name}** - \`${playlist.songs.length}\` músicas\n\n${playlist.songs.slice(0, 10).map((s, idx) => `${idx+1}º - [${s.name}](${s.url})`).join('\n')}`)
+          .setDescription(`**${playlist.name}** - \`${playlist.songs.length}\` músicas\n\n${playlist.songs.slice(0, 10).map((s, idx) => `${idx + 1}º - [${s.name}](${s.url})`).join('\n')}`)
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
@@ -206,7 +205,7 @@ export default class PlayList extends Command {
 
         ctx.sentMsg.addReaction('⬅️');
         ctx.sentMsg.addReaction('➡️');
-        
+
         const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
 
         const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 5 * 60 * 1000 });
@@ -219,7 +218,7 @@ export default class PlayList extends Command {
             case '⬅️':
               if (page === 1) return;
               page--;
-              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx+((page-1)*10)+1}º - [${s.name}](${s.url})`).join('\n'))
+              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx + ((page - 1) * 10) + 1}º - [${s.name}](${s.url})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
               ctx.editMessage({ embed: detailEmbed });
@@ -231,7 +230,7 @@ export default class PlayList extends Command {
             case '➡️':
               if (page === pages) return;
               page++;
-              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx+((page-1)*10)+1}º - [${s.name}](${s.url})`).join('\n'))
+              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx + ((page - 1) * 10) + 1}º - [${s.name}](${s.url})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
               ctx.editMessage({ embed: detailEmbed });
@@ -240,7 +239,7 @@ export default class PlayList extends Command {
                 ctx.sentMsg.removeReaction(r.name, ctx.author.id);
               }
               break;
-            }
+          }
         });
 
         collector.on('end', () => {
@@ -270,14 +269,14 @@ export default class PlayList extends Command {
 
         const id = parseInt(ctx.args[2]);
 
-        if (!id || !playList.songs[id-1]) {
+        if (!id || !playList.songs[id - 1]) {
           ctx.sendMessage(`:x: ID da música inválido!\n**Usa:** ${prefix}playlist detalhes <Nome> para ver o id da música a remover.`);
           return;
         }
 
-        const songName = playList.songs[id-1].name;
+        const songName = playList.songs[id - 1].name;
 
-        playList.songs.splice(id-1, 1);
+        playList.songs.splice(id - 1, 1);
         await userData.save();
 
         ctx.sendMessage(`<a:verificado:803678585008816198> Removeste a música \`${songName}\` da playlist!`);
@@ -308,17 +307,17 @@ export default class PlayList extends Command {
 
           if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED') {
             track = res.tracks[0];
-          }else {
+          } else {
             ctx.sendMessage(':x: Não foi possível adicionar essa música à playlist.');
             return;
           }
-        }else if (player) {
+        } else if (player) {
           track = player.queue.current as Track;
-        }else {
+        } else {
           ctx.sendMessage(`:x: **Usa:** ${prefix}playlist add <Nome da PlayList> [Nome da música]`);
           return;
         }
-        
+
         if (!pl.songs) pl.songs = [];
         if (!track || !track.author || !track.duration || !track.duration || !track.uri) {
           ctx.sendMessage(':x: Não foi possível adicionar a música atual a essa playlist.');
@@ -335,7 +334,7 @@ export default class PlayList extends Command {
           return;
         }
 
-        pl.songs.push({ 
+        pl.songs.push({
           author: track.author,
           duration: track.duration,
           name: track.title,
@@ -344,7 +343,7 @@ export default class PlayList extends Command {
         });
 
         userData && await userData.save();
-        
+
         ctx.sendMessage(`<a:disco:803678643661832233> Música \`${track.title}\` adicionada à playlist!`);
         break;
       case 'shuffle':
@@ -396,7 +395,7 @@ export default class PlayList extends Command {
 
         const voiceChannelID = ctx.msg.member?.voiceState.channelID as string;
         const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
-    
+
         player = this.client.music.create({
           guild: ctx.msg.guildID as string,
           voiceChannel: voiceChannelID,
@@ -404,7 +403,7 @@ export default class PlayList extends Command {
           selfDeafen: true
         });
 
-        player.filters = new Filters(player);
+        player.effects = [];
 
         if (player.state === 'DISCONNECTED') {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
@@ -418,12 +417,12 @@ export default class PlayList extends Command {
         songs.forEach(async (music, i) => {
           let song: Track | UnresolvedTrack;
           if (music.yt) {
-            song = TrackUtils.buildUnresolved({ 
+            song = TrackUtils.buildUnresolved({
               title: music.name,
               author: music.author,
               duration: music.duration
             }, ctx.author);
-          }else {
+          } else {
             song = await this.client.music.search(music.url, ctx.author).then(r => r.tracks[0]);
           }
 
@@ -431,10 +430,10 @@ export default class PlayList extends Command {
 
           player.queue.add(song);
 
-          if (!player.playing && i === 0) 
+          if (!player.playing && i === 0)
             player.play();
 
-          if (i === songs.length-1) {
+          if (i === songs.length - 1) {
             const playEmbed = new this.client.embed()
               .setColor('RANDOM')
               .setTitle('<a:disco:803678643661832233> Playlist Carregada')
@@ -442,7 +441,7 @@ export default class PlayList extends Command {
               .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + songs.length + '`')
               .setTimestamp()
               .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
-              
+
             ctx.sendMessage({ embed: playEmbed });
           }
         });

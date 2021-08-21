@@ -1,7 +1,7 @@
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
 
-import { User, Member, Message } from 'eris';
+import { User, Member } from 'eris';
 import { Player, Node } from 'erela.js';
 import { Manager, NodeOptions } from 'erela.js';
 import Spotify from 'erela.js-spotify';
@@ -92,7 +92,7 @@ export default class D4rkManager extends Manager {
           .addField(":watch: Duração:", '`' + this.client.utils.msToHour(track.duration) + '`')
           .setURL(track.uri)
           .setThumbnail(track.displayThumbnail('maxresdefault'))
-          player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
+        player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
       }
     });
 
@@ -117,10 +117,10 @@ export default class D4rkManager extends Manager {
                 'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
               }
             }).then(r => r.status);
-  
+
             if (status === 202) {
               this.client.createMessage(player.textChannel, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
-            }else {
+            } else {
               this.client.createMessage(player.textChannel, ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
             }
             player.destroy();
@@ -133,13 +133,13 @@ export default class D4rkManager extends Manager {
 
       if (!player.errorCount) {
         player.errorCount = 0;
-      }else ++player.errorCount;
+      } else ++player.errorCount;
 
       if (player.errorCount > 5) {
         player.destroy();
         return;
       }
-      
+
       player.stop();
     });
 
@@ -252,11 +252,11 @@ export default class D4rkManager extends Manager {
 
       artist = text['DB_DALET_ARTIST_NAME'][0];
       songTitle = text['DB_DALET_TITLE_NAME'][0];
-    }else if (radio === 'RFM') {
+    } else if (radio === 'RFM') {
       const xml = await fetch('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer()).then(buffer => buffer.toString('utf16le'));
 
       const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
-        
+
       artist = text.artist[0];
       songTitle = text.name[0];
     }

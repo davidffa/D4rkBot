@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Ping extends Command {
   constructor(client: Client) {
     super(client, {
@@ -21,16 +19,10 @@ export default class Ping extends Command {
     await this.client.botDB.findOne({ botID: this.client.user.id });
     const stopDB = process.hrtime(startDB);
 
-    const startLL = process.hrtime();
-    await fetch(`http://${process.env.LAVALINKHOST}:${process.env.LAVALINKPORT}/version`, {
-      headers: { Authorization: process.env.LAVALINKPASSWORD as string }
-    });
-    const stopLL = process.hrtime(startLL);
-
     const restPing = this.client.requestHandler.latencyRef.latency;
     const pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
     const WSPing = this.client.shards.get(0)?.latency ?? 0;
-    const lavalinkPing = Math.round(((stopLL[0] * 1e9) + stopLL[1]) / 1e6);
+    const lavalinkPing = await this.client.music.nodes.first()?.ping()
 
     const res = [
       `:incoming_envelope: \`${restPing}ms\``,
@@ -55,6 +47,6 @@ export default class Ping extends Command {
       } else {
         ctx.sendMessage(res.join('\n'));
       }
-    }else ctx.sendMessage({ embed })
+    } else ctx.sendMessage({ embed })
   }
 }

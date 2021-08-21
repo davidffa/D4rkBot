@@ -69,7 +69,7 @@ interface InteractionPacket {
 
   data: InteractionData;
 
-  member: { user: { id: string; }}; //dont need more stuff (for now)
+  member: { user: { id: string; } }; //dont need more stuff (for now)
 
   token: string;
   type: number;
@@ -93,55 +93,15 @@ interface IEditInteractionData {
 
 import 'erela.js';
 
-interface Timescale {
-  pitch: number;
-  rate?: number;
-  speed?: number;
-}
-
-interface Bands {
-  band: number;
-  gain: number;
-}
-
-type Equalizer = Bands[];
-
-interface Tremolo {
-  depth: number;
-  frequency: number;
-}
-
-interface Karaoke {
-  level: number;
-  monoLevel: number;
-  filterBand: number;
-  filterWidth: number;
-}
-
-interface Filter {
-  timescale?: Timescale;
-  equalizer?: Equalizer;
-  tremolo?: Tremolo;
-  karaoke?: Karaoke;
-}
-
 type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave';
-
-interface Filters {
-  effects: Effect[];
-  clearFilters(): this;
-  setFilters(filter: Filter): this;
-  addEffect(effect: Effect): this;
-  removeEffect(effect: Effect): this;
-}
 
 declare module 'erela.js' {
   export interface Player {
     lastPlayingMsgID?: string;
     radio?: string;
     djTableMsg?: Message;
-    filters: Filters;
     reconnect?: boolean;
     errorCount?: number;
+    effects: Effect[];
   }
 }

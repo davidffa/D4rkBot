@@ -1,7 +1,6 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import Filters from '../../structures/Filters';
 import { MessageCollector } from '../../structures/Collector';
 
 import { Message, VoiceChannel } from 'eris';
@@ -43,7 +42,7 @@ export default class Search extends Command {
         selfDeafen: true
       });
 
-      player.filters = new Filters(player);
+      player.effects = [];
       return player;
     }
 
