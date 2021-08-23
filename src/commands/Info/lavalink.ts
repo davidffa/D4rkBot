@@ -1,6 +1,11 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import Embed from '../../structures/Embed';
+
+import { Node } from 'erela.js';
+import { User, Emoji } from 'eris';
+import { ReactionCollector } from '../../structures/Collector';
 
 export default class Lavalink extends Command {
   constructor(client: Client) {
@@ -14,9 +19,12 @@ export default class Lavalink extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    const node = this.client.music.nodes.first();
+    const nodes = [
+      this.client.music.nodes.get('USA Node'),
+      this.client.music.nodes.get('Europe Node')
+    ]
 
-    if (!node) {
+    if (!nodes.length) {
       ctx.sendMessage(':warning: Não existem nodes do lavalink disponíveis.');
       return;
     }
@@ -26,12 +34,39 @@ export default class Lavalink extends Command {
       return;
     }
 
+    const embed = await this.getNodeInfoEmbed(ctx.author, nodes[0] as Node);
+    await ctx.sendMessage({ embed });
+    ctx.sentMsg.addReaction('⬅️');
+    ctx.sentMsg.addReaction('➡️');
+
+    let page = 1;
+
+    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
+    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 3 * 60 * 1000, max: 10 });
+
+    collector.on('collect', async (r) => {
+      switch (r.name) {
+        case '⬅️':
+          if (page === 1) return;
+          page--;
+          break;
+        case '➡️':
+          if (page === 2) return;
+          page++;
+          break;
+      }
+      const e = await this.getNodeInfoEmbed(ctx.author, nodes[page - 1] as Node);
+      ctx.editMessage({ embed: e });
+    });
+  }
+
+  async getNodeInfoEmbed(author: User, node: Node): Promise<Embed> {
     const lavalinkPing = await node.ping();
     const versions = node.versions;
 
-    const embed = new this.client.embed()
+    return new this.client.embed()
       .setColor('RANDOM')
-      .setTitle('<:lavalink:829751857483350058> Status do Node do Lavalink')
+      .setTitle('<:lavalink:829751857483350058> Status dos Nodes do Lavalink')
       .setDescription('[Lavalink que eu uso](https://github.com/davidffa/lavalink/releases)')
       .addField(':id: Nome', `\`${node.options.identifier}\``, true)
       .addField(':calendar: Players a tocar', `\`${node.stats.players}\``, true)
@@ -42,8 +77,6 @@ export default class Lavalink extends Command {
       .addField(':information_source: Versões', `Lavaplayer: \`${versions!.LAVAPLAYER}\`\nBuild: \`${versions!.BUILD}\`\nBuild em: <t:${Math.floor(versions!.BUILDTIME / 1000)}:d>`, true)
       .addField('\u200B', `<:spring:869617355498610708> \`${versions!.SPRING}\`\n<:kotlin:856168010004037702> \`${versions!.KOTLIN}\`\n<:java:869621849045229608> \`${versions!.JVM}\``, true)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
-
-    ctx.sendMessage({ embed });
+      .setFooter(`${author.username}#${author.discriminator}`, author.dynamicAvatarURL());
   }
 }

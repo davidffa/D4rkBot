@@ -37,7 +37,7 @@ export default class D4rkManager extends Manager {
     this.searchMsgCollectors = new Map();
 
     this.on('nodeConnect', async (node): Promise<void> => {
-      console.log(`${node.options.identifier} do Lavalink (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
+      console.log(`${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
 
       for (const player of this.players.values()) {
         const position = player.position;
@@ -54,7 +54,7 @@ export default class D4rkManager extends Manager {
 
     this.on('nodeError', (node, error): void => {
       console.log(`Ocorreu um erro no Node ${node.options.identifier}. Erro: ${error.message}`);
-      if (error.message.startsWith('Unable to connect after')) this.reconnect();
+      if (error.message.startsWith('Unable to connect after')) this.reconnect(node);
     });
 
     this.on('nodeDisconnect', (node, reason): void => {
@@ -106,27 +106,35 @@ export default class D4rkManager extends Manager {
 
     this.on('trackError', async (player, track, payload): Promise<void> => {
       if (payload.error && payload.error.includes('429')) {
-        if (player.textChannel) {
-          const appName = process.env.LAVALINKHOST?.split('.')[0];
+        const newNode = this.nodes.find(node => node.connected && node !== player.node);
 
-          if (appName && !Number(appName)) {
-            const status = await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
-              method: 'DELETE',
-              headers: {
-                'Accept': 'application/vnd.heroku+json; version=3',
-                'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
-              }
-            }).then(r => r.status);
-
-            if (status === 202) {
-              this.client.createMessage(player.textChannel, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
-            } else {
-              this.client.createMessage(player.textChannel, ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
-            }
-            player.destroy();
-            return;
-          }
+        if (newNode) player.moveNode(newNode);
+        else {
+          this.client.createMessage(player.textChannel as string, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
+          player.destroy();
         }
+
+        const appName = player.node.options.host.split('.')[0];
+
+        if (appName) {
+          await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
+            method: 'DELETE',
+            headers: {
+              'Accept': 'application/vnd.heroku+json; version=3',
+              'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
+            }
+          }); // .then(r => r.status);
+
+          /*
+          if (status === 202) {
+            this.client.createMessage(player.textChannel, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
+          } else {
+            this.client.createMessage(player.textChannel, ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
+          }
+          player.destroy();
+          */
+        }
+        return;
       }
       player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error || 'Desconhecido'}\``);
       console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
@@ -268,21 +276,22 @@ export default class D4rkManager extends Manager {
     return super.init(this.client.user.id);
   }
 
-  reconnect() {
-    this.destroyNode('Node 1');
+  reconnect(node: Node) {
+    this.destroyNode(node.options.identifier as string);
 
-    this.nodes.set('Node 1',
-      new Node({
-        identifier: 'Node 1',
-        host: process.env.LAVALINKHOST as string,
-        port: Number(process.env.LAVALINKPORT),
-        password: process.env.LAVALINKPASSWORD as string,
-        retryAmount: 10,
-        retryDelay: 3000,
-        secure: false
-      })
-    );
+    const newNode = new Node({
+      identifier: node.options.identifier as string,
+      host: node.options.host,
+      port: node.options.port,
+      password: node.options.password,
+      retryAmount: 10,
+      retryDelay: 3000,
+      secure: false,
+      region: node.options.region
+    })
 
-    this.nodes.first()?.connect();
+    this.nodes.set(node.options.identifier as string, newNode);
+
+    newNode.connect();
   }
 }

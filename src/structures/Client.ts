@@ -155,13 +155,24 @@ export default class D4rkClient extends Client {
   connectLavaLink(): void {
     const nodes: NodeOptions[] = [
       {
-        identifier: 'Node 1',
-        host: process.env.LAVALINKHOST as string,
-        port: Number(process.env.LAVALINKPORT),
+        identifier: 'Europe Node',
+        host: process.env.EULAVALINKHOST as string,
+        port: Number(process.env.EULAVALINKPORT),
         password: process.env.LAVALINKPASSWORD as string,
         retryAmount: 10,
         retryDelay: 3000,
-        secure: false
+        secure: false,
+        region: 'europe'
+      },
+      {
+        identifier: 'USA Node',
+        host: process.env.USALAVALINKHOST as string,
+        port: Number(process.env.USALAVALINKPORT),
+        password: process.env.LAVALINKPASSWORD as string,
+        retryAmount: 10,
+        retryDelay: 3000,
+        secure: false,
+        region: 'usa'
       }
     ];
 
@@ -192,7 +203,7 @@ export default class D4rkClient extends Client {
     if (!bot) {
       bot = await this.botDB.create({ botID: this.user.id });
     }
-    
+
     if (!bot.blacklist) {
       bot.blacklist = [];
       bot.save();
