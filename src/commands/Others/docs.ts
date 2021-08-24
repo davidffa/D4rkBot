@@ -23,7 +23,7 @@ export default class Docs extends Command {
       return;
     }
 
-    const res = await fetch(`${process.env.ERISDOCSAPIURL}/docs?token=${process.env.ERISDOCSAPITOKEN}&search=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
+    const res = await fetch(`${process.env.ERISDOCSAPIURL}/docs?search=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
 
     if (res.error) {
       ctx.sendMessage(':x: Nada encontrado nas docs!');
