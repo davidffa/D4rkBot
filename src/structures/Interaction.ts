@@ -2,7 +2,7 @@ import Client from './Client';
 
 import { TextChannel, User, Member } from 'eris';
 
-import { ContextMenusResolved, InteractionPacket } from '../typings/index';
+import { InteractionPacket } from '../typings/index';
 
 export default class Interaction {
   private client: Client;

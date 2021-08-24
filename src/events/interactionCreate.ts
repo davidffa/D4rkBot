@@ -12,8 +12,6 @@ export default class InteractionCreate {
   }
 
   async run(interaction: Interaction) {
-    // if (interaction.type);
-
     const cmd = this.client.commands.find(c => c.name === interaction.command);
     if (!cmd) throw new Error('Command not found!');
 
