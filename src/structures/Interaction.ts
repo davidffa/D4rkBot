@@ -45,7 +45,7 @@ export default class Interaction {
 
     this.args = [];
 
-    if (interaction.type === 1) {
+    if (interaction.data.type === 1) {
       if (interaction.data.options?.[0].type === 1) {
         this.args.push(interaction.data.options[0].name.toString().trim());
 
@@ -57,8 +57,8 @@ export default class Interaction {
       } else {
         this.args = interaction.data.options?.map(ops => ops.value.toString().trim()) ?? [];
       }
-    } else if (interaction.type === 2) {
-      this.args.push(Object.keys(interaction.data.resolved!.users)[0])
+    } else if (interaction.data.type === 2) {
+      this.args.push(interaction.data.target_id!)
     }
   }
 }

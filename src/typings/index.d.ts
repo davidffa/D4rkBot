@@ -48,11 +48,6 @@ interface Records {
   users: Array<string>;
 }
 
-interface ContextMenusResolved {
-  members: Record<string, unknown>; // I only want the ID
-  users: Record<string, unknown>;
-}
-
 interface InteractionOptions {
   name: string;
   value: string;
@@ -63,8 +58,9 @@ interface InteractionOptions {
 interface InteractionData {
   id: string;
   name: string;
+  type: number;
   options?: InteractionOptions[];
-  resolved?: ContextMenusResolved;
+  target_id?: string;
 }
 
 interface InteractionPacket {
