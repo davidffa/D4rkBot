@@ -2,7 +2,7 @@ import Client from './Client';
 
 import { TextChannel, User, Member } from 'eris';
 
-import { InteractionPacket } from '../typings/index';
+import { ContextMenusResolved, InteractionPacket } from '../typings/index';
 
 export default class Interaction {
   private client: Client;
@@ -45,16 +45,20 @@ export default class Interaction {
 
     this.args = [];
 
-    if (interaction.data.options?.[0].type === 1) {
-      this.args.push(interaction.data.options[0].name.toString().trim());
+    if (interaction.type === 1) {
+      if (interaction.data.options?.[0].type === 1) {
+        this.args.push(interaction.data.options[0].name.toString().trim());
 
-      if (interaction.data.options?.[0].options) {
-        for (const val of interaction.data.options?.[0].options) {
-          this.args.push(val.value.toString().trim());
+        if (interaction.data.options?.[0].options) {
+          for (const val of interaction.data.options?.[0].options) {
+            this.args.push(val.value.toString().trim());
+          }
         }
+      } else {
+        this.args = interaction.data.options?.map(ops => ops.value.toString().trim()) ?? [];
       }
-    } else {
-      this.args = interaction.data.options?.map(ops => ops.value.toString().trim()) ?? [];
+    } else if (interaction.type === 2) {
+      this.args.push(Object.keys(interaction.data.resolved!.users)[0])
     }
   }
 }

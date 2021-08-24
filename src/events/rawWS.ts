@@ -16,6 +16,7 @@ export default class RawWS {
       const interactionData = packet.d as InteractionPacket;
 
       this.client.emit('interactionCreate', new Interaction(this.client, interactionData));
+      console.log(packet);
     }
   }
 }
