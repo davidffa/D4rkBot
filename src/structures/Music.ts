@@ -48,6 +48,8 @@ export default class D4rkManager extends Manager {
       }
     });
 
+    this.pingNodes();
+
     this.on('nodeReconnect', (node): void => {
       console.log(`A reconectar ao node ${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port})...`);
     });
@@ -276,7 +278,21 @@ export default class D4rkManager extends Manager {
     return super.init(this.client.user.id);
   }
 
-  reconnect(node: Node) {
+  private pingNodes() {
+    for (const node of this.nodes.values()) {
+      if (node.options.host.includes('heroku')) {
+        setInterval(() => {
+          fetch(`http://${node.options.host}`, {
+            headers: {
+              Authorization: node.options.password!
+            }
+          })
+        }, 15000);
+      }
+    }
+  }
+
+  private reconnect(node: Node) {
     this.destroyNode(node.options.identifier as string);
 
     const newNode = new Node({
