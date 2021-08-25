@@ -55,11 +55,19 @@ interface InteractionOptions {
   options?: InteractionOptions[];
 }
 
+interface InteractionResolved {
+  messages: Record<string, {
+    content: string // only need content :>
+  }>;
+  // users & members: <- don't need for now
+}
+
 interface InteractionData {
   id: string;
   name: string;
   type: number;
   options?: InteractionOptions[];
+  resolved?: InteractionResolved;
   target_id?: string;
 }
 
