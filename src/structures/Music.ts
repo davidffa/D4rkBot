@@ -282,12 +282,12 @@ export default class D4rkManager extends Manager {
     for (const node of this.nodes.values()) {
       if (node.options.host.includes('heroku')) {
         setInterval(() => {
-          fetch(`http://${node.options.host}`, {
+          fetch(`http://${node.options.host}/version`, {
             headers: {
               Authorization: node.options.password!
             }
           })
-        }, 15000);
+        }, 15 * 60 * 60 * 1000);
       }
     }
   }
