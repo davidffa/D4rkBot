@@ -40,7 +40,7 @@
     "eventemitter3": "^4.0.7",
     "figlet": "^1.5.2",
     "mathjs": "^9.4.4",
-    "mongoose": "^6.0.0",
+    "mongoose": "5.13.8",
     "node-fetch": "^2.6.1",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
