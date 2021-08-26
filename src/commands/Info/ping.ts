@@ -29,7 +29,7 @@ export default class Ping extends Command {
       `:incoming_envelope: \`${restPing}ms\``,
       `:heartbeat: \`${Math.round(WSPing)}ms\``,
       `<:MongoDB:773610222602158090> \`${pingDB}ms\``,
-      `<:lavalink:829751857483350058> \`${lavalinkUSAPing}ms\` & \`${lavalinkEuPing}\``
+      `<:lavalink:829751857483350058> \`${lavalinkUSAPing}ms\` & \`${lavalinkEuPing}ms\``
     ];
 
     const avgPing = (restPing + WSPing + pingDB) / 3;
