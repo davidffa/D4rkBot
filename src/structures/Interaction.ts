@@ -26,7 +26,7 @@ export default class Interaction {
     const channel = this.client.getChannel(interaction.channel_id);
     const user = this.client.users.get(interaction.member.user.id);
 
-    if (!channel || channel.type !== 0) throw new Error('Channel is not a TextChannel!');
+    if (!channel || channel.type !== 0) return;
     if (!user) throw new Error('User not found!');
 
     this.channel = channel;
