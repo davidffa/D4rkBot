@@ -9,7 +9,6 @@ import { Message, User, Emoji } from 'eris';
 import { Player } from 'erela.js';
 
 import { inspect } from 'util';
-import { Type } from '@anishshobith/deeptype';
 
 import { GuildCache } from '../../typings';
 
@@ -67,9 +66,16 @@ export default class Eval extends Command {
 
       const time = ((stop[0] * 1e9) + stop[1]) / 1e6;
 
+      const getType = (): string => {
+        if (evaled === null) return 'null'
+        else {
+          return evaled?.constructor?.name ?? typeof evaled;
+        }
+      }
+
       const response = [
         `:outbox_tray: **Output** \`\`\`js\n${clean(inspect(evaled, { depth: 0 }))}\n\`\`\``,
-        `<:lang_js:803678540528615424> **Tipo** \`\`\`js\n${new Type(evaled).is}\n\`\`\``,
+        `<:lang_js:803678540528615424> **Tipo** \`\`\`js\n${getType()}\n\`\`\``,
         `:timer: **Tempo** \`\`\`${time > 1 ? `${time}ms` : `${(time * 1e3).toFixed(3)}μs`}\`\`\``
       ];
 
@@ -81,7 +87,7 @@ export default class Eval extends Command {
         const body = {
           files: [{
             name: 'Eval output result',
-            content: `//Output:\n${clean(inspect(evaled, { depth: 0 }))}\n//Tipo:\n${new Type(evaled).is}\n//Tempo:\n${((stop[0] * 1e9) + stop[1]) / 1e6}ms`,
+            content: `//Output:\n${clean(inspect(evaled, { depth: 0 }))}\n//Tipo:\n${getType()}\n//Tempo:\n${((stop[0] * 1e9) + stop[1]) / 1e6}ms`,
             languageId: 183
           }]
         }

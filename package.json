@@ -18,17 +18,15 @@
   },
   "devDependencies": {
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.7.1",
+    "@types/node": "^16.7.6",
     "@types/node-fetch": "^2.5.12",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode": "^1.4.1",
     "@types/sbd": "^1.0.2",
     "@types/xml2js": "^0.4.9",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.2"
   },
   "dependencies": {
-    "@anishshobith/deeptype": "^1.1.0",
-    "@discordjs/opus": "^0.6.0",
     "@iamtraction/google-translate": "^1.1.2",
     "bufferutil": "^4.0.3",
     "canvas": "^2.8.0",
@@ -44,7 +42,6 @@
     "node-fetch": "^2.6.1",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
-    "sodium-native": "^3.2.1",
     "steam-provider": "^0.3.2",
     "ts-node-dev": "^1.1.8",
     "unicode-emoji-json": "^0.2.1",
