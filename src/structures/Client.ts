@@ -128,6 +128,7 @@ export default class D4rkClient extends Client {
         this.commands.push(new cmd(this));
       } else {
         readdirSync(`./src/commands/${dir}`).filter(file => file.endsWith('.ts')).forEach(file => {
+          if (file === 'record.ts') return;
           const command = require(`../commands/${dir}/${file}`).default;
           this.commands.push(new command(this));
         });

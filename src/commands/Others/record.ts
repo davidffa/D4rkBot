@@ -1,3 +1,4 @@
+/*
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
@@ -139,3 +140,4 @@ export default class Record extends Command {
     ctx.sendMessage(':red_circle: Gravação de áudio iniciada, execute o comando de novo para parar a gravação!\nTempo máximo: `2 minutos`')
   }
 }
+*/
