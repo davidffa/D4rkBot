@@ -39,7 +39,6 @@ export default class D4rkClient extends Client {
       defaultImageSize: Constants.ImageSizeBoundaries.MAXIMUM,
       getAllUsers: true,
       restMode: true,
-      compress: true,
       intents: [
         'guilds',
         'guildMembers',

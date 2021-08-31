@@ -39,11 +39,10 @@ export default class D4rkManager extends Manager {
     this.on('nodeConnect', async (node): Promise<void> => {
       console.log(`${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
 
-      for (const player of this.players.values()) {
+      for (const player of this.players.filter(p => p.node === node).values()) {
         const position = player.position;
         player.connect();
-        player.seek(position);
-        player.play();
+        player.play({ startTime: position });
         player.reconnect = true;
       }
     });

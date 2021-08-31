@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
-import zlib from 'zlib-sync';
+import { inflateSync } from 'zlib';
 
 import { Emoji, User, Message } from 'eris';
 
@@ -44,13 +44,13 @@ export default class Render extends Command {
 
     if (!(ctx.msg instanceof Message)) {
       ctx.waitInteraction();
-    }else {
+    } else {
       waitMsg = await ctx.sendMessage('<a:loading2:805088089319407667> A verificar se o URL é válido...');
     }
 
     let url = ctx.args[0];
 
-    
+
 
     if (!ctx.args[0].startsWith('http'))
       url = 'http://' + ctx.args[0];
@@ -79,7 +79,7 @@ export default class Render extends Command {
     if (!finalURL) {
       if (!(ctx.msg instanceof Message)) {
         ctx.editMessage(`:x: ${ctx.msg.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
-      }else {
+      } else {
         waitMsg?.edit(`:x: ${ctx.msg.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
       }
       return;
@@ -107,19 +107,18 @@ export default class Render extends Command {
     if (!res) {
       if (!(ctx.msg instanceof Message)) {
         ctx.editMessage(':x: Site inválido');
-      }else {
+      } else {
         waitMsg?.edit(':x: Site inválido');
       }
       return;
     }
 
-    const inflate = new zlib.Inflate();
-    inflate.push(res, zlib.Z_SYNC_FLUSH);
+    const inflate = inflateSync(res);
 
-    if (!inflate.result) {
+    if (!inflate) {
       if (!(ctx.msg instanceof Message)) {
         ctx.editMessage(':x: Site inválido');
-      }else {
+      } else {
         waitMsg?.edit(':x: Site inválido');
       }
       return;
@@ -129,12 +128,12 @@ export default class Render extends Command {
       waitMsg?.delete();
       await ctx.sendMessage({ embed }, {
         name: 'render.png',
-        file: inflate.result
+        file: inflate
       });
-    }else {
+    } else {
       await ctx.editMessage({ embed }, {
         name: 'render.png',
-        file: inflate.result
+        file: inflate
       });
     }
 

@@ -6,10 +6,7 @@ config();
 
 const client = new Client();
 
-connect(process.env.MONGODBURI as string, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
+connect(process.env.MONGODBURI as string).then(() => {
   console.log('Conectado ao banco de dados.');
 }).catch(e => {
   console.error('Erro ao conectar ao banco de dados!', e);
