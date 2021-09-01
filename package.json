@@ -10,7 +10,7 @@
   "author": "David Amorim",
   "license": "MIT",
   "engines": {
-    "node": "14.17.5",
+    "node": "14.17.6",
     "yarn": "1.22.5"
   },
   "scripts": {
@@ -32,13 +32,12 @@
     "cheerio": "^1.0.0-rc.10",
     "dotenv": "^10.0.0",
     "erela.js": "git+https://github.com/davidffa/erela.js#build-mod",
-    "erela.js-spotify": "^1.2.0",
     "eris": "^0.15.1",
     "eventemitter3": "^4.0.7",
     "figlet": "^1.5.2",
     "mathjs": "^9.4.4",
     "mongoose": "6.0.3",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "2.6.1",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",

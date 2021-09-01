@@ -4,7 +4,7 @@ import CommandContext from '../structures/CommandContext';
 import { User, Member } from 'eris';
 import { Player, Node } from 'erela.js';
 import { Manager, NodeOptions } from 'erela.js';
-import Spotify from 'erela.js-spotify';
+import { Spotify } from './Spotify';
 
 import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
