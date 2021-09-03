@@ -3,6 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import Canvas from 'canvas';
+import { getColorFromURL } from 'color-thief-node';
 
 export default class Banner extends Command {
   constructor(client: Client) {
@@ -43,12 +44,12 @@ export default class Banner extends Command {
     const user: any = await this.client.requestHandler.request('GET', `/users/${userID}`, true);
 
     if (!user.banner && !user.accent_color) {
-      ctx.sendMessage(':x: Esse utilizador não tem banner!');
-      return;
+      const [r, g, b] = await getColorFromURL(this.client.users.get(userID)!.dynamicAvatarURL());
+      user.accent_color = r << 16 | g << 8 | b;
     }
 
-    const url = user.banner 
-      ? `https://cdn.discordapp.com/banners/${userID}/${user.banner}${user.banner.startsWith('a_') ? '.gif' : '.png'}?size=4096` 
+    const url = user.banner
+      ? `https://cdn.discordapp.com/banners/${userID}/${user.banner}${user.banner.startsWith('a_') ? '.gif' : '.png'}?size=4096`
       : 'attachment://banner.png';
 
     const embed = new this.client.embed()
@@ -61,7 +62,7 @@ export default class Banner extends Command {
     if (user.banner) {
       embed.setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`);
       ctx.sendMessage({ embed });
-    }else {
+    } else {
       const canvas = Canvas.createCanvas(600, 240);
       const canvasCtx = canvas.getContext('2d');
 
