@@ -43,9 +43,12 @@ export default class Banner extends Command {
 
     const user: any = await this.client.requestHandler.request('GET', `/users/${userID}`, true);
 
+    let dominant = false;
+
     if (!user.banner && !user.accent_color) {
       const [r, g, b] = await getColorFromURL(this.client.users.get(userID)!.dynamicAvatarURL());
       user.accent_color = r << 16 | g << 8 | b;
+      dominant = true;
     }
 
     const url = user.banner
@@ -58,6 +61,8 @@ export default class Banner extends Command {
       .setImage(url)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+
+    dominant && embed.setDescription("OBS: A cor deste banner poderá não corresponder à cor original.")
 
     if (user.banner) {
       embed.setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`);
