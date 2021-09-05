@@ -57,8 +57,14 @@ export default class Nowplaying extends Command {
       canvasCtx.textAlign = 'center';
       canvasCtx.fillText(player.queue.current.title.slice(0, 30), 185, 270, 300);
 
-      if (player.queue.current.thumbnail && player.queue.current.thumbnail) {
-        const thumb = await Canvas.loadImage(player.queue.current.thumbnail);
+      if (player.queue.current.thumbnail) {
+        let url = player.queue.current.displayThumbnail!('maxresdefault') ?? player.queue.current.thumbnail;
+
+        let buffer = await fetch(url).then(r => r.buffer());
+
+        if (!buffer) buffer = await fetch(player.queue.current.thumbnail).then(r => r.buffer());
+
+        const thumb = await Canvas.loadImage(buffer);
         canvasCtx.drawImage(thumb, 70, 67, 240, 135);
       }
 

@@ -103,7 +103,7 @@ export default class Play extends Command {
             player.play();
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       ctx.sendMessage(`:x: Ocorreu um erro ao procurar a música.\nErro: \`${err.message}\``);
     }
   }
