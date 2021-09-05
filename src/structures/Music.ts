@@ -92,7 +92,7 @@ export default class D4rkManager extends Manager {
           .addField(":robot: Enviado por:", '`' + track.author + '`')
           .addField(":watch: Duração:", '`' + this.client.utils.msToHour(track.duration) + '`')
           .setURL(track.uri)
-          .setThumbnail(track.displayThumbnail('maxresdefault'))
+          .setThumbnail(track.thumbnail!)
         player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
       }
     });
