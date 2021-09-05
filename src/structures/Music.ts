@@ -27,7 +27,9 @@ export default class D4rkManager extends Manager {
       plugins: [
         new Spotify({
           clientID: process.env.SPOTIFYCLIENTID as string,
-          clientSecret: process.env.SPOTIFYCLIENTSECRET as string
+          clientSecret: process.env.SPOTIFYCLIENTSECRET as string,
+          playlistLimit: 4,
+          albumLimit: 8,
         })
       ],
     });

@@ -109,7 +109,7 @@ export class Spotify extends Plugin {
 
         const msg = 'Incorrect type for Spotify URL, must be one of \'track\', \'album\' or \'playlist\'.';
         return buildSearch('LOAD_FAILED', null, msg, null);
-      } catch (e) {
+      } catch (e: any) {
         return buildSearch(e.loadType ?? 'LOAD_FAILED' as LoadType, null, e.message ?? null, null);
       }
     }
