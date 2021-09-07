@@ -69,7 +69,7 @@ export class Spotify extends Plugin {
   public async makeRequest<T>(url: string): Promise<T> {
     if (Date.now() >= this.renewDate) await this.renew();
 
-    return fetch(url, {
+    return await fetch(url, {
       headers: {
         Authorization: this.token
       }
@@ -122,7 +122,7 @@ export class Spotify extends Plugin {
     const tracks = album.tracks.items.filter(this.filterNullOrUndefined).map(item => Spotify.convertToUnresolved(item));
     let next = album.tracks.next, page = 1;
 
-    while (next && !this.options.playlistLimit ? true : page < this.options.albumLimit!) {
+    while (next && (!this.options.playlistLimit ? true : page < this.options.albumLimit!)) {
       const nextPage = await this.makeRequest<AlbumTracks>(next!);
       tracks.push(...nextPage.items.filter(this.filterNullOrUndefined).map(item => Spotify.convertToUnresolved(item)));
       next = nextPage.next;
@@ -137,7 +137,7 @@ export class Spotify extends Plugin {
     const tracks = playlist.tracks.items.filter(it => this.filterNullOrUndefined(it) && it.track !== null).map(item => Spotify.convertToUnresolved(item.track));
     let next = playlist.tracks.next, page = 1;
 
-    while (next && !this.options.playlistLimit ? true : page < this.options.playlistLimit!) {
+    while (next && (!this.options.playlistLimit ? true : page < this.options.playlistLimit!)) {
       const nextPage = await this.makeRequest<PlaylistTracks>(next!);
       tracks.push(...nextPage.items.filter(it => this.filterNullOrUndefined(it) && it.track !== null).map(item => Spotify.convertToUnresolved(item.track)));
       next = nextPage.next;
