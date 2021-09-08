@@ -86,7 +86,7 @@ export default class Djtable extends Command {
       collector.on('collect', r => {
         switch (r.name) {
           case '0️⃣':
-            player.filters.clearFilters();
+            player.filters.clear();
             player.effects = [];
             embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
             ctx.editMessage({ embed });
@@ -107,7 +107,7 @@ export default class Djtable extends Command {
               Object.assign(filters, configs[effect]);
             }
 
-            player.filters.setFilters(filters);
+            player.filters.set(filters);
 
             embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
             ctx.editMessage({ embed });
