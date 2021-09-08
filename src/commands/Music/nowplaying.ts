@@ -48,8 +48,6 @@ export default class Nowplaying extends Command {
 
       const background = await Canvas.loadImage(resolve(__dirname, '..', '..', 'assets', 'npBackground.png'));
 
-      canvasCtx.fillStyle = '#363942';
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
       canvasCtx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
       canvasCtx.font = 'bold 20px Arial';
@@ -86,13 +84,13 @@ export default class Nowplaying extends Command {
       canvasCtx.stroke();
 
       const linearGradient = canvasCtx.createLinearGradient(0, 0, 340, 0);
-      linearGradient.addColorStop(0, '#6e0700');
-      linearGradient.addColorStop(1, '#db0e00');
+      linearGradient.addColorStop(0, '#800000');
+      linearGradient.addColorStop(1, '#ff6666');
 
       if (positionPercent) {
         canvasCtx.beginPath();
         canvasCtx.moveTo(15, 300);
-        canvasCtx.lineTo((canvas.width - 15) * positionPercent, 300);
+        canvasCtx.lineTo(Math.round((canvas.width - 30) * positionPercent + 15), 300);
         canvasCtx.lineWidth = 8;
         canvasCtx.strokeStyle = linearGradient;
         canvasCtx.stroke();
