@@ -37,7 +37,7 @@ export default class Banner extends Command {
 
     let dominant = false;
 
-    if (user.banner === undefined) {
+    if (user.banner === undefined || user.accentColor === undefined) {
       this.client.users.update((await this.client.getRESTUser(user.id)));
     }
 
