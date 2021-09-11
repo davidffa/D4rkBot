@@ -89,8 +89,8 @@ export default class Nowplaying extends Command {
       canvasCtx.stroke();
 
       const linearGradient = canvasCtx.createLinearGradient(0, 0, 340, 0);
-      linearGradient.addColorStop(0, '#800000');
-      linearGradient.addColorStop(1, '#ff6666');
+      linearGradient.addColorStop(0, '#440000');
+      linearGradient.addColorStop(1, '#ff0000');
 
       if (positionPercent) {
         canvasCtx.beginPath();
