@@ -58,9 +58,14 @@ export default class Nowplaying extends Command {
       if (player.queue.current.thumbnail) {
         let url = player.queue.current.displayThumbnail!('maxresdefault') ?? player.queue.current.thumbnail;
 
-        let buffer = await fetch(url).then(r => r.buffer());
+        let { buffer, status } = await fetch(url).then(async r => {
+          return {
+            buffer: await r.buffer(),
+            status: r.status
+          }
+        });
 
-        if (!buffer) buffer = await fetch(player.queue.current.thumbnail).then(r => r.buffer());
+        if (status !== 200) buffer = await fetch(player.queue.current.thumbnail).then(r => r.buffer());
 
         const thumb = await Canvas.loadImage(buffer);
         canvasCtx.drawImage(thumb, 70, 67, 240, 135);
@@ -98,12 +103,10 @@ export default class Nowplaying extends Command {
 
       ctx.sendMessage({
         content: `<a:disco:803678643661832233> A tocar ${player.queue.current.title}`,
-        file: [
-          {
-            name: 'nowplaying.png',
-            file: canvas.toBuffer()
-          }
-        ]
+        file: {
+          name: 'nowplaying.png',
+          file: canvas.toBuffer()
+        }
       });
     } else if (ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       const embed = new this.client.embed()
