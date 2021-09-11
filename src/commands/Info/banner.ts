@@ -37,6 +37,10 @@ export default class Banner extends Command {
 
     let dominant = false;
 
+    if (user.banner === undefined) {
+      this.client.users.update((await this.client.getRESTUser(user.id)));
+    }
+
     if (!user.banner && !user.accentColor) {
       const [r, g, b] = await getColorFromURL(user.dynamicAvatarURL());
       user.accentColor = r << 16 | g << 8 | b;
