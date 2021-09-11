@@ -5,7 +5,7 @@ import { ReactionCollector } from '../../structures/Collector';
 
 import { Emoji, Message, User, VoiceChannel } from 'eris';
 
-import { Track, UnresolvedTrack, TrackUtils } from 'erela.js';
+import { Track, TrackUtils } from 'erela.js';
 
 export default class PlayList extends Command {
   constructor(client: Client) {
@@ -158,7 +158,7 @@ export default class PlayList extends Command {
         const listEmbed = new this.client.embed()
           .setTitle('<a:disco:803678643661832233> Lista de Playlists')
           .setColor('RANDOM')
-          .setDescription(`${playlists.map(p => `${p.name} - \`${(p.songs && p.songs.length) || 0}\` músicas`).join('\n')}`)
+          .setDescription(`${playlists.map(p => `${p.name} - \`${(p.tracks && p.tracks.length) || 0}\` músicas`).join('\n')}`)
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
@@ -184,24 +184,26 @@ export default class PlayList extends Command {
           return;
         }
 
-        if (!playlist.songs || !playlist.songs.length) {
+        if (!playlist.tracks || !playlist.tracks.length) {
           ctx.sendMessage({ content: ':x: Essa playlist não tem músicas!', flags: 1 << 6 });
           return;
         }
 
+        const tracks = await this.client.music.decodeTracks(playlist.tracks);
+
         const detailEmbed = new this.client.embed()
           .setTitle('<a:disco:803678643661832233> Lista de Músicas')
           .setColor('RANDOM')
-          .setDescription(`**${playlist.name}** - \`${playlist.songs.length}\` músicas\n\n${playlist.songs.slice(0, 10).map((s, idx) => `${idx + 1}º - [${s.name}](${s.url})`).join('\n')}`)
+          .setDescription(`**${playlist.name}** - \`${tracks.length}\` músicas\n\n${tracks.slice(0, 10).map((track, idx) => `${idx + 1}º - [${track.info.title}](${track.info.uri})`).join('\n')}`)
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
         const msg = await ctx.sendMessage({ embeds: [detailEmbed] }, true) as Message;
 
-        if (playlist.songs.length <= 10) return;
+        if (playlist.tracks.length <= 10) return;
 
         let page = 1;
-        const pages = Math.ceil(playlist.songs.length / 10);
+        const pages = Math.ceil(playlist.tracks.length / 10);
 
         msg.addReaction('⬅️');
         msg.addReaction('➡️');
@@ -212,13 +214,13 @@ export default class PlayList extends Command {
 
         collector.on('collect', r => {
           if (ctx.channel.type !== 0) return;
-          if (!playlist || !playlist.songs) return;
+          if (!playlist || !playlist.tracks) return;
 
           switch (r.name) {
             case '⬅️':
               if (page === 1) return;
               page--;
-              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx + ((page - 1) * 10) + 1}º - [${s.name}](${s.url})`).join('\n'))
+              detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.info.title}](${track.info.uri})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
               msg.edit({ embed: detailEmbed });
@@ -230,7 +232,7 @@ export default class PlayList extends Command {
             case '➡️':
               if (page === pages) return;
               page++;
-              detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx + ((page - 1) * 10) + 1}º - [${s.name}](${s.url})`).join('\n'))
+              detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.info.title}](${track.info.uri})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
               msg.edit({ embed: detailEmbed });
@@ -262,21 +264,21 @@ export default class PlayList extends Command {
           return;
         }
 
-        if (!playList.songs || !playList.songs.length) {
+        if (!playList.tracks || !playList.tracks.length) {
           ctx.sendMessage({ content: ':x: Essa playlist não tem nenhuma música!', flags: 1 << 6 });
           return;
         }
 
         const id = parseInt(ctx.args[2]);
 
-        if (!id || !playList.songs[id - 1]) {
+        if (!id || !playList.tracks[id - 1]) {
           ctx.sendMessage({ content: `:x: ID da música inválido!\n**Usa:** ${prefix}playlist detalhes <Nome> para ver o id da música a remover.`, flags: 1 << 6 });
           return;
         }
 
-        const songName = playList.songs[id - 1].name;
+        const songName = await this.client.music.decodeTrack(playList.tracks[id - 1]).then(t => t.info.title);
 
-        playList.songs.splice(id - 1, 1);
+        playList.tracks.splice(id - 1, 1);
         await userData.save();
 
         ctx.sendMessage(`<a:verificado:803678585008816198> Removeste a música \`${songName}\` da playlist!`);
@@ -295,8 +297,8 @@ export default class PlayList extends Command {
           return;
         }
 
-        if (pl.songs && pl.songs.length >= 60) {
-          ctx.sendMessage({ content: ':x: Não podes ter uma playlist com mais de 60 músicas', flags: 1 << 6 });
+        if (pl.tracks && pl.tracks.length >= 70) {
+          ctx.sendMessage({ content: ':x: Não podes ter uma playlist com mais de 70 músicas', flags: 1 << 6 });
           return;
         }
 
@@ -314,33 +316,25 @@ export default class PlayList extends Command {
         } else if (player) {
           track = player.queue.current as Track;
         } else {
-          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist add <Nome da PlayList> [Nome da música]`, flags: 1 << 6 });
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist add <Nome da Playlist> [Nome da música]`, flags: 1 << 6 });
           return;
         }
 
-        if (!pl.songs) pl.songs = [];
-        if (!track || !track.author || !track.duration || !track.duration || !track.uri) {
-          ctx.sendMessage({ content: ':x: Não foi possível adicionar a música atual a essa playlist.', flags: 1 << 6 });
-          return;
-        }
+        if (!pl.tracks) pl.tracks = [];
 
         if (track.isStream) {
           ctx.sendMessage({ content: ':x: Não podes adicionar uma stream a uma playlist.', flags: 1 << 6 });
           return;
         }
 
-        if (pl.songs.find(song => song.url === track.uri)) {
+        const trackArr = await this.client.music.decodeTracks(pl.tracks);
+
+        if (trackArr.find(t => t.info.uri === track.uri)) {
           ctx.sendMessage({ content: ':x: Essa música já está na playlist.', flags: 1 << 6 });
           return;
         }
 
-        pl.songs.push({
-          author: track.author,
-          duration: track.duration,
-          name: track.title,
-          url: track.uri,
-          yt: /www.youtube.com/g.test(track.uri)
-        });
+        pl.tracks.push(track.track);
 
         userData && await userData.save();
 
@@ -360,12 +354,12 @@ export default class PlayList extends Command {
           return;
         }
 
-        if (!plToShuffle.songs || !plToShuffle.songs.length) {
+        if (!plToShuffle.tracks || !plToShuffle.tracks.length) {
           ctx.sendMessage({ content: ':x: Essa playlist não tem músicas!', flags: 1 << 6 });
           return;
         }
 
-        plToShuffle.songs = plToShuffle.songs.sort(() => Math.random() - 0.5);
+        plToShuffle.tracks = plToShuffle.tracks.sort(() => Math.random() - 0.5);
         userData && userData.save();
 
         ctx.sendMessage('<a:verificado:803678585008816198> Playlist embaralhada com sucesso!');
@@ -384,7 +378,7 @@ export default class PlayList extends Command {
           return;
         }
 
-        const songs = list.songs;
+        const songs = list.tracks;
 
         if (!songs) {
           ctx.sendMessage({ content: ':x: Essa playlist não tem músicas!', flags: 1 << 6 });
@@ -414,37 +408,23 @@ export default class PlayList extends Command {
           player.connect();
         }
 
-        songs.forEach(async (music, i) => {
-          let song: Track | UnresolvedTrack;
-          if (music.yt) {
-            song = TrackUtils.buildUnresolved({
-              title: music.name,
-              author: music.author,
-              duration: music.duration
-            }, ctx.author);
-          } else {
-            song = await this.client.music.search(music.url, ctx.author).then(r => r.tracks[0]);
-          }
+        const tracksToLoad = await this.client.music.decodeTracks(songs);
 
-          if (!player) return;
+        for (const t of tracksToLoad) {
+          player.queue.add(TrackUtils.build(t, ctx.author));
+        }
 
-          player.queue.add(song);
+        if (!player.playing) player.play();
 
-          if (!player.playing && i === 0)
-            player.play();
+        const playEmbed = new this.client.embed()
+          .setColor('RANDOM')
+          .setTitle('<a:disco:803678643661832233> Playlist Carregada')
+          .addField(":page_with_curl: Nome:", '`' + list.name + '`')
+          .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + songs.length + '`')
+          .setTimestamp()
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-          if (i === songs.length - 1) {
-            const playEmbed = new this.client.embed()
-              .setColor('RANDOM')
-              .setTitle('<a:disco:803678643661832233> Playlist Carregada')
-              .addField(":page_with_curl: Nome:", '`' + list.name + '`')
-              .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + songs.length + '`')
-              .setTimestamp()
-              .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
-
-            ctx.sendMessage({ embeds: [playEmbed] });
-          }
-        });
+        ctx.sendMessage({ embeds: [playEmbed] });
         break;
     }
   }

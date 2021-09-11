@@ -1,45 +1,30 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
+import { sharedDB } from '../Database';
 
-interface Song {
+interface Playlist {
   name: string;
-  url: string;
-  author: string;
-  duration: number;
-  yt: boolean;
-}
-
-interface PlayList {
-  name: string;
-  songs?: Song[];
+  tracks?: string[];
 }
 
 interface UserDB extends Document {
   _id: string;
-  playlists?: PlayList[];
+  playlists?: Playlist[];
 }
 
 const userDB = new Schema({
-  _id: { 
+  _id: {
     type: String,
     required: true
   },
 
   playlists: [
-    { 
+    {
       name: String,
-      songs: [
-        { 
-          name: String,
-          url: String,
-          author: String,
-          duration: Number,
-          yt: Boolean
-        }
-      ]
+      tracks: Array
     }
   ]
-}, { 
+}, {
   versionKey: false
 });
 
-export default model<UserDB>('User', userDB);
+export default sharedDB.model<UserDB>('User', userDB);

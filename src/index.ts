@@ -1,16 +1,9 @@
-import { config } from 'dotenv';
-import Client from './structures/Client';
-import { connect } from 'mongoose';
+import 'dotenv/config';
+import './Database';
 
-config();
+import Client from './structures/Client';
 
 const client = new Client();
-
-connect(process.env.MONGODBURI as string).then(() => {
-  console.log('Conectado ao banco de dados.');
-}).catch(e => {
-  console.error('Erro ao conectar ao banco de dados!', e);
-});
 
 client.loadCommands();
 client.loadEvents();

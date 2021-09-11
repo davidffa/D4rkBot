@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
+import { mainDB } from '../Database';
+import { Schema, Document } from 'mongoose';
 
 interface BotDB extends Document {
   botID: string;
@@ -25,4 +26,4 @@ const botDB: Schema = new Schema({
   versionKey: false
 });
 
-export default model<BotDB>("Bot", botDB);
+export default mainDB.model<BotDB>("Bot", botDB);
