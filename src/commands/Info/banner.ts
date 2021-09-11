@@ -28,7 +28,7 @@ export default class Banner extends Command {
       return;
     }
 
-    const user = !ctx.args.length ? ctx.author : await this.client.utils.findUser(ctx.args.join(' '), ctx.guild)
+    let user = !ctx.args.length ? ctx.author : await this.client.utils.findUser(ctx.args.join(' '), ctx.guild)
 
     if (!user) {
       ctx.sendMessage({ content: ':x: Utilizador não encontrado!', flags: 1 << 6 });
@@ -38,7 +38,8 @@ export default class Banner extends Command {
     let dominant = false;
 
     if (user.banner === undefined || user.accentColor === undefined) {
-      this.client.users.update((await this.client.getRESTUser(user.id)));
+      user = await this.client.getRESTUser(user.id)
+      this.client.users.update(user);
     }
 
     if (!user.banner && !user.accentColor) {
