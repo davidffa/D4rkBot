@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
-import { Emoji, User, VoiceChannel } from 'eris';
+import { Emoji, Message, User, VoiceChannel } from 'eris';
 
 import { Track, UnresolvedTrack, TrackUtils } from 'erela.js';
 
@@ -19,12 +19,12 @@ export default class PlayList extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando!');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando!', flags: 1 << 6 });
       return;
     }
 
-    const prefix = this.client.guildCache.get(ctx.msg.guildID as string)?.prefix || 'db.';
-    let player = this.client.music.players.get(ctx.msg.guildID as string);
+    const prefix = this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.';
+    let player = this.client.music.players.get(ctx.guild.id);
 
     if (!ctx.args.length || ['ajuda', 'help'].includes(ctx.args[0]) || !['shuffle', 'embaralhar', 'renomear', 'rename', 'add', 'detalhes', 'details', 'adicionar', 'criar', 'create', 'delete', 'remove', 'remover', 'apagar', 'excluir', 'tocar', 'play', 'listar', 'lista', 'list'].includes(ctx.args[0])) {
       const help = [
@@ -46,7 +46,7 @@ export default class PlayList extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
       return;
     }
 
@@ -58,23 +58,23 @@ export default class PlayList extends Command {
       case 'criar':
       case 'create':
         if (!ctx.args[1]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist criar <Nome da PlayList>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist criar <Nome da PlayList>`, flags: 1 << 6 });
           return;
         }
 
         if (ctx.args[1].length > 32) {
-          ctx.sendMessage(':x: O nome da playlist não pode ter mais do que 32 caracteres.');
+          ctx.sendMessage({ content: ':x: O nome da playlist não pode ter mais do que 32 caracteres.', flags: 1 << 6 });
           return;
         }
 
         if (playlists) {
           if (playlists.length > 30) {
-            ctx.sendMessage(':x: Não podes ter mais de 30 playlists')
+            ctx.sendMessage({ content: ':x: Não podes ter mais de 30 playlists', flags: 1 << 6 })
             return;
           }
 
           if (playlists.find(it => it.name === ctx.args[1])) {
-            ctx.sendMessage(':x: Já tens uma playlist com esse nome!');
+            ctx.sendMessage({ content: ':x: Já tens uma playlist com esse nome!', flags: 1 << 6 });
             return;
           }
 
@@ -98,24 +98,24 @@ export default class PlayList extends Command {
       case 'rename':
       case 'renomear':
         if (!ctx.args[1] || !ctx.args[2]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist renomear <Nome Antigo> <Nome Novo>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist renomear <Nome Antigo> <Nome Novo>`, flags: 1 << 6 });
           return;
         }
 
         if (ctx.args[2].length > 32) {
-          ctx.sendMessage(':x: O nome da playlist não pode ter mais de 32 caracteres!');
+          ctx.sendMessage({ content: ':x: O nome da playlist não pode ter mais de 32 caracteres!', flags: 1 << 6 });
           return;
         }
 
         if (!playlists || !playlists.length) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist!', flags: 1 << 6 });
           return;
         }
 
         const rPlaylist = playlists.find(it => it.name === ctx.args[1]);
 
         if (!rPlaylist) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist com esse nome!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist com esse nome!', flags: 1 << 6 });
           return;
         }
 
@@ -129,12 +129,12 @@ export default class PlayList extends Command {
       case 'apagar':
       case 'excluir':
         if (!playlists || !playlists.length) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist!', flags: 1 << 6 });
           return;
         }
 
         if (!playlists.find(it => it.name === ctx.args[1])) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist com esse nome!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist com esse nome!', flags: 1 << 6 });
           return;
         }
 
@@ -151,7 +151,7 @@ export default class PlayList extends Command {
       case 'listar':
       case 'list':
         if (!playlists || !playlists.length) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist!', flags: 1 << 6 });
           return;
         }
 
@@ -162,30 +162,30 @@ export default class PlayList extends Command {
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-        ctx.sendMessage({ embed: listEmbed });
+        ctx.sendMessage({ embeds: [listEmbed] });
         break;
 
       case 'detalhes':
       case 'details':
         if (!playlists || !playlists.length) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist!', flags: 1 << 6 });
           return;
         }
 
         if (!ctx.args[1]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist detalhes <Nome da playlist>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist detalhes <Nome da playlist>`, flags: 1 << 6 });
           return;
         }
 
         const playlist = playlists.find(it => it.name === ctx.args[1]);
 
         if (!playlist) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist com esse nome!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist com esse nome!', flags: 1 << 6 });
           return;
         }
 
         if (!playlist.songs || !playlist.songs.length) {
-          ctx.sendMessage(':x: Essa playlist não tem músicas!');
+          ctx.sendMessage({ content: ':x: Essa playlist não tem músicas!', flags: 1 << 6 });
           return;
         }
 
@@ -196,19 +196,19 @@ export default class PlayList extends Command {
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-        await ctx.sendMessage({ embed: detailEmbed });
+        const msg = await ctx.sendMessage({ embeds: [detailEmbed] }, true) as Message;
 
         if (playlist.songs.length <= 10) return;
 
         let page = 1;
         const pages = Math.ceil(playlist.songs.length / 10);
 
-        ctx.sentMsg.addReaction('⬅️');
-        ctx.sentMsg.addReaction('➡️');
+        msg.addReaction('⬅️');
+        msg.addReaction('➡️');
 
         const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
 
-        const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 5 * 60 * 1000 });
+        const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
         collector.on('collect', r => {
           if (ctx.channel.type !== 0) return;
@@ -221,10 +221,10 @@ export default class PlayList extends Command {
               detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx + ((page - 1) * 10) + 1}º - [${s.name}](${s.url})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-              ctx.editMessage({ embed: detailEmbed });
+              msg.edit({ embed: detailEmbed });
 
               if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                ctx.sentMsg.removeReaction(r.name, ctx.author.id);
+                msg.removeReaction(r.name, ctx.author.id);
               }
               break;
             case '➡️':
@@ -233,44 +233,44 @@ export default class PlayList extends Command {
               detailEmbed.setDescription(playlist.songs.slice((page - 1) * 10, page * 10).map((s, idx) => `${idx + ((page - 1) * 10) + 1}º - [${s.name}](${s.url})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-              ctx.editMessage({ embed: detailEmbed });
+              msg.edit({ embed: detailEmbed });
 
               if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                ctx.sentMsg.removeReaction(r.name, ctx.author.id);
+                msg.removeReaction(r.name, ctx.author.id);
               }
               break;
           }
         });
 
         collector.on('end', () => {
-          ctx.sentMsg.removeReaction('⬅️');
-          ctx.sentMsg.removeReaction('➡️')
+          msg.removeReaction('⬅️');
+          msg.removeReaction('➡️')
         })
         break;
 
       case 'remove':
       case 'remover':
         if (!userData || !playlists || !playlists.length) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist!', flags: 1 << 6 });
           return;
         }
 
         const playList = playlists.find(it => it.name === ctx.args[1]);
 
         if (!playList) {
-          ctx.sendMessage(':x: Não tens nenhuma playlist com esse nome!');
+          ctx.sendMessage({ content: ':x: Não tens nenhuma playlist com esse nome!', flags: 1 << 6 });
           return;
         }
 
         if (!playList.songs || !playList.songs.length) {
-          ctx.sendMessage(':x: Essa playlist não tem nenhuma música!');
+          ctx.sendMessage({ content: ':x: Essa playlist não tem nenhuma música!', flags: 1 << 6 });
           return;
         }
 
         const id = parseInt(ctx.args[2]);
 
         if (!id || !playList.songs[id - 1]) {
-          ctx.sendMessage(`:x: ID da música inválido!\n**Usa:** ${prefix}playlist detalhes <Nome> para ver o id da música a remover.`);
+          ctx.sendMessage({ content: `:x: ID da música inválido!\n**Usa:** ${prefix}playlist detalhes <Nome> para ver o id da música a remover.`, flags: 1 << 6 });
           return;
         }
 
@@ -284,19 +284,19 @@ export default class PlayList extends Command {
       case 'add':
       case 'adicionar':
         if (!ctx.args[1]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist add <Nome da PlayList> [Nome da música]`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist add <Nome da PlayList> [Nome da música]`, flags: 1 << 6 });
           return;
         }
 
         const pl = playlists?.find(playlist => playlist.name === ctx.args[1]);
 
         if (!pl) {
-          ctx.sendMessage(':x: Playlist não encontrada');
+          ctx.sendMessage({ content: ':x: Playlist não encontrada', flags: 1 << 6 });
           return;
         }
 
         if (pl.songs && pl.songs.length >= 60) {
-          ctx.sendMessage(':x: Não podes ter uma playlist com mais de 60 músicas');
+          ctx.sendMessage({ content: ':x: Não podes ter uma playlist com mais de 60 músicas', flags: 1 << 6 });
           return;
         }
 
@@ -308,29 +308,29 @@ export default class PlayList extends Command {
           if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED') {
             track = res.tracks[0];
           } else {
-            ctx.sendMessage(':x: Não foi possível adicionar essa música à playlist.');
+            ctx.sendMessage({ content: ':x: Não foi possível adicionar essa música à playlist.', flags: 1 << 6 });
             return;
           }
         } else if (player) {
           track = player.queue.current as Track;
         } else {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist add <Nome da PlayList> [Nome da música]`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist add <Nome da PlayList> [Nome da música]`, flags: 1 << 6 });
           return;
         }
 
         if (!pl.songs) pl.songs = [];
         if (!track || !track.author || !track.duration || !track.duration || !track.uri) {
-          ctx.sendMessage(':x: Não foi possível adicionar a música atual a essa playlist.');
+          ctx.sendMessage({ content: ':x: Não foi possível adicionar a música atual a essa playlist.', flags: 1 << 6 });
           return;
         }
 
         if (track.isStream) {
-          ctx.sendMessage(':x: Não podes adicionar uma stream a uma playlist.');
+          ctx.sendMessage({ content: ':x: Não podes adicionar uma stream a uma playlist.', flags: 1 << 6 });
           return;
         }
 
         if (pl.songs.find(song => song.url === track.uri)) {
-          ctx.sendMessage(':x: Essa música já está na playlist.');
+          ctx.sendMessage({ content: ':x: Essa música já está na playlist.', flags: 1 << 6 });
           return;
         }
 
@@ -349,19 +349,19 @@ export default class PlayList extends Command {
       case 'shuffle':
       case 'embaralhar':
         if (!ctx.args[1]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist shuffle <Nome da PlayList>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist shuffle <Nome da PlayList>`, flags: 1 << 6 });
           return;
         }
 
         const plToShuffle = playlists?.find(playlist => playlist.name === ctx.args[1]);
 
         if (!plToShuffle) {
-          ctx.sendMessage(':x: Playlist não encontrada');
+          ctx.sendMessage({ content: ':x: Playlist não encontrada', flags: 1 << 6 });
           return;
         }
 
         if (!plToShuffle.songs || !plToShuffle.songs.length) {
-          ctx.sendMessage(':x: Essa playlist não tem músicas!');
+          ctx.sendMessage({ content: ':x: Essa playlist não tem músicas!', flags: 1 << 6 });
           return;
         }
 
@@ -373,31 +373,31 @@ export default class PlayList extends Command {
       case 'play':
       case 'tocar':
         if (!ctx.args[1]) {
-          ctx.sendMessage(`:x: **Usa:** ${prefix}playlist tocar <Nome da PlayList>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist tocar <Nome da PlayList>`, flags: 1 << 6 });
           return;
         }
 
         const list = playlists?.find(playlist => playlist.name === ctx.args[1]);
 
         if (!list) {
-          ctx.sendMessage(':x: Playlist não encontrada');
+          ctx.sendMessage({ content: ':x: Playlist não encontrada', flags: 1 << 6 });
           return;
         }
 
         const songs = list.songs;
 
         if (!songs) {
-          ctx.sendMessage(':x: Essa playlist não tem músicas!');
+          ctx.sendMessage({ content: ':x: Essa playlist não tem músicas!', flags: 1 << 6 });
           return;
         }
 
         if (!this.client.music.canPlay(ctx, player)) return;
 
-        const voiceChannelID = ctx.msg.member?.voiceState.channelID as string;
+        const voiceChannelID = ctx.member?.voiceState.channelID as string;
         const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
         player = this.client.music.create({
-          guild: ctx.msg.guildID as string,
+          guild: ctx.guild.id,
           voiceChannel: voiceChannelID,
           textChannel: ctx.channel.id,
           selfDeafen: true
@@ -407,7 +407,7 @@ export default class PlayList extends Command {
 
         if (player.state === 'DISCONNECTED') {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-            ctx.sendMessage(':x: O canal de voz está cheio!');
+            ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
             player.destroy();
             return;
           }
@@ -442,7 +442,7 @@ export default class PlayList extends Command {
               .setTimestamp()
               .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-            ctx.sendMessage({ embed: playEmbed });
+            ctx.sendMessage({ embeds: [playEmbed] });
           }
         });
         break;

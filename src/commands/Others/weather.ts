@@ -37,7 +37,7 @@ export default class Weather extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -46,7 +46,7 @@ export default class Weather extends Command {
     const res = await fetch(`http://weather.service.msn.com/find.aspx?src=outlook&weadegreetype=C&culture=pt-PT&weasearchstr=${ctx.args.join(' ')}`).then(res => res.text());
 
     if (!res) {
-      ctx.sendMessage(':x: Ocorreu um erro ao obter os dados meteorológicos');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro ao obter os dados meteorológicos', flags: 1 << 6 });
       return;
     }
 
@@ -78,7 +78,7 @@ export default class Weather extends Command {
     });
 
     if (!weather) {
-      ctx.sendMessage(':x: Cidade não encontrada!');
+      ctx.sendMessage({ content: ':x: Cidade não encontrada!', flags: 1 << 6 });
       return;
     }
 
@@ -97,6 +97,6 @@ export default class Weather extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

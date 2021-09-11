@@ -3,7 +3,7 @@ import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
 import { ReactionCollector } from '../structures/Collector';
 
-import { Emoji, User } from 'eris';
+import { Emoji, Message, User } from 'eris';
 
 export default class Help extends Command {
   constructor(client: Client) {
@@ -18,7 +18,7 @@ export default class Help extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -76,20 +76,20 @@ export default class Help extends Command {
         .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
         .addField(`<:megathink:803675654376652880> Ainda mais ajuda`, '[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)')
 
-      await ctx.sendMessage({ embed });
-      await ctx.sentMsg.addReaction('x_:751062867444498432');
+      const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+      await msg.addReaction('x_:751062867444498432');
 
       const filter = (r: Emoji, user: User) => r.id === '751062867444498432' && user === ctx.author;
 
-      const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 5 * 60 * 1000 });
+      const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
       collector.on('collect', () => {
-        ctx.sentMsg.delete();
+        msg.delete();
       });
 
       collector.on('end', reason => {
         if (reason === 'Time')
-        ctx.sentMsg.removeReaction('x_:751062867444498432');
+          msg.removeReaction('x_:751062867444498432');
       });
 
       return;
@@ -101,7 +101,7 @@ export default class Help extends Command {
     if (!cmd) {
       embed.setTitle('Comando não encontrado')
       embed.setDescription(`:x: Não tenho nenhum comando com o nome \`${name}\``);
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
       return;
     }
 
@@ -116,6 +116,6 @@ export default class Help extends Command {
 
     embed.setTitle(`Ajuda do comando ${ctx.args[0]}`)
     embed.setDescription(data.join('\n'))
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

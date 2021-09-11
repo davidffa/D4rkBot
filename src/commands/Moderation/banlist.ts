@@ -13,15 +13,15 @@ export default class Banlist extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type !== 0 || !ctx.msg.member || !ctx.guild) return;
+    if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.msg.member.permissions.has('banMembers')) {
-      ctx.sendMessage(':x: Não tens permissão para ver a lista de membros banidos.');
+    if (!ctx.member.permissions.has('banMembers')) {
+      ctx.sendMessage({ content: ':x: Não tens permissão para ver a lista de membros banidos.', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('banMembers')) {
-      ctx.sendMessage(':x: Não tenho permissão para ver a lista de membros banidos!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para ver a lista de membros banidos!', flags: 1 << 6 });
       return;
     }
 
@@ -30,7 +30,7 @@ export default class Banlist extends Command {
     const bans = await ctx.guild.getBans();
 
     if (!bans.length) {
-      ctx.sendMessage(':x: Este servidor não tem membros banidos!');
+      ctx.sendMessage({ content: ':x: Este servidor não tem membros banidos!', flags: 1 << 6 });
       return;
     }
 

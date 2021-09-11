@@ -1,6 +1,6 @@
 import { readdirSync, unlinkSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { Client, ClientOptions, User, Guild, Constants } from 'eris';
+import { Client, ClientOptions, User, Guild, Constants, Role } from 'eris';
 import { NodeOptions, VoicePacket } from 'erela.js';
 
 import Embed from './Embed';
@@ -89,7 +89,6 @@ export default class D4rkClient extends Client {
       }
 
       if (!user) {
-        let startsWith = false;
         const lowerCaseParam = param.toLowerCase();
 
         for (const m of guild.members.values()) {
@@ -100,11 +99,10 @@ export default class D4rkClient extends Client {
 
           if ((m.nick && m.nick.startsWith(lowerCaseParam)) || m.username.toLowerCase().startsWith(lowerCaseParam)) {
             user = m.user;
-            startsWith = true;
-            continue;
+            break;
           }
 
-          if (!startsWith && (m.nick && m.nick.toLowerCase().includes(lowerCaseParam)) || m.username.toLowerCase().includes(lowerCaseParam)) {
+          if (m.nick && m.nick.toLowerCase().includes(lowerCaseParam) || m.username.toLowerCase().includes(lowerCaseParam)) {
             user = m.user;
           }
         }
@@ -112,8 +110,35 @@ export default class D4rkClient extends Client {
       return user || null;
     }
 
+    const findRole = (param: string, guild: Guild): Role | null => {
+      let role: Role | null | undefined;
+
+      if (/<@&\d{17,18}>/.test(param)) {
+        const matched = param.match(/\d{17,18}/)?.[0]
+
+        if (matched) param = matched
+      }
+
+      if (/\d{17,18}/.test(param)) {
+        role = guild.roles.get(param)
+      }
+
+      if (!role) {
+        const lowerCaseParam = param.toLowerCase();
+
+        for (const r of guild.roles.values()) {
+          if (r.name === param || r.name.toLowerCase() === lowerCaseParam) return r;
+          if (r.name.startsWith(param) || r.name.toLowerCase().startsWith(lowerCaseParam)) return r;
+          if (r.name.includes(param) || r.name.toLowerCase().includes(lowerCaseParam)) return r;
+        }
+      }
+
+      return role ?? null;
+    }
+
     this.utils = {
       findUser,
+      findRole,
       levenshteinDistance: levDistance,
       msToHour,
       msToDate

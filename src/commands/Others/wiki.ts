@@ -1,12 +1,11 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
-import CommandContext from '../../structures/CommandContext';
-
-import { Message } from 'eris';
+import CommandContext, { Type } from '../../structures/CommandContext';
 
 import fetch from 'node-fetch';
 
 import sbd from 'sbd';
+import { Message } from 'eris';
 
 export default class Wiki extends Command {
   constructor(client: Client) {
@@ -24,14 +23,16 @@ export default class Wiki extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    if (ctx.msg instanceof Message) {
-      await ctx.sendMessage('<a:loading2:805088089319407667> A procurar...');
-    }else {
-      await ctx.waitInteraction();
+    let msg: Message
+
+    if (ctx.type === Type.MESSAGE) {
+      msg = await ctx.sendMessage('<a:loading2:805088089319407667> A procurar...', true) as Message;
+    } else {
+      await ctx.defer();
     }
 
     const content = {
@@ -49,7 +50,11 @@ export default class Wiki extends Command {
     }).then(res => res.json()).then(r => r.result)
 
     if (!res) {
-      ctx.editMessage(':x: Não encontrei nada na wikipedia.');
+      if (ctx.type === Type.INTERACTION) {
+        ctx.sendMessage(':x: Não encontrei nada na wikipedia.');
+      } else {
+        msg!.edit(':x: Não encontrei nada na wikipedia.');
+      }
       return;
     }
 
@@ -70,6 +75,11 @@ export default class Wiki extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.editMessage({ content: '', embed });
+
+    if (ctx.type === Type.INTERACTION) {
+      ctx.sendMessage({ content: '', embeds: [embed] });
+    } else {
+      msg!.edit({ content: '', embeds: [embed] });
+    }
   }
 }

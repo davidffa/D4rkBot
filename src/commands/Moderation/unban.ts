@@ -16,36 +16,36 @@ export default class Unban extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type !== 0 || !ctx.msg.member || !ctx.guild) return;
+    if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.msg.member.permissions.has('banMembers')) {
-      ctx.sendMessage(':x: Não tens permissão para desbanir membros.');
+    if (!ctx.member.permissions.has('banMembers')) {
+      ctx.sendMessage({ content: ':x: Não tens permissão para desbanir membros.', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('banMembers')) {
-      ctx.sendMessage(':x: Não tenho permissão para desbanir membros!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para desbanir membros!', flags: 1 << 6 });
       return;
     }
 
     const bans = await ctx.guild.getBans();
 
     if (!bans.length) {
-      ctx.sendMessage(':x: Este servidor não tem membros banidos!');
+      ctx.sendMessage({ content: ':x: Este servidor não tem membros banidos!', flags: 1 << 6 });
       return;
     }
 
     const member = bans.find(m => m.user.id === ctx.args[0] || m.user.username.toLowerCase().startsWith(ctx.args.join(' ').toLowerCase()));
 
     if (!member) {
-      ctx.sendMessage(':x: Membro não encontrado!');
+      ctx.sendMessage({ content: ':x: Membro não encontrado!', flags: 1 << 6 });
       return;
     }
 
     ctx.guild.unbanMember(member.user.id).then(() => {
       ctx.sendMessage(`<a:verificado:803678585008816198> Desbanis-te o \`${member.user.username}#${member.user.discriminator}\``);
     }).catch(() => {
-      ctx.sendMessage(':x: Ocorreu um erro ao tentar desbanir esse membro.');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro ao tentar desbanir esse membro.', flags: 1 << 6 });
     });
   }
 }

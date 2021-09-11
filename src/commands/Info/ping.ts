@@ -44,10 +44,10 @@ export default class Ping extends Command {
 
     if (ctx.channel.type === 0) {
       if (ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-        ctx.sendMessage({ embed });
+        ctx.sendMessage({ embeds: [embed] });
       } else {
         ctx.sendMessage(res.join('\n'));
       }
-    } else ctx.sendMessage({ embed })
+    } else ctx.sendMessage({ embeds: [embed] })
   }
 }

@@ -19,6 +19,7 @@ interface Command extends CommandOptions {
 
 interface Utils {
   findUser: (param: string, guild: Guild | null) => Promise<User | null>;
+  findRole: (param: string, guild: Guild) => Role | null;
   levenshteinDistance: (src: string, target: string) => number;
   msToHour: (time: number) => string;
   msToDate: (time: number) => string;
@@ -46,59 +47,6 @@ interface GuildCache {
 interface Records {
   timeout: NodeJS.Timeout;
   users: Array<string>;
-}
-
-interface InteractionOptions {
-  name: string;
-  value: string;
-  type: number;
-  options?: InteractionOptions[];
-}
-
-interface InteractionResolved {
-  messages: Record<string, {
-    content: string // only need content :>
-  }>;
-  // users & members: <- don't need for now
-}
-
-interface InteractionData {
-  id: string;
-  name: string;
-  type: number;
-  options?: InteractionOptions[];
-  resolved?: InteractionResolved;
-  target_id?: string;
-}
-
-interface InteractionPacket {
-  application_id: string;
-  channel_id: string;
-  id: string;
-  guild_id: string;
-
-  data: InteractionData;
-
-  member: { user: { id: string; } }; //dont need more stuff (for now)
-
-  token: string;
-  type: number;
-  version: number;
-}
-
-interface InteractionApplicationCommandCallbackData {
-  tts?: boolean;
-  content?: string;
-  embeds?: EmbedOptions[];
-  allowed_mentions?: AllowedMentions;
-  flags?: number;
-}
-
-interface IEditInteractionData {
-  [key: string]: string;
-  content?: string;
-  embeds?: EmbedOptions[];
-  file?: MessageFile;
 }
 
 import 'erela.js';

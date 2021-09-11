@@ -23,7 +23,7 @@ export default class Qrcode extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -32,17 +32,17 @@ export default class Qrcode extends Command {
       case 'create':
       case 'c':
         if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
-          ctx.sendMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
+          ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
           return;
         }
 
         if (!ctx.args[1]) {
-          ctx.sendMessage(`:x: **Usa:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode criar <Texto>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode criar <Texto>`, flags: 1 << 6 });
           return;
         }
 
         if (ctx.args.slice(1).join(' ').length > 800) {
-          ctx.sendMessage(':x: Só podes criar códigos QR com textos até 800 caracteres.');
+          ctx.sendMessage({ content: ':x: Só podes criar códigos QR com textos até 800 caracteres.', flags: 1 << 6 });
           return;
         }
 
@@ -56,9 +56,14 @@ export default class Qrcode extends Command {
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-          ctx.sendMessage({ embed }, {
-          name: 'qr.png',
-          file: Buffer.from(base64data, 'base64')
+        ctx.sendMessage({
+          embeds: [embed],
+          file: [
+            {
+              name: 'qr.png',
+              file: Buffer.from(base64data, 'base64')
+            }
+          ]
         });
 
         break;
@@ -67,10 +72,10 @@ export default class Qrcode extends Command {
       case 'read':
       case 'r':
       case 'l':
-        const qrURL = ctx.args[1] || (ctx.msg instanceof Message && ctx.msg.attachments[0]?.url);
+        const qrURL = ctx.args[1] || ctx.attachments[0]?.url;
 
         if (!qrURL) {
-          ctx.sendMessage(`:x: **Usa:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode ler <URL/Anexo>`);
+          ctx.sendMessage({ content: `:x: **Usa:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode ler <URL/Anexo>`, flags: 1 << 6 });
           return;
         }
 
@@ -80,7 +85,7 @@ export default class Qrcode extends Command {
           .catch(() => null);
 
         if (!data) {
-          ctx.sendMessage(':x: Código QR inválido.');
+          ctx.sendMessage({ content: ':x: Código QR inválido.', flags: 1 << 6 });
           return;
         }
 
@@ -92,10 +97,10 @@ export default class Qrcode extends Command {
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-        ctx.sendMessage({ embed: ebd });
+        ctx.sendMessage({ embeds: [ebd] });
         break;
       default:
-        ctx.sendMessage(`:x: **Usa:** \`${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode <Criar/Ler> <Texto>|<URL/Anexo>\``)
+        ctx.sendMessage({ content: `:x: **Usa:** \`${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode <Criar/Ler> <Texto>|<URL/Anexo>\``, flags: 1 << 6 })
         break;
     }
   }

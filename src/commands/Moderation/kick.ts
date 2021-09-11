@@ -18,86 +18,91 @@ export default class Kick extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type !== 0 || !ctx.msg.member || !ctx.guild) return;
+    if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.msg.member.permissions.has('kickMembers')) {
-      ctx.sendMessage(':x: Não tens permissão para expulsar membros.');
+    if (!ctx.member.permissions.has('kickMembers')) {
+      ctx.sendMessage({ content: ':x: Não tens permissão para expulsar membros.', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('kickMembers')) {
-      ctx.sendMessage(':x: Não tenho permissão para expulsar membros!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para expulsar membros!', flags: 1 << 6 });
       return;
     }
 
-    let member = ctx.guild.members.get((ctx.msg instanceof Message && ctx.msg.mentions[0]?.id) || ctx.args[0]);
+    const user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
+
+    if (!user) {
+      ctx.sendMessage({ content: ':x: Utilizador inválido!', flags: 1 << 6 });
+      return;
+    }
+
+    const member = ctx.guild.members.get(user.id);
 
     if (!member) {
-      ctx.sendMessage(':x: Utilizador inválido!');
+      ctx.sendMessage({ content: ':x: Membro inválido!', flags: 1 << 6 });
       return;
     }
 
-    if (member) {
-      if (member.id === this.client.user.id) {
-        ctx.sendMessage(':x: Não me consigo expulsar a mim mesmo!');
-        return;
+    if (member.id === this.client.user.id) {
+      ctx.sendMessage({ content: ':x: Não me consigo expulsar a mim mesmo!', flags: 1 << 6 });
+      return;
+    }
+
+    if (member.id === ctx.guild.ownerID) {
+      ctx.sendMessage({ content: ':x: Não consigo expulsar o dono do servidor!', flags: 1 << 6 });
+      return;
+    }
+
+    const guild = ctx.guild;
+
+    let botHighestRole = ctx.guild.roles.get(ctx.guild.id) as Role;
+    let memberHighestRole = ctx.guild.roles.get(ctx.guild.id) as Role;
+    let targetHighestRole = ctx.guild.roles.get(ctx.guild.id) as Role;
+
+    member.roles.forEach(roleID => {
+      const role = guild.roles.get(roleID);
+      if (!role) return;
+      if (!targetHighestRole || role.position > targetHighestRole.position) {
+        targetHighestRole = role;
       }
+    });
 
-      if (member.id === ctx.guild.ownerID) {
-        ctx.sendMessage(':x: Não consigo expulsar o dono do servidor!');
-        return;
+    ctx.guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
+      const role = guild.roles.get(roleID);
+      if (!role) return;
+      if (!botHighestRole || role.position > botHighestRole.position) {
+        botHighestRole = role;
       }
+    });
 
-      const guild = ctx.guild;
+    if (botHighestRole.position <= targetHighestRole.position) {
+      ctx.sendMessage({ content: ':x: O cargo mais alto desse membro é superior ao meu cargo mais alto!', flags: 1 << 6 });
+      return;
+    }
 
-      let botHighestRole = ctx.guild.roles.get(ctx.msg.guildID as string) as Role;
-      let memberHighestRole = ctx.guild.roles.get(ctx.msg.guildID as string) as Role;
-      let targetHighestRole = ctx.guild.roles.get(ctx.msg.guildID as string) as Role;
-
-      member.roles.forEach(roleID => {
+    if (ctx.author.id !== ctx.guild.ownerID) {
+      ctx.member.roles.forEach(roleID => {
         const role = guild.roles.get(roleID);
         if (!role) return;
-        if (!targetHighestRole || role.position > targetHighestRole.position) {
-          targetHighestRole = role;
+        if (!memberHighestRole || role.position > memberHighestRole.position) {
+          memberHighestRole = role;
         }
       });
 
-      ctx.guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
-        const role = guild.roles.get(roleID);
-        if (!role) return;
-        if (!botHighestRole || role.position > botHighestRole.position) {
-          botHighestRole = role;
-        }
-      });
-
-      if (botHighestRole.position <= targetHighestRole.position) {
-        ctx.sendMessage(':x: O cargo mais alto desse membro é superior ao meu cargo mais alto!');
+      if (memberHighestRole.position <= targetHighestRole.position) {
+        ctx.sendMessage({ content: ':x: O cargo mais alto desse membro é superior ao teu cargo mais alto!', flags: 1 << 6 });
         return;
-      }
-
-      if (ctx.author.id !== ctx.guild.ownerID) {
-        ctx.msg.member.roles.forEach(roleID => {
-          const role = guild.roles.get(roleID);
-          if (!role) return;
-          if (!memberHighestRole || role.position > memberHighestRole.position) {
-            memberHighestRole = role;
-          }
-        });
-
-        if (memberHighestRole.position <= targetHighestRole.position) {
-          ctx.sendMessage(':x: O cargo mais alto desse membro é superior ao teu cargo mais alto!');
-          return;
-        }
       }
     }
 
     const reason = ctx.args.slice(1).join(' ') || 'Sem motivo';
 
-    ctx.guild.kickMember(member.id, reason).then(() => {
+    ctx.guild.kickMember(user.id, reason).then(() => {
       if (!member) return;
-      ctx.sendMessage(`<a:verificado:803678585008816198> Expulsas-te o \`${member.user.username}#${member.user.discriminator}\` por \`${reason}\``);
+      ctx.sendMessage(`<a:verificado:803678585008816198> Expulsas-te o \`${user.username}#${user.discriminator}\` por \`${reason}\``);
     }).catch(() => {
-      ctx.sendMessage(':x: Não tenho permissão para expulsar esse membro!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para expulsar esse membro!', flags: 1 << 6 });
     });
   }
 }

@@ -46,15 +46,15 @@ export default class Calc extends Command {
     let result;
 
     if (!expr.length)
-      return ctx.sendMessage(':x: Expressão inválida!');
+      return ctx.sendMessage({ content: ':x: Expressão inválida!', flags: 1 << 6 });
 
     try {
       result = limitedEvaluate && limitedEvaluate(expr);
     } catch (err) {
-      return ctx.sendMessage(':x: Expressão inválida!');
+      return ctx.sendMessage({ content: ':x: Expressão inválida!', flags: 1 << 6 });
     }
 
-    if (result === undefined || result === null || typeof result === 'function') return ctx.sendMessage(':x: Expressão inválida!');
+    if (result === undefined || result === null || typeof result === 'function') return ctx.sendMessage({ content: ':x: Expressão inválida!', flags: 1 << 6 });
     if (result === Infinity || result === -Infinity || result.toString() === 'NaN') result = 'Impossível determinar';
 
     const embed = new this.client.embed()
@@ -65,6 +65,6 @@ export default class Calc extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

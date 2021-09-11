@@ -19,17 +19,17 @@ export default class Docs extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     const res = await fetch(`${process.env.ERISDOCSAPIURL}/docs?search=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
 
     if (res.error) {
-      ctx.sendMessage(':x: Nada encontrado nas docs!');
+      ctx.sendMessage({ content: ':x: Nada encontrado nas docs!', flags: 1 << 6 });
       return;
     }
 
-    ctx.sendMessage({ embed: res });
+    ctx.sendMessage({ embeds: [res] });
   }
 }

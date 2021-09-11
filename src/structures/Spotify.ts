@@ -73,7 +73,7 @@ export class Spotify extends Plugin {
       headers: {
         Authorization: this.token
       }
-    }).then(r => r.json());
+    }).then(r => r.json()) as T;
   }
 
   private async search(query: string | SearchQuery, requester?: unknown): Promise<SearchResult> {

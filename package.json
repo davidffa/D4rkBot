@@ -1,6 +1,6 @@
 {
   "name": "d4rkbot",
-  "version": "4.0.4",
+  "version": "4.1.0",
   "description": "Discord Bot made with typescript and eris",
   "main": "src/index.ts",
   "repository": {
@@ -19,13 +19,13 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.7.13",
+    "@types/node": "^16.9.1",
     "@types/node-fetch": "2.5.12",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode": "^1.4.1",
     "@types/sbd": "^1.0.2",
     "@types/xml2js": "^0.4.9",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.3"
   },
   "dependencies": {
     "@iamtraction/google-translate": "^1.1.2",
@@ -34,7 +34,7 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^10.0.0",
     "erela.js": "git+https://github.com/davidffa/erela.js#build-mod",
-    "eris": "^0.15.1",
+    "eris": "git+https://github.com/DonovanDMC/eris.git#27c3293",
     "eventemitter3": "^4.0.7",
     "figlet": "^1.5.2",
     "mathjs": "^9.4.4",

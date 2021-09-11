@@ -18,22 +18,22 @@ export default class Loop extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
     if (player.radio) {
-      ctx.sendMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+      ctx.sendMessage({ content: ':x: Não podes usar este comando enquanto estiver a tocar uma rádio!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -41,7 +41,7 @@ export default class Loop extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = ctx.msg.member;
+    const member = ctx.member;
     if (!member) return;
 
     const loop = (arg: string): void => {
@@ -60,18 +60,18 @@ export default class Loop extends Command {
         else
           ctx.sendMessage('<a:disco:803678643661832233> Loop da queue desativado!');
       } else {
-        ctx.sendMessage(`:x: **Usa:** \`${this.client.guildCache.get(ctx.msg.guildID as string)?.prefix}loop <track/queue>\``);
+        ctx.sendMessage({ content: `:x: **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}loop <track/queue>\``, flags: 1 << 6 });
       }
     }
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         loop(ctx.args[0]);
         return;
       }
-      ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode ativar o loop!');
+      ctx.sendMessage({ content: ':x: Apenas alguém com o cargo DJ pode ativar o loop!', flags: 1 << 6 });
     } else loop(ctx.args[0]);
   }
 }

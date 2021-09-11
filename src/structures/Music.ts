@@ -95,7 +95,7 @@ export default class D4rkManager extends Manager {
           .addField(":watch: Duração:", '`' + this.client.utils.msToHour(track.duration) + '`')
           .setURL(track.uri)
           .setThumbnail(track.thumbnail!)
-        player.lastPlayingMsgID = await channel.createMessage({ embed }).then(m => m.id);
+        player.lastPlayingMsgID = await channel.createMessage({ embeds: [embed] }).then(m => m.id);
       }
     });
 
@@ -132,7 +132,7 @@ export default class D4rkManager extends Manager {
           if (status === 202) {
             this.client.createMessage(player.textChannel, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
           } else {
-            this.client.createMessage(player.textChannel, ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
+            this.client.createMessage(player.textChannel, { content: ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
           }
           player.destroy();
           */
@@ -204,49 +204,51 @@ export default class D4rkManager extends Manager {
   }
 
   canPlay(ctx: CommandContext, player?: Player | undefined): boolean {
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member!.voiceState.channelID;
 
     if (!voiceChannelID) {
-      ctx.sendMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar num canal de voz para executar esse comando!', flags: 1 << 6 });
       return false;
     }
 
     const voiceChannel = this.client.getChannel(voiceChannelID);
 
     if (voiceChannel.type !== 2) {
-      ctx.sendMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro! `Channel type is not VoiceChannel`', flags: 1 << 6 });
       return false;
     }
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
     if (!permissions.has('readMessages')) {
-      ctx.sendMessage(':x: Não tenho permissão para ver o teu canal de voz!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para ver o teu canal de voz!', flags: 1 << 6 });
       return false;
     }
 
     if (!permissions.has('voiceConnect')) {
-      ctx.sendMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para entrar no teu canal de voz!', flags: 1 << 6 });
       return false;
     }
 
     if (!permissions.has('voiceSpeak')) {
-      ctx.sendMessage(':x: Não tenho permissão para falar no teu canal de voz!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para falar no teu canal de voz!', flags: 1 << 6 });
       return false;
     }
 
+    /*
     if (this.client.records.has(ctx.guild?.id as string)) {
-      ctx.sendMessage(':x: Não consigo tocar música enquanto gravo voz!')
+      ctx.sendMessage({ content: ':x: Não consigo tocar música enquanto gravo voz!', flags: 1<<6})
       return false;
     }
+    */
 
     if (player && voiceChannelID !== player.voiceChannel) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar este comando!', flags: 1 << 6 });
       return false;
     }
 
     if (player && !player.radio && player.queue.duration > 8.64e7) {
-      ctx.sendMessage(':x: A queue tem a duração superior a 24 horas!')
+      ctx.sendMessage({ content: ':x: A queue tem a duração superior a 24 horas!', flags: 1 << 6 })
       return false;
     }
     return true;

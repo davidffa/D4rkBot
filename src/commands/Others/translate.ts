@@ -20,14 +20,14 @@ export default class Translate extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     const text = ctx.args.slice(1).join(' ');
 
     if (text.length > 1e3) {
-      ctx.sendMessage(':x: O texto a traduzir só pode ter no máximo 1000 caracteres.')
+      ctx.sendMessage({ content: ':x: O texto a traduzir só pode ter no máximo 1000 caracteres.', flags: 1 << 6 })
       return;
     }
 
@@ -44,13 +44,13 @@ export default class Translate extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embed });
-    } catch (err) {
+      ctx.sendMessage({ embeds: [embed] });
+    } catch (err: any) {
       if (err.message.startsWith('The language') && err.message.endsWith('is not supported.')) {
-        ctx.sendMessage(':x: Linguagem não suportada! Tente `en, pt, fr, ...`');
+        ctx.sendMessage({ content: ':x: Linguagem não suportada! Tente `en, pt, fr, ...`', flags: 1 << 6 });
         return;
       }
-      ctx.sendMessage(':x: Ocorreu um erro!');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro!', flags: 1 << 6 });
     }
   }
 }

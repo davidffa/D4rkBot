@@ -4,7 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 import Embed from '../../structures/Embed';
 
 import { Node } from 'erela.js';
-import { User, Emoji } from 'eris';
+import { User, Emoji, Message } from 'eris';
 import { ReactionCollector } from '../../structures/Collector';
 
 export default class Lavalink extends Command {
@@ -30,19 +30,20 @@ export default class Lavalink extends Command {
     }
 
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     const embed = await this.getNodeInfoEmbed(ctx.author, nodes[0] as Node);
-    await ctx.sendMessage({ embed });
-    ctx.sentMsg.addReaction('⬅️');
-    ctx.sentMsg.addReaction('➡️');
+
+    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+    msg.addReaction('⬅️');
+    msg.addReaction('➡️');
 
     let page = 1;
 
     const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
-    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 3 * 60 * 1000, max: 10 });
+    const collector = new ReactionCollector(this.client, msg, filter, { time: 3 * 60 * 1000, max: 10 });
 
     collector.on('collect', async (r) => {
       switch (r.name) {
@@ -56,7 +57,7 @@ export default class Lavalink extends Command {
           break;
       }
       const e = await this.getNodeInfoEmbed(ctx.author, nodes[page - 1] as Node);
-      ctx.editMessage({ embed: e });
+      msg.edit({ embeds: [e] });
     });
   }
 

@@ -21,14 +21,14 @@ export default class Steam extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     const res = await provider.search(ctx.args.join(' '), 1, 'portuguese', 'pt');
 
     if (!res.length) {
-      ctx.sendMessage(':x: Jogo não encontrado');
+      ctx.sendMessage({ content: ':x: Jogo não encontrado', flags: 1 << 6 });
       return;
     }
 
@@ -50,6 +50,6 @@ export default class Steam extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

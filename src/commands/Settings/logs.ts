@@ -20,21 +20,21 @@ export default class Logs extends Command {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
     if (!ctx.channel.permissionsOf(ctx.author.id).has('manageMessages') && ctx.author.id !== '334054158879686657') {
-      ctx.sendMessage(':x: Precisas da permissão `Gerenciar Mensagens` para usar este comando!');
+      ctx.sendMessage({ content: ':x: Precisas da permissão `Gerenciar Mensagens` para usar este comando!', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Inserir Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Inserir Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    const guildData = this.client.guildCache.get(ctx.msg.guildID as string);
+    const guildData = this.client.guildCache.get(ctx.guild.id);
     const welcomeChannel = ctx.guild.channels.get(guildData?.welcomeChatID || '');
     const byeChannel = ctx.guild.channels.get(guildData?.memberRemoveChatID || '');
 
@@ -45,9 +45,9 @@ export default class Logs extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    await ctx.sendMessage({ embed });
-    ctx.sentMsg.addReaction('1⃣');
-    ctx.sentMsg.addReaction('2⃣');
+    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+    msg.addReaction('1⃣');
+    msg.addReaction('2⃣');
 
     const welcomeMsgCollector = (): void => {
       const filter = (m: Message) => m.author.id === ctx.author.id;
@@ -55,7 +55,7 @@ export default class Logs extends Command {
 
       collector.on('collect', async (m) => {
         if (m.channel.type !== 0) return;
-        ctx.sentMsg.delete().catch(() => { });
+        msg.delete().catch(() => { });
 
         if (!guildData) return;
 
@@ -92,7 +92,7 @@ export default class Logs extends Command {
           guildDBData.save();
         } else {
           this.client.guildDB.create({
-            guildID: ctx.msg.guildID,
+            guildID: ctx.guild.id,
             welcomeChatID: channel.id
           });
         }
@@ -107,7 +107,7 @@ export default class Logs extends Command {
 
       collector.on('collect', async (m) => {
         if (m.channel.type !== 0) return;
-        ctx.sentMsg.delete().catch(() => { });
+        msg.delete().catch(() => { });
         if (!guildData) return;
 
         if (m.content === '0') {
@@ -143,7 +143,7 @@ export default class Logs extends Command {
           guildDBData.save();
         } else {
           this.client.guildDB.create({
-            guildID: ctx.msg.guildID,
+            guildID: ctx.guild.id,
             memberRemoveChatID: channel.id
           });
         }
@@ -153,7 +153,7 @@ export default class Logs extends Command {
     }
 
     const filter = (r: Emoji, user: User) => (r.name === '1⃣' || r.name === '2⃣') && user === ctx.author;
-    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { max: 1, time: 3 * 60 * 1000 });
+    const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
     collector.on('collect', async r => {
       switch (r.name) {
@@ -170,8 +170,8 @@ export default class Logs extends Command {
     });
 
     collector.on('end', () => {
-      ctx.sentMsg.removeReaction('1⃣');
-      ctx.sentMsg.removeReaction('2⃣');
+      msg.removeReaction('1⃣');
+      msg.removeReaction('2⃣');
     });
   }
 }

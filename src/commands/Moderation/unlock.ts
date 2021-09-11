@@ -20,26 +20,26 @@ export default class Unlock extends Command {
     const channel = ctx.channel;
 
     if (!channel.permissionsOf(ctx.author.id).has('manageChannels')) {
-      ctx.sendMessage(':x: Não tens permissão para alterar as permissões deste canal.');
+      ctx.sendMessage({ content: ':x: Não tens permissão para alterar as permissões deste canal.', flags: 1 << 6 });
       return;
     }
 
     if (!channel.permissionsOf(this.client.user.id).has('manageChannels')) {
-      ctx.sendMessage(':x: Não tenho permissão para alterar as permissões deste canal!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para alterar as permissões deste canal!', flags: 1 << 6 });
       return;
     }
 
-    const permissions = channel.permissionOverwrites.get(ctx.msg.guildID as string);
+    const permissions = channel.permissionOverwrites.get(ctx.guild.id);
 
     if (!permissions || (permissions.deny & (1n << 11n)) != 1n << 11n) {
-      ctx.sendMessage(':x: O canal já está desbloqueado!');
+      ctx.sendMessage({ content: ':x: O canal já está desbloqueado!', flags: 1 << 6 });
       return;
     }
 
     const allow = permissions.allow;
     const deny = permissions.deny;
 
-    await channel.editPermission(ctx.msg.guildID as string, allow | (1n << 11n), deny & ~(1n << 11n), 'role', 'Unlock cmd' || ctx.args.join(' ').slice(0, 50));
+    await channel.editPermission(ctx.guild.id, allow | (1n << 11n), deny & ~(1n << 11n), 0, 'Unlock cmd' || ctx.args.join(' ').slice(0, 50));
 
     ctx.sendMessage(':unlock: Canal desbloqueado!');
   }

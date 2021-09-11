@@ -23,22 +23,22 @@ export default class Search extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    const currPlayer = this.client.music.players.get(ctx.msg.guildID as string);
+    const currPlayer = this.client.music.players.get(ctx.guild.id);
 
     if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID as string;
+    const voiceChannelID = ctx.member?.voiceState.channelID as string;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
       const player = this.client.music.create({
-        guild: ctx.msg.guildID as string,
+        guild: ctx.guild.id,
         voiceChannel: voiceChannelID,
-        textChannel: ctx.msg.channel.id,
+        textChannel: ctx.channel.id,
         selfDeafen: true
       });
 
@@ -66,12 +66,12 @@ export default class Search extends Command {
           .setAuthor(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
           .setTimestamp();
 
-        await ctx.sendMessage({ embed });
+        const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
 
         const searchCollector = this.client.music.searchMsgCollectors.get(ctx.author.id);
 
         if (searchCollector) {
-          searchCollector.message.edit({ content: ':x: Pesquisa cancelada!', embed: {} });
+          searchCollector.message.edit({ content: ':x: Pesquisa cancelada!', embeds: [] });
           searchCollector.messageCollector.stop('New Search');
           this.client.music.searchMsgCollectors.delete(ctx.author.id);
         }
@@ -79,10 +79,10 @@ export default class Search extends Command {
         const filter = (m: Message) => m.author.id === ctx.author.id && parseInt(m.content) >= 0 && parseInt(m.content) <= resLength;
         const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
 
-        this.client.music.searchMsgCollectors.set(ctx.author.id, { message: ctx.sentMsg, messageCollector: collector });
+        this.client.music.searchMsgCollectors.set(ctx.author.id, { message: msg, messageCollector: collector });
 
         collector.on('collect', m => {
-          ctx.sentMsg.delete().catch(() => { });
+          msg.delete().catch(() => { });
 
           const idx = parseInt(m.content);
 
@@ -100,7 +100,7 @@ export default class Search extends Command {
 
           if (player.state === 'DISCONNECTED') {
             if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-              ctx.channel.createMessage(':x: O canal de voz está cheio!');
+              ctx.channel.createMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
               player.destroy();
               return;
             }
@@ -118,14 +118,14 @@ export default class Search extends Command {
         collector.on('end', reason => {
           this.client.music.searchMsgCollectors.delete(ctx.author.id);
           if (reason === 'time')
-            ctx.editMessage({ content: ':x: Pesquisa cancelada!', embed: {} });
+            msg.edit({ content: ':x: Pesquisa cancelada!', embeds: [] });
         });
       } else {
-        ctx.channel.createMessage(':x: Não encontrei nenhum resultado!');
+        ctx.channel.createMessage({ content: ':x: Não encontrei nenhum resultado!', flags: 1 << 6 });
       }
     } catch (err) {
       console.error(err);
-      ctx.channel.createMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.channel.createMessage({ content: ':x: Ocorreu um erro ao procurar a música.', flags: 1 << 6 });
     }
   }
 }

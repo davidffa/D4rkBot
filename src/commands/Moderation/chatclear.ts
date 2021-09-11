@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { Message } from 'eris';
 
 export default class Chatclear extends Command {
   constructor(client: Client) {
@@ -35,18 +36,18 @@ export default class Chatclear extends Command {
       return;
     }
 
-    channel.purge(parseInt(ctx.args[0]) + 1).then(async msgs => {
+    channel.purge({ limit: parseInt(ctx.args[0]) + 1 }).then(async msgs => {
       if (parseInt(ctx.args[0]) + 1 !== msgs) {
-        await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(ctx.args[0])}\` mensagens`);
+        const msg = await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(ctx.args[0])}\` mensagens`, true) as Message;
         setTimeout(() => {
-          ctx.sentMsg.delete().catch(() => { });
+          msg.delete().catch(() => { });
         }, 7e3);
         return;
       }
 
-      await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens`);
+      const msg = await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens`, true) as Message;
       setTimeout(() => {
-        ctx.sentMsg.delete().catch(() => { });
+        msg.delete().catch(() => { });
       }, 7e3);
     });
   }

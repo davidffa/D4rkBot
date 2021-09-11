@@ -16,10 +16,10 @@ export default class Volume extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
@@ -28,10 +28,10 @@ export default class Volume extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -39,17 +39,17 @@ export default class Volume extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = ctx.msg.member;
+    const member = ctx.member;
     if (!member) return;
 
     const setVolume = (vol: string): void => {
       if (!Number(vol)) {
-        ctx.sendMessage(':x: Valor do volume inválido!');
+        ctx.sendMessage({ content: ':x: Valor do volume inválido!', flags: 1 << 6 });
         return;
       }
 
       if (Number(vol) <= 0 || Number(vol) > 200) {
-        ctx.sendMessage(':x: O volume apenas pode variar entre 1 e 200');
+        ctx.sendMessage({ content: ':x: O volume apenas pode variar entre 1 e 200', flags: 1 << 6 });
         return;
       }
 
@@ -59,12 +59,12 @@ export default class Volume extends Command {
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (isDJ || ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         setVolume(ctx.args[0]);
         return;
       }
-      ctx.sendMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ pode alterar o volume!');
+      ctx.sendMessage({ content: ':x: Apenas quem requisitou esta música ou alguém com o cargo DJ pode alterar o volume!', flags: 1 << 6 });
     } else setVolume(ctx.args[0]);
   }
 }

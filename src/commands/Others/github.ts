@@ -19,14 +19,14 @@ export default class Github extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     const res = await fetch(`https://api.github.com/users/${encodeURIComponent(ctx.args[0])}`);
 
     if (res.status !== 200) {
-      ctx.sendMessage(':x: Perfil não encontrado');
+      ctx.sendMessage({ content: ':x: Perfil não encontrado', flags: 1 << 6 });
       return;
     }
 
@@ -55,6 +55,6 @@ export default class Github extends Command {
 
     user.bio && embed.addField(':bookmark_tabs: Biografia', `\n\`\`\`${user.bio}\`\`\``);
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

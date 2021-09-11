@@ -43,7 +43,7 @@ export default class Invite extends Command {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       ctx.sendMessage(res.join('\n'))
     } else {
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
     }
   }
 }

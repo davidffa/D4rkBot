@@ -4,7 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { Effect } from '../../typings/index';
 
-import { Emoji, User } from 'eris';
+import { Emoji, Message, User } from 'eris';
 import { ReactionCollector } from '../../structures/Collector';
 
 export default class Djtable extends Command {
@@ -22,26 +22,32 @@ export default class Djtable extends Command {
     if (ctx.channel.type !== 0) return;
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({
+        content: ':x: Preciso da permissão `Anexar Links` para executar este comando',
+        flags: 1 << 6
+      });
       return;
     }
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+      ctx.sendMessage({
+        content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando',
+        flags: 1 << 6
+      });
       return;
     }
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member!.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -49,12 +55,12 @@ export default class Djtable extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = ctx.msg.member;
+    const member = ctx.member;
     if (!member) return;
 
     const sendFilterMessage = async (): Promise<void> => {
       if (player.djTableMsg) {
-        ctx.sendMessage(':x: Já existe uma mesa de DJ aberta!');
+        ctx.sendMessage({ content: ':x: Já existe uma mesa de DJ aberta!', flags: 1 << 6 });
         return;
       }
       const effects: Effect[] = ['bass', 'pop', 'soft', 'treblebass', 'nightcore', 'vaporwave'];
@@ -67,21 +73,21 @@ export default class Djtable extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      await ctx.sendMessage({ embed });
-      player.djTableMsg = ctx.sentMsg;
-      ctx.sentMsg.addReaction('1️⃣');
-      ctx.sentMsg.addReaction('2️⃣');
-      ctx.sentMsg.addReaction('3️⃣');
-      ctx.sentMsg.addReaction('4️⃣');
-      ctx.sentMsg.addReaction('5️⃣');
-      ctx.sentMsg.addReaction('6️⃣');
-      ctx.sentMsg.addReaction('0️⃣');
-      ctx.sentMsg.addReaction('x_:751062867444498432');
+      const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+      player.djTableMsg = msg;
+      msg.addReaction('1️⃣');
+      msg.addReaction('2️⃣');
+      msg.addReaction('3️⃣');
+      msg.addReaction('4️⃣');
+      msg.addReaction('5️⃣');
+      msg.addReaction('6️⃣');
+      msg.addReaction('0️⃣');
+      msg.addReaction('x_:751062867444498432');
 
       const filter = (r: Emoji, u: User) => (r.name === '0️⃣' || r.name === '1️⃣' || r.name === '2️⃣' ||
         r.name === '3️⃣' || r.name === '4️⃣' || r.name === '5️⃣' || r.name === '6️⃣' || r.id === '751062867444498432') && u === ctx.author;
 
-      const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { max: 20, time: 90000 });
+      const collector = new ReactionCollector(this.client, msg, filter, { max: 20, time: 90000 });
 
       collector.on('collect', r => {
         switch (r.name) {
@@ -89,7 +95,7 @@ export default class Djtable extends Command {
             player.filters.clear();
             player.effects = [];
             embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
-            ctx.editMessage({ embed });
+            msg.edit({ embeds: [embed] });
             break;
           case 'x_':
             collector.stop('Close');
@@ -110,7 +116,7 @@ export default class Djtable extends Command {
             player.filters.set(filters);
 
             embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
-            ctx.editMessage({ embed });
+            msg.edit({ embeds: [embed] });
             break;
         }
       });
@@ -122,18 +128,18 @@ export default class Djtable extends Command {
       collector.on('end', () => {
         delete player.djTableMsg;
 
-        ctx.sentMsg.delete();
+        msg.delete();
         ctx.channel.createMessage('<a:disco:803678643661832233> Mesa de DJ fechada!');
       });
     }
 
     const isDJ = await this.client.music.hasDJRole(member);
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (isDJ || ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         sendFilterMessage();
         return;
       }
-      ctx.channel.createMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ pode usar a mesa de DJ!');
+      ctx.channel.createMessage({ content: ':x: Apenas quem requisitou esta música ou alguém com o cargo DJ pode usar a mesa de DJ!', flags: 1 << 6 });
     } else sendFilterMessage();
   }
 }

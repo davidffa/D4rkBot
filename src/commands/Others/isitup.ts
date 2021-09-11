@@ -19,7 +19,7 @@ export default class Isitup extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -31,7 +31,7 @@ export default class Isitup extends Command {
     const body = await fetch(`https://isitup.org/${url}.json`).then(res => res.json()).catch(_ => null);
 
     if (!body) {
-      ctx.sendMessage(':x: Site inválido!');
+      ctx.sendMessage({ content: ':x: Site inválido!', flags: 1 << 6 });
       return;
     }
 
@@ -49,6 +49,6 @@ export default class Isitup extends Command {
         .setDescription(`O site **${ctx.args[0]}** está offline.`)
     }
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

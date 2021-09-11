@@ -17,22 +17,22 @@ export default class Seek extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
     if (player.radio) {
-      ctx.sendMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+      ctx.sendMessage({ content: ':x: Não podes usar este comando enquanto estiver a tocar uma rádio!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member!.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -40,17 +40,17 @@ export default class Seek extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = ctx.msg.member;
+    const member = ctx.member
     if (!member) return;
 
     const seek = (time: string): void => {
       if (Number(time) !== 0 && !Number(time.replace(/:/g, ''))) {
-        ctx.sendMessage(':x: Tempo inválido! Tente no formato `ss` ou `hh:mm:ss`');
+        ctx.sendMessage({ content: ':x: Tempo inválido! Tente no formato `ss` ou `hh:mm:ss`', flags: 1 << 6 });
         return;
       }
 
       if (!player.queue.current?.duration) {
-        ctx.sendMessage(':x: Não consegui ver o tempo da música.');
+        ctx.sendMessage({ content: ':x: Não consegui ver o tempo da música.', flags: 1 << 6 });
         return;
       }
 
@@ -60,7 +60,7 @@ export default class Seek extends Command {
         const parts = time.split(':');
 
         if (parts.length > 3) {
-          ctx.sendMessage(`:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`)
+          ctx.sendMessage({ content: `:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`, flags: 1 << 6 })
           return;
         }
 
@@ -71,7 +71,7 @@ export default class Seek extends Command {
       }
 
       if ((finalTime && (finalTime < 0 || finalTime * 1000 > player.queue.current.duration)) || Number(time) < 0 || Number(time) * 1000 > player.queue.current.duration) {
-        ctx.sendMessage(`:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`)
+        ctx.sendMessage({ content: `:x: O tempo tem de variar entre \`0 e ${player.queue.current.duration / 1000}\` segundos`, flags: 1 << 6 })
         return;
       }
 
@@ -81,12 +81,12 @@ export default class Seek extends Command {
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (isDJ || ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         seek(ctx.args[0]);
         return;
       }
-      ctx.sendMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ !');
+      ctx.sendMessage({ content: ':x: Apenas quem requisitou esta música ou alguém com o cargo DJ !', flags: 1 << 6 });
     } else seek(ctx.args[0]);
   }
 }

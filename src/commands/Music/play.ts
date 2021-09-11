@@ -22,7 +22,7 @@ export default class Play extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -30,7 +30,7 @@ export default class Play extends Command {
 
     if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID as string;
+    const voiceChannelID = ctx.member?.voiceState.channelID as string;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
@@ -49,7 +49,7 @@ export default class Play extends Command {
       const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
 
       if (res.loadType === 'LOAD_FAILED') {
-        ctx.sendMessage(':x: Falha ao carregar a música.');
+        ctx.sendMessage(`:x: Falha ao carregar a música. Erro: \`${res.exception?.message}\``);
       } else if (res.loadType === 'NO_MATCHES') {
         ctx.sendMessage(':x: Nenhuma música encontrada.');
       } else {
@@ -62,7 +62,7 @@ export default class Play extends Command {
 
         if (player.state === 'DISCONNECTED') {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-            ctx.sendMessage(':x: O canal de voz está cheio!');
+            ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
             player.destroy();
             return;
           }
@@ -91,7 +91,7 @@ export default class Play extends Command {
 
           urlRegex.test(ctx.args[0]) && embed.setURL(ctx.args[0]);
 
-          ctx.sendMessage({ embed });
+          ctx.sendMessage({ embeds: [embed] });
         } else {
           const tracks = res.tracks;
 

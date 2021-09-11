@@ -17,19 +17,19 @@ export default class Enable extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.msg.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
-      ctx.sendMessage(':x: Precisas da permissão `MANAGE_GUILD` para usar este comando.');
+    if (!ctx.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
+      ctx.sendMessage({ content: ':x: Precisas da permissão `MANAGE_GUILD` para usar este comando.', flags: 1 << 6 });
       return;
     }
 
     const command = this.client.commands.filter(c => ctx.author.id === '334054158879686657' || c.category !== 'Dev').find(c => c.name === ctx.args[0] || c.aliases?.includes(ctx.args[0]));
 
     if (!command) {
-      ctx.sendMessage(':x: Eu não tenho esse comando!');
+      ctx.sendMessage({ content: ':x: Eu não tenho esse comando!', flags: 1 << 6 });
       return;
     }
 
-    const guildData = this.client.guildCache.get(ctx.msg.guildID as string);
+    const guildData = this.client.guildCache.get(ctx.guild.id);
 
     if (guildData) {
       if (!guildData.disabledCmds.includes(command.name)) {
@@ -40,7 +40,7 @@ export default class Enable extends Command {
       guildData.disabledCmds.splice(guildData.disabledCmds.indexOf(command.name), 1);
     }
 
-    const guildDBData = await this.client.guildDB.findOne({ guildID: ctx.msg.guildID });
+    const guildDBData = await this.client.guildDB.findOne({ guildID: ctx.guild.id });
 
     if (guildDBData && guildDBData.disabledCmds) {
       guildDBData.disabledCmds.splice(guildDBData.disabledCmds.indexOf(command.name), 1);
@@ -58,6 +58,6 @@ export default class Enable extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

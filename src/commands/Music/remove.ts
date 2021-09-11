@@ -18,10 +18,10 @@ export default class Remove extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
@@ -30,10 +30,10 @@ export default class Remove extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -41,17 +41,17 @@ export default class Remove extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = ctx.msg.member;
+    const member = ctx.member;
     if (!member) return;
 
     const remove = (pos: number): void => {
       if (!player.queue.length) {
-        ctx.sendMessage(':x: Não há músicas na queue');
+        ctx.sendMessage({ content: ':x: Não há músicas na queue', flags: 1 << 6 });
         return;
       }
 
       if (!pos || pos <= 0 || pos > player.queue.length) {
-        ctx.sendMessage(`:x: Número inválido! Tente um número entre 1 e ${player.queue.length}`);
+        ctx.sendMessage({ content: `:x: Número inválido! Tente um número entre 1 e ${player.queue.length}`, flags: 1 << 6 });
         return;
       }
 
@@ -61,16 +61,16 @@ export default class Remove extends Command {
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (!player.queue.length) {
-        ctx.sendMessage(':x: Não há músicas na queue');
+        ctx.sendMessage({ content: ':x: Não há músicas na queue', flags: 1 << 6 });
         return;
       }
       if (isDJ || (player.queue[parseInt(ctx.args[0]) - 1] && ctx.author === player.queue[parseInt(ctx.args[0]) - 1].requester) || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         remove(parseInt(ctx.args[0]));
         return;
       }
-      ctx.sendMessage(':x: Apenas quem requisitou essa música ou alguém com o cargo DJ pode remover a música da queue!');
+      ctx.sendMessage({ content: ':x: Apenas quem requisitou essa música ou alguém com o cargo DJ pode remover a música da queue!', flags: 1 << 6 });
     } else remove(parseInt(ctx.args[0]));
   }
 }

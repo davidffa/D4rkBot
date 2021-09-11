@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message } from 'eris';
-
 import fetch from 'node-fetch';
 
 export default class Addemoji extends Command {
@@ -21,15 +19,15 @@ export default class Addemoji extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (!ctx.guild) return;
     if (ctx.channel.type !== 0 || !ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
-      ctx.sendMessage(':x: Preciso da permissão `Gerir Emojis` para executar este comando!');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Gerir Emojis` para executar este comando!', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.msg.member?.permissions.has('manageEmojis')) {
-      ctx.sendMessage(':x: Precisas da permissão `Gerir Emojis` para executar este comando!')
+    if (!ctx.member!.permissions.has('manageEmojis')) {
+      ctx.sendMessage({ content: ':x: Precisas da permissão `Gerir Emojis` para executar este comando!', flags: 1 << 6 })
       return;
     }
-    
+
     if (/<a?:.{2,32}:\d{17,18}>/.test(ctx.args[0])) {
       const id = ctx.args[0].match(/\d{17,18}/)?.[0] as string;
       ctx.args[0] = `https://cdn.discordapp.com/emojis/${id}${/^<a/.test(ctx.args[0]) ? '.gif' : '.png'}`;
@@ -40,24 +38,24 @@ export default class Addemoji extends Command {
     let imageURL: string;
     let emojiName: string;
 
-    if (ctx.msg instanceof Message && ctx.msg.attachments.length) {
-      imageURL = ctx.msg.attachments[0].url;
+    if (ctx.attachments.length) {
+      imageURL = ctx.attachments[0].url;
       emojiName = ctx.args[0];
     } else {
       if (!urlRegex.test(ctx.args[0])) {
-        ctx.sendMessage(':x: URL inválido!');
+        ctx.sendMessage({ content: ':x: URL inválido!', flags: 1 << 6 });
         return;
       }
       imageURL = ctx.args[0];
       if (!ctx.args[1]) {
-        ctx.sendMessage(`:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}addemoji <URL/Anexo/Emoji> <nome>\``);
+        ctx.sendMessage({ content: `:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}addemoji <URL/Anexo/Emoji> <nome>\``, flags: 1 << 6 });
         return;
       }
       emojiName = ctx.args[1];
     }
 
     if (emojiName.length < 2 || emojiName.length > 32) {
-      ctx.sendMessage(':x: O nome do emoji tem de ter entre 2 e 32 caracteres.');
+      ctx.sendMessage({ content: ':x: O nome do emoji tem de ter entre 2 e 32 caracteres.', flags: 1 << 6 });
       return;
     }
 
@@ -72,7 +70,7 @@ export default class Addemoji extends Command {
     });
 
     if (!type) {
-      ctx.sendMessage(':x: Imagem inválida!');
+      ctx.sendMessage({ content: ':x: Imagem inválida!', flags: 1 << 6 });
       return;
     }
 
@@ -81,7 +79,7 @@ export default class Addemoji extends Command {
     const imgWeight = ((base64.length * (3 / 4)) - (base64.endsWith('==') ? 1 : 2)) / 1024;
 
     if (imgWeight > 256) {
-      ctx.sendMessage(':x: A imagem não pode ser maior do que 256 KB.');
+      ctx.sendMessage({ content: ':x: A imagem não pode ser maior do que 256 KB.', flags: 1 << 6 });
       return;
     }
 
@@ -92,11 +90,11 @@ export default class Addemoji extends Command {
       });
 
       ctx.sendMessage(`Emoji ${res.animated ? '<a:' : '<:'}${res.name}:${res.id}> adicionado.`);
-    } catch (err) {
+    } catch (err: any) {
       if (err.message.includes('image: File cannot be larger than 256.0 kb')) {
-        ctx.sendMessage(':x: A imagem não pode ser maior do que 256 KB.');
+        ctx.sendMessage({ content: ':x: A imagem não pode ser maior do que 256 KB.', flags: 1 << 6 });
       } else {
-        ctx.sendMessage(':x: Ocorreu um erro ao enviar o emoji.');
+        ctx.sendMessage({ content: ':x: Ocorreu um erro ao enviar o emoji.', flags: 1 << 6 });
         console.error(err);
       }
     }

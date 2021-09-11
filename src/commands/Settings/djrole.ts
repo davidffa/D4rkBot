@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message } from 'eris';
-
 export default class Djrole extends Command {
   constructor(client: Client) {
     super(client, {
@@ -19,11 +17,11 @@ export default class Djrole extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    const data = this.client.guildCache.get(ctx.msg.guildID as string);
+    const data = this.client.guildCache.get(ctx.guild.id);
 
     if (!ctx.args.length) {
       if (!data?.djRole) {
-        ctx.sendMessage(`:x: Nenhum cargo de DJ setado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um cargo de DJ.`);
+        ctx.sendMessage({ content: `:x: Nenhum cargo de DJ setado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um cargo de DJ.`, flags: 1 << 6 });
         return;
       }
 
@@ -31,12 +29,12 @@ export default class Djrole extends Command {
 
       if (!djrole) {
         data.djRole = '';
-        const dbData = await this.client.guildDB.findOne({ guildID: ctx.msg.guildID as string });
+        const dbData = await this.client.guildDB.findOne({ guildID: ctx.guild.id });
 
         if (dbData) {
           dbData.djrole = '';
           dbData.save();
-          ctx.sendMessage(`:x: Nenhum cargo de DJ setado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um cargo de DJ.`);
+          ctx.sendMessage({ content: `:x: Nenhum cargo de DJ setado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um cargo de DJ.`, flags: 1 << 6 });
         }
         return;
       }
@@ -45,8 +43,8 @@ export default class Djrole extends Command {
       return;
     }
 
-    if (!ctx.msg.member?.permissions.has('manageRoles') && ctx.author.id !== '334054158879686657') {
-      ctx.sendMessage(':x: Precisas da permissão `Gerenciar Cargos` para usar este comando.');
+    if (!ctx.member?.permissions.has('manageRoles') && ctx.author.id !== '334054158879686657') {
+      ctx.sendMessage({ content: ':x: Precisas da permissão `Gerenciar Cargos` para usar este comando.', flags: 1 << 6 });
       return;
     }
 
@@ -54,7 +52,7 @@ export default class Djrole extends Command {
       if (data && data.djRole) {
         data.djRole = '';
 
-        const dbData = await this.client.guildDB.findOne({ guildID: ctx.msg.guildID as string });
+        const dbData = await this.client.guildDB.findOne({ guildID: ctx.guild.id });
 
         if (dbData) {
           dbData.djrole = '';
@@ -63,29 +61,27 @@ export default class Djrole extends Command {
         }
         return;
       }
-      ctx.sendMessage(':x: O DJ role não estava ativo!');
+      ctx.sendMessage({ content: ':x: O DJ role não estava ativo!', flags: 1 << 6 });
       return;
     }
 
-    const role = ctx.guild.roles.get((ctx.msg instanceof Message && ctx.msg.roleMentions[0]) || ctx.args[0])
-      || ctx.guild.roles.find(r => r.name === ctx.args[0])
-      || ctx.guild.roles.find(r => r.name.toLowerCase().includes(ctx.args.join(' ').toLowerCase()));
+    const role = this.client.utils.findRole(ctx.args.join(' '), ctx.guild);
 
     if (!role) {
-      ctx.sendMessage(':x: Cargo não encontrado!');
+      ctx.sendMessage({ content: ':x: Cargo não encontrado!', flags: 1 << 6 });
       return;
     }
 
     if (data) data.djRole = role.id;
 
-    const dbData = await this.client.guildDB.findOne({ guildID: ctx.msg.guildID });
+    const dbData = await this.client.guildDB.findOne({ guildID: ctx.guild.id });
 
     if (dbData) {
       dbData.djrole = role.id;
       dbData.save();
     } else {
       await this.client.guildDB.create({
-        guildID: ctx.msg.guildID as string,
+        guildID: ctx.guild.id,
         djrole: role.id
       });
     }

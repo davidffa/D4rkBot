@@ -17,7 +17,7 @@ export default class Channelinfo extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (!ctx.guild) return;
     if (ctx.channel.type !== 0 || !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando.');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando.', flags: 1 << 6 });
       return;
     }
 
@@ -25,7 +25,7 @@ export default class Channelinfo extends Command {
       || ctx.guild.channels.find(ch => ch.name.includes(ctx.args.join(' ')))) : ctx.channel;
 
     if (!channel) {
-      ctx.sendMessage(':x: Canal não encontrado!');
+      ctx.sendMessage({ content: ':x: Canal não encontrado!', flags: 1 << 6 });
       return;
     }
 
@@ -75,6 +75,6 @@ export default class Channelinfo extends Command {
     if (channel.type === 0 || channel.type === 5) {
       embed.addField(':question: Tópico', `\`\`\`${channel.topic ? channel.topic : 'Nenhum'}\`\`\``, true);
     }
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ReactionCollector } from '../../structures/Collector';
 
-import { Emoji, User } from 'eris';
+import { Emoji, Message, User } from 'eris';
 
 import fetch from 'node-fetch';
 import cio from 'cheerio';
@@ -30,12 +30,12 @@ export default class Lyrics extends Command {
     if (ctx.channel.type !== 0) return;
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -87,10 +87,13 @@ export default class Lyrics extends Command {
     let artist, title;
 
     if (!ctx.args.length) {
-      const player = this.client.music.players.get(ctx.msg.guildID as string);
+      const player = this.client.music.players.get(ctx.guild.id);
 
       if (!player || !player.queue.current) {
-        ctx.sendMessage(`:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(ctx.msg.guildID as string)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`);
+        ctx.sendMessage({
+          content: `:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`,
+          flags: 1 << 6
+        });
         return;
       }
 
@@ -98,12 +101,12 @@ export default class Lyrics extends Command {
         const np = await this.client.music.getRadioNowPlaying(player.radio);
         artist = np.artist;
         title = np.songTitle;
-      }else {
+      } else {
         const titleArr = player.queue.current.title.split('-');
         artist = titleArr[0];
         title = titleArr[1];
       }
-      
+
       if (title) {
         res = await lyrics(title, artist);
       } else {
@@ -120,9 +123,12 @@ export default class Lyrics extends Command {
 
     if (!res) {
       if (ctx.args.join(' ').split('-').length === 1) {
-        ctx.sendMessage(`:x: Não encontrei nenhum resultado.\nExperimenta usar \`${this.client.guildCache.get(ctx.msg.guildID as string)?.prefix || 'db.'}lyrics <Nome da música> - <Artista>\``);
-      }else {
-        ctx.sendMessage(':x: Não encontrei nenhum resultado.');
+        ctx.sendMessage({
+          content: `:x: Não encontrei nenhum resultado.\nExperimenta usar \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}lyrics <Nome da música> - <Artista>\``,
+          flags: 1 << 6
+        });
+      } else {
+        ctx.sendMessage({ content: ':x: Não encontrei nenhum resultado.', flags: 1 << 6 });
       }
       return;
     }
@@ -139,13 +145,13 @@ export default class Lyrics extends Command {
       .setTimestamp()
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    await ctx.sendMessage({ embed });
-    ctx.sentMsg.addReaction('⬅️');
-    ctx.sentMsg.addReaction('➡️');
+    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+    msg.addReaction('⬅️');
+    msg.addReaction('➡️');
 
     const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
 
-    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 6 * 60 * 1000, max: 20 });
+    const collector = new ReactionCollector(this.client, msg, filter, { time: 6 * 60 * 1000, max: 20 });
 
     const changePage = (r: Emoji): void => {
       if (!res) return;
@@ -164,14 +170,14 @@ export default class Lyrics extends Command {
       embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
         .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-      ctx.editMessage({ embed });
+      msg.edit({ embeds: [embed] });
     }
 
     collector.on('collect', r => {
       if (ctx.channel.type !== 0) return;
 
       if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-        ctx.sentMsg.removeReaction(r.name, ctx.author.id);
+        msg.removeReaction(r.name, ctx.author.id);
       }
 
       changePage(r);
@@ -185,8 +191,8 @@ export default class Lyrics extends Command {
     });
 
     collector.on('end', () => {
-      ctx.sentMsg.removeReaction('⬅️');
-      ctx.sentMsg.removeReaction('➡️');
+      msg.removeReaction('⬅️');
+      msg.removeReaction('➡️');
     });
   }
 }

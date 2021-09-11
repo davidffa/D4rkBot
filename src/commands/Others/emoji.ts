@@ -38,12 +38,12 @@ export default class Emoji extends Command {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage(':x: Preciso da permissão `Adicionar Reações` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -78,13 +78,13 @@ export default class Emoji extends Command {
 
         embed.addField(`:handshake: Suporte para tom de pele`, `\`${unicodeEmojiInfo.skin_tone_support ? 'Sim' : 'Não'}\``, true);
 
-        ctx.sendMessage({ embed });
+        ctx.sendMessage({ embeds: [embed] });
         return;
       }
     }
 
     if (!ctx.channel.guild.emojis.length) {
-      ctx.sendMessage(':x: Este servidor não tem emojis :frowning2:.');
+      ctx.sendMessage({ content: ':x: Este servidor não tem emojis :frowning2:.', flags: 1 << 6 });
       return;
     }
 
@@ -104,20 +104,20 @@ export default class Emoji extends Command {
         .setTimestamp()
         .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-      const msg = await ctx.sendMessage({ embed });
+      const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
 
       if (emojiList.length > 30) {
-        ctx.sentMsg.addReaction('⬅️');
-        ctx.sentMsg.addReaction('➡️');
+        msg.addReaction('⬅️');
+        msg.addReaction('➡️');
 
         const filter = (r: ErisEmoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
-        const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 5 * 60 * 1000 });
+        const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
         collector.on('collect', async r => {
-          if (ctx.sentMsg.channel.type !== 0) return;
+          if (msg.channel.type !== 0) return;
 
-          if (ctx.sentMsg.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            ctx.sentMsg.removeReaction(r.name, ctx.author.id);
+          if (msg.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+            msg.removeReaction(r.name, ctx.author.id);
           }
 
           switch (r.name) {
@@ -133,7 +133,7 @@ export default class Emoji extends Command {
 
           embed.setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice((page - 1) * 30, page * 30).join(' | ')}`)
             .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
-          ctx.editMessage({ embed });
+          msg.edit({ embeds: [embed] });
         });
       }
       return;
@@ -156,14 +156,14 @@ export default class Emoji extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
     }
 
     if (ctx.args[0].split(':').length === 3) {
       const e = ctx.guild.emojis.find((emoji: GuildEmoji) => emoji.id === ctx.args[0].split(':')[2].slice(0, -1));
 
       if (!e) {
-        ctx.sendMessage(':x: Não encontrei esse emoji!');
+        ctx.sendMessage({ content: ':x: Não encontrei esse emoji!', flags: 1 << 6 });
         return;
       }
       getEmojiInfo(e);
@@ -179,7 +179,7 @@ export default class Emoji extends Command {
     });
 
     if (!emojiList.length) {
-      ctx.sendMessage(':x: Não encontrei esse emoji!');
+      ctx.sendMessage({ content: ':x: Não encontrei esse emoji!', flags: 1 << 6 });
       return;
     }
 
@@ -199,13 +199,13 @@ export default class Emoji extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    await ctx.sendMessage({ embed });
+    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
 
     const filter = (m: Message) => m.author.id === ctx.author.id && parseInt(m.content) >= 1 && parseInt(m.content) <= 20;
     const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
 
     collector.on('collect', m => {
-      ctx.sentMsg.delete();
+      msg.delete();
       getEmojiInfo(emojiList[Number(m.content) - 1]);
     });
   }

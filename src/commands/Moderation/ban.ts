@@ -18,30 +18,22 @@ export default class Ban extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type !== 0 || !ctx.msg.member || !ctx.guild) return;
+    if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.msg.member.permissions.has('banMembers')) {
-      ctx.sendMessage(':x: Não tens permissão para banir membros.');
+    if (!ctx.member.permissions.has('banMembers')) {
+      ctx.sendMessage({ content: ':x: Não tens permissão para banir membros.', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('banMembers')) {
-      ctx.sendMessage(':x: Não tenho permissão para banir membros!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para banir membros!', flags: 1 << 6 });
       return;
     }
 
-    let user = (ctx.msg instanceof Message && ctx.msg.mentions[0]) || null;
+    const user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
 
     if (!user) {
-      if (Number(ctx.args[0]) && (ctx.args[0].length >= 17 || ctx.args[0].length <= 19)) {
-        try {
-          user = this.client.users.get(ctx.args[0]) || await this.client.getRESTUser(ctx.args[0]);
-        } catch { }
-      }
-    }
-
-    if (!user) {
-      ctx.sendMessage(':x: Utilizador inválido!');
+      ctx.sendMessage({ content: ':x: Utilizador inválido!', flags: 1 << 6 });
       return;
     }
 
@@ -49,20 +41,20 @@ export default class Ban extends Command {
 
     if (member) {
       if (member.id === this.client.user.id) {
-        ctx.sendMessage(':x: Não me consigo banir a mim mesmo!');
+        ctx.sendMessage({ content: ':x: Não me consigo banir a mim mesmo!', flags: 1 << 6 });
         return;
       }
 
       if (member.id === ctx.guild.ownerID) {
-        ctx.sendMessage(':x: Não consigo banir o dono do servidor!');
+        ctx.sendMessage({ content: ':x: Não consigo banir o dono do servidor!', flags: 1 << 6 });
         return;
       }
 
       const guild = ctx.guild;
 
-      let botHighestRole = ctx.guild.roles.get(ctx.msg.guildID as string) as Role;
-      let memberHighestRole = ctx.guild.roles.get(ctx.msg.guildID as string) as Role;
-      let targetHighestRole = ctx.guild.roles.get(ctx.msg.guildID as string) as Role;
+      let botHighestRole = ctx.guild.roles.get(ctx.guild.id) as Role;
+      let memberHighestRole = ctx.guild.roles.get(ctx.guild.id) as Role;
+      let targetHighestRole = ctx.guild.roles.get(ctx.guild.id) as Role;
 
       member.roles.forEach(roleID => {
         const role = guild.roles.get(roleID);
@@ -72,7 +64,7 @@ export default class Ban extends Command {
         }
       });
 
-     ctx.guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
+      ctx.guild.members.get(this.client.user.id)?.roles.forEach(roleID => {
         const role = guild.roles.get(roleID);
         if (!role) return;
         if (!botHighestRole || role.position > botHighestRole.position) {
@@ -81,12 +73,12 @@ export default class Ban extends Command {
       });
 
       if (botHighestRole.position <= targetHighestRole.position) {
-        ctx.sendMessage(':x: O cargo mais alto desse membro é superior ao meu cargo mais alto!');
+        ctx.sendMessage({ content: ':x: O cargo mais alto desse membro é superior ao meu cargo mais alto!', flags: 1 << 6 });
         return;
       }
 
       if (ctx.author.id !== ctx.guild.ownerID) {
-        ctx.msg.member.roles.forEach(roleID => {
+        ctx.member.roles.forEach(roleID => {
           const role = guild.roles.get(roleID);
           if (!role) return;
           if (!memberHighestRole || role.position > memberHighestRole.position) {
@@ -95,7 +87,7 @@ export default class Ban extends Command {
         });
 
         if (memberHighestRole.position <= targetHighestRole.position) {
-          ctx.sendMessage(':x: O cargo mais alto desse membro é superior ao teu cargo mais alto!');
+          ctx.sendMessage({ content: ':x: O cargo mais alto desse membro é superior ao teu cargo mais alto!', flags: 1 << 6 });
           return;
         }
       }
@@ -106,7 +98,7 @@ export default class Ban extends Command {
     ctx.guild.banMember(user.id, 0, reason).then(() => {
       ctx.sendMessage(`<a:verificado:803678585008816198> Banis-te o \`${user?.username}#${user?.discriminator}\` por \`${reason}\``);
     }).catch(() => {
-      ctx.sendMessage(':x: Não tenho permissão para banir esse membro!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para banir esse membro!', flags: 1 << 6 });
     })
   }
 }

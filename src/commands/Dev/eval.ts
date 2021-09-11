@@ -4,7 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { ReactionCollector } from '../../structures/Collector';
 
-import { Message, User, Emoji } from 'eris';
+import { Message, User, Emoji, TextableChannel } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -81,8 +81,10 @@ export default class Eval extends Command {
 
       const res = response.join('\n');
 
+      let msg: Message;
+
       if (res.length < 2e3) {
-        await ctx.sendMessage(res);
+        msg = await ctx.sendMessage(res, true) as Message;
       } else {
         const body = {
           files: [{
@@ -101,62 +103,67 @@ export default class Eval extends Command {
         }).then(res => res.json());
 
         if (bin.key) {
-          await ctx.sendMessage(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`);
+          msg = await ctx.sendMessage(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, true) as Message;
         } else {
-          await ctx.sendMessage(':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!', {
-            name: 'eval.txt',
-            file: Buffer.from(res)
-          });
+          msg = await ctx.sendMessage({
+            content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
+            file: [
+              {
+                name: 'eval.txt',
+                file: Buffer.from(res)
+              }
+            ]
+          }, true) as Message;
         }
       }
 
       if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) return;
 
-      ctx.sentMsg.addReaction('x_:751062867444498432');
-      ctx.sentMsg.addReaction('📋');
+      msg.addReaction('x_:751062867444498432');
+      msg.addReaction('📋');
 
       const filter = (r: Emoji, u: User) => (r.id === '751062867444498432' || r.name === '📋') && u === ctx.author;
 
-      const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { max: 1, time: 3 * 60 * 1000 });
+      const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
       collector.on('collect', async r => {
         switch (r.name) {
           case '📋':
             const dmChannel = await ctx.author.getDMChannel();
-            dmChannel.createMessage(ctx.sentMsg.content);
+            dmChannel.createMessage(msg.content);
 
             if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              ctx.sentMsg.removeReactions();
+              msg.removeReactions();
             else {
-              ctx.sentMsg.removeReaction('x_:751062867444498432');
-              ctx.sentMsg.removeReaction('📋');
+              msg.removeReaction('x_:751062867444498432');
+              msg.removeReaction('📋');
             }
 
-            ctx.editMessage('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
+            msg.edit('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
 
             break;
           case 'x_':
-            if (ctx.msg instanceof Message && ctx.msg.attachments.length === 1) {
-              ctx.sentMsg.delete();
+            if (msg.attachments.length === 1) {
+              msg.delete();
               return;
             }
 
             if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              ctx.sentMsg.removeReactions();
+              msg.removeReactions();
             else {
-              ctx.sentMsg.removeReaction('x_:751062867444498432');
-              ctx.sentMsg.removeReaction('📋');
+              msg.removeReaction('x_:751062867444498432');
+              msg.removeReaction('📋');
             }
 
-            ctx.editMessage('<a:verificado:803678585008816198> Resultado da eval fechado!');
+            msg.edit('<a:verificado:803678585008816198> Resultado da eval fechado!');
             break;
         }
       });
 
       collector.on('end', reason => {
         if (reason === 'Time')
-          ctx.sentMsg.removeReaction('x_:751062867444498432');
-        ctx.sentMsg.removeReaction('📋');
+          msg.removeReaction('x_:751062867444498432');
+        msg.removeReaction('📋');
       });
     } catch (err) {
       ctx.sendMessage(`:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``)

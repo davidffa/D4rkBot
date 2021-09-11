@@ -22,7 +22,7 @@ export default class Record extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID) {
       ctx.sendMessage(':x: Precisas de estar num canal de voz para usar esse comando!');

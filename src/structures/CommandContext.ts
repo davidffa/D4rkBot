@@ -1,99 +1,90 @@
 import Client from './Client';
-import Interaction from './Interaction';
+import { Attachment, CommandInteraction, Guild, InteractionDataOptionsWithValue, Member, Message, MessageContent, TextableChannel, User } from 'eris';
 
-import { Message, Guild, GuildChannel, MessageContent, MessageFile, User, TextableChannel } from 'eris';
-
-import { InteractionApplicationCommandCallbackData, IEditInteractionData } from '../typings/index';
+export enum Type {
+  MESSAGE,
+  INTERACTION
+}
 
 export default class CommandContext {
-  client: Client;
-  msg: Message | Interaction;
-  args: string[];
+  private readonly client: Client;
+  private readonly interactionOrMessage: Message | CommandInteraction;
+  private deferred: boolean;
 
-  sentMsg: Message;
+  public type: Type;
+  public args: string[] = [];
+  public attachments: Attachment[];
 
-  constructor(client: Client, message: Message|Interaction, args?: string[]) {
+  constructor(client: Client, interaction: Message | CommandInteraction, args: string[] = []) {
     this.client = client;
-    this.msg = message;
+    this.interactionOrMessage = interaction;
 
-    if (message instanceof Interaction) {
-      this.args = message.args;
-    }else {
-      this.args = args || [];
-    }
-  }
+    if (interaction instanceof Message) {
+      this.type = Type.MESSAGE;
 
-  async sendMessage(content: MessageContent, file?: MessageFile): Promise<Message<TextableChannel>> {
-    if (this.msg instanceof Message) {
-      this.sentMsg = await this.msg.channel.createMessage(content, file);
-      return this.sentMsg;
-    }
+      this.args = args;
+      this.attachments = interaction.attachments;
+    } else {
+      this.type = Type.INTERACTION;
 
-    let cbData = {} as InteractionApplicationCommandCallbackData;
+      if (interaction.data.type === 1) {
+        if (interaction.data.options?.[0].type === 1) {
+          this.args.push(interaction.data.options[0].name.toString().trim());
 
-    if (typeof content === 'string') {
-      cbData.content = '' + content;
-    }else if (typeof content === 'object') {
-      if (content.embed) {
-        cbData.embeds = [content.embed];
-        delete content.embed;
+          for (const val of (interaction.data.options[0].options as InteractionDataOptionsWithValue[])) {
+            this.args.push(val.value.toString().trim());
+          }
+
+        } else {
+          const options = interaction.data.options as InteractionDataOptionsWithValue[];
+
+          this.args = options?.map(ops => ops.value.toString().trim()) ?? [];
+        }
+      } else if (interaction.data.type === 2) {
+        this.args.push(interaction.data.target_id!);
+      } else if (interaction.data.type === 3) {
+        this.args = interaction.data.resolved!.messages!.get(interaction.data.target_id!)!.content.split(/ +/);
       }
-      Object.assign(cbData, content);
-    }else {
-      return Promise.reject('No content provided');
     }
-
-    const cb = {
-      type: 4,
-      data: cbData
-    }
-
-    await this.client.requestHandler.request('POST', `/interactions/${this.msg.id}/${this.msg.token}/callback`, true, cb, file);
-    this.sentMsg = await this.client.requestHandler.request('GET', `/webhooks/${this.client.user.id}/${this.msg.token}/messages/@original`, true).then((message: any) => new Message(message, this.client));
-    return this.sentMsg;
-  }
-
-  async editMessage(content: MessageContent, file?: MessageFile) {
-    if (!(this.msg instanceof Interaction)) {
-      if (!this.sentMsg) return Promise.reject('No message has been sent!');
-      return this.sentMsg.edit(content);
-    }
-
-    const data = {} as IEditInteractionData;
-
-    if (typeof content === 'string') data.content = '' + content;
-    else if (typeof content === 'object') {
-      if (content.embed) {
-        data.embeds = [content.embed];
-        delete content.embed;
-      }
-      Object.assign(data, content);
-    }else {
-      return Promise.reject('No content provided');
-    }
-
-    await this.client.requestHandler.request('PATCH', `/webhooks/${this.client.user.id}/${this.msg.token}/messages/@original`, true, data, file)
-  }
-
-  async waitInteraction() {
-    if (!(this.msg instanceof Interaction)) return;
-    const cb = {
-      type: 5
-    }
-
-    await this.client.requestHandler.request('POST', `/interactions/${this.msg.id}/${this.msg.token}/callback`, true, cb);
-  }
-
-  get guild(): Guild | null {
-    if (this.msg.channel instanceof GuildChannel) return this.msg.channel.guild;
-    return null;
   }
 
   get author(): User {
-    return this.msg.author;
+    if (this.interactionOrMessage instanceof Message) return this.interactionOrMessage.author;
+    return this.interactionOrMessage.member!.user;
+  }
+
+  get member(): Member | null | undefined {
+    return this.interactionOrMessage.member;
+  }
+
+  get guild(): Guild {
+    return this.client.guilds.get(this.interactionOrMessage.guildID!)!
   }
 
   get channel(): TextableChannel {
-    return this.msg.channel;
+    return this.interactionOrMessage.channel;
+  }
+
+  async sendMessage(content: MessageContent, fetchReply = false): Promise<Message<TextableChannel> | void> {
+    if (this.interactionOrMessage instanceof Message) {
+      return this.channel.createMessage(content);
+    } else {
+      if (this.deferred) {
+        await this.interactionOrMessage.editOriginalMessage(content);
+      } else {
+        await this.interactionOrMessage.createMessage(content);
+      }
+
+      if (fetchReply) {
+        return this.interactionOrMessage.getOriginalMessage();
+      }
+    }
+  }
+
+  async defer() {
+    if (this.interactionOrMessage instanceof CommandInteraction) {
+      this.interactionOrMessage.defer();
+      this.deferred = true;
+    }
   }
 }

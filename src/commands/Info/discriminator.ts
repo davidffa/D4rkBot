@@ -22,14 +22,14 @@ export default class Discriminator extends Command {
     const discrimin = ctx.args.join('').replace('#', '');
 
     if (!discriminRegex.test(discrimin)) {
-      ctx.sendMessage(':x: Discriminator inválido!');
+      ctx.sendMessage({ content: ':x: Discriminator inválido!', flags: 1 << 6 });
       return;
     }
 
     const members = ctx.guild.members.filter(m => m.discriminator === discrimin).map(m => `${m.username}#${m.discriminator}`);
 
     if (!members.length) {
-      ctx.sendMessage(':x: Não encontrei nenhum membro com esse discriminator!');
+      ctx.sendMessage({ content: ':x: Não encontrei nenhum membro com esse discriminator!', flags: 1 << 6 });
       return;
     }
 

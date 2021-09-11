@@ -6,28 +6,28 @@ import fetch from 'node-fetch';
 
 export default class Repository extends Command {
   constructor(client: Client) {
-      super(client, {
-          name: 'repository',
-          description: 'Informações sobre algum repositório do github.',
-          args: 2,
-          usage: '<Dono> <Nome do repositório>',
-          category: 'Others',
-          aliases: ['repo', 'repositorio'],
-          dm: true,
-          cooldown: 5
-      });
+    super(client, {
+      name: 'repository',
+      description: 'Informações sobre algum repositório do github.',
+      args: 2,
+      usage: '<Dono> <Nome do repositório>',
+      category: 'Others',
+      aliases: ['repo', 'repositorio'],
+      dm: true,
+      cooldown: 5
+    });
   }
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
-        
+
     const res = await fetch(`https://api.github.com/repos/${encodeURIComponent(ctx.args[0])}/${encodeURIComponent(ctx.args[1])}`);
 
     if (res.status !== 200) {
-      ctx.sendMessage(':x: Repositório não encontrado');
+      ctx.sendMessage({ content: ':x: Repositório não encontrado', flags: 1 << 6 });
       return;
     }
 
@@ -47,14 +47,14 @@ export default class Repository extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      repo.language && embed.addField(':gear: Linguagem', repo.language, true);
-      repo.license && repo.license.name && embed.addField(':newspaper: Licença', repo.license.name, true)
+    repo.language && embed.addField(':gear: Linguagem', repo.language, true);
+    repo.license && repo.license.name && embed.addField(':newspaper: Licença', repo.license.name, true)
 
-      embed.addField(':calendar: Criado em', `<t:${Math.floor(new Date(repo.created_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(repo.created_at).getTime() / 1e3)}:R>)`, true);
-      embed.addField(':calendar: Último push', `<t:${Math.floor(new Date(repo.pushed_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(repo.pushed_at).getTime() / 1e3)}:R>)`, true);
+    embed.addField(':calendar: Criado em', `<t:${Math.floor(new Date(repo.created_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(repo.created_at).getTime() / 1e3)}:R>)`, true);
+    embed.addField(':calendar: Último push', `<t:${Math.floor(new Date(repo.pushed_at).getTime() / 1e3)}:d> (<t:${Math.floor(new Date(repo.pushed_at).getTime() / 1e3)}:R>)`, true);
 
-      repo.description && embed.addField(':bookmark_tabs: Descrição', `\`\`\`\n${repo.description}\`\`\``);
+    repo.description && embed.addField(':bookmark_tabs: Descrição', `\`\`\`\n${repo.description}\`\`\``);
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

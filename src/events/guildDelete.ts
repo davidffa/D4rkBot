@@ -20,12 +20,12 @@ export default class GuildDelete {
       .addField(':crown: Dono', `\`${this.client.users.get(guild.ownerID)?.username}#${this.client.users.get(guild.ownerID)?.discriminator}\``, true)
       .addField(':closed_book: ID', `\`${guild.id}\``, true)
       .addField(':man: Membros', `\`${guild.members.size}\``, true)
-      .setThumbnail(guild.dynamicIconURL())
+      .setThumbnail(guild.dynamicIconURL() ?? '')
       .setTimestamp();
 
     const channel = await this.client.users.get('334054158879686657')?.getDMChannel();
 
-    channel && this.client.createMessage(channel.id, { embed });
+    channel && this.client.createMessage(channel.id, { embeds: [embed] });
 
     for (const collector of this.client.reactionCollectors) {
       if (collector.message.guildID === guild.id) {

@@ -17,27 +17,27 @@ export default class Disable extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.msg.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
-      ctx.sendMessage(':x: Precisas da permissão `MANAGE_GUILD` para usar este comando.');
+    if (!ctx.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
+      ctx.sendMessage({ content: ':x: Precisas da permissão `MANAGE_GUILD` para usar este comando.', flags: 1 << 6 });
       return;
     }
 
     const command = this.client.commands.filter(c => ctx.author.id === '334054158879686657' || c.category !== 'Dev').find(c => c.name === ctx.args[0] || c.aliases?.includes(ctx.args[0]));
 
     if (!command) {
-      ctx.sendMessage(':x: Eu não tenho esse comando!');
+      ctx.sendMessage({ content: ':x: Eu não tenho esse comando!', flags: 1 << 6 });
       return;
     }
 
     if (command.name === 'help') {
-      ctx.sendMessage(':x: Não podes desativar o comando de ajuda!');
+      ctx.sendMessage({ content: ':x: Não podes desativar o comando de ajuda!', flags: 1 << 6 });
       return;
     } else if (['ping', 'enable', 'disable', 'botinfo', 'invite'].includes(command.name)) {
-      ctx.sendMessage(`:x: Não podes desativar o comando \`${ctx.args[0]}\``);
+      ctx.sendMessage({ content: `:x: Não podes desativar o comando \`${ctx.args[0]}\``, flags: 1 << 6 });
       return;
     }
 
-    const guildData = this.client.guildCache.get(ctx.msg.guildID as string);
+    const guildData = this.client.guildCache.get(ctx.guild.id);
 
     if (guildData) {
       if (guildData.disabledCmds.includes(command.name)) {
@@ -48,14 +48,14 @@ export default class Disable extends Command {
       guildData.disabledCmds.push(command.name);
     }
 
-    const guildDBData = await this.client.guildDB.findOne({ guildID: ctx.msg.guildID });
+    const guildDBData = await this.client.guildDB.findOne({ guildID: ctx.guild.id });
 
     if (guildDBData) {
       guildDBData.disabledCmds ? guildDBData.disabledCmds.push(command.name) : guildDBData.disabledCmds = [command.name];
       guildDBData.save();
     } else {
       this.client.guildDB.create({
-        guildID: ctx.msg.guildID,
+        guildID: ctx.guild.id,
         disabledCmds: [command.name]
       });
     }
@@ -71,6 +71,6 @@ export default class Disable extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

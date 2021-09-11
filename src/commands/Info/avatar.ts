@@ -18,7 +18,7 @@ export default class Avatar extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -31,7 +31,7 @@ export default class Avatar extends Command {
     }
 
     if (!user) {
-      ctx.sendMessage(':x: Utilizador não encontrado!');
+      ctx.sendMessage({ content: ':x: Utilizador não encontrado!', flags: 1 << 6 });
       return;
     }
 
@@ -45,6 +45,6 @@ export default class Avatar extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message } from 'eris';
-
 export default class Skip extends Command {
   constructor(client: Client) {
     super(client, {
@@ -18,17 +16,17 @@ export default class Skip extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -57,18 +55,18 @@ export default class Skip extends Command {
       ctx.sendMessage(dj ? ':fast_forward: Música pulada por um DJ!' : ':fast_forward: Música pulada!');
     }
 
-    const member = ctx.msg.member
+    const member = ctx.member
     if (!member) return;
 
     if (await this.client.music.hasDJRole(member)) {
       skip(true);
     } else {
-      if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+      if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
         if (ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
           skip(false);
           return;
         }
-        ctx.sendMessage(':x: Apenas quem requisitou esta música ou alguém com o cargo DJ a pode pular!');
+        ctx.sendMessage({ content: ':x: Apenas quem requisitou esta música ou alguém com o cargo DJ a pode pular!', flags: 1 << 6 });
       } else skip(false);
     }
   }

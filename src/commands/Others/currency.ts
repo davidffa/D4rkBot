@@ -21,12 +21,12 @@ export default class Currency extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     if (isNaN(parseFloat(ctx.args[2]))) {
-      ctx.sendMessage(':x: Valor inválido.');
+      ctx.sendMessage({ content: ':x: Valor inválido.', flags: 1 << 6 });
       return;
     }
 
@@ -40,7 +40,7 @@ export default class Currency extends Command {
     const value = $('span[class="ccOutputRslt"]').text();
 
     if (value.endsWith('---')) {
-      ctx.sendMessage(':x: Formato da moeda inválido! Tente `USD, EUR, BRL, ...`');
+      ctx.sendMessage({ content: ':x: Formato da moeda inválido! Tente `USD, EUR, BRL, ...`', flags: 1 << 6 });
       return;
     }
 
@@ -53,6 +53,6 @@ export default class Currency extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

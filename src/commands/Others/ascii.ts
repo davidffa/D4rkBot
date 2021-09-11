@@ -22,13 +22,13 @@ export default class Ascii extends Command {
     const text = ctx.args.join(' ');
 
     if (text.length > 15) {
-      ctx.sendMessage(':x: Máximo de 15 caracteres permitido!');
+      ctx.sendMessage({ content: ':x: Máximo de 15 caracteres permitido!', flags: 1 << 6 });
       return;
     }
 
     figlet(text, (err, data) => {
       if (err || !data) {
-        ctx.sendMessage(':x: Conteúdo inválido.');
+        ctx.sendMessage({ content: ':x: Conteúdo inválido.', flags: 1 << 6 });
         return;
       }
 

@@ -18,38 +18,38 @@ export default class Forceplay extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(`:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(ctx.msg.guildID as string)}play <Nome/URL>\``);
+      ctx.sendMessage({ content: `:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(ctx.guild.id)}play <Nome/URL>\``, flags: 1 << 6 });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
     if (!player.radio && player.queue.duration > 8.64e7) {
-      ctx.sendMessage(':x: A queue tem a duração superior a 24 horas!')
+      ctx.sendMessage({ content: ':x: A queue tem a duração superior a 24 horas!', flags: 1 << 6 })
       return;
     }
 
-    const member = ctx.msg.member;
+    const member = ctx.member;
     const voiceChannel = this.client.getChannel(voiceChannelID);
     if (!member || !voiceChannel || voiceChannel.type !== 2) return;
 
     const isDJ = await this.client.music.hasDJRole(member)
 
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (!isDJ && voiceChannel.voiceMembers.filter(m => !m.bot).length > 1) {
-        ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode usar este comando!');
+        ctx.sendMessage({ content: ':x: Apenas alguém com o cargo DJ pode usar este comando!', flags: 1 << 6 });
         return;
       }
     }
@@ -58,7 +58,7 @@ export default class Forceplay extends Command {
       const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
 
       if (res.loadType === 'LOAD_FAILED') {
-        ctx.sendMessage(':x: Falha ao carregar a música.');
+        ctx.sendMessage(`:x: Falha ao carregar a música. Erro: ${res.exception?.message}`);
       } else if (res.loadType === 'NO_MATCHES') {
         ctx.sendMessage(':x: Nenhuma música encontrada.');
       } else {
@@ -84,7 +84,7 @@ export default class Forceplay extends Command {
 
           urlRegex.test(ctx.args[0]) && embed.setURL(ctx.args[0]);
 
-          ctx.sendMessage({ embed });
+          ctx.sendMessage({ embeds: [embed] });
         } else {
           const tracks = res.tracks;
 
@@ -94,7 +94,7 @@ export default class Forceplay extends Command {
       }
     } catch (err) {
       console.error(err);
-      ctx.sendMessage(':x: Ocorreu um erro ao procurar a música.');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro ao procurar a música.', flags: 1 << 6 });
     }
   }
 }

@@ -17,16 +17,16 @@ export default class Servericon extends Command {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `EMBED_LINKS` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `EMBED_LINKS` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     if (!ctx.guild.icon) {
-      ctx.sendMessage(':x: Este servidor não tem icon.');
+      ctx.sendMessage({ content: ':x: Este servidor não tem icon.', flags: 1 << 6 });
       return;
     }
 
-    const url = ctx.guild.dynamicIconURL();
+    const url = ctx.guild.dynamicIconURL()!;
 
     const embed = new this.client.embed()
       .setTitle(`:frame_photo: Icon do servidor **${ctx.guild.name}**`)
@@ -36,6 +36,6 @@ export default class Servericon extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embed });
+    ctx.sendMessage({ embeds: [embed] });
   }
 }

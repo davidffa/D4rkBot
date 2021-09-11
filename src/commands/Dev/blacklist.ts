@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import {  User } from 'eris';
+import { User } from 'eris';
 
 export default class Blacklist extends Command {
   constructor(client: Client) {
@@ -29,17 +29,17 @@ export default class Blacklist extends Command {
         const user = this.client.users.get(userID);
         if (user) {
           return `${user.username}#${user.discriminator} (${user.id})`;
-        }else {
+        } else {
           return userID;
         }
       })
 
       ctx.sendMessage(`:bookmark_tabs: Lista dos utilizadores na blacklist:\n\`\`\`\n${msg.join('\n')}\n\`\`\``);
-    }else if (ctx.args[0].toLowerCase() === 'add' || ctx.args[0].toLowerCase() === 'remove') {
+    } else if (ctx.args[0].toLowerCase() === 'add' || ctx.args[0].toLowerCase() === 'remove') {
       let user: User;
       try {
         user = this.client.users.get(ctx.args[1]) || await this.client.getRESTUser(ctx.args[1]);
-      }catch {
+      } catch {
         ctx.sendMessage(':x: Utilizador não encontrado!')
         return;
       }
@@ -55,7 +55,7 @@ export default class Blacklist extends Command {
         ctx.sendMessage(':x: BotDB não criada!');
         return;
       }
-      
+
       if (ctx.args[0].toLowerCase() === 'add') {
         if (this.client.blacklist.includes(user.id)) {
           ctx.sendMessage(':x: Esse utilizador já está na blacklist!');
@@ -64,7 +64,7 @@ export default class Blacklist extends Command {
 
         if (botDB.blacklist) {
           botDB.blacklist.push(user.id);
-        }else {
+        } else {
           botDB.blacklist = []
         }
 
@@ -73,7 +73,7 @@ export default class Blacklist extends Command {
         this.client.blacklist.push(user.id);
 
         ctx.sendMessage(`<a:verificado:803678585008816198> Utilizador \`${user.username}#${user.discriminator}\` adicionado à blacklist!`);
-      }else {
+      } else {
         if (!this.client.blacklist.includes(user.id)) {
           ctx.sendMessage(':x: Esse utilizador não está na blacklist!');
           return;
@@ -81,7 +81,7 @@ export default class Blacklist extends Command {
 
         if (botDB.blacklist) {
           botDB.blacklist.splice(botDB.blacklist.indexOf(user.id), 1);
-        }else {
+        } else {
           botDB.blacklist = []
         }
 
@@ -90,7 +90,7 @@ export default class Blacklist extends Command {
         this.client.blacklist.splice(this.client.blacklist.indexOf(user.id), 1);
         ctx.sendMessage(`<a:verificado:803678585008816198> Utilizador \`${user.username}#${user.discriminator}\` removido da blacklist!`);
       }
-    }else {
+    } else {
       ctx.sendMessage(':x: Opção desconhecida! **Usa:** `list|add|remove`');
     }
   }

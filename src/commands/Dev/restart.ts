@@ -30,19 +30,19 @@ export default class Restart extends Command {
         status: r.status,
         res: await r.json()
       }
-    })
+    });
 
     if (res.id === 'not_found') {
       ctx.sendMessage(':x: Aplicação não encontrada!');
       return;
-    }else if (res.id === 'forbidden') {
+    } else if (res.id === 'forbidden') {
       ctx.sendMessage(':x: Não tens acesso a essa aplicação!');
       return;
     }
 
     if (status === 202) {
       ctx.sendMessage('<a:verificado:803678585008816198> Aplicação reiniciada com sucesso!');
-    }else {
+    } else {
       ctx.sendMessage(':x: Não foi possível reiniciar essa aplicação!');
     }
   }

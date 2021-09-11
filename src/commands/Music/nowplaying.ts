@@ -23,10 +23,10 @@ export default class Nowplaying extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player || !player.queue.current) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
@@ -96,9 +96,14 @@ export default class Nowplaying extends Command {
         canvasCtx.stroke();
       }
 
-      ctx.sendMessage(`<a:disco:803678643661832233> A tocar ${player.queue.current.title}`, {
-        name: 'nowplaying.png',
-        file: canvas.toBuffer()
+      ctx.sendMessage({
+        content: `<a:disco:803678643661832233> A tocar ${player.queue.current.title}`,
+        file: [
+          {
+            name: 'nowplaying.png',
+            file: canvas.toBuffer()
+          }
+        ]
       });
     } else if (ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       const embed = new this.client.embed()
@@ -110,9 +115,9 @@ export default class Nowplaying extends Command {
       if (player.queue.current.uri) embed.setURL(player.queue.current.uri);
       const requester = player.queue.current.requester as User;
       embed.setDescription(`\`${player.queue.current.title}\` requisitado por \`${requester.username as string}#${requester.discriminator}\` com a duração de \`${this.client.utils.msToHour(player.position)}/${this.client.utils.msToHour(player.queue.current.duration as number)}\``);
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
     } else {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` ou `Anexar arquivos` para executar este comando.');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` ou `Anexar arquivos` para executar este comando.', flags: 1 << 6 });
     }
   }
 }

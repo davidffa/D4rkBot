@@ -16,7 +16,7 @@ export default class Radio extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -38,70 +38,70 @@ export default class Radio extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
-    const currPlayer = this.client.music.players.get(ctx.msg.guildID as string);
+    const voiceChannelID = ctx.member?.voiceState.channelID;
+    const currPlayer = this.client.music.players.get(ctx.guild.id);
 
     if (!voiceChannelID) {
-      ctx.sendMessage(':x: Precisas de estar num canal de voz para executar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar num canal de voz para executar esse comando!', flags: 1 << 6 });
       return;
     }
 
     const voiceChannel = this.client.getChannel(voiceChannelID);
 
     if (voiceChannel.type !== 2) {
-      ctx.sendMessage(':x: Ocorreu um erro! `Channel type is not VoiceChannel`');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro! `Channel type is not VoiceChannel`', flags: 1 << 6 });
       return;
     }
 
     if (currPlayer && voiceChannelID !== currPlayer.voiceChannel) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar este comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar este comando!', flags: 1 << 6 });
       return;
     }
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
     if (!permissions.has('readMessages')) {
-      ctx.sendMessage(':x: Não tenho permissão para ver o teu canal de voz!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para ver o teu canal de voz!', flags: 1 << 6 });
       return;
     }
 
     if (!permissions.has('voiceConnect')) {
-      ctx.sendMessage(':x: Não tenho permissão para entrar no teu canal de voz!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para entrar no teu canal de voz!', flags: 1 << 6 });
       return;
     }
 
     if (!permissions.has('voiceSpeak')) {
-      ctx.sendMessage(':x: Não tenho permissão para falar no teu canal de voz!');
+      ctx.sendMessage({ content: ':x: Não tenho permissão para falar no teu canal de voz!', flags: 1 << 6 });
       return;
     }
 
-    if (this.client.records.has(ctx.msg.guildID as string)) {
-      ctx.sendMessage(':x: Não consigo tocar rádio enquanto gravo voz!')
+    if (this.client.records.has(ctx.guild.id)) {
+      ctx.sendMessage({ content: ':x: Não consigo tocar rádio enquanto gravo voz!', flags: 1 << 6 });
       return;
     }
 
-    let player = this.client.music.players.get(ctx.msg.guildID as string);
+    let player = this.client.music.players.get(ctx.guild.id);
 
     if (player && player.radio === radio[0]) {
-      ctx.sendMessage(':x: Essa rádio já está a tocar!');
+      ctx.sendMessage({ content: ':x: Essa rádio já está a tocar!', flags: 1 << 6 });
       return;
     }
 
     if (player && !player.radio) {
-      if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+      if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
         if (voiceChannel.voiceMembers.filter(m => !m.bot).length !== 1
-          && (ctx.msg.member && !await this.client.music.hasDJRole(ctx.msg.member) && !voiceChannel.permissionsOf(ctx.msg.member).has('voiceMoveMembers'))) {
-          ctx.sendMessage(':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode usar este comando!');
+          && (ctx.member && !await this.client.music.hasDJRole(ctx.member) && !voiceChannel.permissionsOf(ctx.member).has('voiceMoveMembers'))) {
+          ctx.sendMessage({ content: ':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode usar este comando!', flags: 1 << 6 });
           return;
         }
       }
     } else {
       player = this.client.music.create({
-        guild: ctx.msg.guildID as string,
+        guild: ctx.guild.id,
         voiceChannel: voiceChannelID,
         textChannel: ctx.channel.id,
         selfDeafen: true
@@ -113,7 +113,7 @@ export default class Radio extends Command {
       const res = await this.client.music.search(radio[1], ctx.author);
 
       if (res.loadType !== 'TRACK_LOADED') {
-        ctx.sendMessage(':x: Ocorreu um erro ao tocar a rádio.');
+        ctx.sendMessage({ content: ':x: Ocorreu um erro ao tocar a rádio.', flags: 1 << 6 });
         player.destroy();
         return;
       }
@@ -121,7 +121,7 @@ export default class Radio extends Command {
       if (player.state === 'DISCONNECTED') {
         if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels')
           && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
-          ctx.sendMessage(':x: O canal de voz está cheio!');
+          ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
           player.destroy();
           return;
         }
@@ -147,11 +147,11 @@ export default class Radio extends Command {
         .setColor('RANDOM')
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
-      ctx.sendMessage({ embed });
+      ctx.sendMessage({ embeds: [embed] });
     } catch (err) {
       console.error(err);
       player.destroy();
-      ctx.sendMessage(':x: Ocorreu um erro ao tocar a rádio.');
+      ctx.sendMessage({ content: ':x: Ocorreu um erro ao tocar a rádio.', flags: 1 << 6 });
     }
   }
 }

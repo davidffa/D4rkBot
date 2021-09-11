@@ -16,17 +16,17 @@ export default class Shuffle extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannelID = ctx.msg.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
-      ctx.sendMessage(':x: Precisas de estar no meu canal de voz para usar esse comando!');
+      ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
@@ -34,16 +34,16 @@ export default class Shuffle extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const member = ctx.msg.member;
+    const member = ctx.member;
     if (!member) return;
     if (player.radio) {
-      ctx.sendMessage(':x: Não podes usar este comando enquanto estiver a tocar uma rádio!');
+      ctx.sendMessage({ content: ':x: Não podes usar este comando enquanto estiver a tocar uma rádio!', flags: 1 << 6 });
       return;
     }
 
     const shuffle = (): void => {
       if (!player.queue.length) {
-        ctx.sendMessage(':x: A queue está vazia!');
+        ctx.sendMessage({ content: ':x: A queue está vazia!', flags: 1 << 6 });
         return;
       }
       player.queue.shuffle();
@@ -53,12 +53,12 @@ export default class Shuffle extends Command {
 
     const isDJ = await this.client.music.hasDJRole(member);
 
-    if (this.client.guildCache.get(ctx.msg.guildID as string)?.djRole) {
+    if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
       if (isDJ || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         shuffle();
         return;
       }
-      ctx.sendMessage(':x: Apenas alguém com o cargo DJ pode embaralhar a lista de músicas!');
+      ctx.sendMessage({ content: ':x: Apenas alguém com o cargo DJ pode embaralhar a lista de músicas!', flags: 1 << 6 });
     } else shuffle();
   }
 }

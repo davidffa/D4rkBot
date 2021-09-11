@@ -19,7 +19,7 @@ export default class Periodictable extends Command {
 
   execute(ctx: CommandContext): void {
     if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Arquivos` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -33,14 +33,24 @@ export default class Periodictable extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embed }, {
-        name: 'TP.png',
-        file: buffer
+      ctx.sendMessage({
+        embeds: [embed],
+        file: [
+          {
+            name: 'TP.png',
+            file: buffer
+          }
+        ]
       });
     } else {
-      ctx.sendMessage('Tabela Periódica!', {
-        name: 'Tabela Periódica.png',
-        file: buffer
+      ctx.sendMessage({
+        content: 'Tabela Periódica!',
+        file: [
+          {
+            name: 'Tabela Periódica.png',
+            file: buffer
+          }
+        ]
       });
     }
   }

@@ -159,7 +159,7 @@ export default class MessageCreate {
         appendFileSync('./logs/log.txt', `**Comando:** \`${cmdName}\` executado no DM.\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.username}#${message.author.discriminator}\n\n`);
 
       this.client.commandsUsed++;
-    } catch (err) {
+    } catch (err: any) {
       message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
       console.error(err.message);
 
@@ -171,7 +171,7 @@ export default class MessageCreate {
           .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
           .setTimestamp();
 
-        this.client.createMessage('334054158879686657', { embed });
+        this.client.createMessage('334054158879686657', { embeds: [embed] });
       }
     }
   }

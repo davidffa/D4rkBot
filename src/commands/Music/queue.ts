@@ -19,14 +19,14 @@ export default class Queue extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
-      ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    const player = this.client.music.players.get(ctx.msg.guildID as string);
+    const player = this.client.music.players.get(ctx.guild.id);
 
     if (!player) {
-      ctx.sendMessage(':x: Não estou a tocar nada de momento!');
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
 
@@ -65,17 +65,17 @@ export default class Queue extends Command {
       .setTimestamp()
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    await ctx.sendMessage({ embed });
+    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
 
     if (queue.size <= 10) return;
 
-    ctx.sentMsg.addReaction('⬅️');
-    ctx.sentMsg.addReaction('➡️');
+    msg.addReaction('⬅️');
+    msg.addReaction('➡️');
 
 
     const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
 
-    const collector = new ReactionCollector(this.client, ctx.sentMsg, filter, { time: 10 * 60 * 1000 });
+    const collector = new ReactionCollector(this.client, msg, filter, { time: 10 * 60 * 1000 });
 
     collector.on('collect', r => {
       if (ctx.channel.type !== 0) return;
@@ -97,10 +97,10 @@ export default class Queue extends Command {
               .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
           }
 
-          ctx.editMessage({ embed });
+          msg.edit({ embeds: [embed] });
 
           if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            ctx.sentMsg.removeReaction(r.name, ctx.author.id);
+            msg.removeReaction(r.name, ctx.author.id);
           }
           break;
         case '➡️':
@@ -109,10 +109,10 @@ export default class Queue extends Command {
           embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
             .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-          ctx.editMessage({ embed });
+          msg.edit({ embeds: [embed] });
 
           if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            ctx.sentMsg.removeReaction(r.name, ctx.author.id);
+            msg.removeReaction(r.name, ctx.author.id);
           }
           break;
       }
