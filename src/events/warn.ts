@@ -8,6 +8,6 @@ export default class OnWarn {
   }
 
   run(warn: string): void {
-    console.warn(warn);
+    console.warn('[WARN]', warn);
   }
 }

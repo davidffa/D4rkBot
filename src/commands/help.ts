@@ -1,9 +1,9 @@
 import Command from '../structures/Command';
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
-import { ReactionCollector } from '../structures/Collector';
+import { ComponentCollector } from '../structures/Collector';
 
-import { Emoji, Message, User } from 'eris';
+import { ComponentInteraction, Message } from 'eris';
 
 export default class Help extends Command {
   constructor(client: Client) {
@@ -73,23 +73,22 @@ export default class Help extends Command {
       embed.addField(`> :information_source: Informação [${Info.length}]`, `\`\`\`${Info.join(' | ')}\`\`\``)
         .addField(`> <a:disco:803678643661832233> Musica [${Music.length}]`, `\`\`\`${Music.join(' | ')}\`\`\``)
         .addField(`> :books: Outros [${Others.length}]`, `\`\`\`${Others.join(' | ')}\`\`\``)
-        .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
+        .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
         .addField(`<:megathink:803675654376652880> Ainda mais ajuda`, '[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)')
 
       const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
       await msg.addReaction('x_:751062867444498432');
 
-      const filter = (r: Emoji, user: User) => r.id === '751062867444498432' && user === ctx.author;
+      const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
-      const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
+      const collector = new ComponentCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
       collector.on('collect', () => {
         msg.delete();
       });
 
-      collector.on('end', reason => {
-        if (reason === 'Time')
-          msg.removeReaction('x_:751062867444498432');
+      collector.on('end', () => {
+        msg.edit({ components: [] });
       });
 
       return;

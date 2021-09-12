@@ -1,9 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { ReactionCollector } from '../../structures/Collector';
+import { ComponentCollector } from '../../structures/Collector';
 
-import { Emoji, Message, User } from 'eris';
+import { ActionRow, ActionRowComponents, ComponentInteraction, Message } from 'eris';
 
 import fetch from 'node-fetch';
 import cio from 'cheerio';
@@ -31,11 +31,6 @@ export default class Lyrics extends Command {
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
-      return;
-    }
-
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage({ content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -133,6 +128,31 @@ export default class Lyrics extends Command {
       return;
     }
 
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'left',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '⬅️'
+        },
+        disabled: true
+      },
+      {
+        custom_id: 'right',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '➡️'
+        }
+      }
+    ]
+
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
+
     let page = 1;
     const pages = Math.ceil(res.lyrics.length / 20);
 
@@ -145,54 +165,46 @@ export default class Lyrics extends Command {
       .setTimestamp()
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
-    msg.addReaction('⬅️');
-    msg.addReaction('➡️');
+    const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
 
-    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
-    const collector = new ReactionCollector(this.client, msg, filter, { time: 6 * 60 * 1000, max: 20 });
+    const collector = new ComponentCollector(this.client, msg, filter, { time: 6 * 60 * 1000, max: 20 });
 
-    const changePage = (r: Emoji): void => {
+    const changePage = (i: ComponentInteraction): void => {
       if (!res) return;
 
-      switch (r.name) {
-        case '⬅️':
+      switch (i.data.custom_id) {
+        case 'left':
           if (page === 1) return;
-          page--;
+          if (--page === 1) {
+            row.components[0].disabled = true;
+          }
+          row.components[1].disabled = false;
           break;
-        case '➡️':
+        case 'right':
           if (page === pages) return;
-          page++;
+          if (++page === pages) {
+            row.components[1].disabled = true;
+          }
+          row.components[0].disabled = false;
           break;
       }
 
       embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
         .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-      msg.edit({ embeds: [embed] });
+      i.editParent({ embeds: [embed], components: [row] });
     }
 
-    collector.on('collect', r => {
-      if (ctx.channel.type !== 0) return;
-
-      if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-        msg.removeReaction(r.name, ctx.author.id);
-      }
-
-      changePage(r);
-    });
-
-    collector.on('remove', r => {
-      if (ctx.channel.type !== 0) return;
-
-      if (!ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-        changePage(r);
+    collector.on('collect', i => {
+      changePage(i);
     });
 
     collector.on('end', () => {
-      msg.removeReaction('⬅️');
-      msg.removeReaction('➡️');
+      row.components[0].disabled = true;
+      row.components[1].disabled = true;
+      msg.edit({ components: [row] });
     });
   }
 }

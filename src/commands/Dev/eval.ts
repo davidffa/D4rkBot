@@ -2,9 +2,9 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { ReactionCollector } from '../../structures/Collector';
+import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, User, Emoji, TextableChannel } from 'eris';
+import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -54,6 +54,32 @@ export default class Eval extends Command {
       return text;
     }
 
+    let msg: Message;
+
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'delete',
+        style: 4,
+        type: 2,
+        emoji: {
+          name: '🗑️'
+        }
+      },
+      {
+        custom_id: 'dm',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '📋'
+        }
+      }
+    ]
+
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
+
     try {
       const start = process.hrtime();
       const code = ctx.args.join(' ');
@@ -81,10 +107,8 @@ export default class Eval extends Command {
 
       const res = response.join('\n');
 
-      let msg: Message;
-
       if (res.length < 2e3) {
-        msg = await ctx.sendMessage(res, true) as Message;
+        msg = await ctx.sendMessage({ content: res, components: [row] }, true) as Message;
       } else {
         const body = {
           files: [{
@@ -103,7 +127,7 @@ export default class Eval extends Command {
         }).then(res => res.json());
 
         if (bin.key) {
-          msg = await ctx.sendMessage(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, true) as Message;
+          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row] }, true) as Message;
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
@@ -112,61 +136,41 @@ export default class Eval extends Command {
                 name: 'eval.txt',
                 file: Buffer.from(res)
               }
-            ]
+            ],
+            components: [row]
           }, true) as Message;
         }
       }
-
-      if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) return;
-
-      msg.addReaction('x_:751062867444498432');
-      msg.addReaction('📋');
-
-      const filter = (r: Emoji, u: User) => (r.id === '751062867444498432' || r.name === '📋') && u === ctx.author;
-
-      const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
-
-      collector.on('collect', async r => {
-        switch (r.name) {
-          case '📋':
-            const dmChannel = await ctx.author.getDMChannel();
-            dmChannel.createMessage(msg.content);
-
-            if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              msg.removeReactions();
-            else {
-              msg.removeReaction('x_:751062867444498432');
-              msg.removeReaction('📋');
-            }
-
-            msg.edit('<a:verificado:803678585008816198> Resultado da eval enviado no privado!');
-
-            break;
-          case 'x_':
-            if (msg.attachments.length === 1) {
-              msg.delete();
-              return;
-            }
-
-            if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              msg.removeReactions();
-            else {
-              msg.removeReaction('x_:751062867444498432');
-              msg.removeReaction('📋');
-            }
-
-            msg.edit('<a:verificado:803678585008816198> Resultado da eval fechado!');
-            break;
-        }
-      });
-
-      collector.on('end', reason => {
-        if (reason === 'Time')
-          msg.removeReaction('x_:751062867444498432');
-        msg.removeReaction('📋');
-      });
     } catch (err) {
-      ctx.sendMessage(`:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``)
+      msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``, components: [row] }, true) as Message;
     }
+
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
+
+    const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
+
+    collector.on('collect', async i => {
+      switch (i.data.custom_id) {
+        case 'dm':
+          const dmChannel = await ctx.author.getDMChannel();
+          dmChannel.createMessage(msg.content);
+
+          msg.edit({ content: '<a:verificado:803678585008816198> Resultado da eval enviado no privado!', components: [] });
+
+          break;
+        case 'delete':
+          if (msg.attachments.length === 1) {
+            msg.delete();
+            return;
+          }
+
+          msg.edit({ content: '<a:verificado:803678585008816198> Resultado da eval fechado!', components: [] });
+          break;
+      }
+    });
+
+    collector.on('end', () => {
+      msg.edit({ components: [] });
+    });
   }
 }

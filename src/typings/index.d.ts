@@ -1,5 +1,4 @@
 import { Message, User, Guild, AllowedMentions, EmbedOptions, MessageFile } from 'eris';
-import { MessageCollector } from 'eris-collector';
 import CommandContext from '../structures/CommandContext';
 
 interface CommandOptions {
@@ -30,8 +29,8 @@ interface Timeouts {
   message: Message;
 }
 
-interface MsgCollectors {
-  messageCollector: MessageCollector;
+interface ComponentCollectors {
+  collector: ComponentCollector;
   message: Message;
 }
 

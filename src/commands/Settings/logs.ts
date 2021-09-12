@@ -1,9 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { ReactionCollector, MessageCollector } from '../../structures/Collector';
+import { ComponentCollector, MessageCollector } from '../../structures/Collector';
 
-import { Message, Emoji, User } from 'eris';
+import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
 
 export default class Logs extends Command {
   constructor(client: Client) {
@@ -24,11 +24,6 @@ export default class Logs extends Command {
       return;
     }
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage({ content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando', flags: 1 << 6 });
-      return;
-    }
-
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Inserir Links` para executar este comando', flags: 1 << 6 });
       return;
@@ -41,13 +36,35 @@ export default class Logs extends Command {
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTitle('Configurar logs')
-      .setDescription(`:one: Canal das mensagens de bem-vindo: \`${welcomeChannel ? `${welcomeChannel.name}` : 'Nenhum'}\`\n\n:two: Canal das mensagens de saídas de membros: \`${byeChannel ? `${byeChannel.name}` : 'Nenhum'}\``)
+      .setDescription(`👋 Canal das mensagens de bem-vindo: \`${welcomeChannel ? `${welcomeChannel.name}` : 'Nenhum'}\`\n\n🚪 Canal das mensagens de saídas de membros: \`${byeChannel ? `${byeChannel.name}` : 'Nenhum'}\``)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
-    msg.addReaction('1⃣');
-    msg.addReaction('2⃣');
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'welcome',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '👋'
+        },
+      },
+      {
+        custom_id: 'leave',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '🚪'
+        }
+      }
+    ]
+
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
+
+    const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
 
     const welcomeMsgCollector = (): void => {
       const filter = (m: Message) => m.author.id === ctx.author.id;
@@ -152,26 +169,20 @@ export default class Logs extends Command {
       });
     }
 
-    const filter = (r: Emoji, user: User) => (r.name === '1⃣' || r.name === '2⃣') && user === ctx.author;
-    const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
+    const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
-    collector.on('collect', async r => {
-      switch (r.name) {
-        case '1⃣':
-          ctx.sendMessage('Escreva o ID ou o nome do canal para onde as mensagens de bem-vindo irão (Escreva 0 para desativar).');
+    collector.on('collect', i => {
+      switch (i.data.custom_id) {
+        case 'welcome':
+          i.editParent({ content: 'Escreva o ID ou o nome do canal para onde as mensagens de bem-vindo irão (Escreva 0 para desativar).', embeds: [], components: [] });
           welcomeMsgCollector();
           break;
-        case '2⃣':
-          ctx.sendMessage('Escreva o ID ou o nome do canal para onde as mensagens de saída de membros irão (Escreva 0 para desativar).');
+        case 'leave':
+          i.editParent({ content: 'Escreva o ID ou o nome do canal para onde as mensagens de saída de membros irão (Escreva 0 para desativar).', embeds: [], components: [] });
           byeMsgCollector();
           break;
       }
-
-    });
-
-    collector.on('end', () => {
-      msg.removeReaction('1⃣');
-      msg.removeReaction('2⃣');
     });
   }
 }

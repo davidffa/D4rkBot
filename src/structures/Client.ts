@@ -11,7 +11,7 @@ import msToDate from '../utils/msToDate';
 import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
 import userDatabase from '../models/userDB';
-import { ReactionCollector, MessageCollector } from './Collector';
+import { ComponentCollector, MessageCollector } from './Collector';
 
 import { Command, Utils, Records, GuildCache } from '../typings/index';
 
@@ -30,8 +30,9 @@ export default class D4rkClient extends Client {
   guildDB: typeof guildDatabase;
   userDB: typeof userDatabase;
   embed: typeof Embed;
-  reactionCollectors: Array<ReactionCollector>;
+  // reactionCollectors: Array<ReactionCollector>;
   messageCollectors: Array<MessageCollector>;
+  componentCollectors: Array<ComponentCollector>;
 
   constructor() {
     const clientOptions: ClientOptions = {
@@ -46,11 +47,14 @@ export default class D4rkClient extends Client {
         'guildVoiceStates',
         'guildPresences',
         'guildMessages',
-        'guildMessageReactions',
-        'directMessages',
-        'directMessageReactions'
       ],
-      messageLimit: 40
+      disableEvents: {
+        'TYPING_START': true,
+        'GUILD_BAN_ADD': true,
+        'GUILD_BAN_REMOVE': true,
+
+      },
+      messageLimit: 20
     }
 
     super(process.env.TOKEN as string, clientOptions);
@@ -64,8 +68,9 @@ export default class D4rkClient extends Client {
     this.guildDB = guildDatabase;
     this.userDB = userDatabase;
     this.embed = Embed;
-    this.reactionCollectors = [];
+    // this.reactionCollectors = [];
     this.messageCollectors = [];
+    this.componentCollectors = [];
 
     const findUser = async (param: string, guild: Guild | null): Promise<User | null> => {
       let user: User | null | undefined;
@@ -90,6 +95,7 @@ export default class D4rkClient extends Client {
 
       if (!user) {
         const lowerCaseParam = param.toLowerCase();
+        let startsWith = false;
 
         for (const m of guild.members.values()) {
           if ((m.nick && (m.nick === param || m.nick.toLowerCase() === param.toLowerCase())) || m.username === param || m.username.toLowerCase() === param.toLowerCase()) {
@@ -99,10 +105,11 @@ export default class D4rkClient extends Client {
 
           if ((m.nick && m.nick.startsWith(lowerCaseParam)) || m.username.toLowerCase().startsWith(lowerCaseParam)) {
             user = m.user;
-            break;
+            startsWith = true;
+            continue;
           }
 
-          if (m.nick && m.nick.toLowerCase().includes(lowerCaseParam) || m.username.toLowerCase().includes(lowerCaseParam)) {
+          if (!startsWith && (m.nick && m.nick.toLowerCase().includes(lowerCaseParam) || m.username.toLowerCase().includes(lowerCaseParam))) {
             user = m.user;
           }
         }
@@ -125,11 +132,16 @@ export default class D4rkClient extends Client {
 
       if (!role) {
         const lowerCaseParam = param.toLowerCase();
+        let startsWith = false;
 
         for (const r of guild.roles.values()) {
           if (r.name === param || r.name.toLowerCase() === lowerCaseParam) return r;
-          if (r.name.startsWith(param) || r.name.toLowerCase().startsWith(lowerCaseParam)) return r;
-          if (r.name.includes(param) || r.name.toLowerCase().includes(lowerCaseParam)) return r;
+          if (r.name.startsWith(param) || r.name.toLowerCase().startsWith(lowerCaseParam)) {
+            role = r;
+            startsWith = true;
+            continue;
+          }
+          if (!startsWith && (r.name.includes(param) || r.name.toLowerCase().includes(lowerCaseParam))) return r;
         }
       }
 
@@ -152,7 +164,6 @@ export default class D4rkClient extends Client {
         this.commands.push(new cmd(this));
       } else {
         readdirSync(`./src/commands/${dir}`).filter(file => file.endsWith('.ts')).forEach(file => {
-          if (file === 'record.ts') return;
           const command = require(`../commands/${dir}/${file}`).default;
           this.commands.push(new command(this));
         });

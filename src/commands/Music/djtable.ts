@@ -4,8 +4,8 @@ import CommandContext from '../../structures/CommandContext';
 
 import { Effect } from '../../typings/index';
 
-import { Emoji, Message, User } from 'eris';
-import { ReactionCollector } from '../../structures/Collector';
+import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteractionSelectMenuData, Message } from 'eris';
+import { ComponentCollector } from '../../structures/Collector';
 
 export default class Djtable extends Command {
   constructor(client: Client) {
@@ -24,14 +24,6 @@ export default class Djtable extends Command {
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       ctx.sendMessage({
         content: ':x: Preciso da permissão `Anexar Links` para executar este comando',
-        flags: 1 << 6
-      });
-      return;
-    }
-
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage({
-        content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando',
         flags: 1 << 6
       });
       return;
@@ -58,6 +50,83 @@ export default class Djtable extends Command {
     const member = ctx.member;
     if (!member) return;
 
+    const menu: ActionRowComponents[] = [
+      {
+        custom_id: 'menu',
+        type: 3,
+        placeholder: 'Escolhe um filtro para ativar/desativar',
+        options: [
+          {
+            label: 'Bass',
+            value: 'bass',
+            emoji: {
+              name: '1️⃣'
+            }
+          },
+          {
+            label: 'Pop',
+            value: 'pop',
+            emoji: {
+              name: '2️⃣'
+            }
+          },
+          {
+            label: 'Soft',
+            value: 'soft',
+            emoji: {
+              name: '3️⃣'
+            }
+          },
+          {
+            label: 'Treblebass',
+            value: 'treblebass',
+            emoji: {
+              name: '4️⃣'
+            }
+          },
+          {
+            label: 'Nightcore',
+            value: 'nightcore',
+            emoji: {
+              name: '5️⃣'
+            }
+          },
+          {
+            label: 'Vaporwave',
+            value: 'vaporwave',
+            emoji: {
+              name: '6️⃣'
+            }
+          },
+        ]
+      },
+    ];
+
+    const btns: ActionRowComponents[] = [
+      {
+        custom_id: 'clear',
+        type: 2,
+        style: 4,
+        emoji: { name: '🗑️' }
+      },
+      {
+        custom_id: 'close',
+        type: 2,
+        style: 4,
+        label: 'Fechar'
+      }
+    ]
+
+    const menuRow: ActionRow = {
+      type: 1,
+      components: menu
+    }
+
+    const btnRow: ActionRow = {
+      type: 1,
+      components: btns
+    }
+
     const sendFilterMessage = async (): Promise<void> => {
       if (player.djTableMsg) {
         ctx.sendMessage({ content: ':x: Já existe uma mesa de DJ aberta!', flags: 1 << 6 });
@@ -68,44 +137,29 @@ export default class Djtable extends Command {
       const embed = new this.client.embed()
         .setTitle('<a:disco:803678643661832233> Mesa de DJ')
         .setColor('RANDOM')
-        .setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`)
+        .setDescription(`:wastebasket: Remove todos os filtros ativos\n\n${effects.map((effect) => `${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`)
         .setThumbnail('https://i.pinimg.com/564x/a3/a9/29/a3a929cc8d09e88815b89bc071ff4d8d.jpg')
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow] }, true) as Message;
       player.djTableMsg = msg;
-      msg.addReaction('1️⃣');
-      msg.addReaction('2️⃣');
-      msg.addReaction('3️⃣');
-      msg.addReaction('4️⃣');
-      msg.addReaction('5️⃣');
-      msg.addReaction('6️⃣');
-      msg.addReaction('0️⃣');
-      msg.addReaction('x_:751062867444498432');
 
-      const filter = (r: Emoji, u: User) => (r.name === '0️⃣' || r.name === '1️⃣' || r.name === '2️⃣' ||
-        r.name === '3️⃣' || r.name === '4️⃣' || r.name === '5️⃣' || r.name === '6️⃣' || r.id === '751062867444498432') && u === ctx.author;
+      const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
-      const collector = new ReactionCollector(this.client, msg, filter, { max: 20, time: 90000 });
+      const collector = new ComponentCollector(this.client, msg, filter, { max: 20, time: 90000 });
 
-      collector.on('collect', r => {
-        switch (r.name) {
-          case '0️⃣':
-            player.filters.clear();
-            player.effects = [];
-            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
-            msg.edit({ embeds: [embed] });
-            break;
-          case 'x_':
-            collector.stop('Close');
-            break;
-          default:
-            const i = parseInt(r.name.replace(/\uFE0F\u20E3/, ''))
-            if (!player.effects.includes(effects[i - 1])) {
-              player.effects.push(effects[i - 1])
+      collector.on('collect', i => {
+        switch (i.data.custom_id) {
+          case 'menu':
+            const data = i.data as ComponentInteractionSelectMenuData;
+
+            const val = data.values[0] as Effect;
+
+            if (player.effects.includes(val)) {
+              player.effects.splice(player.effects.indexOf(val));
             } else {
-              player.effects.splice(player.effects.indexOf(effects[i - 1]));
+              player.effects.push(val);
             }
 
             const filters = {}
@@ -115,21 +169,27 @@ export default class Djtable extends Command {
 
             player.filters.set(filters);
 
-            embed.setDescription(`**0)** Remove todos os filtros ativos\n\n${effects.map((effect, idx) => `**${idx + 1})** ${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
-            msg.edit({ embeds: [embed] });
+            embed.setDescription(`:wastebasket: Remove todos os filtros ativos\n\n${effects.map((effect) => `${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
+            i.editParent({ embeds: [embed] });
+            break;
+          case 'clear':
+            player.filters.clear();
+            player.effects = [];
+            embed.setDescription(`:wastebasket: Remove todos os filtros ativos\n\n${effects.map((effect) => `${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`);
+            i.editParent({ embeds: [embed] });
+            break;
+          case 'close':
+            delete player.djTableMsg;
+
+            i.editParent({ content: '<a:disco:803678643661832233> Mesa de DJ fechada!', embeds: [], components: [] });
             break;
         }
-      });
-
-      collector.on('remove', r => {
-        collector.emit('collect', r, ctx.author);
       });
 
       collector.on('end', () => {
         delete player.djTableMsg;
 
-        msg.delete();
-        ctx.channel.createMessage('<a:disco:803678643661832233> Mesa de DJ fechada!');
+        msg.edit({ content: '<a:disco:803678643661832233> Mesa de DJ fechada!', embeds: [], components: [] });
       });
     }
 

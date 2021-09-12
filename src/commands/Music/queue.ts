@@ -1,9 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { ReactionCollector } from '../../structures/Collector';
+import { ComponentCollector } from '../../structures/Collector';
 
-import { Emoji, Message, User } from 'eris';
+import { ActionRow, ActionRowComponents, ComponentInteraction, Message, User } from 'eris';
 
 export default class Queue extends Command {
   constructor(client: Client) {
@@ -65,55 +65,79 @@ export default class Queue extends Command {
       .setTimestamp()
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
 
-    if (queue.size <= 10) return;
+    if (queue.size <= 10) {
+      await ctx.sendMessage({ embeds: [embed] });
+      return;
+    }
 
-    msg.addReaction('⬅️');
-    msg.addReaction('➡️');
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'left',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '⬅️'
+        },
+        disabled: true
+      },
+      {
+        custom_id: 'right',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '➡️'
+        }
+      }
+    ];
 
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
 
-    const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
+    const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
 
-    const collector = new ReactionCollector(this.client, msg, filter, { time: 10 * 60 * 1000 });
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
-    collector.on('collect', r => {
-      if (ctx.channel.type !== 0) return;
+    const collector = new ComponentCollector(this.client, msg, filter, { time: 10 * 60 * 1000 });
 
+    collector.on('collect', i => {
       const newDesc = [
         `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
         `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
         `${getSongDetails(0, 9)}`
       ];
 
-      switch (r.name) {
-        case '⬅️':
+      switch (i.data.custom_id) {
+        case 'left':
           if (page === 1) return;
-          page--;
+          if (--page === 1) {
+            row.components[0].disabled = true;
+          }
+          row.components[1].disabled = false;
+
           if (page === 1) {
-            embed.setDescription(newDesc.join('\n'));
+            embed.setDescription(newDesc.join('\n'))
+              .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());;
           } else {
             embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
               .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
           }
 
-          msg.edit({ embeds: [embed] });
-
-          if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            msg.removeReaction(r.name, ctx.author.id);
-          }
+          i.editParent({ embeds: [embed], components: [row] });
           break;
-        case '➡️':
+        case 'right':
           if (page === pages) return;
-          page++;
+          if (++page === pages) {
+            row.components[1].disabled = true;
+          }
+          row.components[0].disabled = false;
+
           embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
             .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-          msg.edit({ embeds: [embed] });
-
-          if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            msg.removeReaction(r.name, ctx.author.id);
-          }
+          i.editParent({ embeds: [embed], components: [row] });
           break;
       }
     })

@@ -1,5 +1,4 @@
 import Client from '../structures/Client';
-import { ReactionCollector } from '../structures/Collector';
 
 import { Message } from 'eris';
 
@@ -12,17 +11,11 @@ export default class MessageDeleteBulk {
 
   run(message: Message[]) {
     const msgIDs = message.map(m => m.id);
-    
-    const collectors: ReactionCollector[] = [];
 
-    for (const collector of this.client.reactionCollectors) {
+    for (const collector of this.client.componentCollectors) {
       if (msgIDs.includes(collector.message.id)) {
-        collectors.push(collector);
+        collector.stop('Message Delete');
       }
-    };
-
-    for (const c of collectors) {
-      c.stop('Message Delete');
     }
   }
 }

@@ -73,7 +73,7 @@ export default class Channelinfo extends Command {
     channel.parentID && embed.addField(':flag_white: Categoria', `\`${ctx.guild.channels.get(channel.parentID)?.name}\``, true);
 
     if (channel.type === 0 || channel.type === 5) {
-      embed.addField(':question: Tópico', `\`\`\`${channel.topic ? channel.topic : 'Nenhum'}\`\`\``, true);
+      embed.addField(':question: Tópico', `\`\`\`${channel.topic ? channel.topic : 'Nenhum'}\`\`\``);
     }
     ctx.sendMessage({ embeds: [embed] });
   }

@@ -1,9 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { ReactionCollector } from '../../structures/Collector';
+import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, Emoji, User } from 'eris';
+import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
 
 import fetch from 'node-fetch';
 import { exec } from 'child_process';
@@ -24,6 +24,30 @@ export default class Shell extends Command {
   execute(ctx: CommandContext) {
     if (ctx.author.id !== '334054158879686657') return;
 
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'delete',
+        style: 4,
+        type: 2,
+        emoji: {
+          name: '🗑️'
+        }
+      },
+      {
+        custom_id: 'dm',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '📋'
+        }
+      }
+    ]
+
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
+
     exec(ctx.args.join(' '), async (_err, stdout, stderr) => {
       if (!stdout && !stderr) {
         ctx.sendMessage(':warning: Sem output!');
@@ -36,9 +60,9 @@ export default class Shell extends Command {
 
       if (res.length + 15 < 2e3) {
         if (stderr) {
-          msg = await ctx.sendMessage(`:x: Erro: \`\`\`sh\n${res}\`\`\``, true) as Message;
+          msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`sh\n${res}\`\`\``, components: [row] }, true) as Message;
         } else {
-          msg = await ctx.sendMessage(`:outbox_tray: **Output:**\`\`\`sh\n${res}\n\`\`\``, true) as Message;
+          msg = await ctx.sendMessage({ content: `:outbox_tray: **Output:**\`\`\`sh\n${res}\n\`\`\``, components: [row] }, true) as Message;
         }
       } else {
         const body = {
@@ -58,7 +82,7 @@ export default class Shell extends Command {
         }).then(res => res.json());
 
         if (bin.key) {
-          msg = await ctx.sendMessage(`:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, true) as Message;
+          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row] }, true) as Message;
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
@@ -67,57 +91,38 @@ export default class Shell extends Command {
                 name: 'shell.txt',
                 file: Buffer.from(res)
               }
-            ]
+            ],
+            components: [row]
           }, true) as Message;
         }
       }
-      if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) return;
 
-      msg.addReaction('x_:751062867444498432');
-      msg.addReaction('📋');
+      const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
-      const filter = (r: Emoji, user: User) => (r.id === '751062867444498432' || r.name === '📋') && user === ctx.author;
+      const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
-      const collector = new ReactionCollector(this.client, msg, filter, { time: 3 * 60 * 1000, max: 1 });
-
-      collector.on('collect', async r => {
-        switch (r.name) {
-          case '📋':
+      collector.on('collect', async i => {
+        switch (i.data.custom_id) {
+          case 'dm':
             const dmChannel = await ctx.author.getDMChannel();
             dmChannel.createMessage(msg.content);
 
-            if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              msg.removeReactions();
-            else {
-              msg.removeReaction('x_:751062867444498432');
-              msg.removeReaction('📋');
-            }
-
-            msg.edit('<a:verificado:803678585008816198> Resultado do shell enviado no privado!');
+            msg.edit({ content: '<a:verificado:803678585008816198> Resultado do shell enviado no privado!', components: [] });
 
             break;
-          case 'x_':
+          case 'delete':
             if (msg.attachments.length === 1) {
               msg.delete();
               return;
             }
 
-            if (ctx.channel.type === 0 && ctx.channel.permissionsOf(this.client.user.id).has('manageMessages'))
-              msg.removeReactions();
-            else {
-              msg.removeReaction('x_:751062867444498432');
-              msg.removeReaction('📋');
-            }
-
-            msg.edit('<a:verificado:803678585008816198> Resultado da shell fechado!');
+            msg.edit({ content: '<a:verificado:803678585008816198> Resultado da shell fechado!', components: [] });
             break;
         }
-      });
+      })
 
-      collector.on('end', reason => {
-        if (reason === 'Time')
-          msg.removeReaction('x_:751062867444498432');
-        msg.removeReaction('📋');
+      collector.on('end', () => {
+        msg.edit({ components: [] });
       });
     })
   }

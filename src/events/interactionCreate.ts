@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
-import { Interaction, CommandInteraction } from 'eris';
+import { Interaction, CommandInteraction, ComponentInteraction } from 'eris';
 
 import { existsSync, appendFileSync, mkdirSync } from 'fs';
 
@@ -12,7 +12,17 @@ export default class InteractionCreate {
   }
 
   async run(interaction: Interaction) {
-    if (!(interaction instanceof CommandInteraction)) return;
+    if (!(interaction instanceof CommandInteraction)) {
+      if (interaction instanceof ComponentInteraction) {
+        for (const collector of this.client.componentCollectors) {
+          if (collector.message.id === interaction.message.id) {
+            collector.collect(interaction);
+            break;
+          }
+        }
+      }
+      return;
+    }
 
     const cmd = this.client.commands.find(c => c.name === interaction.data.name);
     if (!cmd) throw new Error('Command not found!');

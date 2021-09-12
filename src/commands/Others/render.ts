@@ -1,11 +1,11 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext, { Type } from '../../structures/CommandContext';
-import { ReactionCollector } from '../../structures/Collector';
+import { ComponentCollector, } from '../../structures/Collector';
 
 import { inflateSync } from 'zlib';
 
-import { Emoji, User, Message } from 'eris';
+import { Message, ComponentInteraction, ActionRowComponents, ActionRow } from 'eris';
 
 import fetch from 'node-fetch';
 
@@ -123,6 +123,23 @@ export default class Render extends Command {
     }
 
     waitMsg?.delete();
+
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'delete',
+        style: 4,
+        type: 2,
+        emoji: {
+          name: '🗑️'
+        }
+      },
+    ]
+
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
+
     const msg = await ctx.sendMessage({
       embeds: [embed],
       file: [
@@ -130,21 +147,16 @@ export default class Render extends Command {
           name: 'render.png',
           file: inflate
         }
-      ]
+      ],
+      components: [row]
     }, true) as Message;
 
-    await msg.addReaction('x_:751062867444498432');
 
-    const filter = (r: Emoji, user: User) => (r.id === '751062867444498432') && user === ctx.author;
-    const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 5 * 60 * 1000 });
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
+    const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 5 * 60 * 1000 });
 
     collector.on('collect', () => {
       msg.delete();
-    });
-
-    collector.on('end', reason => {
-      if (reason === 'Time')
-        msg.removeReaction('x_:751062867444498432');
     });
   }
 }

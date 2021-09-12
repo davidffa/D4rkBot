@@ -1,10 +1,10 @@
 import Client from '../structures/Client';
-import { ReactionCollector } from '../structures/Collector';
+import { ComponentCollector } from '../structures/Collector';
 import CommandContext from '../structures/CommandContext';
 
 import { existsSync, mkdirSync, appendFileSync } from 'fs';
 
-import { Message, Emoji, User } from 'eris';
+import { Message, ActionRowComponents, ActionRow, ComponentInteraction } from 'eris';
 
 export default class MessageCreate {
   client: Client;
@@ -81,25 +81,40 @@ export default class MessageCreate {
         }
       });
 
-      const msg = await message.channel.createMessage(`:x: Eu não tenho esse comando.\n:thinking: Querias dizer \`${prefix}${diduMean}\`?`);
+      const components: ActionRowComponents[] = [
+        {
+          custom_id: 'run',
+          style: 1,
+          type: 2,
+          label: 'Executar',
+          emoji: {
+            id: '777546055952498708',
+            name: 'shell',
+          }
+        },
+      ]
 
-      if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('addReactions')) return;
+      const row: ActionRow = {
+        type: 1,
+        components
+      }
 
-      msg.addReaction('shell:777546055952498708');
+      const msg = await message.channel.createMessage({
+        content: `:x: Eu não tenho esse comando.\n:thinking: Querias dizer \`${prefix}${diduMean}\`?`,
+        components: [row]
+      });
 
-      const filter = (r: Emoji, user: User) => r.id === '777546055952498708' && user === message.author;
+      const filter = (i: ComponentInteraction) => i.member!.id === message.author.id;
 
-      const collector = new ReactionCollector(this.client, msg, filter, { max: 1, time: 10 * 1000 });
+      const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 10 * 1000 });
 
       collector.on('collect', () => {
         message.content = `${prefix}${diduMean} ${args.join(' ')}`.trim();
         this.client.emit('messageCreate', message);
-        msg.delete();
       });
 
-      collector.on('end', reason => {
-        if (reason === 'Time')
-          msg.delete();
+      collector.on('end', () => {
+        msg.delete();
       });
 
       return;

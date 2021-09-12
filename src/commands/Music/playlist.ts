@@ -1,9 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { ReactionCollector } from '../../structures/Collector';
+import { ComponentCollector } from '../../structures/Collector';
 
-import { Emoji, Message, User, VoiceChannel } from 'eris';
+import { ActionRow, ComponentInteraction, ActionRowComponents, Message, VoiceChannel } from 'eris';
 
 import { Track, TrackUtils } from 'erela.js';
 
@@ -198,55 +198,79 @@ export default class PlayList extends Command {
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-        const msg = await ctx.sendMessage({ embeds: [detailEmbed] }, true) as Message;
 
-        if (playlist.tracks.length <= 10) return;
+        if (playlist.tracks.length <= 10) {
+          ctx.sendMessage({ embeds: [detailEmbed] });
+          return;
+        }
+
+        const components: ActionRowComponents[] = [
+          {
+            custom_id: 'left',
+            style: 2,
+            type: 2,
+            emoji: {
+              name: '⬅️'
+            },
+            disabled: true
+          },
+          {
+            custom_id: 'right',
+            style: 2,
+            type: 2,
+            emoji: {
+              name: '➡️'
+            }
+          }
+        ];
+
+        const row: ActionRow = {
+          type: 1,
+          components
+        }
+
+        const msg = await ctx.sendMessage({ embeds: [detailEmbed], components: [row] }, true) as Message;
 
         let page = 1;
         const pages = Math.ceil(playlist.tracks.length / 10);
 
-        msg.addReaction('⬅️');
-        msg.addReaction('➡️');
+        const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
-        const filter = (r: Emoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
+        const collector = new ComponentCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
-        const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
-
-        collector.on('collect', r => {
-          if (ctx.channel.type !== 0) return;
+        collector.on('collect', i => {
           if (!playlist || !playlist.tracks) return;
 
-          switch (r.name) {
-            case '⬅️':
+          switch (i.data.custom_id) {
+            case 'left':
               if (page === 1) return;
-              page--;
+              if (--page === 1) {
+                row.components[0].disabled = true;
+              }
+              row.components[1].disabled = false;
               detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.info.title}](${track.info.uri})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-              msg.edit({ embed: detailEmbed });
-
-              if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                msg.removeReaction(r.name, ctx.author.id);
-              }
+              i.editParent({ embeds: [detailEmbed], components: [row] });
               break;
-            case '➡️':
+            case 'right':
               if (page === pages) return;
-              page++;
+              if (++page === pages) {
+                row.components[1].disabled = true;
+              }
+              row.components[0].disabled = false;
               detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.info.title}](${track.info.uri})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-              msg.edit({ embed: detailEmbed });
-
-              if (ctx.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-                msg.removeReaction(r.name, ctx.author.id);
-              }
+              i.editParent({ embeds: [detailEmbed], components: [row] });
               break;
           }
         });
 
         collector.on('end', () => {
-          msg.removeReaction('⬅️');
-          msg.removeReaction('➡️')
+          row.components[0].disabled = true;
+          row.components[1].disabled = true;
+          msg.edit({ components: [row] });
         })
         break;
 

@@ -1,9 +1,9 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { ReactionCollector, MessageCollector } from '../../structures/Collector';
+import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, User, Emoji as ErisEmoji } from 'eris';
+import { Message, ActionRowComponents, ActionRow, ComponentInteraction, ComponentInteractionSelectMenuData } from 'eris';
 
 import fetch from 'node-fetch';
 
@@ -39,11 +39,6 @@ export default class Emoji extends Command {
 
     if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
-      return;
-    }
-
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('addReactions')) {
-      ctx.sendMessage({ content: ':x: Preciso da permissão `Adicionar Reações` para executar este comando', flags: 1 << 6 });
       return;
     }
 
@@ -95,6 +90,31 @@ export default class Emoji extends Command {
         emoji.animated ? emojiList.push(`<a:${emoji.name}:${emoji.id}>`) : emojiList.push(`<:${emoji.name}:${emoji.id}>`);
       });
 
+      const components: ActionRowComponents[] = [
+        {
+          custom_id: 'left',
+          style: 2,
+          type: 2,
+          emoji: {
+            name: '⬅️'
+          },
+          disabled: true
+        },
+        {
+          custom_id: 'right',
+          style: 2,
+          type: 2,
+          emoji: {
+            name: '➡️'
+          }
+        }
+      ]
+
+      const row: ActionRow = {
+        type: 1,
+        components
+      }
+
       let page = 1;
       const pages = Math.ceil(emojiList.length / 30);
 
@@ -104,42 +124,43 @@ export default class Emoji extends Command {
         .setTimestamp()
         .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-      const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
-
-      if (emojiList.length > 30) {
-        msg.addReaction('⬅️');
-        msg.addReaction('➡️');
-
-        const filter = (r: ErisEmoji, user: User) => (r.name === '⬅️' || r.name === '➡️') && user === ctx.author;
-        const collector = new ReactionCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
-
-        collector.on('collect', async r => {
-          if (msg.channel.type !== 0) return;
-
-          if (msg.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
-            msg.removeReaction(r.name, ctx.author.id);
-          }
-
-          switch (r.name) {
-            case '⬅️':
-              if (page === 1) return;
-              page--;
-              break;
-            case '➡️':
-              if (page === pages) return;
-              page++;
-              break;
-          }
-
-          embed.setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice((page - 1) * 30, page * 30).join(' | ')}`)
-            .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
-          msg.edit({ embeds: [embed] });
-        });
+      if (emojiList.length <= 30) {
+        ctx.sendMessage({ embeds: [embed] });
+        return;
       }
+
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
+
+      const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
+      const collector = new ComponentCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
+
+      collector.on('collect', async i => {
+        switch (i.data.custom_id) {
+          case 'left':
+            if (page === 1) return;
+            if (--page === 1) {
+              row.components[0].disabled = true;
+            }
+            row.components[1].disabled = false;
+            break;
+          case 'right':
+            if (page === pages) return;
+            if (++page === pages) {
+              row.components[1].disabled = true;
+            }
+            row.components[0].disabled = false;
+            break;
+        }
+
+        embed.setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice((page - 1) * 30, page * 30).join(' | ')}`)
+          .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+        i.editParent({ embeds: [embed], components: [row] });
+      });
+
       return;
     }
 
-    const getEmojiInfo = (emoji: GuildEmoji) => {
+    const getEmojiInfo = (emoji: GuildEmoji, i?: ComponentInteraction) => {
       const createdAt = Math.floor(Number(emoji.id) / 4194304) + 1420070400000;
       const url = `https://cdn.discordapp.com/emojis/${emoji.id}.${emoji.animated ? 'gif' : 'png'}`;
 
@@ -156,7 +177,8 @@ export default class Emoji extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      ctx.sendMessage({ embeds: [embed] });
+      if (i) i.editParent({ embeds: [embed], components: [] });
+      else ctx.sendMessage({ embeds: [embed] });
     }
 
     if (ctx.args[0].split(':').length === 3) {
@@ -188,25 +210,38 @@ export default class Emoji extends Command {
       return;
     }
 
-    const emojiStringList = emojiList.slice(0, 20).map((emoji: GuildEmoji, idx) => {
-      return `${idx + 1} - <${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>`;
-    });
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'menu',
+        type: 3,
+        placeholder: 'Escolhe um emoji para ver mais informação',
+        options: emojiList.slice(0, 20).map((emoji: GuildEmoji, idx) => {
+          return {
+            label: '' + (idx + 1),
+            value: '' + idx,
+            emoji: {
+              id: emoji.id,
+              name: emoji.name,
+              animated: emoji.animated
+            },
+          }
+        })
+      },
+    ];
 
-    const embed = new this.client.embed()
-      .setTitle(':grinning: Lista de emojis encontrados')
-      .setColor('RANDOM')
-      .setDescription(`${emojiStringList.join('\n')}\nEscreve um número de **1** a **${emojiList.length >= 20 ? '20' : emojiList.length}** para obter informação sobre esse emoji`)
-      .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
 
-    const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
+    const msg = await ctx.sendMessage({ content: '\u200B', components: [row] }, true) as Message;
 
-    const filter = (m: Message) => m.author.id === ctx.author.id && parseInt(m.content) >= 1 && parseInt(m.content) <= 20;
-    const collector = new MessageCollector(this.client, ctx.channel, filter, { max: 1, time: 20000 });
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
+    const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 20000 });
 
-    collector.on('collect', m => {
-      msg.delete();
-      getEmojiInfo(emojiList[Number(m.content) - 1]);
+    collector.on('collect', i => {
+      const data = i.data as ComponentInteractionSelectMenuData
+      getEmojiInfo(emojiList[Number(data.values[0])], i);
     });
   }
 }

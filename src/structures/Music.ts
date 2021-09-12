@@ -9,12 +9,12 @@ import { Spotify } from './Spotify';
 import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
 
-import { Timeouts, MsgCollectors } from '../typings/index';
+import { Timeouts, ComponentCollectors } from '../typings/index';
 
 export default class D4rkManager extends Manager {
   client: Client;
   channelTimeouts: Map<string, Timeouts>;
-  searchMsgCollectors: Map<string, MsgCollectors>;
+  searchCollectors: Map<string, ComponentCollectors>;
 
   constructor(client: Client, nodes: NodeOptions[]) {
     super({
@@ -36,7 +36,7 @@ export default class D4rkManager extends Manager {
 
     this.client = client;
     this.channelTimeouts = new Map();
-    this.searchMsgCollectors = new Map();
+    this.searchCollectors = new Map();
 
     this.on('nodeConnect', async (node): Promise<void> => {
       console.log(`${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
