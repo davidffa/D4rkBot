@@ -12,7 +12,6 @@ export default class Ascii extends Command {
       args: 1,
       usage: '<Texto>',
       category: 'Others',
-      dm: true,
       aliases: ['asciiart'],
       cooldown: 3
     });

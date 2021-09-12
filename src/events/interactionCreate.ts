@@ -24,6 +24,7 @@ export default class InteractionCreate {
       return;
     }
 
+    if (interaction.channel.type === 1) return;
     const cmd = this.client.commands.find(c => c.name === interaction.data.name);
     if (!cmd) throw new Error('Command not found!');
 

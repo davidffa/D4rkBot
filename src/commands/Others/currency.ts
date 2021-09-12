@@ -13,7 +13,6 @@ export default class Currency extends Command {
       args: 3,
       usage: '<de> <para> <valor>',
       category: 'Others',
-      dm: true,
       aliases: ['moeda', 'curr', 'conversormoeda', 'currconverter'],
       cooldown: 3
     });

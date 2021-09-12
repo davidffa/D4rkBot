@@ -15,7 +15,6 @@ export default class Shell extends Command {
       description: 'Executa um comando no terminal e retorna o seu resultado',
       aliases: ['sh'],
       args: 1,
-      dm: true,
       usage: '<comando>',
       category: 'Dev',
     });

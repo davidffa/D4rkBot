@@ -10,7 +10,6 @@ export default class Invite extends Command {
       aliases: ['inv', 'convite'],
       category: 'Info',
       cooldown: 3,
-      dm: true
     });
   }
 

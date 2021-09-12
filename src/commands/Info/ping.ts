@@ -9,7 +9,6 @@ export default class Ping extends Command {
       description: 'Mostra o ping de envio de mensagens, o da API e o da Base de dados',
       category: 'Info',
       aliases: ['latencia', 'latency'],
-      dm: true,
       cooldown: 4
     });
   }

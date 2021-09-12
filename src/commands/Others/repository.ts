@@ -13,7 +13,6 @@ export default class Repository extends Command {
       usage: '<Dono> <Nome do repositório>',
       category: 'Others',
       aliases: ['repo', 'repositorio'],
-      dm: true,
       cooldown: 5
     });
   }

@@ -16,7 +16,6 @@ export default class Qrcode extends Command {
       usage: '<Criar/Ler> <Texto>|<URL/Anexo>',
       category: 'Others',
       aliases: ['qr'],
-      dm: true,
       cooldown: 4
     });
   }

@@ -12,7 +12,6 @@ export default class Help extends Command {
       description: 'Lista de todos os comandos ou informações de um comando específico.',
       aliases: ['comandos', 'cmd', 'cmds', 'ajuda', 'ajd', 'cmdlist', 'commandlist'],
       cooldown: 5,
-      dm: true
     })
   }
 

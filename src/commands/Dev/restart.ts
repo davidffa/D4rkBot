@@ -12,7 +12,6 @@ export default class Restart extends Command {
       args: 1,
       usage: '<nome do app>',
       category: 'Dev',
-      dm: true,
     });
   }
 

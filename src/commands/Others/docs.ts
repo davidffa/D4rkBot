@@ -12,7 +12,6 @@ export default class Docs extends Command {
       args: 1,
       usage: '<Procura>',
       category: 'Others',
-      dm: true,
       cooldown: 3
     });
   }

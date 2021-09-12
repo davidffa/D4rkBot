@@ -21,8 +21,9 @@ export default class MessageCreate {
     }
 
     if (message.author.bot) return;
+    if (message.channel.type === 1) return;
 
-    const prefix = (message.channel.type === 0 && (this.client.guildCache.get(message.guildID as string)?.prefix)) || 'db.';
+    const prefix = (this.client.guildCache.get(message.guildID as string)?.prefix) || 'db.';
 
     if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {
       if (message.channel.type === 0) {
@@ -124,9 +125,6 @@ export default class MessageCreate {
 
     if (this.client.lockedCmds.includes(command.name) && message.author.id !== '334054158879686657' && message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('sendMessages'))
       return message.channel.createMessage(`:x: O comando \`${cmdName}\` está em manutenção.`);
-
-    if (!command?.dm && message.channel.type === 1)
-      return message.channel.createMessage(':x: Não posso executar esse comando em Mensagens Diretas!');
 
     if (message.channel.type === 0 && this.client.guildCache.get(message.guildID as string)?.disabledCmds.includes(command.name) && message.channel.permissionsOf(this.client.user.id).has('sendMessages'))
       return message.channel.createMessage(`:x: O comando \`${command.name}\` está desativado neste servidor.`);

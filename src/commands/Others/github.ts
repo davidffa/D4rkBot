@@ -12,7 +12,6 @@ export default class Github extends Command {
       args: 1,
       usage: '<Nome>',
       category: 'Others',
-      dm: true,
       cooldown: 5
     });
   }

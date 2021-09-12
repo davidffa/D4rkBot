@@ -12,7 +12,6 @@ export default class Periodictable extends Command {
       description: 'Envia uma imagem da tabela periódica.',
       category: 'Others',
       aliases: ['tp', 'tabelaperiodica'],
-      dm: true,
       cooldown: 4
     });
   }

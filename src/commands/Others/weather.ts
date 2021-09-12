@@ -29,7 +29,6 @@ export default class Weather extends Command {
       args: 1,
       usage: '<cidade>',
       category: 'Others',
-      dm: true,
       aliases: ['clima', 'meteorologia'],
       cooldown: 5
     });

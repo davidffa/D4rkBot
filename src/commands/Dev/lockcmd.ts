@@ -10,7 +10,6 @@ export default class LockCmd extends Command {
       args: 1,
       usage: '<comando>',
       category: 'Dev',
-      dm: true,
     });
   }
 

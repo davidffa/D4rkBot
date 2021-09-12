@@ -12,7 +12,6 @@ export default class Calc extends Command {
       args: 1,
       usage: '<Expressão Matemática>',
       category: 'Others',
-      dm: true,
       aliases: ['calcular', 'calculadora', 'calculate', 'calculator'],
       cooldown: 3
     });

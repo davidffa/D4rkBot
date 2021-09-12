@@ -13,7 +13,6 @@ export default class Translate extends Command {
       usage: '<para> <texto>',
       category: 'Others',
       aliases: ['traduzir'],
-      dm: true,
       cooldown: 3
     });
   }

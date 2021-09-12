@@ -12,7 +12,6 @@ export default class Isitup extends Command {
       args: 1,
       usage: '<URL>',
       category: 'Others',
-      dm: true,
       cooldown: 4
     });
   }

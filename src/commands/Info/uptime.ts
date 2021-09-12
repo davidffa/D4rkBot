@@ -10,7 +10,6 @@ export default class Uptime extends Command {
       category: 'Info',
       aliases: ['ontime'],
       cooldown: 5,
-      dm: true
     });
   }
 

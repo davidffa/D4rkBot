@@ -11,7 +11,6 @@ export default class Avatar extends Command {
       description: 'Mostra o teu avatar ou de outra pessoa em uma imagem grande.',
       category: 'Info',
       aliases: ['av'],
-      dm: true,
       usage: '[nome]',
     });
   }

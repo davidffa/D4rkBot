@@ -27,7 +27,6 @@ export default class Eval extends Command {
       usage: '<código>',
       category: 'Dev',
       args: 1,
-      dm: true
     });
 
     this.fetch = fetch;

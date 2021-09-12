@@ -14,7 +14,6 @@ export default class Steam extends Command {
       aliases: ['steamgame'],
       usage: '<Jogo>',
       category: 'Others',
-      dm: true,
       cooldown: 5
     });
   }

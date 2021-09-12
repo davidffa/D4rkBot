@@ -15,7 +15,6 @@ export default class Wiki extends Command {
       aliases: ['wikipedia'],
       category: 'Others',
       args: 1,
-      dm: true,
       cooldown: 5,
       usage: '<Palavra/Frase>'
     });

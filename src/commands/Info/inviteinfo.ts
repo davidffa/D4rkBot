@@ -9,7 +9,6 @@ export default class Inviteinfo extends Command {
       description: 'Mostra informações sobre um convite de um servidor.',
       category: 'Info',
       aliases: ['invinfo'],
-      dm: true,
       usage: '<ID do convite>',
       args: 1,
       cooldown: 4

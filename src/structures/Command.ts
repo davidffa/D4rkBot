@@ -9,7 +9,6 @@ export default class Command implements CommandOptions {
   aliases?: Array<string>;
   usage?: string;
   category?: 'Moderation' | 'Settings' | 'Dev' | 'Info' | 'Others' | 'Music';
-  dm: boolean;
   args?: number;
   cooldown: number;
 
@@ -21,7 +20,6 @@ export default class Command implements CommandOptions {
     this.aliases = options.aliases;
     this.usage = options.usage;
     this.category = options.category;
-    this.dm = options.dm || false;
     this.args = options.args;
     this.cooldown = options.cooldown || 3;
   }

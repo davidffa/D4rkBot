@@ -12,7 +12,6 @@ export default class Blacklist extends Command {
       args: 1,
       usage: '<list/add/remove> [user]',
       category: 'Dev',
-      dm: true,
     });
   }
 
