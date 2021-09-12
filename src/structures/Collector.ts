@@ -177,6 +177,8 @@ export class ComponentCollector extends EventEmitter3 {
 
       if (this.options.max && this.interactionCount === this.options.max)
         this.stop('Max');
+    } else {
+      interaction.createMessage({ content: 'Não podes interagir aqui!', flags: 1 << 6 });
     }
   }
 
