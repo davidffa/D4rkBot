@@ -217,7 +217,7 @@ export default class Emoji extends Command {
         placeholder: 'Escolhe um emoji para ver mais informação',
         options: emojiList.slice(0, 20).map((emoji: GuildEmoji, idx) => {
           return {
-            label: '' + (idx + 1),
+            label: emoji.name,
             value: '' + idx,
             emoji: {
               id: emoji.id,
