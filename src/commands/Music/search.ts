@@ -75,7 +75,7 @@ export default class Search extends Command {
             options: tracks.map((track, idx) => {
               return {
                 emoji: { name: emojis[idx] },
-                label: formatString(track.title, 50),
+                label: formatString(track.author, 75),
                 description: formatString(track.title, 100),
                 value: idx.toString()
               }
