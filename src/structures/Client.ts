@@ -59,6 +59,11 @@ export default class D4rkClient extends Client {
 
     super(process.env.TOKEN as string, clientOptions);
 
+    this.editStatus('idle', {
+      name: 'A iniciar...',
+      type: 3
+    });
+
     this.commands = [];
     this.records = new Map();
     this.cooldowns = new Map();
@@ -268,7 +273,7 @@ export default class D4rkClient extends Client {
   loadStatus(): void {
     let id = 0;
 
-    setInterval(async (): Promise<void> => {
+    const task = async () => {
       switch (id) {
         case 0:
           this.editStatus('dnd', {
@@ -318,12 +323,12 @@ export default class D4rkClient extends Client {
             type: 3
           });
           break;
-        default:
-          id = -1;
-          break;
       }
-      id++;
-    }, 30000);
+      id = id % 7 + 1;
+    }
+
+    task();
+    setInterval(() => task(), 30000);
   }
 
   async loadLogs(): Promise<void> {
