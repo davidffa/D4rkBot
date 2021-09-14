@@ -3,7 +3,7 @@ import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
 import { ComponentCollector } from '../structures/Collector';
 
-import { ComponentInteraction, Message } from 'eris';
+import { ActionRow, ComponentInteraction, Message } from 'eris';
 
 export default class Help extends Command {
   constructor(client: Client) {
@@ -75,8 +75,21 @@ export default class Help extends Command {
         .addField(`:thinking: Mais ajuda`, `Faz \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}help <nome do comando>\` para obter informação sobre um comando`)
         .addField(`<:megathink:803675654376652880> Ainda mais ajuda`, '[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)')
 
-      const msg = await ctx.sendMessage({ embeds: [embed] }, true) as Message;
-      await msg.addReaction('x_:751062867444498432');
+      const row: ActionRow = {
+        type: 1,
+        components: [
+          {
+            custom_id: 'delete',
+            style: 4,
+            type: 2,
+            emoji: {
+              name: '🗑️'
+            }
+          }
+        ]
+      }
+
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
 
       const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 
