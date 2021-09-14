@@ -34,22 +34,18 @@ export default class Periodictable extends Command {
 
       ctx.sendMessage({
         embeds: [embed],
-        file: [
-          {
-            name: 'TP.png',
-            file: buffer
-          }
-        ]
+        file: {
+          name: 'TP.png',
+          file: buffer
+        }
       });
     } else {
       ctx.sendMessage({
         content: 'Tabela Periódica!',
-        file: [
-          {
-            name: 'Tabela Periódica.png',
-            file: buffer
-          }
-        ]
+        file: {
+          name: 'Tabela Periódica.png',
+          file: buffer
+        }
       });
     }
   }

@@ -130,12 +130,10 @@ export default class Eval extends Command {
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
-            file: [
-              {
-                name: 'eval.txt',
-                file: Buffer.from(res)
-              }
-            ],
+            file: {
+              name: 'eval.txt',
+              file: Buffer.from(res)
+            },
             components: [row]
           }, true) as Message;
         }

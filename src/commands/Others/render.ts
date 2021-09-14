@@ -142,12 +142,10 @@ export default class Render extends Command {
 
     const msg = await ctx.sendMessage({
       embeds: [embed],
-      file: [
-        {
-          name: 'render.png',
-          file: inflate
-        }
-      ],
+      file: {
+        name: 'render.png',
+        file: inflate
+      },
       components: [row]
     }, true) as Message;
 

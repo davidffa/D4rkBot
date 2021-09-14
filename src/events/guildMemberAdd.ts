@@ -78,12 +78,10 @@ export default class GuildMemberAdd {
     ctx.drawImage(avatar, 22, 22, 206, 206);
 
     this.client.createMessage(guildData.welcomeChatID, {
-      file: [
-        {
-          name: 'bem-vindo.png',
-          file: canvas.toBuffer()
-        }
-      ]
+      file: {
+        name: 'bem-vindo.png',
+        file: canvas.toBuffer()
+      }
     })
   }
 }
