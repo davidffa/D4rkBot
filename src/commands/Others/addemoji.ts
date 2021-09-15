@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Addemoji extends Command {
   constructor(client: Client) {
     super(client, {
@@ -59,9 +57,9 @@ export default class Addemoji extends Command {
       return;
     }
 
-    const { buffer, type } = await fetch(imageURL).then(async (res) => {
-      const buff = await res.buffer();
-      const types = res.headers.get('content-type');
+    const { buffer, type } = await this.client.request(imageURL).then((res) => {
+      const buff = res.buffer;
+      const types = res.headers['content-type'];
 
       if (!types || !(/image\/png|image\/jpeg|image\/jpg|image\/gif/g.test(types))) {
         return { buffer: buff, type: null };

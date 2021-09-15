@@ -12,10 +12,11 @@ import {
   LoadType,
   SearchQuery,
 } from 'erela.js';
-import fetch from 'node-fetch';
 
 const BASE_URL = 'https://api.spotify.com/v1';
 const REGEX = /(?:https:\/\/open\.spotify\.com\/|spotify:)(?:.+)?(track|playlist|album)[\/:]([A-Za-z0-9]+)/;
+
+import request from '../utils/Request';
 
 const buildSearch = (loadType: LoadType, tracks: UnresolvedTrack[] | null, error: string | null, name: string | null): SearchResult => ({
   loadType: loadType,
@@ -69,11 +70,11 @@ export class Spotify extends Plugin {
   public async makeRequest<T>(url: string): Promise<T> {
     if (Date.now() >= this.renewDate) await this.renew();
 
-    return await fetch(url, {
+    return await request(url, {
       headers: {
         Authorization: this.token
       }
-    }).then(r => r.json()) as T;
+    }).then(r => r.json) as T;
   }
 
   private async search(query: string | SearchQuery, requester?: unknown): Promise<SearchResult> {
@@ -168,13 +169,13 @@ export class Spotify extends Plugin {
   }
 
   private async renewToken(): Promise<number> {
-    const { access_token, expires_in } = await fetch('https://accounts.spotify.com/api/token?grant_type=client_credentials', {
+    const { access_token, expires_in } = await request('https://accounts.spotify.com/api/token?grant_type=client_credentials', {
       method: 'POST',
       headers: {
         Authorization: `Basic ${this.authorization}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       }
-    }).then(r => r.json());
+    }).then(r => r.json);
 
     if (!access_token) {
       throw new Error('Invalid Spotify client.');

@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Docs extends Command {
   constructor(client: Client) {
     super(client, {
@@ -22,7 +20,7 @@ export default class Docs extends Command {
       return;
     }
 
-    const res = await fetch(`${process.env.ERISDOCSAPIURL}/docs?search=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
+    const res = await this.client.request(`${process.env.ERISDOCSAPIURL}/docs?search=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json);
 
     if (res.error) {
       ctx.sendMessage({ content: ':x: Nada encontrado nas docs!', flags: 1 << 6 });

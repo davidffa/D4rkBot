@@ -5,8 +5,6 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { Message, ActionRowComponents, ActionRow, ComponentInteraction, ComponentInteractionSelectMenuData } from 'eris';
 
-import fetch from 'node-fetch';
-
 interface UnicodeEmojiInfo {
   name: string;
   slug: string;
@@ -46,7 +44,7 @@ export default class Emoji extends Command {
       const unicodeEmojiInfo: UnicodeEmojiInfo | undefined = require('unicode-emoji-json')[ctx.args[0]];
 
       if (unicodeEmojiInfo) {
-        const emojiAPIInfo = await fetch(`https://emoji-api.com/emojis?search=${unicodeEmojiInfo.slug}&access_key=${process.env.EMOJIAPIKEY}`).then(res => res.json());
+        const emojiAPIInfo = await this.client.request(`https://emoji-api.com/emojis?search=${unicodeEmojiInfo.slug}&access_key=${process.env.EMOJIAPIKEY}`).then(res => res.json);
 
         const embed = new this.client.embed()
           .setColor('RANDOM')

@@ -5,7 +5,6 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { ActionRow, ActionRowComponents, ComponentInteraction, Message } from 'eris';
 
-import fetch from 'node-fetch';
 import cio from 'cheerio';
 
 interface LyricsRes {
@@ -43,17 +42,17 @@ export default class Lyrics extends Command {
         .replace(/\s+/g, ' ')
         .trim();
 
-      const res = await fetch(`https://api.genius.com/search?q=${encodeURIComponent(song)}`, {
+      const res = await this.client.request(`https://api.genius.com/search?q=${encodeURIComponent(song)}`, {
         headers: {
-          Authorization: `Bearer ${process.env.GENIUSLYRICSTOKEN}`
+          'Authorization': `Bearer ${process.env.GENIUSLYRICSTOKEN}`
         }
-      }).then(res => res.json());
+      }).then(res => res.json);
 
       if (!res.response.hits.length) return null;
 
       const data = res.response.hits[0].result;
 
-      const lyricsData = await fetch(data.url).then(res => res.text());
+      const lyricsData = await this.client.request(data.url).then(res => res.text);
 
       const $ = cio.load(lyricsData);
       let lyrics = $('div[class="lyrics"]').text().trim();

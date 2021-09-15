@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Restart extends Command {
   constructor(client: Client) {
     super(client, {
@@ -18,16 +16,16 @@ export default class Restart extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.author.id !== '334054158879686657') return;
 
-    const { status, res } = await fetch(`https://api.heroku.com/apps/${ctx.args[0].toLowerCase()}/dynos`, {
+    const { status, res } = await this.client.request(`https://api.heroku.com/apps/${ctx.args[0].toLowerCase()}/dynos`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/vnd.heroku+json; version=3',
         'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
       }
-    }).then(async (r) => {
+    }).then(r => {
       return {
         status: r.status,
-        res: await r.json()
+        res: r.json
       }
     });
 

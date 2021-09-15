@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext, { Type } from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 import sbd from 'sbd';
 import { Message } from 'eris';
 
@@ -39,14 +37,13 @@ export default class Wiki extends Command {
       lang: 'pt'
     }
 
-    const res = await fetch('https://api.algorithmia.com/v1/algo/web/WikipediaParser/0.1.2?timeout=300', {
-      method: 'post',
+    const res = await this.client.request('https://api.algorithmia.com/v1/algo/web/WikipediaParser/0.1.2?timeout=300', {
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Simple ${process.env.AlgorithmiaKey}`
       },
-      body: JSON.stringify(content)
-    }).then(res => res.json()).then(r => r.result)
+      body: content
+    }).then(res => res.json.result)
 
     if (!res) {
       if (ctx.type === Type.INTERACTION) {

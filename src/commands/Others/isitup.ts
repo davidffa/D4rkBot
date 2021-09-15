@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Isitup extends Command {
   constructor(client: Client) {
     super(client, {
@@ -27,7 +25,7 @@ export default class Isitup extends Command {
 
     const url = ctx.args[0].replace(HTTP, '').replace(PATH, '');
 
-    const body = await fetch(`https://isitup.org/${url}.json`).then(res => res.json()).catch(_ => null);
+    const body = await this.client.request(`https://isitup.org/${url}.json`).then(res => res.json).catch(_ => null);
 
     if (!body) {
       ctx.sendMessage({ content: ':x: Site inválido!', flags: 1 << 6 });

@@ -2,7 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
 import cio from 'cheerio';
 
 export default class Currency extends Command {
@@ -32,7 +31,7 @@ export default class Currency extends Command {
     ctx.args[0] = ctx.args[0].toUpperCase();
     ctx.args[1] = ctx.args[1].toUpperCase();
 
-    const res = await fetch(`https://www.x-rates.com/calculator/?from=${ctx.args[0]}&to=${ctx.args[1]}&amount=${ctx.args[2]}`).then(res => res.text());
+    const res = await this.client.request(`https://www.x-rates.com/calculator/?from=${ctx.args[0]}&to=${ctx.args[1]}&amount=${ctx.args[2]}`).then(res => res.text);
 
     const $ = cio.load(res);
 

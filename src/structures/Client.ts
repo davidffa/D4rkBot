@@ -5,12 +5,16 @@ import { NodeOptions, VoicePacket } from 'erela.js';
 
 import Embed from './Embed';
 import Music from './Music';
+
 import levDistance from '../utils/levenshteinDistance';
 import msToHour from '../utils/msToHour';
 import msToDate from '../utils/msToDate';
+import request, { ReqOptions, Response } from '../utils/Request';
+
 import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
 import userDatabase from '../models/userDB';
+
 import { ComponentCollector, MessageCollector } from './Collector';
 
 import { Command, Utils, Records, GuildCache } from '../typings/index';
@@ -33,6 +37,7 @@ export default class D4rkClient extends Client {
   // reactionCollectors: Array<ReactionCollector>;
   messageCollectors: Array<MessageCollector>;
   componentCollectors: Array<ComponentCollector>;
+  request: (url: string, options?: ReqOptions) => Promise<Response>;
 
   constructor() {
     const clientOptions: ClientOptions = {
@@ -73,6 +78,7 @@ export default class D4rkClient extends Client {
     this.guildDB = guildDatabase;
     this.userDB = userDatabase;
     this.embed = Embed;
+    this.request = request;
     // this.reactionCollectors = [];
     this.messageCollectors = [];
     this.componentCollectors = [];

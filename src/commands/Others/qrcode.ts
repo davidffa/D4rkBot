@@ -2,10 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message } from 'eris';
-
 import QRCode from 'qrcode';
-import fetch from 'node-fetch';
 
 export default class Qrcode extends Command {
   constructor(client: Client) {
@@ -76,9 +73,8 @@ export default class Qrcode extends Command {
           return;
         }
 
-        const data = await fetch(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`)
-          .then(res => res.json())
-          .then(json => json[0].symbol[0].data)
+        const data = await this.client.request(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`)
+          .then(res => res.json[0].symbol[0].data)
           .catch(() => null);
 
         if (!data) {

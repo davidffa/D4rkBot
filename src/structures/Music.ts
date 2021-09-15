@@ -6,7 +6,6 @@ import { Player, Node } from 'erela.js';
 import { Manager, NodeOptions } from 'erela.js';
 import { Spotify } from './Spotify';
 
-import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
 
 import { Timeouts, ComponentCollectors } from '../typings/index';
@@ -120,7 +119,7 @@ export default class D4rkManager extends Manager {
         const appName = player.node.options.host.split('.')[0];
 
         if (appName) {
-          await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
+          await this.client.request(`https://api.heroku.com/apps/${appName}/dynos`, {
             method: 'DELETE',
             headers: {
               'Accept': 'application/vnd.heroku+json; version=3',
@@ -252,14 +251,14 @@ export default class D4rkManager extends Manager {
     const xmlParser = new Parser();
 
     if (['CidadeHipHop', 'CidadeFM', 'RadioComercial', 'M80'].includes(radio)) {
-      const xml = await fetch(`https://${radio === 'M80' ? 'm80' : radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.text());
+      const xml = await this.client.request(`https://${radio === 'M80' ? 'm80' : radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.text);
 
       const text = await xmlParser.parseStringPromise(xml).then(t => t.RadioInfo.Table[0]);
 
       artist = text['DB_DALET_ARTIST_NAME'][0];
       songTitle = text['DB_DALET_TITLE_NAME'][0];
     } else if (radio === 'RFM') {
-      const xml = await fetch('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer()).then(buffer => buffer.toString('utf16le'));
+      const xml = await this.client.request('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer.toString('utf16le'));
 
       const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
 
@@ -278,7 +277,7 @@ export default class D4rkManager extends Manager {
     for (const node of this.nodes.values()) {
       if (node.options.host.includes('heroku')) {
         setInterval(() => {
-          fetch(`http://${node.options.host}/version`, {
+          this.client.request(`http://${node.options.host}/version`, {
             headers: {
               Authorization: node.options.password!
             }

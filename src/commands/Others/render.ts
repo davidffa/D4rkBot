@@ -7,8 +7,6 @@ import { inflateSync } from 'zlib';
 
 import { Message, ComponentInteraction, ActionRowComponents, ActionRow } from 'eris';
 
-import fetch from 'node-fetch';
-
 export default class Render extends Command {
   constructor(client: Client) {
     super(client, {
@@ -60,10 +58,10 @@ export default class Render extends Command {
         }, 5e3);
 
         try {
-          const res = await fetch(url);
+          const res = await this.client.request(url);
 
           if (res)
-            resolve(res.url);
+            resolve(url);
           else
             resolve(null)
         } catch (err) {
@@ -93,13 +91,13 @@ export default class Render extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    const res = await fetch(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
+    const res = await this.client.request(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
       headers: {
         Authorization: process.env.RENDERAPITOKEN as string,
       },
     }).then(r => {
       if (r.status !== 200) return null;
-      return r.buffer();
+      return r.buffer;
     });
 
     if (!res) {

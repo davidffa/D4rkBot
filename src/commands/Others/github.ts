@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Github extends Command {
   constructor(client: Client) {
     super(client, {
@@ -22,14 +20,14 @@ export default class Github extends Command {
       return;
     }
 
-    const res = await fetch(`https://api.github.com/users/${encodeURIComponent(ctx.args[0])}`);
+    const res = await this.client.request(`https://api.github.com/users/${encodeURIComponent(ctx.args[0])}`);
 
     if (res.status !== 200) {
       ctx.sendMessage({ content: ':x: Perfil não encontrado', flags: 1 << 6 });
       return;
     }
 
-    const user = await res.json();
+    const user = res.json;
 
     const embed = new this.client.embed()
       .setTitle(`<:github:784791056670654465> Perfil de ${user.login}`)

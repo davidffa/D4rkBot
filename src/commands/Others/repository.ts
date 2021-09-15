@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import fetch from 'node-fetch';
-
 export default class Repository extends Command {
   constructor(client: Client) {
     super(client, {
@@ -23,14 +21,14 @@ export default class Repository extends Command {
       return;
     }
 
-    const res = await fetch(`https://api.github.com/repos/${encodeURIComponent(ctx.args[0])}/${encodeURIComponent(ctx.args[1])}`);
+    const res = await this.client.request(`https://api.github.com/repos/${encodeURIComponent(ctx.args[0])}/${encodeURIComponent(ctx.args[1])}`);
 
     if (res.status !== 200) {
       ctx.sendMessage({ content: ':x: Repositório não encontrado', flags: 1 << 6 });
       return;
     }
 
-    const repo = await res.json();
+    const repo = res.json;
 
     const embed = new this.client.embed()
       .setTitle(`<:github:784791056670654465> Repositório ${repo.name}`)

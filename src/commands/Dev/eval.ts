@@ -12,12 +12,9 @@ import { inspect } from 'util';
 
 import { GuildCache } from '../../typings';
 
-import fetch from 'node-fetch';
-
 export default class Eval extends Command {
   player: Player | null | undefined;
   guildCache: GuildCache | null | undefined;
-  fetch: typeof fetch;
 
   constructor(client: Client) {
     super(client, {
@@ -28,15 +25,13 @@ export default class Eval extends Command {
       category: 'Dev',
       args: 1,
     });
-
-    this.fetch = fetch;
   }
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.author.id !== '334054158879686657' || !ctx.guild) return;
 
     if (ctx.channel.type === 0) {
-      this.player = this.client.music.get(ctx.guild.id);
+      // this.player = this.client.music.get(ctx.guild.id);
       this.guildCache = this.client.guildCache.get(ctx.guild.id);
     } else {
       this.player = null
@@ -117,13 +112,10 @@ export default class Eval extends Command {
           }]
         }
 
-        const bin = await fetch('https://sourceb.in/api/bins', {
+        const bin = await this.client.request('https://sourceb.in/api/bins', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        }).then(res => res.json());
+          body
+        }).then(res => res.json);
 
         if (bin.key) {
           msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row] }, true) as Message;

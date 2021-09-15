@@ -5,7 +5,6 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
 
-import fetch from 'node-fetch';
 import { exec } from 'child_process';
 
 export default class Shell extends Command {
@@ -72,13 +71,10 @@ export default class Shell extends Command {
           }]
         };
 
-        const bin = await fetch('https://sourceb.in/api/bins', {
+        const bin = await this.client.request('https://sourceb.in/api/bins', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        }).then(res => res.json());
+          body
+        }).then(res => res.json);
 
         if (bin.key) {
           msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row] }, true) as Message;
