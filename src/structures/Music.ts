@@ -235,13 +235,6 @@ export default class D4rkManager extends Manager {
       return false;
     }
 
-    /*
-    if (this.client.records.has(ctx.guild?.id as string)) {
-      ctx.sendMessage({ content: ':x: Não consigo tocar música enquanto gravo voz!', flags: 1<<6})
-      return false;
-    }
-    */
-
     if (player && voiceChannelID !== player.voiceChannel) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar este comando!', flags: 1 << 6 });
       return false;

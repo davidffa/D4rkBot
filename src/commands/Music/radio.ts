@@ -24,7 +24,7 @@ export default class Radio extends Command {
       M80: 'https://mcrscast1.mcr.iol.pt/m80',
       CidadeFM: 'https://mcrscast.mcr.iol.pt/cidadefm',
       CidadeHipHop: 'https://mcrscast.mcr.iol.pt/cidHiphop',
-      RFM: 'http://22343.live.streamtheworld.com/RFMAAC_SC',
+      RFM: 'https://22533.live.streamtheworld.com/RFMAAC.aac',
       RadioComercial: 'https://mcrscast1.mcr.iol.pt/comercial'
     };
 
