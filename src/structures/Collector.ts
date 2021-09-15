@@ -1,4 +1,4 @@
-import EventEmitter3 from 'eventemitter3';
+import { EventEmitter } from 'events';
 import Client from './Client';
 import { Message, ComponentInteraction, TextableChannel } from 'eris';
 
@@ -44,7 +44,7 @@ interface CollectorOptions {
   time?: number;
 }
 
-// export class ReactionCollector extends EventEmitter3 {
+// export class ReactionCollector extends EventEmitter {
 //   client: Client;
 //   message: Message;
 //   filter?: typeof ReactionCollectorFilter;
@@ -99,7 +99,7 @@ interface CollectorOptions {
 //   }
 // }
 
-export class MessageCollector extends EventEmitter3 {
+export class MessageCollector extends EventEmitter {
   client: Client;
   channel: TextableChannel;
   filter?: typeof MessageCollectorFilter;
@@ -144,7 +144,7 @@ export class MessageCollector extends EventEmitter3 {
   }
 }
 
-export class ComponentCollector extends EventEmitter3 {
+export class ComponentCollector extends EventEmitter {
   client: Client;
   message: Message;
   filter?: typeof ComponentCollectorFilter;

@@ -34,7 +34,6 @@
     "dotenv": "^10.0.0",
     "erela.js": "davidffa/erela.js#build-mod",
     "eris": "git+https://github.com/DonovanDMC/eris.git#27c3293",
-    "eventemitter3": "^4.0.7",
     "figlet": "^1.5.2",
     "mathjs": "^9.4.5",
     "mongoose": "6.0.5",
