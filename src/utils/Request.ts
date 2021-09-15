@@ -23,7 +23,8 @@ export default function fetch(url: string, options?: ReqOptions): Promise<Respon
     let response = new Transform();
 
     const req = request({
-      host: requestUrl.host,
+      host: requestUrl.hostname,
+      port: requestUrl.port,
       path: requestUrl.pathname + requestUrl.search,
       headers: {
         'User-Agent': 'D4rkBot (Discord Bot)',
