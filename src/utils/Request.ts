@@ -1,7 +1,6 @@
 import https from 'https';
 import http, { IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
 import { Transform } from 'stream';
-import { resolve } from 'dns';
 
 export type ReqOptions = {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
