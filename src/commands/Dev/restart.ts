@@ -22,10 +22,10 @@ export default class Restart extends Command {
         'Accept': 'application/vnd.heroku+json; version=3',
         'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
       }
-    }).then(r => {
+    }).then(async r => {
       return {
         status: r.status,
-        res: r.json
+        res: await r.json()
       }
     });
 

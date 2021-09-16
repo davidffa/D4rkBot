@@ -97,7 +97,7 @@ export default class Render extends Command {
       },
     }).then(r => {
       if (r.status !== 200) return null;
-      return r.buffer;
+      return r.buffer();
     });
 
     if (!res) {

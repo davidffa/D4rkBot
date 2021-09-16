@@ -74,7 +74,8 @@ export default class Qrcode extends Command {
         }
 
         const data = await this.client.request(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`)
-          .then(res => res.json[0].symbol[0].data)
+          .then(res => res.json())
+          .then(json => json[0].symbol[0].data)
           .catch(() => null);
 
         if (!data) {

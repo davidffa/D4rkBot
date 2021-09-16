@@ -1,6 +1,7 @@
 import https from 'https';
 import http, { IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
 import { Transform } from 'stream';
+import { resolve } from 'dns';
 
 export type ReqOptions = {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -84,15 +85,17 @@ export class Response {
     return this.data.response.read();
   }
 
-  get buffer() {
-    return Buffer.from(this.data.response.read());
+  public buffer(): Promise<Buffer> {
+    return new Promise((resolve) => resolve(Buffer.from(this.data.response.read())));
   }
 
-  get json() {
-    try {
-      return JSON.parse(this.data.response.read());
-    } catch {
-      return {};
-    }
+  public json(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(JSON.parse(this.data.response.read()));
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }

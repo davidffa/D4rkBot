@@ -43,7 +43,7 @@ export default class Wiki extends Command {
         'Authorization': `Simple ${process.env.AlgorithmiaKey}`
       },
       body: content
-    }).then(res => res.json.result)
+    }).then(res => res.json()).then(json => json.result);
 
     if (!res) {
       if (ctx.type === Type.INTERACTION) {

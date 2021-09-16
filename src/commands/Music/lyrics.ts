@@ -46,7 +46,7 @@ export default class Lyrics extends Command {
         headers: {
           'Authorization': `Bearer ${process.env.GENIUSLYRICSTOKEN}`
         }
-      }).then(res => res.json);
+      }).then(res => res.json());
 
       if (!res.response.hits.length) return null;
 

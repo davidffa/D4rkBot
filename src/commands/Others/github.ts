@@ -27,7 +27,7 @@ export default class Github extends Command {
       return;
     }
 
-    const user = res.json;
+    const user = await res.json();
 
     const embed = new this.client.embed()
       .setTitle(`<:github:784791056670654465> Perfil de ${user.login}`)

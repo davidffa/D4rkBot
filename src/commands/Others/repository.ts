@@ -28,7 +28,7 @@ export default class Repository extends Command {
       return;
     }
 
-    const repo = res.json;
+    const repo = await res.json();
 
     const embed = new this.client.embed()
       .setTitle(`<:github:784791056670654465> Repositório ${repo.name}`)

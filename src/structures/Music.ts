@@ -258,7 +258,7 @@ export default class D4rkManager extends Manager {
       artist = text['DB_DALET_ARTIST_NAME'][0];
       songTitle = text['DB_DALET_TITLE_NAME'][0];
     } else if (radio === 'RFM') {
-      const xml = await this.client.request('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer.toString('utf16le'));
+      const xml = await this.client.request('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.buffer()).then(buff => buff.toString('utf16le'));
 
       const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
 
