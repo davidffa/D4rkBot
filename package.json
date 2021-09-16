@@ -14,7 +14,7 @@
     "yarn": "1.22.5"
   },
   "scripts": {
-    "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/index.ts"
+    "start": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts"
   },
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
@@ -33,10 +33,10 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^10.0.0",
     "erela.js": "davidffa/erela.js#build-mod",
-    "eris": "git+https://github.com/DonovanDMC/eris.git#27c3293",
+    "eris": "DonovanDMC/eris#2d78ed8",
     "figlet": "^1.5.2",
     "mathjs": "^9.4.5",
-    "mongoose": "6.0.5",
+    "mongoose": "6.0.6",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
