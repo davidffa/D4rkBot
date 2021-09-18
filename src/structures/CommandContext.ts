@@ -31,10 +31,11 @@ export default class CommandContext {
         if (interaction.data.options?.[0].type === 1) {
           this.args.push(interaction.data.options[0].name.toString().trim());
 
-          for (const val of (interaction.data.options[0].options as InteractionDataOptionsWithValue[])) {
-            this.args.push(val.value.toString().trim());
+          if (interaction.data.options[0].options) {
+            for (const val of (interaction.data.options[0].options as InteractionDataOptionsWithValue[])) {
+              this.args.push(val.value.toString().trim());
+            }
           }
-
         } else {
           const options = interaction.data.options as InteractionDataOptionsWithValue[];
 
