@@ -98,10 +98,22 @@ export default class Kick extends Command {
 
     const reason = ctx.args.slice(1).join(' ') || 'Sem motivo';
 
+    const embed = new this.client.embed()
+      .setTitle('Expulsão')
+      .setDescription(`Foste expulso do servidor ${ctx.guild.name}!`)
+      .addField(':man: Expulso por:', `\`${ctx.author.username}#${ctx.author.discriminator}\``)
+      .addField(':newspaper: Motivo:', `\`${reason}\``)
+      .setColor(0xffff00)
+      .setTimestamp()
+
+    const dm = await user.getDMChannel();
+    const msg = await dm.createMessage({ embeds: [embed] }).catch(() => null);
+
     ctx.guild.kickMember(user.id, reason).then(() => {
       if (!member) return;
       ctx.sendMessage(`<a:verificado:803678585008816198> Expulsas-te o \`${user.username}#${user.discriminator}\` por \`${reason}\``);
     }).catch(() => {
+      if (msg) msg.delete();
       ctx.sendMessage({ content: ':x: Não tenho permissão para expulsar esse membro!', flags: 1 << 6 });
     });
   }

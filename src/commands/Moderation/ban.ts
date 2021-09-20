@@ -95,9 +95,21 @@ export default class Ban extends Command {
 
     const reason = ctx.args.slice(1).join(' ') || 'Sem motivo';
 
+    const embed = new this.client.embed()
+      .setTitle('Banimento')
+      .setDescription(`Foste banido do servidor ${ctx.guild.name}!`)
+      .addField(':man: Banido por:', `\`${ctx.author.username}#${ctx.author.discriminator}\``)
+      .addField(':newspaper: Motivo:', `\`${reason}\``)
+      .setColor(0xff0000)
+      .setTimestamp()
+
+    const dm = await user.getDMChannel();
+    const msg = await dm.createMessage({ embeds: [embed] }).catch(() => null);
+
     ctx.guild.banMember(user.id, 0, reason).then(() => {
       ctx.sendMessage(`<a:verificado:803678585008816198> Banis-te o \`${user?.username}#${user?.discriminator}\` por \`${reason}\``);
     }).catch(() => {
+      if (msg) msg.delete();
       ctx.sendMessage({ content: ':x: Não tenho permissão para banir esse membro!', flags: 1 << 6 });
     })
   }
