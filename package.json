@@ -11,7 +11,7 @@
   "license": "MIT",
   "engines": {
     "node": "14.17.6",
-    "yarn": "1.22.5"
+    "yarn": "1.22.11"
   },
   "scripts": {
     "start": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts"
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.9.1",
+    "@types/node": "^16.9.6",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode": "^1.4.1",
     "@types/sbd": "^1.0.2",
@@ -33,10 +33,10 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^10.0.0",
     "erela.js": "davidffa/erela.js#build-mod",
-    "eris": "DonovanDMC/eris#2d78ed8",
+    "eris": "DonovanDMC/eris#bee4213",
     "figlet": "^1.5.2",
-    "mathjs": "^9.4.5",
-    "mongoose": "6.0.6",
+    "mathjs": "^9.5.0",
+    "mongoose": "6.0.7",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
