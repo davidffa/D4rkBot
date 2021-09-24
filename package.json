@@ -33,7 +33,7 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^10.0.0",
     "erela.js": "davidffa/erela.js#build-mod",
-    "eris": "DonovanDMC/eris#bee4213",
+    "eris": "DonovanDMC/eris#4b672c5",
     "figlet": "^1.5.2",
     "mathjs": "^9.5.0",
     "mongoose": "6.0.7",
