@@ -5,17 +5,17 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteractionSelectMenuData, Message, VoiceChannel } from 'eris';
 
-import { Player } from 'erela.js';
+import { Player, SearchResult } from 'erela.js';
 
 export default class Search extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'search',
-      description: 'Procura uma música no YouTube e toca-a.',
+      description: 'Procura uma música no YouTube, YouTube Music, SoundCloud ou Yandex-Music e toca-a.',
       category: 'Music',
       aliases: ['procurar', 'searchmusic'],
       cooldown: 5,
-      usage: '<Nome>',
+      usage: '[yt/ytm/sc/ym] <Nome>',
       args: 1
     });
   }
@@ -54,7 +54,24 @@ export default class Search extends Command {
     const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 
     try {
-      const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
+      let res: SearchResult;
+
+      const sources: any = {
+        yt: 'youtube',
+        ytm: 'youtubemusic',
+        sc: 'soundcloud',
+        ym: 'yandex'
+      }
+
+      if (['yt', 'ytm', 'sc', 'ym'].includes(ctx.args[0].toLowerCase())) {
+        if (ctx.args.length < 1) {
+          ctx.sendMessage({ content: `:x: Argumentos em falta. **Usa:** \`${this.client.guildCache.get(ctx.guild.id)!.prefix}${this.name} ${this.usage}\``, flags: 1 << 6 });
+          return;
+        }
+        res = await this.client.music.search({ source: sources[ctx.args[0].toLowerCase()], query: ctx.args.slice(1).join(' ') }, ctx.author);
+      } else {
+        res = await this.client.music.search(ctx.args.join(' '), ctx.author);
+      }
 
       if (res.loadType === 'SEARCH_RESULT') {
         const tracks = res.tracks.slice(0, 10);

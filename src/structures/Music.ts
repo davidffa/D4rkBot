@@ -1,5 +1,5 @@
-import Client from '../structures/Client';
-import CommandContext from '../structures/CommandContext';
+import Client from './Client';
+import CommandContext from './CommandContext';
 
 import { User, Member } from 'eris';
 import { Player, Node } from 'erela.js';
@@ -60,7 +60,7 @@ export default class D4rkManager extends Manager {
     });
 
     this.on('nodeDisconnect', (node, reason): void => {
-      console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason ?? reason.code ?? 'Desconhecido'}`);
+      console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente.\nMotivo: ${reason.reason || reason.code || 'Desconhecido'}`);
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
