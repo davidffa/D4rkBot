@@ -95,13 +95,13 @@ export default class Avatar extends Command {
 
     collector.on('collect', i => {
       if (i.data.custom_id === 'left') {
-        row.components[0].disabled = false;
         row.components[0].disabled = true;
-        i.editParent({ embeds: [userEmbed], components: [row] });
-      } else {
-        row.components[0].disabled = true;
-        row.components[0].disabled = false;
+        row.components[1].disabled = false;
         i.editParent({ embeds: [memberEmbed], components: [row] });
+      } else {
+        row.components[0].disabled = false;
+        row.components[1].disabled = true;
+        i.editParent({ embeds: [userEmbed], components: [row] });
       }
     });
 
