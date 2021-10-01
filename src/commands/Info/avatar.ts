@@ -2,7 +2,8 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { User } from 'eris';
+import { ActionRow, ActionRowComponents, ComponentInteraction, Message, User } from 'eris';
+import { ComponentCollector } from '../../structures/Collector';
 
 export default class Avatar extends Command {
   constructor(client: Client) {
@@ -34,16 +35,78 @@ export default class Avatar extends Command {
       return;
     }
 
-    const url = user.dynamicAvatarURL();
+    const userUrl = user.dynamicAvatarURL();
 
-    const embed = new this.client.embed()
+    const userEmbed = new this.client.embed()
       .setTitle(`:frame_photo: Avatar de ${user.username}#${user.discriminator}`)
       .setColor('RANDOM')
-      .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
-      .setImage(url)
+      .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${userUrl}) para baixar a imagem!`)
+      .setImage(userUrl)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-    ctx.sendMessage({ embeds: [embed] });
+    const member = ctx.guild.members.get(user.id);
+
+    if (!member || !member.avatar) {
+      ctx.sendMessage({ embeds: [userEmbed] });
+      return;
+    }
+
+    const memberUrl = member.avatarURL;
+
+    const memberEmbed = new this.client.embed()
+      .setTitle(`:frame_photo: Avatar de ${user.username}#${user.discriminator} neste servidor`)
+      .setColor('RANDOM')
+      .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${memberUrl}) para baixar a imagem!`)
+      .setImage(memberUrl)
+      .setTimestamp()
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+
+    const components: ActionRowComponents[] = [
+      {
+        custom_id: 'left',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '⬅️'
+        },
+        disabled: true
+      },
+      {
+        custom_id: 'right',
+        style: 2,
+        type: 2,
+        emoji: {
+          name: '➡️'
+        }
+      }
+    ]
+
+    const row: ActionRow = {
+      type: 1,
+      components
+    }
+
+    const msg = await ctx.sendMessage({ embeds: [memberEmbed], components: [row] }, true) as Message;
+
+    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
+
+    const collector = new ComponentCollector(this.client, msg, filter, { time: 3 * 60 * 1000 });
+
+    collector.on('collect', i => {
+      if (i.data.custom_id === 'left') {
+        row.components[0].disabled = false;
+        row.components[0].disabled = true;
+        i.editParent({ embeds: [userEmbed], components: [row] });
+      } else {
+        row.components[0].disabled = true;
+        row.components[0].disabled = false;
+        i.editParent({ embeds: [memberEmbed], components: [row] });
+      }
+    });
+
+    collector.on('end', () => {
+      msg.edit({ components: [] });
+    });
   }
 }
