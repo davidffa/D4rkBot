@@ -11,11 +11,11 @@ export default class Search extends Command {
   constructor(client: Client) {
     super(client, {
       name: 'search',
-      description: 'Procura uma música no YouTube, YouTube Music, SoundCloud ou Yandex-Music e toca-a.',
+      description: 'Procura uma música no YouTube, YouTube Music, SoundCloud, Odysee ou Yandex-Music e toca-a.',
       category: 'Music',
       aliases: ['procurar', 'searchmusic'],
       cooldown: 5,
-      usage: '[yt/ytm/sc/ym] <Nome>',
+      usage: '[yt/ytm/sc/od/ym] <Nome>',
       args: 1
     });
   }
@@ -59,11 +59,12 @@ export default class Search extends Command {
       const sources: any = {
         yt: 'youtube',
         ytm: 'youtubemusic',
+        od: 'odysee',
         sc: 'soundcloud',
         ym: 'yandex'
       }
 
-      if (['yt', 'ytm', 'sc', 'ym'].includes(ctx.args[0].toLowerCase())) {
+      if (['yt', 'ytm', 'sc', 'od', 'ym'].includes(ctx.args[0].toLowerCase())) {
         if (ctx.args.length < 1) {
           ctx.sendMessage({ content: `:x: Argumentos em falta. **Usa:** \`${this.client.guildCache.get(ctx.guild.id)!.prefix}${this.name} ${this.usage}\``, flags: 1 << 6 });
           return;
