@@ -102,10 +102,12 @@ export default class Nowplaying extends Command {
 
       ctx.sendMessage({
         content: `<a:disco:803678643661832233> A tocar ${player.queue.current.title}`,
-        file: {
-          name: 'nowplaying.png',
-          file: canvas.toBuffer()
-        }
+        attachments: [
+          {
+            name: 'nowplaying.png',
+            file: canvas.toBuffer()
+          }
+        ]
       });
     } else if (ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
       const embed = new this.client.embed()

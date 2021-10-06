@@ -73,10 +73,12 @@ export default class Banner extends Command {
 
       ctx.sendMessage({
         embeds: [embed],
-        file: {
-          name: 'banner.png',
-          file: canvas.toBuffer()
-        }
+        attachments: [
+          {
+            name: 'banner.png',
+            file: canvas.toBuffer()
+          }
+        ]
       })
     }
   }

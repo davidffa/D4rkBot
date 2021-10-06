@@ -350,10 +350,12 @@ export default class D4rkClient extends Client {
 
       await this.createMessage('775420724990705736', {
         content: `:bookmark_tabs: Log dos comandos.\nData: <t:${Math.floor(Date.now() / 1e3)}>`,
-        file: {
-          name: 'log.txt',
-          file: buffer
-        }
+        attachments: [
+          {
+            name: 'log.txt',
+            file: buffer
+          }
+        ]
       });
       unlinkSync(logPath);
     }, 7.2e6);

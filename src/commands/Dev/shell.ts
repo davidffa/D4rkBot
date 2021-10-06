@@ -81,10 +81,12 @@ export default class Shell extends Command {
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
-            file: {
-              name: 'shell.txt',
-              file: Buffer.from(res)
-            },
+            attachments: [
+              {
+                name: 'shell.txt',
+                file: Buffer.from(res)
+              }
+            ],
             components: [row]
           }, true) as Message;
         }
