@@ -10,7 +10,7 @@
   "author": "David Amorim",
   "license": "MIT",
   "engines": {
-    "node": "14.17.6",
+    "node": "14.18.0",
     "yarn": "1.22.11"
   },
   "scripts": {
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.10.2",
+    "@types/node": "^16.10.3",
     "@types/puppeteer": "^5.4.4",
     "@types/qrcode": "^1.4.1",
     "@types/sbd": "^1.0.2",
@@ -33,10 +33,10 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^10.0.0",
     "erela.js": "davidffa/erela.js#build-mod",
-    "eris": "DonovanDMC/eris#4b672c5",
+    "eris": "DonovanDMC/eris#29d77c4",
     "figlet": "^1.5.2",
     "mathjs": "^9.5.0",
-    "mongoose": "6.0.8",
+    "mongoose": "6.0.9",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
