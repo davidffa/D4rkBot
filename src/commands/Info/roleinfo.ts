@@ -48,6 +48,8 @@ export default class RoleInfo extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
+    role.iconURL && embed.setThumbnail(role.iconURL);
+
     ctx.sendMessage({ embeds: [embed] });
   }
 }
