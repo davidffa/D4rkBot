@@ -50,7 +50,7 @@ interface Records {
 
 import 'erela.js';
 
-type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave';
+type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave' | 'lowpass' | '8D';
 
 declare module 'erela.js' {
   export interface Player {

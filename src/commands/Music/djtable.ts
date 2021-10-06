@@ -98,6 +98,20 @@ export default class Djtable extends Command {
               name: '6️⃣'
             }
           },
+          {
+            label: 'Lowpass',
+            value: 'lowpass',
+            emoji: {
+              name: '7️⃣'
+            }
+          },
+          {
+            label: '8D',
+            value: '8D',
+            emoji: {
+              name: '8️⃣'
+            }
+          },
         ]
       },
     ];
@@ -132,7 +146,7 @@ export default class Djtable extends Command {
         ctx.sendMessage({ content: ':x: Já existe uma mesa de DJ aberta!', flags: 1 << 6 });
         return;
       }
-      const effects: Effect[] = ['bass', 'pop', 'soft', 'treblebass', 'nightcore', 'vaporwave'];
+      const effects: Effect[] = ['bass', 'pop', 'soft', 'treblebass', 'nightcore', 'vaporwave', 'lowpass', '8D'];
 
       const embed = new this.client.embed()
         .setTitle('<a:disco:803678643661832233> Mesa de DJ')
@@ -227,4 +241,8 @@ const configs = {
     timescale: { pitch: 0.5 },
     tremolo: { depth: 0.3, frequency: 14 },
   },
+  lowpass: {
+    lowPass: { smoothing: 15 }
+  },
+  '8D': { rotation: { speed: .2 } }
 };
