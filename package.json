@@ -8,7 +8,7 @@
     "url": "git+https://github.com/davidffa/D4rkBot.git"
   },
   "author": "David Amorim",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "engines": {
     "node": "14.18.0",
     "yarn": "1.22.11"
