@@ -107,7 +107,7 @@ export default class MessageCreate {
 
       const filter = (i: ComponentInteraction) => i.member!.id === message.author.id;
 
-      const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 10 * 1000 });
+      const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 5 * 1000 });
 
       collector.on('collect', () => {
         message.content = `${prefix}${diduMean} ${args.join(' ')}`.trim();
