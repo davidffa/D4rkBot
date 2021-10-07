@@ -282,7 +282,7 @@ export default class D4rkManager extends Manager {
               Authorization: node.options.password!
             }
           })
-        }, 15 * 60 * 1000);
+        }, 25 * 60 * 1000);
       }
     }
   }
