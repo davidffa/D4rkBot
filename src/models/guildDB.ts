@@ -9,6 +9,7 @@ interface GuildDB extends Document {
   memberRemoveChatID?: string;
   disabledCmds?: Array<string>;
   djrole?: string;
+  didumean?: boolean;
 }
 
 const guildDB = new Schema({
@@ -33,6 +34,9 @@ const guildDB = new Schema({
   },
   djrole: {
     type: String
+  },
+  didumean: {
+    type: Boolean
   }
 }, {
   versionKey: false

@@ -41,6 +41,7 @@ interface GuildCache {
   welcomeChatID: string;
   memberRemoveChatID: string;
   djRole: string;
+  didUMean: boolean;
 }
 
 interface Records {

@@ -20,8 +20,7 @@ export default class MessageCreate {
       }
     }
 
-    if (message.author.bot) return;
-    if (message.channel.type === 1) return;
+    if (message.author.bot || message.channel.type === 1 || !this.client.cacheLoaded) return;
 
     const prefix = (this.client.guildCache.get(message.guildID as string)?.prefix) || 'db.';
 
@@ -55,6 +54,7 @@ export default class MessageCreate {
     const command = this.client.commands.filter(c => message.author.id === '334054158879686657' || c.category !== 'Dev').find(c => c.name === cmdName || c.aliases?.includes(cmdName));
 
     if (!command) {
+      if (!this.client.guildCache.get(message.guildID as string)?.didUMean) return;
       if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
       let cmds: string[] = [];
 

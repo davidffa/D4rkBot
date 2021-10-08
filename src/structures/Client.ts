@@ -20,6 +20,7 @@ import { ComponentCollector, MessageCollector } from './Collector';
 import { Command, Utils, Records, GuildCache } from '../typings/index';
 
 export default class D4rkClient extends Client {
+  cacheLoaded: boolean;
   commands: Array<Command>;
   music: Music;
   utils: Utils;
@@ -69,6 +70,7 @@ export default class D4rkClient extends Client {
       type: 3
     });
 
+    this.cacheLoaded = false;
     this.commands = [];
     this.records = new Map();
     this.cooldowns = new Map();
@@ -236,12 +238,13 @@ export default class D4rkClient extends Client {
       const guildData = guildsDB.find(g => g.guildID === guild.id);
 
       this.guildCache.set(guild.id, {
-        prefix: guildData?.prefix || 'db.',
-        disabledCmds: guildData?.disabledCmds || [],
-        autoRole: guildData?.roleID || '',
-        welcomeChatID: guildData?.welcomeChatID || '',
-        memberRemoveChatID: guildData?.memberRemoveChatID || '',
-        djRole: guildData?.djrole || '',
+        prefix: guildData?.prefix ?? 'db.',
+        disabledCmds: guildData?.disabledCmds ?? [],
+        autoRole: guildData?.roleID ?? '',
+        welcomeChatID: guildData?.welcomeChatID ?? '',
+        memberRemoveChatID: guildData?.memberRemoveChatID ?? '',
+        djRole: guildData?.djrole ?? '',
+        didUMean: guildData?.didumean ?? true
       });
     });
 
@@ -272,6 +275,8 @@ export default class D4rkClient extends Client {
         this.lastCmdsUsed = this.commandsUsed;
       }
     }, 3e5);
+
+    this.cacheLoaded = true;
 
     console.log('Guild Cache carregada.');
   }
