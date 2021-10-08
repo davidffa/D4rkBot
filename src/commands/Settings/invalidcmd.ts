@@ -56,7 +56,7 @@ export default class InvalidCmd extends Command {
 
       ctx.sendMessage('<a:verificado:803678585008816198> Mensagem de comando inválido desativada!');
     } else {
-      ctx.sendMessage({ content: `:x: **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}didumean <on/off>\``, flags: 1 << 6 });
+      ctx.sendMessage({ content: `:x: **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}invalidcmd <on/off>\``, flags: 1 << 6 });
     }
   }
 }
