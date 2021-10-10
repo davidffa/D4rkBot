@@ -267,10 +267,12 @@ export default class PlayList extends Command {
           }
         });
 
-        collector.on('end', () => {
-          row.components[0].disabled = true;
-          row.components[1].disabled = true;
-          msg.edit({ components: [row] });
+        collector.on('end', (r) => {
+          if (r === 'Time') {
+            row.components[0].disabled = true;
+            row.components[1].disabled = true;
+            msg.edit({ components: [row] });
+          }
         })
         break;
 

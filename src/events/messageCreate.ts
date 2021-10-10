@@ -114,8 +114,9 @@ export default class MessageCreate {
         this.client.emit('messageCreate', message);
       });
 
-      collector.on('end', () => {
-        msg.delete();
+      collector.on('end', (r) => {
+        if (r === 'Time' || r === 'Max')
+          msg.delete();
       });
 
       return;

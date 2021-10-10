@@ -160,8 +160,9 @@ export default class Eval extends Command {
       }
     });
 
-    collector.on('end', () => {
-      msg.edit({ components: [] });
+    collector.on('end', (r) => {
+      if (r === 'Time')
+        msg.edit({ components: [] });
     });
   }
 }

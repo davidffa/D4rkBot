@@ -188,7 +188,7 @@ export default class Search extends Command {
 
         collector.on('end', reason => {
           this.client.music.searchCollectors.delete(ctx.author.id);
-          if (reason === 'time')
+          if (reason === 'Time')
             msg.edit({ content: ':x: Pesquisa cancelada!', embeds: [], components: [] });
         });
       } else {

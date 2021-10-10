@@ -200,10 +200,11 @@ export default class Djtable extends Command {
         }
       });
 
-      collector.on('end', () => {
+      collector.on('end', (r) => {
         delete player.djTableMsg;
 
-        msg.edit({ content: '<a:disco:803678643661832233> Mesa de DJ fechada!', embeds: [], components: [] });
+        if (r === 'Time')
+          msg.edit({ content: '<a:disco:803678643661832233> Mesa de DJ fechada!', embeds: [], components: [] });
       });
     }
 
