@@ -36,6 +36,11 @@ export default class Chatclear extends Command {
       return;
     }
 
+    if (parseInt(ctx.args[0]) > 1e3) {
+      ctx.sendMessage({ content: ':x: Só podes apagar 1000 mensagens de cada vez!', flags: 1 << 6 });
+      return;
+    }
+
     channel.purge({ limit: parseInt(ctx.args[0]) + 1 }).then(async msgs => {
       if (parseInt(ctx.args[0]) + 1 !== msgs) {
         const msg = await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(ctx.args[0])}\` mensagens`, true) as Message;
