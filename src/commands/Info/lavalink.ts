@@ -61,7 +61,7 @@ export default class Lavalink extends Command {
 
     const embed = await this.getNodeInfoEmbed(ctx.author, nodes[0] as Node);
 
-    const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
+    const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
     let page = 1;
 

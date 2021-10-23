@@ -156,7 +156,7 @@ export default class Djtable extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow] }, true) as Message;
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow], fetchReply: true }) as Message;
       player.djTableMsg = msg;
 
       const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;

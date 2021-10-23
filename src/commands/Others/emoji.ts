@@ -127,7 +127,7 @@ export default class Emoji extends Command {
         return;
       }
 
-      const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
       const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
       const collector = new ComponentCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
@@ -232,7 +232,7 @@ export default class Emoji extends Command {
       components
     }
 
-    const msg = await ctx.sendMessage({ content: '\u200B', components: [row] }, true) as Message;
+    const msg = await ctx.sendMessage({ content: '\u200B', components: [row], fetchReply: true }) as Message;
 
     const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
     const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 20000 });

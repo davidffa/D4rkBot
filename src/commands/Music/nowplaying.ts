@@ -102,7 +102,7 @@ export default class Nowplaying extends Command {
 
       ctx.sendMessage({
         content: `<a:disco:803678643661832233> A tocar ${player.queue.current.title}`,
-        attachments: [
+        files: [
           {
             name: 'nowplaying.png',
             file: canvas.toBuffer()

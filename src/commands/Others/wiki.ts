@@ -27,7 +27,7 @@ export default class Wiki extends Command {
     let msg: Message
 
     if (ctx.type === Type.MESSAGE) {
-      msg = await ctx.sendMessage('<a:loading2:805088089319407667> A procurar...', true) as Message;
+      msg = await ctx.sendMessage({ content: '<a:loading2:805088089319407667> A procurar...', fetchReply: true }) as Message;
     } else {
       await ctx.defer();
     }

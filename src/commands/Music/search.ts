@@ -127,7 +127,7 @@ export default class Search extends Command {
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
           .setTimestamp();
 
-        const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow] }, true) as Message;
+        const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow], fetchReply: true }) as Message;
 
         const searchCollector = this.client.music.searchCollectors.get(ctx.author.id);
 

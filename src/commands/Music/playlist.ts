@@ -229,7 +229,7 @@ export default class PlayList extends Command {
           components
         }
 
-        const msg = await ctx.sendMessage({ embeds: [detailEmbed], components: [row] }, true) as Message;
+        const msg = await ctx.sendMessage({ embeds: [detailEmbed], components: [row], fetchReply: true }) as Message;
 
         let page = 1;
         const pages = Math.ceil(playlist.tracks.length / 10);

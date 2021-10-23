@@ -77,13 +77,9 @@ export default class GuildMemberAdd {
     const avatar = await Canvas.loadImage(member.user.staticAvatarURL);
     ctx.drawImage(avatar, 22, 22, 206, 206);
 
-    this.client.createMessage(guildData.welcomeChatID, {
-      attachments: [
-        {
-          name: 'bem-vindo.png',
-          file: canvas.toBuffer()
-        }
-      ]
+    this.client.createMessage(guildData.welcomeChatID, '', {
+      name: 'bem-vindo.png',
+      file: canvas.toBuffer()
     })
   }
 }

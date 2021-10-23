@@ -44,11 +44,6 @@ interface GuildCache {
   didUMean: boolean;
 }
 
-interface Records {
-  timeout: NodeJS.Timeout;
-  users: Array<string>;
-}
-
 import 'erela.js';
 
 type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave' | 'lowpass' | '8D';

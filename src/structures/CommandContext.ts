@@ -1,9 +1,14 @@
 import Client from './Client';
-import { Attachment, CommandInteraction, Guild, InteractionDataOptionsWithValue, Member, Message, MessageContent, TextableChannel, User } from 'eris';
+import { AdvancedMessageContent, Attachment, CommandInteraction, FileContent, Guild, InteractionDataOptionsWithValue, Member, Message, MessageContent, TextableChannel, User } from 'eris';
 
 export enum Type {
   MESSAGE,
   INTERACTION
+}
+
+type Content = AdvancedMessageContent & {
+  fetchReply?: boolean;
+  files?: FileContent[];
 }
 
 export default class CommandContext {
@@ -66,20 +71,33 @@ export default class CommandContext {
     return this.interactionOrMessage.channel;
   }
 
-  async sendMessage(content: MessageContent, fetchReply = false): Promise<Message<TextableChannel> | void> {
+  async sendMessage(content: Content | string): Promise<Message<TextableChannel> | void> {
+    content = this.formatContent(content);
+
+    const fetchReply = !!content.fetchReply;
+    const files = content.files;
+
+    delete content.fetchReply;
+    delete content.files;
+
     if (this.interactionOrMessage instanceof Message) {
-      return this.channel.createMessage(content);
+      return this.channel.createMessage(content, files);
     } else {
       if (this.deferred) {
-        await this.interactionOrMessage.editOriginalMessage(content);
+        await this.interactionOrMessage.editOriginalMessage({ ...content, file: files?.[0] });
       } else {
-        await this.interactionOrMessage.createMessage(content);
+        await this.interactionOrMessage.createMessage({ ...content, file: files?.[0] });
       }
 
       if (fetchReply) {
         return this.interactionOrMessage.getOriginalMessage();
       }
     }
+  }
+
+  private formatContent(content: Content | string): Content {
+    if (typeof content === 'string') return { content };
+    return content;
   }
 
   async defer() {

@@ -89,7 +89,7 @@ export default class Help extends Command {
         ]
       }
 
-      const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
       const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 

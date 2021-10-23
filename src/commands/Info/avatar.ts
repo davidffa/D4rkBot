@@ -87,7 +87,7 @@ export default class Avatar extends Command {
       components
     }
 
-    const msg = await ctx.sendMessage({ embeds: [memberEmbed], components: [row] }, true) as Message;
+    const msg = await ctx.sendMessage({ embeds: [memberEmbed], components: [row], fetchReply: true }) as Message;
 
     const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 

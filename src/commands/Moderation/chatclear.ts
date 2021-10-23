@@ -43,14 +43,14 @@ export default class Chatclear extends Command {
 
     channel.purge({ limit: parseInt(ctx.args[0]) + 1 }).then(async msgs => {
       if (parseInt(ctx.args[0]) + 1 !== msgs) {
-        const msg = await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(ctx.args[0])}\` mensagens`, true) as Message;
+        const msg = await ctx.sendMessage({ content: `<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens\n:warning: Não consegui apagar todas as \`${parseInt(ctx.args[0])}\` mensagens`, fetchReply: true }) as Message;
         setTimeout(() => {
           msg.delete().catch(() => { });
         }, 7e3);
         return;
       }
 
-      const msg = await ctx.sendMessage(`<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens`, true) as Message;
+      const msg = await ctx.sendMessage({ content: `<a:verificado:803678585008816198> Limpas \`${msgs - 1}\` mensagens`, fetchReply: true }) as Message;
       setTimeout(() => {
         msg.delete().catch(() => { });
       }, 7e3);

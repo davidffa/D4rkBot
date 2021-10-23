@@ -43,7 +43,7 @@ export default class Render extends Command {
     if (ctx.type === Type.INTERACTION) {
       ctx.defer();
     } else {
-      waitMsg = await ctx.sendMessage('<a:loading2:805088089319407667> A verificar se o URL é válido...', true) as Message;
+      waitMsg = await ctx.sendMessage({ content: '<a:loading2:805088089319407667> A verificar se o URL é válido...', fetchReply: true }) as Message;
     }
 
     let url = ctx.args[0];
@@ -140,14 +140,15 @@ export default class Render extends Command {
 
     const msg = await ctx.sendMessage({
       embeds: [embed],
-      attachments: [
+      files: [
         {
           name: 'render.png',
           file: inflate
         }
       ],
-      components: [row]
-    }, true) as Message;
+      components: [row],
+      fetchReply: true
+    }) as Message;
 
 
     const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;

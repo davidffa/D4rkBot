@@ -58,9 +58,9 @@ export default class Shell extends Command {
 
       if (res.length + 15 < 2e3) {
         if (stderr) {
-          msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`sh\n${res}\`\`\``, components: [row] }, true) as Message;
+          msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`sh\n${res}\`\`\``, components: [row], fetchReply: true }) as Message;
         } else {
-          msg = await ctx.sendMessage({ content: `:outbox_tray: **Output:**\`\`\`sh\n${res}\n\`\`\``, components: [row] }, true) as Message;
+          msg = await ctx.sendMessage({ content: `:outbox_tray: **Output:**\`\`\`sh\n${res}\n\`\`\``, components: [row], fetchReply: true }) as Message;
         }
       } else {
         const body = {
@@ -77,18 +77,19 @@ export default class Shell extends Command {
         }).then(res => res.json());
 
         if (bin.key) {
-          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row] }, true) as Message;
+          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row], fetchReply: true }) as Message;
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
-            attachments: [
+            files: [
               {
                 name: 'shell.txt',
                 file: Buffer.from(res)
               }
             ],
-            components: [row]
-          }, true) as Message;
+            components: [row],
+            fetchReply: true
+          }) as Message;
         }
       }
 

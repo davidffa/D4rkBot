@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message, Role } from 'eris';
+import { Role } from 'eris';
 
 export default class Kick extends Command {
   constructor(client: Client) {

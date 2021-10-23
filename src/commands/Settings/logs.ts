@@ -64,7 +64,7 @@ export default class Logs extends Command {
       components
     }
 
-    const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
+    const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
     const welcomeMsgCollector = (): void => {
       const filter = (m: Message) => m.author.id === ctx.author.id;

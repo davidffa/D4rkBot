@@ -59,7 +59,7 @@ export default class Lyrics extends Command {
 
       if (!lyrics) {
         lyrics = '';
-        $('div[class^="Lyrics__Container"]').each((i, el) => {
+        $('div[class^="Lyrics__Container"]').each((_, el) => {
           if ($(el).text().length) {
             let snippet = $(el).html()
               ?.replace(/<br>/g, '\n')
@@ -164,7 +164,7 @@ export default class Lyrics extends Command {
       .setTimestamp()
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
-    const msg = await ctx.sendMessage({ embeds: [embed], components: [row] }, true) as Message;
+    const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
     const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
 

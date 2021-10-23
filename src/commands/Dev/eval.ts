@@ -102,7 +102,7 @@ export default class Eval extends Command {
       const res = response.join('\n');
 
       if (res.length < 2e3) {
-        msg = await ctx.sendMessage({ content: res, components: [row] }, true) as Message;
+        msg = await ctx.sendMessage({ content: res, components: [row], fetchReply: true }) as Message;
       } else {
         const body = {
           files: [{
@@ -118,22 +118,23 @@ export default class Eval extends Command {
         }).then(res => res.json());
 
         if (bin.key) {
-          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row] }, true) as Message;
+          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row], fetchReply: true }) as Message;
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
-            attachments: [
+            files: [
               {
                 name: 'eval.txt',
                 file: Buffer.from(res)
               }
             ],
-            components: [row]
-          }, true) as Message;
+            components: [row],
+            fetchReply: true
+          }) as Message;
         }
       }
     } catch (err) {
-      msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``, components: [row] }, true) as Message;
+      msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``, components: [row], fetchReply: true }) as Message;
     }
 
     const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;

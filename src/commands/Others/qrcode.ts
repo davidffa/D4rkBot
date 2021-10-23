@@ -54,7 +54,7 @@ export default class Qrcode extends Command {
 
         ctx.sendMessage({
           embeds: [embed],
-          attachments: [
+          files: [
             {
               name: 'qr.png',
               file: Buffer.from(base64data, 'base64')

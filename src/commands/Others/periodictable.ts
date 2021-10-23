@@ -34,7 +34,7 @@ export default class Periodictable extends Command {
 
       ctx.sendMessage({
         embeds: [embed],
-        attachments: [
+        files: [
           {
             name: 'TP.png',
             file: buffer
@@ -44,7 +44,7 @@ export default class Periodictable extends Command {
     } else {
       ctx.sendMessage({
         content: 'Tabela Periódica!',
-        attachments: [
+        files: [
           {
             name: 'Tabela Periódica.png',
             file: buffer
