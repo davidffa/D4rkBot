@@ -163,6 +163,10 @@ export default class MessageCreate {
       const ctx = new CommandContext(this.client, message, args);
       command.execute(ctx);
 
+      this.client.commandsUsed++;
+
+      if (process.env.NODE_ENV !== 'production') return;
+
       //Logs
       if (!existsSync('./logs'))
         mkdirSync('./logs');
@@ -171,8 +175,6 @@ export default class MessageCreate {
         appendFileSync('./logs/log.txt', `**Comando:** \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.username}#${message.author.discriminator}(${message.author.id})\n\n`);
       else
         appendFileSync('./logs/log.txt', `**Comando:** \`${cmdName}\` executado no DM.\`\n**Args:** \`[${args.join(' ')}]\`\n**User:** ${message.author.username}#${message.author.discriminator}\n\n`);
-
-      this.client.commandsUsed++;
     } catch (err: any) {
       message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
       console.error(err.message);
