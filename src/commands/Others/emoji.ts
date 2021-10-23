@@ -53,8 +53,7 @@ export default class Emoji extends Command {
           .addField(':bookmark_tabs: Nome', `\`${unicodeEmojiInfo.name}\``, true)
           .addField(':newspaper:  Slug', `\`${unicodeEmojiInfo.slug}\``, true)
           .addField(':books: Grupo', `\`${unicodeEmojiInfo.group}\``, true)
-          .addField(':link: Versão do emoji', `\`${unicodeEmojiInfo.emoji_version}\``, true)
-          .addField(':pushpin: Versão de unicode', `\`${unicodeEmojiInfo.unicode_version}\``, true)
+          .addField(':pushpin: Versão unicode', `\`${unicodeEmojiInfo.unicode_version}\``, true)
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
