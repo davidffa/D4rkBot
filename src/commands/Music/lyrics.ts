@@ -84,27 +84,37 @@ export default class Lyrics extends Command {
       const player = this.client.music.players.get(ctx.guild.id);
 
       if (!player || !player.queue.current) {
-        ctx.sendMessage({
-          content: `:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.`,
-          flags: 1 << 6
-        });
-        return;
-      }
+        const activity = ctx.member?.activities?.find(a => a.name === 'Spotify');
 
-      if (player.radio) {
-        const np = await this.client.music.getRadioNowPlaying(player.radio);
-        artist = np.artist;
-        title = np.songTitle;
-      } else {
-        const titleArr = player.queue.current.title.split('-');
-        artist = titleArr[0];
-        title = titleArr[1];
-      }
+        if (activity && activity.details) {
+          title = activity.details;
+          artist = activity.state;
 
-      if (title) {
-        res = await lyrics(title, artist);
+          res = await lyrics(title, artist);
+        } else {
+          ctx.sendMessage({
+            content: `:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.\n_P.S. Também deteto se estiveres a ouvir alguma música do spotify!_`,
+            flags: 1 << 6
+          });
+          return;
+        }
+
       } else {
-        res = await lyrics(player.queue.current.title);
+        if (player.radio) {
+          const np = await this.client.music.getRadioNowPlaying(player.radio);
+          artist = np.artist;
+          title = np.songTitle;
+        } else {
+          const titleArr = player.queue.current.title.split('-');
+          artist = titleArr[0];
+          title = titleArr[1];
+        }
+
+        if (title) {
+          res = await lyrics(title, artist);
+        } else {
+          res = await lyrics(player.queue.current.title);
+        }
       }
     } else {
       const data = ctx.args.join(' ').split('-');
@@ -113,6 +123,7 @@ export default class Lyrics extends Command {
         res = await lyrics(data[0].trim());
       else
         res = await lyrics(data[0].trim(), data[1].trim());
+
     }
 
     if (!res) {
