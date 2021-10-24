@@ -17,14 +17,13 @@ import userDatabase from '../models/userDB';
 
 import { ComponentCollector, MessageCollector } from './Collector';
 
-import { Command, Utils, Records, GuildCache } from '../typings/index';
+import { Command, Utils, GuildCache } from '../typings/index';
 
 export default class D4rkClient extends Client {
   cacheLoaded: boolean;
   commands: Array<Command>;
   music: Music;
   utils: Utils;
-  records: Map<string, Records>;
   cooldowns: Map<string, Map<string, number>>;
   blacklist: Array<string>;
   guildCache: Map<string, GuildCache>;
@@ -72,7 +71,6 @@ export default class D4rkClient extends Client {
 
     this.cacheLoaded = false;
     this.commands = [];
-    this.records = new Map();
     this.cooldowns = new Map();
     this.guildCache = new Map();
     this.lockedCmds = [];

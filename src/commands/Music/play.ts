@@ -119,9 +119,11 @@ export default class Play extends Command {
 
     if (match && match.length > 4) {
       for (var i = 1, min = Math.min(match.length - 3, 8); i < min; i++) {
+        const searchTerm = match[i].replace(/^"/, '').replace(/"$/, '')
+
         choices.push({
-          name: match[i].replace(/^"/, '').replace(/"$/, ''),
-          value: i.toString()
+          name: searchTerm,
+          value: searchTerm
         })
       }
     }
