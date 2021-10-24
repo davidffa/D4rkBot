@@ -6,6 +6,8 @@ import { VoiceChannel } from 'eris';
 
 import { Player } from 'erela.js';
 
+import { Choices } from '../../typings/index';
+
 export default class Play extends Command {
   constructor(client: Client) {
     super(client, {
@@ -106,5 +108,29 @@ export default class Play extends Command {
     } catch (err: any) {
       ctx.sendMessage(`:x: Ocorreu um erro ao procurar a música.\nErro: \`${err.message}\``);
     }
+  }
+
+  async runAutoComplete(interactionID: string, interactionToken: string, value: string) {
+    const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`).then(r => r.text.toString());
+
+    const choices: Choices[] = [];
+
+    const match = res.match(/"[\w\s]+"/g);
+
+    if (match && match.length > 4) {
+      for (var i = 1, min = Math.min(match.length - 3, 8); i < min; i++) {
+        choices.push({
+          name: match[i].replace(/^"/, '').replace(/"$/, ''),
+          value: i.toString()
+        })
+      }
+    }
+
+    this.client.requestHandler.request('POST', `/interactions/${interactionID}/${interactionToken}/callback`, true, {
+      type: 8,
+      data: {
+        choices
+      }
+    });
   }
 }

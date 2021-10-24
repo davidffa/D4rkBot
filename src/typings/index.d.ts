@@ -14,6 +14,7 @@ interface CommandOptions {
 
 interface Command extends CommandOptions {
   execute: (ctx: CommandContext) => void;
+  runAutoComplete: (interactionID: string, interactionToken: string, value: string) => void;
 }
 
 interface Utils {
@@ -42,6 +43,11 @@ interface GuildCache {
   memberRemoveChatID: string;
   djRole: string;
   didUMean: boolean;
+}
+
+interface Choices {
+  name: string;
+  value: string;
 }
 
 import 'erela.js';
