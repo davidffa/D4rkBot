@@ -234,14 +234,16 @@ export default class Search extends Command {
     } else if (options[0].value === 'sc') {
       const id = await soundCloudIdExtractor();
 
-      const res = await this.client.request(`https://api-v2.soundcloud.com/search/queries?q=${encodeURIComponent(value)}&client_id=${id}&limit=7`).then(r => r.json());
-      const searchResult = res.collection;
+      if (id) {
+        const res = await this.client.request(`https://api-v2.soundcloud.com/search/queries?q=${encodeURIComponent(value)}&client_id=${id}&limit=7`).then(r => r.json());
+        const searchResult = res.collection;
 
-      for (var i = 0, min = Math.min(searchResult.length, 8); i < min; i++) {
-        choices.push({
-          name: searchResult[i].output,
-          value: searchResult[i].output
-        })
+        for (var i = 0, min = Math.min(searchResult.length, 8); i < min; i++) {
+          choices.push({
+            name: searchResult[i].output,
+            value: searchResult[i].output
+          })
+        }
       }
     } else if (options[0].value === 'od') {
       const res = await this.client.request(`https://lighthouse.odysee.com/search?s=${encodeURIComponent(value)}&size=7&from=0&nsfw=false`).then(r => r.json());
