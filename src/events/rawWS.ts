@@ -21,7 +21,7 @@ export default class RawWS {
 
         const focusedField = data.options.find((op: any) => op.focused);
 
-        cmd.runAutoComplete(packetData.id, packetData.token, focusedField.value);
+        cmd.runAutoComplete?.(packetData.id, packetData.token, focusedField.value);
       }
     }
   }

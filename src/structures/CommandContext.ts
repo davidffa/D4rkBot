@@ -1,5 +1,5 @@
 import Client from './Client';
-import { AdvancedMessageContent, Attachment, CommandInteraction, FileContent, Guild, InteractionDataOptionsWithValue, Member, Message, MessageContent, TextableChannel, User } from 'eris';
+import { AdvancedMessageContent, Attachment, CommandInteraction, FileContent, Guild, InteractionDataOptionsWithValue, Member, Message, TextableChannel, User } from 'eris';
 
 export enum Type {
   MESSAGE,

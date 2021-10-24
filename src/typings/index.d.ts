@@ -14,7 +14,7 @@ interface CommandOptions {
 
 interface Command extends CommandOptions {
   execute: (ctx: CommandContext) => void;
-  runAutoComplete: (interactionID: string, interactionToken: string, value: string) => void;
+  runAutoComplete?: (interactionID: string, interactionToken: string, value: string) => void;
 }
 
 interface Utils {
