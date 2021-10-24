@@ -36,7 +36,7 @@ export default class Spotify extends Command {
       }
     }
 
-    const activity = ctx.member?.activities?.find(a => a.name === 'Spotify');
+    const activity = member?.activities?.find(a => a.name === 'Spotify');
 
     if (!activity) {
       ctx.sendMessage({ content: ':x: Esse membro não está a ouvir nada no spotify!', flags: 1 << 6 });
@@ -82,7 +82,7 @@ export default class Spotify extends Command {
     canvasCtx.fillText(artist, 400, 165, 500);
 
     const duration = activity.timestamps!.end! - activity.timestamps!.start;
-    const current = Date.now() - activity.timestamps!.start
+    const current = Math.abs(Date.now() - activity.timestamps!.start)
 
     const durationStr = this.client.utils.msToHour(duration);
 
