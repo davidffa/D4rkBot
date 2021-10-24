@@ -48,7 +48,7 @@ export default class Queue extends Command {
     }
 
     let page = 1;
-    const pages = Math.ceil(queue.size / 10);
+    const pages = Math.max(Math.ceil(queue.size / 10), 1);
 
     const req = queue.current?.requester as User;
 
