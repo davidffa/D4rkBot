@@ -204,6 +204,16 @@ export default class Search extends Command {
   }
 
   async runAutoComplete(interactionID: string, interactionToken: string, value: string, options: any) {
+    if (!value) {
+      this.client.requestHandler.request('POST', `/interactions/${interactionID}/${interactionToken}/callback`, true, {
+        type: 8,
+        data: {
+          choices: []
+        }
+      });
+      return;
+    }
+
     const choices: Choices[] = [];
 
     if (options[0].value === 'yt' || options[0].value === 'ytm') {
