@@ -115,15 +115,15 @@ export default class Play extends Command {
 
     const choices: Choices[] = [];
 
-    const match = res.match(/"[\w\s]+"/g);
+    const data = res.split('[');
 
-    if (match && match.length > 4) {
-      for (var i = 1, min = Math.min(match.length - 3, 8); i < min; i++) {
-        const searchTerm = match[i].replace(/^"/, '').replace(/"$/, '')
+    for (var i = 3, min = Math.min(8 * 2, data.length); i < min; i += 2) {
+      const choice = data[i].split('"')[1];
 
+      if (choice) {
         choices.push({
-          name: searchTerm,
-          value: searchTerm
+          name: choice,
+          value: choice
         })
       }
     }
