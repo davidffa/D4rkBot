@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
-import { Interaction, CommandInteraction, ComponentInteraction } from 'eris';
+import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction } from 'eris';
 
 import { existsSync, appendFileSync, mkdirSync } from 'fs';
 
@@ -12,6 +12,8 @@ export default class InteractionCreate {
   }
 
   async run(interaction: Interaction) {
+    if (interaction instanceof AutocompleteInteraction) return; // using rawWS for now...
+
     if (!(interaction instanceof CommandInteraction)) {
       if (interaction instanceof ComponentInteraction) {
         for (const collector of this.client.componentCollectors) {
@@ -71,14 +73,15 @@ export default class InteractionCreate {
 
     try {
       cmd.execute(ctx);
+      this.client.commandsUsed++;
+
+      if (process.env.NODE_ENV !== 'production') return;
 
       //Logs
       if (!existsSync('./logs'))
         mkdirSync('./logs');
 
       appendFileSync('./logs/log.txt', `**Slash Command:** \`${cmd.name}\` executado no servidor \`${interaction.guildID}\`\n**Args:** \`[${ctx.args?.join(' ')}]\`\n**User:** ${interaction.member?.username}#${interaction.member?.discriminator}(${interaction.member?.id})\n\n`);
-
-      this.client.commandsUsed++;
     } catch (err: any) {
       interaction.createMessage({
         content: `:x: Ocorreu um erro ao executar o comando \`${cmd.name}\``,

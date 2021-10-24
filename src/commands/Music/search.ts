@@ -7,6 +7,9 @@ import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteract
 
 import { Player, SearchResult } from 'erela.js';
 
+import soundCloudIdExtractor from '../../utils/soundCloudIdExtractor';
+import { Choices } from '../../typings';
+
 export default class Search extends Command {
   constructor(client: Client) {
     super(client, {
@@ -192,11 +195,60 @@ export default class Search extends Command {
             msg.edit({ content: ':x: Pesquisa cancelada!', embeds: [], components: [] });
         });
       } else {
-        ctx.channel.createMessage({ content: ':x: Não encontrei nenhum resultado!', flags: 1 << 6 });
+        ctx.sendMessage({ content: ':x: Não encontrei nenhum resultado!', flags: 1 << 6 });
       }
     } catch (err) {
       console.error(err);
-      ctx.channel.createMessage({ content: ':x: Ocorreu um erro ao procurar a música.', flags: 1 << 6 });
+      ctx.sendMessage({ content: ':x: Ocorreu um erro ao procurar a música.', flags: 1 << 6 });
     }
+  }
+
+  async runAutoComplete(interactionID: string, interactionToken: string, value: string, options: any) {
+    const choices: Choices[] = [];
+
+    if (options[0].value === 'yt' || options[0].value === 'ytm') {
+      const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`).then(r => r.text.toString());
+
+      const match = res.match(/"[\w\s]+"/g);
+
+      if (match && match.length > 4) {
+        for (var i = 1, min = Math.min(match.length - 3, 8); i < min; i++) {
+          const searchTerm = match[i].replace(/^"/, '').replace(/"$/, '')
+
+          choices.push({
+            name: searchTerm,
+            value: searchTerm
+          })
+        }
+      }
+    } else if (options[0].value === 'sc') {
+      const id = await soundCloudIdExtractor();
+
+      const res = await this.client.request(`https://api-v2.soundcloud.com/search/queries?q=${encodeURIComponent(value)}&client_id=${id}&limit=7`).then(r => r.json());
+      const searchResult = res.collection;
+
+      for (var i = 0, min = Math.min(searchResult.length, 8); i < min; i++) {
+        choices.push({
+          name: searchResult[i].output,
+          value: searchResult[i].output
+        })
+      }
+    } else if (options[0].value === 'od') {
+      const res = await this.client.request(`https://lighthouse.odysee.com/search?s=${encodeURIComponent(value)}&size=7&from=0&nsfw=false`).then(r => r.json());
+
+      for (var i = 0, min = Math.min(res.length, 8); i < min; i++) {
+        choices.push({
+          name: res[i].name,
+          value: res[i].name
+        })
+      }
+    }
+
+    this.client.requestHandler.request('POST', `/interactions/${interactionID}/${interactionToken}/callback`, true, {
+      type: 8,
+      data: {
+        choices
+      }
+    });
   }
 }
