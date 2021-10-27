@@ -80,6 +80,8 @@ export default class CommandContext {
     delete content.fetchReply;
     delete content.files;
 
+    if (content.content === undefined) content.content = '';
+
     if (this.interactionOrMessage instanceof Message) {
       return this.channel.createMessage(content, files);
     } else {
