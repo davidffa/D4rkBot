@@ -42,6 +42,7 @@ export default class Channelinfo extends Command {
       .setTitle('Channel Info')
       .setColor('RANDOM')
       .addField(':id: ID', `\`${channel.id}\``, true)
+      .addField(':calendar: Criado em', `<t:${~~(channel.createdAt / 1e3)}:d> (<t:${~~(channel.createdAt / 1e3)}:R>)`, true)
       .addField(':newspaper: Nome', `\`${channel.name}\``, true)
       .addField(':diamond_shape_with_a_dot_inside: Tipo', `\`${channelTypes[channel.type]}\``, true)
       .addField(':underage: NSFW', `\`${channel.nsfw ? 'Sim' : 'Não'}\``, true)
