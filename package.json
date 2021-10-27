@@ -10,7 +10,7 @@
   "author": "David Amorim",
   "license": "Apache-2.0",
   "engines": {
-    "node": "14.18.1",
+    "node": "16.13.0",
     "yarn": "1.22.15"
   },
   "scripts": {
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
     "@types/figlet": "^1.5.4",
-    "@types/node": "^16.11.4",
+    "@types/node": "^16.11.6",
     "@types/qrcode": "^1.4.1",
     "@types/sbd": "^1.0.2",
     "@types/xml2js": "^0.4.9",
