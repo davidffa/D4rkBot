@@ -53,8 +53,8 @@ export default class Spotify extends Command {
 
     const gradient = canvasCtx.createLinearGradient(350, 0, 350, 950);
 
-    gradient.addColorStop(0, `rgba(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}, 0.3)`);
-    gradient.addColorStop(1, `rgba(${palette[1][0]}, ${palette[1][1]}, ${palette[1][2]}, 0.3)`);
+    gradient.addColorStop(0, `rgba(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}, 0.5)`);
+    gradient.addColorStop(1, `rgba(${palette[1][0]}, ${palette[1][1]}, ${palette[1][2]}, 0.5)`);
 
     canvasCtx.fillStyle = gradient;
     canvasCtx.fillRect(350, 0, 600, 350);
