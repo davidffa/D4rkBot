@@ -52,7 +52,7 @@ export default class Lyrics extends Command {
 
       const data = res.response.hits[0].result;
 
-      const lyricsData = await this.client.request(data.url).then(res => res.text);
+      const lyricsData = await this.client.request(data.url).then(res => res.text());
 
       const $ = cio.load(lyricsData);
       let lyrics = $('div[class="lyrics"]').text().trim();

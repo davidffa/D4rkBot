@@ -217,7 +217,7 @@ export default class Search extends Command {
     const choices: Choices[] = [];
 
     if (options[0].value === 'yt' || options[0].value === 'ytm') {
-      const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`).then(r => r.text.toString());
+      const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`).then(r => r.text());
 
       const data = res.split('[');
 

@@ -40,7 +40,7 @@ export default class Weather extends Command {
 
     const xmlParser = new xml2js.Parser({ charkey: 'C$', attrkey: 'A$', explicitArray: true });
 
-    const res = await this.client.request(`http://weather.service.msn.com/find.aspx?src=outlook&weadegreetype=C&culture=pt-PT&weasearchstr=${ctx.args.join(' ')}`).then(res => res.text);
+    const res = await this.client.request(`http://weather.service.msn.com/find.aspx?src=outlook&weadegreetype=C&culture=pt-PT&weasearchstr=${ctx.args.join(' ')}`).then(res => res.text());
 
     if (!res) {
       ctx.sendMessage({ content: ':x: Ocorreu um erro ao obter os dados meteorológicos', flags: 1 << 6 });

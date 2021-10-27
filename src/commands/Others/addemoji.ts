@@ -57,8 +57,8 @@ export default class Addemoji extends Command {
       return;
     }
 
-    const { buffer, type } = await this.client.request(imageURL).then(async (res) => {
-      const buff = await res.buffer();
+    const { buffer, type } = await this.client.request(imageURL).then((res) => {
+      const buff = res.buffer;
       const types = res.headers['content-type'];
 
       if (!types || !(/image\/png|image\/jpeg|image\/jpg|image\/gif/g.test(types))) {

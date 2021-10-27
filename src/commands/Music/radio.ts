@@ -79,11 +79,6 @@ export default class Radio extends Command {
       return;
     }
 
-    if (this.client.records.has(ctx.guild.id)) {
-      ctx.sendMessage({ content: ':x: Não consigo tocar rádio enquanto gravo voz!', flags: 1 << 6 });
-      return;
-    }
-
     let player = this.client.music.players.get(ctx.guild.id);
 
     if (player && player.radio === radio[0]) {

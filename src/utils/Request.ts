@@ -1,6 +1,5 @@
 import https from 'https';
 import http, { IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
-import { Transform } from 'stream';
 
 export type ReqOptions = {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -20,7 +19,7 @@ export default function fetch(url: string, options?: ReqOptions): Promise<Respon
 
     const request = requestUrl.protocol === 'https:' ? https.request : http.request;
 
-    let response = new Transform();
+    const data: Buffer[] = [];
 
     const req = request({
       host: requestUrl.hostname,
@@ -33,10 +32,10 @@ export default function fetch(url: string, options?: ReqOptions): Promise<Respon
       method: options?.method
     }, (res) => {
       res
-        .on('data', data => response.push(data))
+        .on('data', d => data.push(d))
         .on('error', err => reject(err))
         .once('end', () => {
-          resolve(new Response(response, res.headers, res.statusCode))
+          resolve(new Response(data, res.headers, res.statusCode))
         });
     });
 
@@ -56,7 +55,7 @@ export default function fetch(url: string, options?: ReqOptions): Promise<Respon
 }
 
 interface ResponseData {
-  response: Transform;
+  response: Buffer;
   headers: IncomingHttpHeaders
   status?: number;
 }
@@ -64,9 +63,9 @@ interface ResponseData {
 export class Response {
   private readonly data: ResponseData;
 
-  constructor(res: Transform, headers: IncomingHttpHeaders, status?: number) {
+  constructor(data: Buffer[], headers: IncomingHttpHeaders, status?: number) {
     this.data = {
-      response: res,
+      response: Buffer.concat(data),
       headers,
       status
     };
@@ -80,18 +79,20 @@ export class Response {
     return this.data.status;
   }
 
-  get text() {
-    return this.data.response.read();
+  get buffer(): Buffer {
+    return this.data.response;
   }
 
-  public buffer(): Promise<Buffer> {
-    return new Promise((resolve) => resolve(Buffer.from(this.data.response.read())));
+  public text(encoding: BufferEncoding = 'utf8'): Promise<string> {
+    return new Promise((resolve) => {
+      resolve(this.data.response.toString(encoding));
+    });
   }
 
   public json(): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(JSON.parse(this.data.response.read()));
+        resolve(JSON.parse(this.data.response.toString()));
       } catch (err) {
         reject(err);
       }
