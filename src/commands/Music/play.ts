@@ -118,7 +118,7 @@ export default class Play extends Command {
     const data = res.split('[');
 
     for (var i = 3, min = Math.min(8 * 2, data.length); i < min; i += 2) {
-      const choice = data[i].split('"')[1];
+      const choice = data[i].split('"')[1].replace(/\\u([0-9a-fA-F]{4})/g, (_, cc) => String.fromCharCode(parseInt(cc, 16)));
 
       if (choice) {
         choices.push({

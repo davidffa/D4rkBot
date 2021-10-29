@@ -551,7 +551,7 @@ entities@^2.0.0:
 
 erela.js@davidffa/erela.js#build-mod:
   version "2.3.3"
-  resolved "https://codeload.github.com/davidffa/erela.js/tar.gz/cc8ed7c9368eb0cd074c40f4958b267eb8a65833"
+  resolved "https://codeload.github.com/davidffa/erela.js/tar.gz/7c5e4e2b32159c83ce1ecb920506c94e8f2430de"
   dependencies:
     "@discordjs/collection" "^0.2.1"
     petitio "^1.3.2"
@@ -559,7 +559,7 @@ erela.js@davidffa/erela.js#build-mod:
 
 eris@DonovanDMC/eris:
   version "0.16.0-dev"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/3785198b71134818201e7f55368f8d5d01811704"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/284db88406c3b92a4104dcc884894dc33c92d98e"
   dependencies:
     ws "^7.4.6"
   optionalDependencies:
