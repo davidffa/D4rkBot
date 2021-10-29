@@ -104,6 +104,8 @@ export default class Radio extends Command {
       player.effects = [];
     }
 
+    await ctx.defer();
+
     try {
       const res = await this.client.music.search(radio[1], ctx.author);
 
