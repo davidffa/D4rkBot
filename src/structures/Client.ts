@@ -90,7 +90,7 @@ export default class D4rkClient extends Client {
 
       if (matched) {
         try {
-          user = this.users.get(matched[0]) || await this.getRESTUser(matched[0]);
+          user = this.users.get(matched[1]) || await this.getRESTUser(matched[1]);
         } catch { }
       } else if (/\d{17,18}/.test(param)) {
         try {
