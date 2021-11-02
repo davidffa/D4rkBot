@@ -80,6 +80,11 @@ export default class D4rkManager extends Manager {
         if (msg) msg.delete();
       }
 
+      if (channel.permissionsOf(this.client.user.id).has('sendMessages')) {
+        delete player.lastPlayingMsgID;
+        return;
+      }
+
       const requester = player.queue.current?.requester as User;
 
       const embed = new this.client.embed()
@@ -125,16 +130,7 @@ export default class D4rkManager extends Manager {
               'Accept': 'application/vnd.heroku+json; version=3',
               'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
             }
-          }); // .then(r => r.status);
-
-          /*
-          if (status === 202) {
-            this.client.createMessage(player.textChannel, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
-          } else {
-            this.client.createMessage(player.textChannel, { content: ':x: Parece que o YouTube me impediu de tocar essa música!\nDesta vez não consegui resolver o problema :cry:.');
-          }
-          player.destroy();
-          */
+          });
         }
         return;
       }
@@ -164,7 +160,8 @@ export default class D4rkManager extends Manager {
         }
         player.destroy();
 
-        channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
+        if (channel.permissionsOf(this.client.user.id).has('sendMessages'))
+          channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
       }
     });
 
