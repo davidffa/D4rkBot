@@ -86,9 +86,9 @@ export default class CommandContext {
       return this.channel.createMessage(content, files);
     } else {
       if (this.deferred) {
-        await this.interactionOrMessage.editOriginalMessage({ ...content, file: files?.[0] });
+        await this.interactionOrMessage.editOriginalMessage(content, files);
       } else {
-        await this.interactionOrMessage.createMessage({ ...content, file: files?.[0] });
+        await this.interactionOrMessage.createMessage(content, files);
       }
 
       if (fetchReply) {
