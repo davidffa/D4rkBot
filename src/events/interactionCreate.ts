@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
-import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction } from 'eris';
+import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionDataOptionWithValue } from 'eris';
 
 import { existsSync, appendFileSync, mkdirSync } from 'fs';
 
@@ -12,7 +12,18 @@ export default class InteractionCreate {
   }
 
   async run(interaction: Interaction) {
-    if (interaction instanceof AutocompleteInteraction) return; // using rawWS for now...
+    if (interaction instanceof AutocompleteInteraction) {
+      const cmd = this.client.commands.find(c => c.name === interaction.data.name);
+
+      if (!cmd) throw new Error(`Command ${interaction.data.name} does not exist!`);
+
+      const ops = interaction.data.options as InteractionDataOptionWithValue[];
+
+      const focusedField = ops.find(o => o.focused);
+
+      cmd.runAutoComplete?.(interaction, focusedField!.value as string, ops);
+      return;
+    }
 
     if (!(interaction instanceof CommandInteraction)) {
       if (interaction instanceof ComponentInteraction) {
@@ -28,7 +39,7 @@ export default class InteractionCreate {
 
     if (interaction.channel.type === 1) return;
     const cmd = this.client.commands.find(c => c.name === interaction.data.name);
-    if (!cmd) throw new Error('Command not found!');
+    if (!cmd) throw new Error(`Command ${interaction.data.name} does not exist!`);
 
     if (this.client.blacklist.includes(interaction.member!.id)) {
       interaction.createMessage({

@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { VoiceChannel } from 'eris';
+import { AutocompleteInteraction, VoiceChannel } from 'eris';
 
 import { Player } from 'erela.js';
 
@@ -110,7 +110,12 @@ export default class Play extends Command {
     }
   }
 
-  async runAutoComplete(interactionID: string, interactionToken: string, value: string) {
+  async runAutoComplete(interaction: AutocompleteInteraction, value: string) {
+    if (!value) {
+      interaction.result([]);
+      return;
+    }
+
     const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`).then(r => r.text('latin1'));
 
     const choices: Choices[] = [];
@@ -128,11 +133,6 @@ export default class Play extends Command {
       }
     }
 
-    this.client.requestHandler.request('POST', `/interactions/${interactionID}/${interactionToken}/callback`, true, {
-      type: 8,
-      data: {
-        choices
-      }
-    });
+    interaction.result(choices);
   }
 }

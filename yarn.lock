@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@babel/runtime@^7.15.4":
+"@babel/runtime@^7.16.0":
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.0.tgz#e27b977f2e2088ba24748bf99b5e1dece64e4f0b"
   integrity sha512-Nht8L0O8YCktmsDV6FqFue7vQLRx3Hb0B37lS5y0jDRqRxlBG4wIJHnf9/bgSE2UyipKFA01YtS+npRdTWBUyw==
@@ -559,7 +559,7 @@ erela.js@davidffa/erela.js#build-mod:
 
 eris@DonovanDMC/eris:
   version "0.16.0-dev"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/e759481dc4dd43bc5fa053aa62527ca7db2579aa"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/bb0033ccdc5388a73e472bd3fb686884009c9b76"
   dependencies:
     ws "^7.4.6"
   optionalDependencies:
@@ -851,12 +851,12 @@ make-error@^1.1.1:
   resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.3.6.tgz#2eb2e37ea9b67c4891f684a1394799af484cf7a2"
   integrity sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==
 
-mathjs@^9.5.0:
-  version "9.5.1"
-  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-9.5.1.tgz#553353ee95852e8dd07edc49d8464db3abb7413f"
-  integrity sha512-yYu67sdmrLrQeRyN+DPH0aRQphdmI/gz4oNXFx4YR43NKifOiNTfXT30+ACsNIWaqJ1KihhVDD+X1kwfI2/X9g==
+mathjs@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-10.0.0.tgz#872e8e5c0d23a383760cb84e16542fad5093c6a5"
+  integrity sha512-PZcQ73mVvVG2GZXvE47q+j7P3ALVxWUM51wTmlVX3F/3IJMLNziNIqStwyIDAO64ZGB8u3iFlQwxT7DIijtNlw==
   dependencies:
-    "@babel/runtime" "^7.15.4"
+    "@babel/runtime" "^7.16.0"
     complex.js "^2.0.15"
     decimal.js "^10.3.1"
     escape-latex "^1.2.0"

@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteractionSelectMenuData, Message, VoiceChannel } from 'eris';
+import { ActionRow, ActionRowComponents, AutocompleteInteraction, ComponentInteraction, ComponentInteractionSelectMenuData, InteractionDataOptionWithValue, Message, VoiceChannel } from 'eris';
 
 import { Player, SearchResult } from 'erela.js';
 
@@ -203,14 +203,9 @@ export default class Search extends Command {
     }
   }
 
-  async runAutoComplete(interactionID: string, interactionToken: string, value: string, options: any) {
+  async runAutoComplete(interaction: AutocompleteInteraction, value: string, options: InteractionDataOptionWithValue[]) {
     if (!value) {
-      this.client.requestHandler.request('POST', `/interactions/${interactionID}/${interactionToken}/callback`, true, {
-        type: 8,
-        data: {
-          choices: []
-        }
-      });
+      interaction.result([]);
       return;
     }
 
@@ -256,11 +251,6 @@ export default class Search extends Command {
       }
     }
 
-    this.client.requestHandler.request('POST', `/interactions/${interactionID}/${interactionToken}/callback`, true, {
-      type: 8,
-      data: {
-        choices
-      }
-    });
+    interaction.result(choices);
   }
 }

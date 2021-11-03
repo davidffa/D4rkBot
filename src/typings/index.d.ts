@@ -1,4 +1,4 @@
-import { Message, User, Guild, AllowedMentions, EmbedOptions, MessageFile } from 'eris';
+import type { Message, User, Guild, AllowedMentions, EmbedOptions, MessageFile, AutocompleteInteraction } from 'eris';
 import CommandContext from '../structures/CommandContext';
 
 interface CommandOptions {
@@ -14,7 +14,7 @@ interface CommandOptions {
 
 interface Command extends CommandOptions {
   execute: (ctx: CommandContext) => void;
-  runAutoComplete?: (interactionID: string, interactionToken: string, value: string, options?: any) => void;
+  runAutoComplete?: (interaction: AutocompleteInteraction, value: string, options?: any) => void;
 }
 
 interface Utils {

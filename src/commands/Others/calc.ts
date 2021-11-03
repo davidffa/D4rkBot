@@ -26,7 +26,7 @@ export default class Calc extends Command {
     const math = create(all);
     const limitedEvaluate = math.evaluate;
 
-    math.import && math.import({
+    math.import({
       'import': function () { throw new Error() },
       'createUnit': function () { throw new Error() },
       'evaluate': function () { throw new Error() },

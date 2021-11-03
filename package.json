@@ -34,7 +34,7 @@
     "erela.js": "davidffa/erela.js#build-mod",
     "eris": "DonovanDMC/eris",
     "figlet": "^1.5.2",
-    "mathjs": "^9.5.0",
+    "mathjs": "^10.0.0",
     "mongoose": "6.0.12",
     "qrcode": "^1.4.4",
     "sbd": "^1.0.19",
