@@ -93,7 +93,8 @@ export default class Userinfo extends Command {
       SYSTEM: '',
       BUG_HUNTER_LEVEL_2: '<:BugHunterLvl2:803665318274400256>',
       VERIFIED_BOT: '<:vBot1:804393321862397952><:vBot2:804393321854140440>',
-      VERIFIED_BOT_DEVELOPER: '<:dev_badge:803665036769230899>'
+      VERIFIED_BOT_DEVELOPER: '<:dev_badge:803665036769230899>',
+      DISCORD_CERTIFIED_MODERATOR: '<:DiscordCertifiedModerator:863424954371932180>'
     }
 
     const flags = user.publicFlags;
@@ -109,8 +110,6 @@ export default class Userinfo extends Command {
       } else if (user.avatar && user.avatar.startsWith('a_')) {
         userBadges.push('<:badgenitro:803666299556200478>')
       }
-
-      if ((flags & 1 << 18) == 1 << 18) userBadges.push('<:DiscordCertifiedModerator:863424954371932180>');
 
       if (userBadges) {
         embed.addField('Emblemas :medal:', userBadges.join(' '), true);
