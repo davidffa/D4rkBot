@@ -80,7 +80,7 @@ export default class D4rkManager extends Manager {
         if (msg) msg.delete();
       }
 
-      if (channel.permissionsOf(this.client.user.id).has('sendMessages')) {
+      if (!channel.permissionsOf(this.client.user.id).has('sendMessages')) {
         delete player.lastPlayingMsgID;
         return;
       }
