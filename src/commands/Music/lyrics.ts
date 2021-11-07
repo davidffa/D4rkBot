@@ -33,6 +33,8 @@ export default class Lyrics extends Command {
       return;
     }
 
+    await ctx.defer();
+
     const lyrics = async (name: string, artist?: string): Promise<LyricsRes | null> => {
       const song = `${name} ${artist}`
         .toLowerCase()
