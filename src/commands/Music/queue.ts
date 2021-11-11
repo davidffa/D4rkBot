@@ -40,7 +40,7 @@ export default class Queue extends Command {
     const getSongDetails = (pos: number, pos2: number): string => {
       const data = [];
 
-      for (; pos <= pos2 && queue[pos]; pos++) {
+      for (; pos < pos2 && queue[pos]; pos++) {
         const req = queue[pos].requester as User;
         data.push(`${pos + 1}º - \`${queue[pos].title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`)
       }
@@ -55,7 +55,7 @@ export default class Queue extends Command {
     const desc = [
       `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n`,
       `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
-      `${getSongDetails(0, 9)}`
+      `${getSongDetails(0, 10)}`
     ];
 
     const embed = new this.client.embed()
@@ -106,7 +106,7 @@ export default class Queue extends Command {
       const newDesc = [
         `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
         `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
-        `${getSongDetails(0, 9)}`
+        `${getSongDetails(0, 10)}`
       ];
 
       switch (i.data.custom_id) {
@@ -121,7 +121,7 @@ export default class Queue extends Command {
             embed.setDescription(newDesc.join('\n'))
               .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());;
           } else {
-            embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
+            embed.setDescription(getSongDetails((page - 1) * 10, page * 10))
               .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
           }
 
@@ -134,7 +134,7 @@ export default class Queue extends Command {
           }
           row.components[0].disabled = false;
 
-          embed.setDescription(getSongDetails((page - 1) * 9 + 1, page * 10))
+          embed.setDescription(getSongDetails((page - 1) * 10, page * 10))
             .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
           i.editParent({ embeds: [embed], components: [row] });
