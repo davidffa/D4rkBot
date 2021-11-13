@@ -104,7 +104,7 @@ export default class CommandContext {
 
   async defer() {
     if (this.interactionOrMessage instanceof CommandInteraction) {
-      this.interactionOrMessage.defer();
+      await this.interactionOrMessage.defer();
       this.deferred = true;
     }
   }
