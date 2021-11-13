@@ -2,8 +2,6 @@ import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
 import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionDataOptionWithValue } from 'eris';
 
-import { existsSync, appendFileSync, mkdirSync } from 'fs';
-
 export default class InteractionCreate {
   client: Client;
 
@@ -86,13 +84,13 @@ export default class InteractionCreate {
       cmd.execute(ctx);
       this.client.commandsUsed++;
 
-      if (process.env.NODE_ENV !== 'production') return;
+      // if (process.env.NODE_ENV !== 'production') return;
 
       //Logs
-      if (!existsSync('./logs'))
-        mkdirSync('./logs');
+      // if (!existsSync('./logs'))
+      //   mkdirSync('./logs');
 
-      appendFileSync('./logs/log.txt', `**Slash Command:** \`${cmd.name}\` executado no servidor \`${interaction.guildID}\`\n**Args:** \`[${ctx.args?.join(' ')}]\`\n**User:** ${interaction.member?.username}#${interaction.member?.discriminator}(${interaction.member?.id})\n\n`);
+      // appendFileSync('./logs/log.txt', `Slash Command: \`${cmd.name}\` executado no servidor \`${interaction.guildID}\`\nArgs: \`${ctx.args?.join(' ')}\`\nUser: ${interaction.member?.username}#${interaction.member?.discriminator} (${interaction.member?.id})\n\n`);
     } catch (err: any) {
       interaction.createMessage({
         content: `:x: Ocorreu um erro ao executar o comando \`${cmd.name}\``,
