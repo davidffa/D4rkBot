@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "engines": {
     "node": "16.13.0",
-    "yarn": "1.22.15"
+    "yarn": "1.22.17"
   },
   "scripts": {
     "start": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts"
