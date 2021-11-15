@@ -170,6 +170,10 @@ export default class D4rkManager extends Manager {
         player.djTableMsg.delete();
       }
     });
+
+    this.on('socketClosed', (player, payload) => {
+      if (payload.code === 1006) player.connect();
+    });
   }
 
   async hasDJRole(member: Member): Promise<boolean> {
