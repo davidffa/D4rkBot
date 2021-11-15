@@ -558,8 +558,8 @@ erela.js@davidffa/erela.js#build-mod:
     ws "^8.2.0"
 
 eris@DonovanDMC/eris:
-  version "0.16.0-dev"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/7e702e1d18aece211b1d022a477f43235278a41f"
+  version "0.16.0"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/4b5ada7acee5d4aa2f7eba7a5dfb3353f5a25fed"
   dependencies:
     ws "^8.2.3"
   optionalDependencies:
