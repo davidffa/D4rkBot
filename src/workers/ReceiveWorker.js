@@ -1,4 +1,4 @@
-const { parentPort, isMainThread } = require('worker_threads');
+const { parentPort } = require('worker_threads');
 const { spawn } = require('child_process');
 const { Readable } = require('stream');
 const { createWriteStream, existsSync, mkdirSync } = require('fs');
