@@ -10,6 +10,14 @@ export default class VoiceChannelLeave {
   }
 
   async run(member: Member, oldChannel: VoiceChannel): Promise<void> {
+    const rec = this.client.records.get(member.guild.id);
+    if (rec && member.id === this.client.user.id) {
+      clearTimeout(rec.timeout);
+      rec.worker.postMessage({ op: 0 });
+      this.client.records.delete(member.guild.id);
+      return;
+    }
+
     const player = this.client.music.players.get(member.guild.id);
     if (!player) return;
 

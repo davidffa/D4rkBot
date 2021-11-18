@@ -16,7 +16,7 @@ import userDatabase from '../models/userDB';
 
 import { ComponentCollector, MessageCollector } from './Collector';
 
-import { Command, Utils, GuildCache } from '../typings/index';
+import { Command, Utils, GuildCache, IRecord } from '../typings/index';
 
 export default class D4rkClient extends Client {
   cacheLoaded: boolean;
@@ -36,6 +36,7 @@ export default class D4rkClient extends Client {
   // reactionCollectors: Array<ReactionCollector>;
   messageCollectors: Array<MessageCollector>;
   componentCollectors: Array<ComponentCollector>;
+  records: Map<string, IRecord>;
   request: (url: string, options?: ReqOptions) => Promise<Response>;
 
   constructor() {
@@ -81,6 +82,7 @@ export default class D4rkClient extends Client {
     // this.reactionCollectors = [];
     this.messageCollectors = [];
     this.componentCollectors = [];
+    this.records = new Map();
 
     const findUser = async (param: string, guild: Guild | null): Promise<User | null> => {
       let user: User | null | undefined;

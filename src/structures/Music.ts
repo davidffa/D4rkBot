@@ -1,7 +1,7 @@
 import Client from './Client';
 import CommandContext from './CommandContext';
 
-import { User, Member } from 'eris';
+import { User, Member, VoiceChannel } from 'eris';
 import { Player, Node } from 'erela.js';
 import { Manager, NodeOptions } from 'erela.js';
 import { Spotify } from './Spotify';
@@ -211,12 +211,12 @@ export default class D4rkManager extends Manager {
       return false;
     }
 
-    const voiceChannel = this.client.getChannel(voiceChannelID);
-
-    if (voiceChannel.type !== 2) {
-      ctx.sendMessage({ content: ':x: Ocorreu um erro! `Channel type is not VoiceChannel`', flags: 1 << 6 });
+    if (this.client.records.has(ctx.guild.id)) {
+      ctx.sendMessage({ content: ':x: Não consigo tocar música enquanto gravo áudio!', flags: 1 << 6 });
       return false;
     }
+
+    const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 

@@ -50,6 +50,13 @@ interface Choices {
   value: string;
 }
 
+import { Worker } from 'worker_threads';
+interface IRecord {
+  timeout: NodeJS.Timeout;
+  worker: Worker;
+  voiceChannelID: string;
+}
+
 import 'erela.js';
 
 type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave' | 'lowpass' | '8D';
