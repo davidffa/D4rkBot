@@ -43,21 +43,25 @@ parentPort.on('message', (data) => {
     interval = setInterval(() => {
       const finalPacket = Buffer.allocUnsafe(3840); // (48k 16 bit little endian pcm, 2 stereo channels)
 
-      for (var i = 0; i < 3840; i += 2) {
-        let sample = 0;
+      if (voiceMap.size) {
+        for (var i = 0; i < 3840; i += 2) {
+          let sample = 0;
 
-        for (const voiceQueue of voiceMap.values()) {
-          sample += voiceQueue[0].readInt16LE(i);
+          for (const voiceQueue of voiceMap.values()) {
+            sample += voiceQueue[0].readInt16LE(i);
+          }
+
+          sample = Math.max(-32767, Math.min(32767, sample)); // 16bit boundaries
+
+          finalPacket.writeInt16LE(sample, i);
         }
 
-        sample = Math.max(-32767, Math.min(32767, sample)); // 16bit boundaries
-
-        finalPacket.writeInt16LE(sample, i);
-      }
-
-      for (const [userID, voiceQueue] of voiceMap.entries()) {
-        voiceQueue.shift();
-        if (!voiceQueue[0]) voiceMap.delete(userID);
+        for (const [userID, voiceQueue] of voiceMap.entries()) {
+          voiceQueue.shift();
+          if (!voiceQueue[0]) voiceMap.delete(userID);
+        }
+      } else { // no voice packets, fill buffer with silence
+        finalPacket.fill(0);
       }
 
       readable.push(finalPacket);
