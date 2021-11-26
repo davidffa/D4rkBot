@@ -32,20 +32,9 @@ export default class Wiki extends Command {
       await ctx.defer();
     }
 
-    const content = {
-      articleName: ctx.args.join(' '),
-      lang: 'pt'
-    }
+    const search = await this.client.request(`https://pt.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=1&gsrsearch=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
 
-    const res = await this.client.request('https://api.algorithmia.com/v1/algo/web/WikipediaParser/0.1.2?timeout=300', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Simple ${process.env.AlgorithmiaKey}`
-      },
-      body: content
-    }).then(res => res.json()).then(json => json.result);
-
-    if (!res) {
+    if (!Object.keys(search.query.pages).length) {
       if (ctx.type === Type.INTERACTION) {
         ctx.sendMessage(':x: Não encontrei nada na wikipedia.');
       } else {
@@ -54,7 +43,13 @@ export default class Wiki extends Command {
       return;
     }
 
-    const text = res.content.split('\n').filter((line: string) => {
+    const { title } = Object.values(search.query.pages)[0] as any;
+
+    const res = await this.client.request(`https://pt.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&explaintext&format=json&titles=${encodeURIComponent(title)}`).then(r => r.json());
+
+    const { extract, thumbnail } = Object.values(res.query.pages)[0] as any;
+
+    const text = extract.split('\n').filter((line: string) => {
       if (line.trim().length === 0 || line.trim().startsWith('='))
         return false;
       return true;
@@ -64,10 +59,10 @@ export default class Wiki extends Command {
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
-      .setTitle(`Wikipedia (${res.title})`)
-      .setThumbnail(res.images.find((url: string) => url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')) || 'https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png')
+      .setTitle(`Wikipedia (${title})`)
+      .setThumbnail(thumbnail?.source || 'https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png')
       .setDescription(summary)
-      .setURL(res.url)
+      .setURL(`https://pt.wikipedia.org/w/${title}`)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
