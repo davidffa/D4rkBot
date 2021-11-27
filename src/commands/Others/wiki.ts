@@ -62,7 +62,7 @@ export default class Wiki extends Command {
       .setTitle(`Wikipedia (${title})`)
       .setThumbnail(thumbnail?.source || 'https://www.wikipedia.org/portal/wikipedia.org/assets/img/Wikipedia-logo-v2.png')
       .setDescription(summary)
-      .setURL(`https://pt.wikipedia.org/w/${encodeURIComponent(title)}`)
+      .setURL(`https://pt.wikipedia.org/wiki/${encodeURIComponent(title)}`)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
