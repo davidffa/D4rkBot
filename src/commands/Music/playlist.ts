@@ -335,6 +335,25 @@ export default class PlayList extends Command {
 
           if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED') {
             track = res.tracks[0];
+          } else if (res.loadType === 'PLAYLIST_LOADED') {
+            const tracksB64 = res.tracks.map(t => t.track).filter(b64 => !pl.tracks?.includes(b64));
+
+            if (!tracksB64.length) {
+              ctx.sendMessage({ content: ':x: Todas as músicas dessa playlist já estão na tua playlist do bot!', flags: 1 << 6 });
+              return;
+            }
+
+            if ((pl.tracks?.length ?? 0) + tracksB64.length >= 70) {
+              ctx.sendMessage({ content: ':x: Não podes ter uma playlist com mais de 70 músicas', flags: 1 << 6 });
+              return;
+            }
+
+            pl.tracks = pl.tracks?.concat(tracksB64) ?? tracksB64;
+            userData && await userData.save();
+
+            ctx.sendMessage(`<a:verificado:803678585008816198> \`${tracksB64.length}\` músicas adicionadas à playlist!`);
+
+            return;
           } else {
             ctx.sendMessage({ content: ':x: Não foi possível adicionar essa música à playlist.', flags: 1 << 6 });
             return;
