@@ -34,7 +34,7 @@ export default class Wiki extends Command {
 
     const search = await this.client.request(`https://pt.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=1&gsrsearch=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.json());
 
-    if (!Object.keys(search.query.pages).length) {
+    if (search.query.pages[-1]) {
       if (ctx.type === Type.INTERACTION) {
         ctx.sendMessage(':x: Não encontrei nada na wikipedia.');
       } else {
