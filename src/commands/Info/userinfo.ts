@@ -94,10 +94,11 @@ export default class Userinfo extends Command {
       BUG_HUNTER_LEVEL_2: '<:BugHunterLvl2:803665318274400256>',
       VERIFIED_BOT: '<:vBot1:804393321862397952><:vBot2:804393321854140440>',
       VERIFIED_BOT_DEVELOPER: '<:dev_badge:803665036769230899>',
-      DISCORD_CERTIFIED_MODERATOR: '<:DiscordCertifiedModerator:863424954371932180>'
+      DISCORD_CERTIFIED_MODERATOR: '<:DiscordCertifiedModerator:863424954371932180>',
+      BOT_HTTP_INTERACTIONS: '', // idk
     }
 
-    const flags = user.publicFlags;
+    const flags = (user.publicFlags ?? 0) & ~(Constants.UserFlags.BOT_HTTP_INTERACTIONS);
 
     if (flags) {
       const flagArray = Object.entries(Constants.UserFlags).filter(([, bit]) => (flags & bit) == bit).map(([field,]) => field);
