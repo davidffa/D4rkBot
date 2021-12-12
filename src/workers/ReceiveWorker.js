@@ -51,7 +51,9 @@ parentPort.on('message', (data) => {
             sample += voiceQueue[0].readInt16LE(i);
           }
 
-          sample = Math.max(-32767, Math.min(32767, sample)); // 16bit boundaries
+          // Respect 16bit boundaries
+          if (sample > 32767) sample = 32767;
+          else if (sample < -32768) sample = -32768;
 
           finalPacket.writeInt16LE(sample, i);
         }
