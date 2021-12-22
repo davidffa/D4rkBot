@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import QRCode from 'qrcode';
-
 export default class Qrcode extends Command {
   constructor(client: Client) {
     super(client, {
@@ -42,8 +40,7 @@ export default class Qrcode extends Command {
           return;
         }
 
-        const url = await QRCode.toDataURL(ctx.args.slice(1).join(' '));
-        const base64data = url.replace(/^data:image\/png;base64,/, '');
+        const { buffer } = await this.client.request(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(ctx.args.slice(1).join(' '))}`);
 
         const embed = new this.client.embed()
           .setTitle('<:qrcode:784833114761461800> QR Code')
@@ -57,7 +54,7 @@ export default class Qrcode extends Command {
           files: [
             {
               name: 'qr.png',
-              file: Buffer.from(base64data, 'base64')
+              file: buffer
             }
           ]
         });
