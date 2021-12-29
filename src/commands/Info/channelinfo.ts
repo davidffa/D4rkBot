@@ -8,7 +8,7 @@ export default class Channelinfo extends Command {
       name: 'channelinfo',
       description: 'Mostra informações sobre um canal do servidor.',
       category: 'Info',
-      aliases: ['chinfo'],
+      aliases: ['chinfo', 'ci'],
       usage: '[ID do canal/Nome]',
       cooldown: 4
     });
