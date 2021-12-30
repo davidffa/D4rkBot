@@ -2,6 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
+import { ConnectionState } from 'vulkava';
 export default class Radio extends Command {
   constructor(client: Client) {
     super(client, {
@@ -57,7 +58,7 @@ export default class Radio extends Command {
       return;
     }
 
-    if (currPlayer && voiceChannelID !== currPlayer.voiceChannel) {
+    if (currPlayer && voiceChannelID !== currPlayer.voiceChannelId) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar este comando!', flags: 1 << 6 });
       return;
     }
@@ -95,11 +96,11 @@ export default class Radio extends Command {
         }
       }
     } else {
-      player = this.client.music.create({
-        guild: ctx.guild.id,
-        voiceChannel: voiceChannelID,
-        textChannel: ctx.channel.id,
-        selfDeafen: true
+      player = this.client.music.createPlayer({
+        guildId: ctx.guild.id,
+        voiceChannelId: voiceChannelID,
+        textChannelId: ctx.channel.id,
+        selfDeaf: true
       })
       player.effects = [];
     }
@@ -107,7 +108,7 @@ export default class Radio extends Command {
     await ctx.defer();
 
     try {
-      const res = await this.client.music.search(radio[1], ctx.author);
+      const res = await this.client.music.search(radio[1]);
 
       if (res.loadType !== 'TRACK_LOADED') {
         ctx.sendMessage({ content: ':x: Ocorreu um erro ao tocar a rádio.', flags: 1 << 6 });
@@ -115,7 +116,7 @@ export default class Radio extends Command {
         return;
       }
 
-      if (player.state === 'DISCONNECTED') {
+      if (player.state === ConnectionState.DISCONNECTED) {
         if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels')
           && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
           ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
@@ -125,14 +126,15 @@ export default class Radio extends Command {
         player.connect();
       }
 
-      if (player.queue.current) {
-        player.queue.clear();
-        player.stop();
+      if (player.current) {
+        player.queue = [];
+        player.skip();
       }
 
-      player.setTextChannel(ctx.channel.id);
+      player.textChannelId = ctx.channel.id;
 
-      player.queue.add(res.tracks[0]);
+      res.tracks[0].setRequester(ctx.author);
+      player.queue.push(res.tracks[0]);
 
       if (!player.playing)
         player.play();

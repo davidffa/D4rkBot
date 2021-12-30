@@ -27,7 +27,7 @@ export default class Stop extends Command {
 
     const voiceChannelID = ctx.member?.voiceState.channelID;
 
-    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
+    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
@@ -37,8 +37,8 @@ export default class Stop extends Command {
     if (voiceChannel.type !== 2) return;
 
     const stop = (dj: Boolean): void => {
-      if (player.textChannel) {
-        const channel = this.client.getChannel(player.textChannel);
+      if (player.textChannelId) {
+        const channel = this.client.getChannel(player.textChannelId);
         if (channel.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
@@ -52,7 +52,7 @@ export default class Stop extends Command {
     }
 
     const allQueueRequester = (user: User): boolean => {
-      if (player.queue.current?.requester !== user) return false;
+      if (player.current?.requester !== user) return false;
       for (const m of player.queue) {
         if (m.requester !== user) return false;
       }

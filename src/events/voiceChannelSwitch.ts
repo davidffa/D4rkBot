@@ -2,7 +2,7 @@ import Client from '../structures/Client';
 
 import { Member, VoiceChannel } from 'eris';
 
-export default class VoiceChannelSwitch {
+export default class VoiceChannelIdSwitch {
   client: Client;
 
   constructor(client: Client) {
@@ -21,12 +21,12 @@ export default class VoiceChannelSwitch {
     const player = this.client.music.players.get(member.guild.id);
     if (!player || member.bot) return;
 
-    if (oldChannel.id === player.voiceChannel && !oldChannel.voiceMembers.filter(m => !m.bot).length && newChannel.id !== player.voiceChannel) {
+    if (oldChannel.id === player.voiceChannelId && !oldChannel.voiceMembers.filter(m => !m.bot).length && newChannel.id !== player.voiceChannelId) {
       player.pause(true);
-      const msg = await this.client.createMessage(player.textChannel as string, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.');
+      const msg = await this.client.createMessage(player.textChannelId as string, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.');
 
       const timeout = setTimeout(() => {
-        this.client.createMessage(player.textChannel as string, ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos');
+        this.client.createMessage(player.textChannelId as string, ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos');
         player.destroy();
         this.client.music.channelTimeouts.get(member.guild.id)?.message.delete().catch(() => { });
         this.client.music.channelTimeouts.delete(member.guild.id);
@@ -36,7 +36,7 @@ export default class VoiceChannelSwitch {
       return;
     }
 
-    if (newChannel.id === player.voiceChannel && this.client.music.channelTimeouts.has(member.guild.id) && newChannel.voiceMembers.filter(m => !m.bot).length) {
+    if (newChannel.id === player.voiceChannelId && this.client.music.channelTimeouts.has(member.guild.id) && newChannel.voiceMembers.filter(m => !m.bot).length) {
       player.pause(false);
       const data = this.client.music.channelTimeouts.get(member.guild.id);
       if (!data) return;

@@ -6,7 +6,7 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
 
-import { Player } from 'erela.js';
+import { Player } from 'vulkava';
 
 import { inspect } from 'util';
 
@@ -31,7 +31,7 @@ export default class Eval extends Command {
     if (ctx.author.id !== '334054158879686657' || !ctx.guild) return;
 
     if (ctx.channel.type === 0) {
-      this.player = this.client.music.get(ctx.guild.id);
+      this.player = this.client.music.players.get(ctx.guild.id);
       this.guildCache = this.client.guildCache.get(ctx.guild.id);
     } else {
       this.player = null

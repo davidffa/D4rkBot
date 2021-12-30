@@ -5,7 +5,7 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { ActionRow, ComponentInteraction, ActionRowComponents, Message, VoiceChannel } from 'eris';
 
-import { Track, TrackUtils } from 'erela.js';
+import { Track, UnresolvedTrack, ConnectionState } from 'vulkava';
 
 export default class PlayList extends Command {
   constructor(client: Client) {
@@ -194,7 +194,7 @@ export default class PlayList extends Command {
         const detailEmbed = new this.client.embed()
           .setTitle('<a:disco:803678643661832233> Lista de Músicas')
           .setColor('RANDOM')
-          .setDescription(`**${playlist.name}** - \`${tracks.length}\` músicas\n\n${tracks.slice(0, 10).map((track, idx) => `${idx + 1}º - [${track.info.title}](${track.info.uri})`).join('\n')}`)
+          .setDescription(`**${playlist.name}** - \`${tracks.length}\` músicas\n\n${tracks.slice(0, 10).map((track, idx) => `${idx + 1}º - [${track.title}](${track.uri})`).join('\n')}`)
           .setTimestamp()
           .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
@@ -248,7 +248,7 @@ export default class PlayList extends Command {
                 row.components[0].disabled = true;
               }
               row.components[1].disabled = false;
-              detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.info.title}](${track.info.uri})`).join('\n'))
+              detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.title}](${track.uri})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
               i.editParent({ embeds: [detailEmbed], components: [row] });
@@ -259,7 +259,7 @@ export default class PlayList extends Command {
                 row.components[1].disabled = true;
               }
               row.components[0].disabled = false;
-              detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.info.title}](${track.info.uri})`).join('\n'))
+              detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.title}](${track.uri})`).join('\n'))
                 .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
               i.editParent({ embeds: [detailEmbed], components: [row] });
@@ -302,7 +302,7 @@ export default class PlayList extends Command {
           return;
         }
 
-        const songName = await this.client.music.decodeTrack(playList.tracks[id - 1]).then(t => t.info.title);
+        const songName = await this.client.music.decodeTrack(playList.tracks[id - 1]).then(t => t.title);
 
         playList.tracks.splice(id - 1, 1);
         await userData.save();
@@ -334,9 +334,17 @@ export default class PlayList extends Command {
           const res = await this.client.music.search(ctx.args.slice(2).join(' '));
 
           if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED') {
-            track = res.tracks[0];
+            if (res.tracks[0] instanceof UnresolvedTrack) {
+              track = await res.tracks[0].build();
+            } else {
+              track = res.tracks[0];
+            }
           } else if (res.loadType === 'PLAYLIST_LOADED') {
-            const tracksB64 = res.tracks.map(t => t.track).filter(b64 => !pl.tracks?.includes(b64));
+            const tracksB64 = (await Promise.all(res.tracks.map(async t => {
+              if (t instanceof UnresolvedTrack) {
+                return await t.build().then(t => t.encodedTrack);
+              } else return t.encodedTrack;
+            }))).filter(b64 => !pl.tracks?.includes(b64));
 
             if (!tracksB64.length) {
               ctx.sendMessage({ content: ':x: Todas as músicas dessa playlist já estão na tua playlist do bot!', flags: 1 << 6 });
@@ -359,7 +367,7 @@ export default class PlayList extends Command {
             return;
           }
         } else if (player) {
-          track = player.queue.current as Track;
+          track = player.current as Track;
         } else {
           ctx.sendMessage({ content: `:x: **Usa:** ${prefix}playlist add <Nome da Playlist> [Nome da música]`, flags: 1 << 6 });
           return;
@@ -374,12 +382,12 @@ export default class PlayList extends Command {
 
         const trackArr = await this.client.music.decodeTracks(pl.tracks);
 
-        if (trackArr.find(t => t.info.uri === track.uri)) {
+        if (trackArr.find(t => t.uri === track.uri)) {
           ctx.sendMessage({ content: ':x: Essa música já está na playlist.', flags: 1 << 6 });
           return;
         }
 
-        pl.tracks.push(track.track);
+        pl.tracks.push(track.encodedTrack);
 
         userData && await userData.save();
 
@@ -435,16 +443,16 @@ export default class PlayList extends Command {
         const voiceChannelID = ctx.member?.voiceState.channelID as string;
         const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
-        player = this.client.music.create({
-          guild: ctx.guild.id,
-          voiceChannel: voiceChannelID,
-          textChannel: ctx.channel.id,
-          selfDeafen: true
+        player = this.client.music.createPlayer({
+          guildId: ctx.guild.id,
+          voiceChannelId: voiceChannelID,
+          textChannelId: ctx.channel.id,
+          selfDeaf: true
         });
 
         player.effects = [];
 
-        if (player.state === 'DISCONNECTED') {
+        if (player.state === ConnectionState.DISCONNECTED) {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
             ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
             player.destroy();
@@ -456,7 +464,7 @@ export default class PlayList extends Command {
         const tracksToLoad = await this.client.music.decodeTracks(songs);
 
         for (const t of tracksToLoad) {
-          player.queue.add(TrackUtils.build(t, ctx.author));
+          player.queue.push(t);
         }
 
         if (!player.playing) player.play();

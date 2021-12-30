@@ -57,11 +57,11 @@ interface IRecord {
   voiceChannelID: string;
 }
 
-import 'erela.js';
+import 'vulkava';
 
 type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave' | 'lowpass' | '8D';
 
-declare module 'erela.js' {
+declare module 'vulkava' {
   export interface Player {
     lastPlayingMsgID?: string;
     radio?: string;

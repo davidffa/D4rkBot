@@ -13,7 +13,7 @@ export default class VoiceChannelJoin {
     const player = this.client.music.players.get(member.guild.id);
     if (!player || member.bot) return;
 
-    if (this.client.music.channelTimeouts.has(member.guild.id) && newChannel.id === player.voiceChannel) {
+    if (this.client.music.channelTimeouts.has(member.guild.id) && newChannel.id === player.voiceChannelId) {
       player.pause(false);
       const data = this.client.music.channelTimeouts.get(member.guild.id);
       if (!data) return;

@@ -31,7 +31,6 @@
     "cheerio": "^1.0.0-rc.10",
     "color-thief-node": "^1.0.4",
     "dotenv": "^10.0.0",
-    "erela.js": "davidffa/erela.js#build-mod",
     "eris": "^0.16.1",
     "figlet": "^1.5.2",
     "mathjs": "^10.0.0",
@@ -41,6 +40,7 @@
     "steam-provider": "^0.3.2",
     "ts-node-dev": "^1.1.8",
     "unicode-emoji-json": "^0.3.0",
+    "vulkava": "https://github.com/davidffa/Vulkava#build",
     "xml2js": "^0.4.23"
   }
 }

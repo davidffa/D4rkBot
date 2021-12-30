@@ -48,13 +48,13 @@ export default class Queue extends Command {
     }
 
     let page = 1;
-    const pages = Math.max(Math.ceil(queue.size / 10), 1);
+    const pages = Math.max(Math.ceil(queue.length / 10), 1);
 
-    const req = queue.current?.requester as User;
+    const req = player.current?.requester as User;
 
     const desc = [
-      `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n`,
-      `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
+      `<a:disco:803678643661832233> **A tocar:** \`${player.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n`,
+      `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(player.queueDuration)}) ----- Total de músicas na queue: ${queue.length}`,
       `${getSongDetails(0, 10)}`
     ];
 
@@ -66,7 +66,7 @@ export default class Queue extends Command {
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
 
-    if (queue.size <= 10) {
+    if (queue.length <= 10) {
       await ctx.sendMessage({ embeds: [embed] });
       return;
     }
@@ -104,8 +104,8 @@ export default class Queue extends Command {
 
     collector.on('collect', i => {
       const newDesc = [
-        `<a:disco:803678643661832233> **A tocar:** \`${queue.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
-        `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(queue.duration)}) ----- Total de músicas na queue: ${queue.size}`,
+        `<a:disco:803678643661832233> **A tocar:** \`${player.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
+        `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(player.queueDuration)}) ----- Total de músicas na queue: ${queue.length}`,
         `${getSongDetails(0, 10)}`
       ];
 

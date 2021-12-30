@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import Embed from '../../structures/Embed';
 
-import { Node } from 'erela.js';
+import { Node } from 'vulkava';
 import { User, Message, ActionRowComponents, ActionRow, ComponentInteraction } from 'eris';
 import { ComponentCollector } from '../../structures/Collector';
 
@@ -20,8 +20,8 @@ export default class Lavalink extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     const nodes = [
-      this.client.music.nodes.get('USA Node'),
-      this.client.music.nodes.get('Europe Node')
+      this.client.music.nodes.find(n => n.identifier === 'USA Node'),
+      this.client.music.nodes.find(n => n.identifier === 'Europe Node')
     ]
 
     if (!nodes.length) {
@@ -95,8 +95,8 @@ export default class Lavalink extends Command {
     return new this.client.embed()
       .setColor('RANDOM')
       .setTitle('<:lavalink:829751857483350058> Status dos Nodes do Lavalink')
-      .setDescription('[Lavalink que eu uso](https://github.com/davidffa/lavalink/releases)')
-      .addField(':id: Nome', `\`${node.options.identifier}\``, true)
+      .setDescription('[Lavalink que eu uso](https://github.com/davidffa/lavalink/releases)\nWrapper do Lavalink: [Vulkava](https://npmjs.com/package/vulkava)')
+      .addField(':id: Nome', `\`${node.identifier}\``, true)
       .addField(':calendar: Players a tocar', `\`${node.stats.players}\``, true)
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(node.stats.uptime)}\``, true)
       .addField('<a:carregando:869622946233221160> CPU', `Cores: \`${node.stats.cpu.cores}\`\nLavalink: \`${~~(node.stats.cpu.lavalinkLoad * 100)}%\`\nSistema: \`${~~(node.stats.cpu.systemLoad * 100)}%\``, true)

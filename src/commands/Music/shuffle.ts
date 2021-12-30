@@ -25,7 +25,7 @@ export default class Shuffle extends Command {
 
     const voiceChannelID = ctx.member?.voiceState.channelID;
 
-    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
+    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
@@ -46,7 +46,7 @@ export default class Shuffle extends Command {
         ctx.sendMessage({ content: ':x: A queue está vazia!', flags: 1 << 6 });
         return;
       }
-      player.queue.shuffle();
+      player.shuffleQueue();
 
       ctx.sendMessage('<a:disco:803678643661832233> Lista de músicas embaralhada!');
     }

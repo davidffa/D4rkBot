@@ -24,7 +24,7 @@ export default class Nowplaying extends Command {
 
     const player = this.client.music.players.get(ctx.guild.id);
 
-    if (!player || !player.queue.current) {
+    if (!player || !player.current) {
       ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }
@@ -52,10 +52,10 @@ export default class Nowplaying extends Command {
       canvasCtx.font = 'bold 20px Arial';
       canvasCtx.fillStyle = '#eee';
       canvasCtx.textAlign = 'center';
-      canvasCtx.fillText(player.queue.current.title.slice(0, 30), 185, 270, 300);
+      canvasCtx.fillText(player.current.title.slice(0, 30), 185, 270, 300);
 
-      if (player.queue.current.thumbnail) {
-        let url = player.queue.current.displayThumbnail!('maxresdefault') ?? player.queue.current.thumbnail;
+      if (player.current.thumbnail) {
+        let url = player.current.thumbnail;
 
         let { buffer, status } = await this.client.request(url).then(r => {
           return {
@@ -64,20 +64,20 @@ export default class Nowplaying extends Command {
           }
         });
 
-        if (status !== 200) buffer = await this.client.request(player.queue.current.thumbnail).then(r => r.buffer);
+        if (status !== 200) buffer = await this.client.request(player.current.thumbnail).then(r => r.buffer);
 
         const thumb = await Canvas.loadImage(buffer);
         canvasCtx.drawImage(thumb, 70, 67, 240, 135);
       }
 
-      const duration = this.client.utils.msToHour(player.queue.current.duration as number);
+      const duration = this.client.utils.msToHour(player.current.duration as number);
 
-      const positionPercent = player.position / (player.queue.current.duration as number);
+      const positionPercent = player.exactPosition / (player.current.duration as number);
 
       canvasCtx.font = 'bold 16px Arial';
       canvasCtx.textAlign = 'start';
       canvasCtx.fillStyle = '#ddd';
-      canvasCtx.fillText(this.client.utils.msToHour(player.position), 15, 323);
+      canvasCtx.fillText(this.client.utils.msToHour(player.exactPosition), 15, 323);
       canvasCtx.fillText(duration, canvas.width - canvasCtx.measureText(duration).width - 15, 323);
 
       canvasCtx.beginPath();
@@ -101,7 +101,7 @@ export default class Nowplaying extends Command {
       }
 
       ctx.sendMessage({
-        content: `<a:disco:803678643661832233> A tocar ${player.queue.current.title}`,
+        content: `<a:disco:803678643661832233> A tocar ${player.current.title}`,
         files: [
           {
             name: 'nowplaying.png',
@@ -116,9 +116,9 @@ export default class Nowplaying extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
-      if (player.queue.current.uri) embed.setURL(player.queue.current.uri);
-      const requester = player.queue.current.requester as User;
-      embed.setDescription(`\`${player.queue.current.title}\` requisitado por \`${requester.username as string}#${requester.discriminator}\` com a duração de \`${this.client.utils.msToHour(player.position)}/${this.client.utils.msToHour(player.queue.current.duration as number)}\``);
+      if (player.current.uri) embed.setURL(player.current.uri);
+      const requester = player.current.requester as User;
+      embed.setDescription(`\`${player.current.title}\` requisitado por \`${requester.username as string}#${requester.discriminator}\` com a duração de \`${this.client.utils.msToHour(player.exactPosition)}/${this.client.utils.msToHour(player.current.duration as number)}\``);
       ctx.sendMessage({ embeds: [embed] });
     } else {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` ou `Anexar arquivos` para executar este comando.', flags: 1 << 6 });

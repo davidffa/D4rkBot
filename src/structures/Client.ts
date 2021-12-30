@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
 import { Client, ClientOptions, User, Guild, Constants, Role } from 'eris';
-import { NodeOptions, VoicePacket } from 'erela.js';
+import { NodeOptions } from 'vulkava';
 
 import Embed from './Embed';
 import Music from './Music';
@@ -201,31 +201,33 @@ export default class D4rkClient extends Client {
   connectLavaLink(): void {
     const nodes: NodeOptions[] = [
       {
-        identifier: 'Europe Node',
-        host: process.env.EULAVALINKHOST as string,
+        id: 'Europe Node',
+        hostname: process.env.EULAVALINKHOST as string,
         port: Number(process.env.EULAVALINKPORT),
         password: process.env.LAVALINKPASSWORD as string,
-        retryAmount: 10,
-        retryDelay: 3000,
+        maxRetryAttempts: 10,
+        retryAttemptsInterval: 3000,
         secure: false,
-        region: 'europe'
+        region: 'EU',
+        resumeKey: 'D4rkBot'
       },
       {
-        identifier: 'USA Node',
-        host: process.env.USALAVALINKHOST as string,
+        id: 'USA Node',
+        hostname: process.env.USALAVALINKHOST as string,
         port: Number(process.env.USALAVALINKPORT),
         password: process.env.LAVALINKPASSWORD as string,
-        retryAmount: 10,
-        retryDelay: 3000,
+        maxRetryAttempts: 10,
+        retryAttemptsInterval: 3000,
         secure: false,
-        region: 'usa'
+        region: 'USA',
+        resumeKey: 'D4rkBot'
       }
     ];
 
     this.music = new Music(this, nodes);
 
     this.music.init();
-    super.on('rawWS', (packet) => this.music.updateVoiceState(packet as VoicePacket));
+    super.on('rawWS', (packet) => this.music.handleVoiceUpdate(packet));
   }
 
   async loadBotCache(): Promise<void> {

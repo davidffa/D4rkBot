@@ -2,8 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message } from 'eris';
-
 export default class Autorole extends Command {
   constructor(client: Client) {
     super(client, {

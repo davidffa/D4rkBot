@@ -2,15 +2,13 @@ import Client from './Client';
 import CommandContext from './CommandContext';
 
 import { User, Member, VoiceChannel } from 'eris';
-import { Player, Node } from 'erela.js';
-import { Manager, NodeOptions } from 'erela.js';
-import { Spotify } from './Spotify';
+import { NodeOptions, Vulkava, Player, Node } from 'vulkava';
 
 import { Parser } from 'xml2js';
 
 import { Timeouts, ComponentCollectors } from '../typings/index';
 
-export default class D4rkManager extends Manager {
+export default class D4rkManager extends Vulkava {
   client: Client;
   channelTimeouts: Map<string, Timeouts>;
   searchCollectors: Map<string, ComponentCollectors>;
@@ -18,19 +16,14 @@ export default class D4rkManager extends Manager {
   constructor(client: Client, nodes: NodeOptions[]) {
     super({
       nodes,
-      autoPlay: true,
-      send(id, payload) {
+      sendWS(id, payload) {
         const guild = client.guilds.get(id);
         if (guild) guild.shard.sendWS(payload.op, payload.d);
       },
-      plugins: [
-        new Spotify({
-          clientID: process.env.SPOTIFYCLIENTID as string,
-          clientSecret: process.env.SPOTIFYCLIENTSECRET as string,
-          playlistLimit: 4,
-          albumLimit: 8,
-        })
-      ],
+      spotify: {
+        clientId: process.env.SPOTIFYCLIENTID!,
+        clientSecret: process.env.SPOTIFYCLIENTSECRET!,
+      }
     });
 
     this.client = client;
@@ -38,29 +31,24 @@ export default class D4rkManager extends Manager {
     this.searchCollectors = new Map();
 
     this.on('nodeConnect', async (node): Promise<void> => {
-      console.log(`${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port}) conectado!`);
+      console.log(`${node.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.hostname}:${node.options.port}) conectado!`);
 
-      for (const player of this.players.filter(p => p.node === node).values()) {
+      for (const player of [...this.players.values()].filter(p => p.node === node).values()) {
         const position = player.position;
         player.connect();
         player.play({ startTime: position });
-        player.reconnect = true;
       }
     });
 
     this.pingNodes();
 
-    this.on('nodeReconnect', (node): void => {
-      console.log(`A reconectar ao node ${node.options.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.host}:${node.options.port})...`);
-    });
-
-    this.on('nodeError', (node, error): void => {
-      console.log(`Ocorreu um erro no Node ${node.options.identifier}. Erro: ${error.message}`);
+    this.on('error', (node, error): void => {
+      console.log(`Ocorreu um erro no Node ${node.identifier}. Erro: ${error.message}`);
       if (error.message.startsWith('Unable to connect after')) this.reconnect(node);
     });
 
-    this.on('nodeDisconnect', (node, reason): void => {
-      console.log(`O node do lavalink ${node.options.identifier} desconectou inesperadamente com o código ${reason.code || 'Desconhecido'}`);
+    this.on('nodeDisconnect', (node): void => {
+      console.log(`O node do lavalink ${node.identifier} desconectou.`);
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
@@ -69,9 +57,9 @@ export default class D4rkManager extends Manager {
         return;
       }
 
-      if (!player.textChannel) return;
+      if (!player.textChannelId) return;
 
-      const channel = this.client.getChannel(player.textChannel);
+      const channel = this.client.getChannel(player.textChannelId);
       if (channel.type !== 0) return;
 
       if (player.lastPlayingMsgID) {
@@ -85,7 +73,7 @@ export default class D4rkManager extends Manager {
         return;
       }
 
-      const requester = player.queue.current?.requester as User;
+      const requester = player.current?.requester as User;
 
       const embed = new this.client.embed()
         .setColor('RANDOM')
@@ -104,24 +92,24 @@ export default class D4rkManager extends Manager {
     });
 
     this.on('trackStuck', (player, track): void => {
-      if (player.textChannel) {
-        this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}.`);
-        player.stop();
+      if (player.textChannelId) {
+        this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}.`);
+        player.skip();
       }
-      console.error(`[Lavalink] Track Stuck on guild ${player.guild}. Music title: ${track.title}`);
+      console.error(`[Lavalink] Track Stuck on guild ${player.guildId}. Music title: ${track.title}`);
     });
 
-    this.on('trackError', async (player, track, payload): Promise<void> => {
-      if (payload.error && payload.error.includes('429')) {
-        const newNode = this.nodes.find(node => node.connected && node !== player.node);
+    this.on('trackException', async (player, track, err): Promise<void> => {
+      if (err && err.message.includes('429')) {
+        const newNode = this.nodes.find(node => node.state === 1 && node !== player.node);
 
         if (newNode) player.moveNode(newNode);
         else {
-          this.client.createMessage(player.textChannel as string, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
+          this.client.createMessage(player.textChannelId as string, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
           player.destroy();
         }
 
-        const appName = player.node.options.host.split('.')[0];
+        const appName = player.node.options.hostname.split('.')[0];
 
         if (appName) {
           await this.client.request(`https://api.heroku.com/apps/${appName}/dynos`, {
@@ -134,8 +122,8 @@ export default class D4rkManager extends Manager {
         }
         return;
       }
-      player.textChannel && this.client.createMessage(player.textChannel, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${payload.error || 'Desconhecido'}\``);
-      console.error(`[Lavalink] Track Error on guild ${player.guild}. Error: ${payload.error}`);
+      player.textChannelId && this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\``);
+      console.error(`[Lavalink] Track Error on guild ${player.guildId}. Error: ${err.message}`);
 
       if (!player.errorCount) {
         player.errorCount = 0;
@@ -146,12 +134,12 @@ export default class D4rkManager extends Manager {
         return;
       }
 
-      player.stop();
+      player.skip();
     });
 
     this.on('queueEnd', (player): void => {
-      if (player.textChannel) {
-        const channel = this.client.getChannel(player.textChannel);
+      if (player.textChannelId) {
+        const channel = this.client.getChannel(player.textChannelId);
         if (channel.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
@@ -163,16 +151,6 @@ export default class D4rkManager extends Manager {
         if (channel.permissionsOf(this.client.user.id).has('sendMessages'))
           channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
       }
-    });
-
-    this.on('playerDestroy', (player) => {
-      if (player.djTableMsg) {
-        player.djTableMsg.delete();
-      }
-    });
-
-    this.on('socketClosed', (player, payload) => {
-      if (payload.code === 1006) player.connect();
     });
   }
 
@@ -235,12 +213,12 @@ export default class D4rkManager extends Manager {
       return false;
     }
 
-    if (player && voiceChannelID !== player.voiceChannel) {
+    if (player && voiceChannelID !== player.voiceChannelId) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar este comando!', flags: 1 << 6 });
       return false;
     }
 
-    if (player && !player.radio && player.queue.duration > 8.64e7) {
+    if (player && !player.radio && player.queueDuration > 8.64e7) {
       ctx.sendMessage({ content: ':x: A queue tem a duração superior a 24 horas!', flags: 1 << 6 })
       return false;
     }
@@ -271,14 +249,14 @@ export default class D4rkManager extends Manager {
   }
 
   init() {
-    return super.init(this.client.user.id);
+    return super.start(this.client.user.id);
   }
 
   private pingNodes() {
     for (const node of this.nodes.values()) {
-      if (node.options.host.includes('heroku')) {
+      if (node.options.hostname.includes('heroku')) {
         setInterval(() => {
-          this.client.request(`http://${node.options.host}/version`, {
+          this.client.request(`http://${node.options.hostname}/version`, {
             headers: {
               Authorization: node.options.password!
             }
@@ -289,20 +267,21 @@ export default class D4rkManager extends Manager {
   }
 
   private reconnect(node: Node) {
-    this.destroyNode(node.options.identifier as string);
+    node.disconnect();
+    this.nodes.splice(this.nodes.indexOf(node), 1);
 
-    const newNode = new Node({
-      identifier: node.options.identifier as string,
-      host: node.options.host,
+    const newNode = new Node(this, {
+      id: node.identifier as string,
+      hostname: node.options.hostname,
       port: node.options.port,
       password: node.options.password,
-      retryAmount: 10,
-      retryDelay: 3000,
+      maxRetryAttempts: 10,
+      retryAttemptsInterval: 3000,
       secure: false,
       region: node.options.region
     })
 
-    this.nodes.set(node.options.identifier as string, newNode);
+    this.nodes.push(newNode);
 
     newNode.connect();
   }

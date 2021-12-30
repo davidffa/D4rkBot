@@ -21,8 +21,8 @@ export default class Ping extends Command {
     const restPing = this.client.requestHandler.latencyRef.latency;
     const pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
     const WSPing = this.client.shards.get(0)?.latency ?? 0;
-    const lavalinkUSAPing = await this.client.music.nodes.get('USA Node')!.ping();
-    const lavalinkEuPing = await this.client.music.nodes.get('Europe Node')!.ping();
+    const lavalinkUSAPing = await this.client.music.nodes.find(n => n.identifier === 'USA Node')!.ping();
+    const lavalinkEuPing = await this.client.music.nodes.find(n => n.identifier === 'Europe Node')!.ping();
 
     const res = [
       `:incoming_envelope: \`${restPing}ms\``,

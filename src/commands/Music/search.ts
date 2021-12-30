@@ -5,7 +5,7 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { ActionRow, ActionRowComponents, AutocompleteInteraction, ComponentInteraction, ComponentInteractionSelectMenuData, InteractionDataOptionWithValue, Message, VoiceChannel } from 'eris';
 
-import { Player, SearchResult } from 'erela.js';
+import { Player, SearchResult, ConnectionState } from 'vulkava';
 
 import soundCloudIdExtractor from '../../utils/soundCloudIdExtractor';
 import { Choices } from '../../typings';
@@ -38,11 +38,11 @@ export default class Search extends Command {
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
-      const player = this.client.music.create({
-        guild: ctx.guild.id,
-        voiceChannel: voiceChannelID,
-        textChannel: ctx.channel.id,
-        selfDeafen: true
+      const player = this.client.music.createPlayer({
+        guildId: ctx.guild.id,
+        voiceChannelId: voiceChannelID,
+        textChannelId: ctx.channel.id,
+        selfDeaf: true
       });
 
       player.effects = [];
@@ -72,9 +72,9 @@ export default class Search extends Command {
           ctx.sendMessage({ content: `:x: Argumentos em falta. **Usa:** \`${this.client.guildCache.get(ctx.guild.id)!.prefix}${this.name} ${this.usage}\``, flags: 1 << 6 });
           return;
         }
-        res = await this.client.music.search({ source: sources[ctx.args[0].toLowerCase()], query: ctx.args.slice(1).join(' ') }, ctx.author);
+        res = await this.client.music.search(ctx.args.slice(1).join(' '), sources[ctx.args[0].toLowerCase()]);
       } else {
-        res = await this.client.music.search(ctx.args.join(' '), ctx.author);
+        res = await this.client.music.search(ctx.args.join(' '));
       }
 
       if (res.loadType === 'SEARCH_RESULT') {
@@ -154,11 +154,11 @@ export default class Search extends Command {
               const player = currPlayer || createPlayer();
 
               if (player.radio) {
-                player.stop();
+                player.skip();
                 delete player.radio;
               }
 
-              if (player.state === 'DISCONNECTED') {
+              if (player.state === ConnectionState.DISCONNECTED) {
                 if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
                   ctx.channel.createMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
                   player.destroy();
@@ -171,7 +171,10 @@ export default class Search extends Command {
 
               const selectedTracks = data.values.map(val => tracks[Number(val)]);
 
-              selectedTracks.forEach(t => player.queue.add(t));
+              for (const t of selectedTracks) {
+                t.setRequester(ctx.author);
+                player.queue.push(t);
+              }
 
               const ebd = new this.client.embed()
                 .setColor('RANDOM')

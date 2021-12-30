@@ -25,14 +25,9 @@ export default class Remove extends Command {
       return;
     }
 
-    if (!ctx.args.length) {
-      ctx.sendMessage(`:speaker: Volume atual: \`${player.volume}\``);
-      return;
-    }
-
     const voiceChannelID = ctx.member?.voiceState.channelID;
 
-    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
+    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
@@ -55,7 +50,7 @@ export default class Remove extends Command {
         return;
       }
 
-      player.queue.remove(pos - 1);
+      player.queue.splice(pos - 1, 1);
       ctx.sendMessage(`<a:disco:803678643661832233> Música na posição ${pos} removida!`);
     }
 

@@ -30,7 +30,7 @@ export default class Volume extends Command {
 
     const voiceChannelID = ctx.member?.voiceState.channelID;
 
-    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
+    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
@@ -53,14 +53,14 @@ export default class Volume extends Command {
         return;
       }
 
-      player.setVolume(Number(vol))
+      player.filters.setVolume(Number(vol))
       ctx.sendMessage(`:speaker: Volume da música setado para \`${vol}\``);
     }
 
     const isDJ = await this.client.music.hasDJRole(member);
 
     if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
-      if (isDJ || ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
+      if (isDJ || ctx.author === player.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
         setVolume(ctx.args[0]);
         return;
       }

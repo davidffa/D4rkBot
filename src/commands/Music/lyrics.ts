@@ -85,7 +85,7 @@ export default class Lyrics extends Command {
     if (!ctx.args.length) {
       const player = this.client.music.players.get(ctx.guild.id);
 
-      if (!player || !player.queue.current) {
+      if (!player || !player.current) {
         const activity = ctx.member?.activities?.find(a => a.name === 'Spotify');
 
         if (activity && activity.details) {
@@ -107,7 +107,7 @@ export default class Lyrics extends Command {
           artist = np.artist;
           title = np.songTitle;
         } else {
-          const titleArr = player.queue.current.title.split('-');
+          const titleArr = player.current.title.split('-');
           artist = titleArr[0];
           title = titleArr[1];
         }
@@ -115,7 +115,7 @@ export default class Lyrics extends Command {
         if (title) {
           res = await lyrics(title, artist);
         } else {
-          res = await lyrics(player.queue.current.title);
+          res = await lyrics(player.current.title);
         }
       }
     } else {

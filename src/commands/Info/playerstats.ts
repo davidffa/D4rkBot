@@ -25,33 +25,14 @@ export default class PlayerStats extends Command {
 
     const node = player.node;
 
-    async function getPlayerPing() {
-      return new Promise((res) => {
-        const cb = (payload: any) => {
-          node.manager.removeListener('nodeRaw', cb);
-
-          if (payload.op == 'playerPing') {
-            res(payload.ping);
-          }
-        };
-
-        node.manager.on('nodeRaw', cb);
-
-        node.send({
-          op: 'playerPing',
-          guildId: player?.guild,
-        });
-      })
-    }
-
-    const ping = await getPlayerPing();
+    const ping = await node.ping(ctx.guild.id);
     const nodePing = await node.ping();
 
     const embed = new this.client.embed()
       .setTitle('Status do player')
       .setColor('RANDOM')
       .addField(':microphone2: Conectado ao servidor de voz', `\`${player.voiceState.event.endpoint}\``)
-      .addField('<:lavalink:829751857483350058> Conectado ao lavalink', `\`${node.options.identifier}\``)
+      .addField('<:lavalink:829751857483350058> Conectado ao lavalink', `\`${node.identifier}\``)
       .addField('🏓 Pings', `Lavalink <-> servidor de voz: \`${ping}ms\`\nBot <-> Lavalink: \`${nodePing}ms\``)
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
       .setTimestamp();

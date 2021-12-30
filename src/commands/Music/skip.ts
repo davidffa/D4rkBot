@@ -25,7 +25,7 @@ export default class Skip extends Command {
 
     const voiceChannelID = ctx.member?.voiceState.channelID;
 
-    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
+    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
@@ -35,17 +35,15 @@ export default class Skip extends Command {
     if (voiceChannel.type !== 2) return;
 
     const skip = (dj: Boolean): void => {
-      player.stop();
+      player.skip();
 
-      if (!player.queue[0]) {
-        if (player.textChannel) {
-          const channel = this.client.getChannel(player.textChannel);
-          if (channel.type !== 0) return;
+      if (!player.queue[0] && !player.trackRepeat && !player.queueRepeat) {
+        const channel = this.client.getChannel(player.textChannelId!);
+        if (channel.type !== 0) return;
 
-          if (player.lastPlayingMsgID) {
-            const msg = channel.messages.get(player.lastPlayingMsgID);
-            if (msg) msg.delete();
-          }
+        if (player.lastPlayingMsgID) {
+          const msg = channel.messages.get(player.lastPlayingMsgID);
+          if (msg) msg.delete();
         }
 
         player.destroy();
@@ -62,7 +60,7 @@ export default class Skip extends Command {
       skip(true);
     } else {
       if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
-        if (ctx.author === player.queue.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
+        if (ctx.author === player.current?.requester || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1) {
           skip(false);
           return;
         }

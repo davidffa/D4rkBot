@@ -4,7 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { AutocompleteInteraction, VoiceChannel } from 'eris';
 
-import { Player } from 'erela.js';
+import { Player, ConnectionState } from 'vulkava';
 
 import { Choices } from '../../typings/index';
 
@@ -36,11 +36,11 @@ export default class Play extends Command {
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
-      const player = this.client.music.create({
-        guild: ctx.guild?.id as string,
-        voiceChannel: voiceChannelID,
-        textChannel: ctx.channel.id,
-        selfDeafen: true
+      const player = this.client.music.createPlayer({
+        guildId: ctx.guild?.id as string,
+        voiceChannelId: voiceChannelID,
+        textChannelId: ctx.channel.id,
+        selfDeaf: true
       });
 
       player.effects = [];
@@ -48,7 +48,7 @@ export default class Play extends Command {
     }
 
     try {
-      const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
+      const res = await this.client.music.search(ctx.args.join(' '));
 
       if (res.loadType === 'LOAD_FAILED') {
         ctx.sendMessage(`:x: Falha ao carregar a música. Erro: \`${res.exception?.message}\``);
@@ -58,11 +58,11 @@ export default class Play extends Command {
         const player = currPlayer || createPlayer();
 
         if (player.radio) {
-          player.stop();
+          player.skip();
           delete player.radio;
         }
 
-        if (player.state === 'DISCONNECTED') {
+        if (player.state === ConnectionState.DISCONNECTED) {
           if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
             ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
             player.destroy();
@@ -72,10 +72,12 @@ export default class Play extends Command {
         }
 
         if (res.loadType === 'PLAYLIST_LOADED') {
-          const playlist = res.playlist;
+          const playlist = res.playlistInfo;
 
-          for (const track of res.tracks)
-            player.queue.add(track);
+          for (const track of res.tracks) {
+            track.setRequester(ctx.author);
+            player.queue.push(track);
+          }
 
           if (!player.playing)
             player.play();
@@ -83,9 +85,9 @@ export default class Play extends Command {
           const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('<a:disco:803678643661832233> Playlist Carregada')
-            .addField(":page_with_curl: Nome:", '`' + playlist?.name + '`')
+            .addField(":page_with_curl: Nome:", '`' + playlist?.title + '`')
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
-            .addField(':watch: Duração', `\`${this.client.utils.msToHour(res.playlist?.duration || 0)}\``)
+            .addField(':watch: Duração', `\`${this.client.utils.msToHour(playlist?.duration || 0)}\``)
             .setTimestamp()
             .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
@@ -97,7 +99,8 @@ export default class Play extends Command {
         } else {
           const tracks = res.tracks;
 
-          player.queue.add(tracks[0]);
+          tracks[0].setRequester(ctx.author);
+          player.queue.push(tracks[0]);
 
           ctx.sendMessage(`:bookmark_tabs: Adicionado à lista \`${tracks[0].title}\``);
 

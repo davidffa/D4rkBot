@@ -31,12 +31,12 @@ export default class Forceplay extends Command {
 
     const voiceChannelID = ctx.member?.voiceState.channelID;
 
-    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannel)) {
+    if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
-    if (!player.radio && player.queue.duration > 8.64e7) {
+    if (!player.radio && player.queueDuration > 8.64e7) {
       ctx.sendMessage({ content: ':x: A queue tem a duração superior a 24 horas!', flags: 1 << 6 })
       return;
     }
@@ -55,7 +55,7 @@ export default class Forceplay extends Command {
     }
 
     try {
-      const res = await this.client.music.search(ctx.args.join(' '), ctx.author);
+      const res = await this.client.music.search(ctx.args.join(' '));
 
       if (res.loadType === 'LOAD_FAILED') {
         ctx.sendMessage(`:x: Falha ao carregar a música. Erro: ${res.exception?.message}`);
@@ -63,20 +63,22 @@ export default class Forceplay extends Command {
         ctx.sendMessage(':x: Nenhuma música encontrada.');
       } else {
         if (res.loadType === 'PLAYLIST_LOADED') {
-          const playlist = res.playlist;
+          const playlist = res.playlistInfo;
           res.tracks.reverse();
 
-          for (const track of res.tracks)
+          for (const track of res.tracks) {
+            track.setRequester(ctx.author);
             player.queue.unshift(track);
+          }
 
-          player.stop();
+          player.skip();
 
           const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('<a:disco:803678643661832233> Playlist Carregada')
-            .addField(":page_with_curl: Nome:", '`' + playlist?.name + '`')
+            .addField(":page_with_curl: Nome:", '`' + playlist?.title + '`')
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
-            .addField(':watch: Duração', `\`${this.client.utils.msToHour(res.playlist?.duration || 0)}\``)
+            .addField(':watch: Duração', `\`${this.client.utils.msToHour(playlist?.duration || 0)}\``)
             .setTimestamp()
             .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
@@ -88,8 +90,9 @@ export default class Forceplay extends Command {
         } else {
           const tracks = res.tracks;
 
+          tracks[0].setRequester(ctx.author);
           player.queue.unshift(tracks[0]);
-          player.stop();
+          player.skip();
         }
       }
     } catch (err) {
