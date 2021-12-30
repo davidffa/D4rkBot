@@ -14,6 +14,6 @@ export default class Ready {
     this.client.connectLavaLink();
     this.client.loadStatus();
     this.client.loadBotCache();
-    // this.client.loadLogs();
+    this.client.loadLogs();
   }
 }

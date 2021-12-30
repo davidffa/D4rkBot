@@ -1,4 +1,5 @@
-import { readdirSync } from 'fs';
+import { readdirSync, readFileSync, existsSync, unlinkSync } from 'fs';
+import { resolve } from 'path';
 import { Client, ClientOptions, User, Guild, Constants, Role } from 'eris';
 import { NodeOptions } from 'vulkava';
 
@@ -341,25 +342,25 @@ export default class D4rkClient extends Client {
     setInterval(() => task(), 30000);
   }
 
-  // async loadLogs(): Promise<void> {
-  //   const logPath = resolve(__dirname, '..', '..', 'logs', 'log.txt');
+  async loadLogs(): Promise<void> {
+    const logPath = resolve(__dirname, '..', '..', 'logs', 'log.txt');
 
-  //   if (existsSync(logPath))
-  //     unlinkSync(logPath);
+    if (existsSync(logPath))
+      unlinkSync(logPath);
 
-  //   setInterval(async (): Promise<void> => {
-  //     if (!existsSync(logPath)) return;
+    setInterval(async (): Promise<void> => {
+      if (!existsSync(logPath)) return;
 
-  //     const buffer = readFileSync(logPath);
+      const buffer = readFileSync(logPath);
 
-  //     await this.createMessage('775420724990705736', {
-  //       content: `:bookmark_tabs: Log dos comandos.\nData: <t:${Math.floor(Date.now() / 1e3)}>`,
-  //     }, {
-  //       name: 'log.txt',
-  //       file: buffer
-  //     }
-  //     );
-  //     unlinkSync(logPath);
-  //   }, 7.2e6);
-  // }
+      await this.createMessage('775420724990705736', {
+        content: `:bookmark_tabs: Log dos comandos.\nData: <t:${Math.floor(Date.now() / 1e3)}>`,
+      }, {
+        name: 'log.txt',
+        file: buffer
+      }
+      );
+      unlinkSync(logPath);
+    }, 7.2e6);
+  }
 }

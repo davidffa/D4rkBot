@@ -3,6 +3,7 @@ import { ComponentCollector } from '../structures/Collector';
 import CommandContext from '../structures/CommandContext';
 
 import { Message, ActionRowComponents, ActionRow, ComponentInteraction } from 'eris';
+import { appendFileSync, existsSync, mkdirSync } from 'fs';
 
 export default class MessageCreate {
   client: Client;
@@ -163,14 +164,14 @@ export default class MessageCreate {
 
       this.client.commandsUsed++;
 
-      // if (process.env.NODE_ENV !== 'production') return;
+      if (process.env.NODE_ENV !== 'production') return;
 
       //Logs
-      // if (!existsSync('./logs'))
-      //   mkdirSync('./logs');
+      if (!existsSync('./logs'))
+        mkdirSync('./logs');
 
-      // if (message.channel.type === 0)
-      //   appendFileSync('./logs/log.txt', `Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
+      if (message.channel.type === 0)
+        appendFileSync('./logs/log.txt', `Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
     } catch (err: any) {
       message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
       console.error(err.message);
