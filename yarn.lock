@@ -3,9 +3,9 @@
 
 
 "@babel/runtime@^7.16.5":
-  version "7.16.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.5.tgz#7f3e34bf8bdbbadf03fbb7b1ea0d929569c9487a"
-  integrity sha512-TXWihFIS3Pyv5hzR7j6ihmeLkZfrXGxAr5UfSl8CHf+6q/wpiYDkUau0czckpYG8QmnCIuPpdLtuA9VmuGGyMA==
+  version "7.16.7"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
+  integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -1344,9 +1344,10 @@ util-deprecate@^1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
-"vulkava@https://github.com/davidffa/Vulkava#build":
-  version "1.0.0"
-  resolved "https://github.com/davidffa/Vulkava#66d1b7c98f6c474d2d01089dcd4ea491c484e1c6"
+vulkava@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.0.3.tgz#c4bf506a4d626acc573ced7081efead6de83cef5"
+  integrity sha512-4Fblw6J1dWM0Ik0nDYPiALJAx6jRHVctzeiL0KEqCTvgX2LHqtCV8tq6TuiILUSJyMYZSeEUz+H7WwEgwzAqgg==
   dependencies:
     ws "^8.4.0"
 

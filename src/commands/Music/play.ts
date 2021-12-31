@@ -85,7 +85,7 @@ export default class Play extends Command {
           const embed = new this.client.embed()
             .setColor('RANDOM')
             .setTitle('<a:disco:803678643661832233> Playlist Carregada')
-            .addField(":page_with_curl: Nome:", '`' + playlist?.title + '`')
+            .addField(":page_with_curl: Nome:", '`' + playlist.name + '`')
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
             .addField(':watch: Duração', `\`${this.client.utils.msToHour(playlist?.duration || 0)}\``)
             .setTimestamp()
