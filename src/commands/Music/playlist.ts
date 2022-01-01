@@ -464,6 +464,7 @@ export default class PlayList extends Command {
         const tracksToLoad = await this.client.music.decodeTracks(songs);
 
         for (const t of tracksToLoad) {
+          t.setRequester(ctx.author);
           player.queue.push(t);
         }
 
