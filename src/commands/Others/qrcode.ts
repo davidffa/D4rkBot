@@ -40,6 +40,8 @@ export default class Qrcode extends Command {
           return;
         }
 
+        await ctx.defer();
+
         const { buffer } = await this.client.request(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(ctx.args.slice(1).join(' '))}`);
 
         const embed = new this.client.embed()

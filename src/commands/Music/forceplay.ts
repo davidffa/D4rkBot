@@ -62,6 +62,8 @@ export default class Forceplay extends Command {
       } else if (res.loadType === 'NO_MATCHES') {
         ctx.sendMessage(':x: Nenhuma música encontrada.');
       } else {
+        delete player.radio;
+
         if (res.loadType === 'PLAYLIST_LOADED') {
           const playlist = res.playlistInfo;
           res.tracks.reverse();
