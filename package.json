@@ -34,13 +34,13 @@
     "eris": "^0.16.1",
     "figlet": "^1.5.2",
     "mathjs": "^10.0.2",
-    "mongoose": "6.1.4",
+    "mongoose": "6.1.5",
     "sbd": "^1.0.19",
     "sodium-native": "^3.3.0",
     "steam-provider": "^0.3.2",
     "ts-node-dev": "^1.1.8",
     "unicode-emoji-json": "^0.3.0",
-    "vulkava": "^1.0.3",
+    "vulkava": "^1.0.6",
     "xml2js": "^0.4.23"
   }
 }

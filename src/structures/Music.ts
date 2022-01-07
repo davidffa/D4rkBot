@@ -47,8 +47,8 @@ export default class D4rkManager extends Vulkava {
       if (error.message.startsWith('Unable to connect after')) this.reconnect(node);
     });
 
-    this.on('nodeDisconnect', (node): void => {
-      console.log(`O node do lavalink ${node.identifier} desconectou.`);
+    this.on('nodeDisconnect', (node, code, reason): void => {
+      console.log(`O node do lavalink ${node.identifier} desconectou. Close code: ${code}. Reason: ${reason === '' ? 'Unknown' : reason}`);
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
