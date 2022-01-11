@@ -460,10 +460,10 @@ domutils@^2.5.2, domutils@^2.7.0, domutils@^2.8.0:
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
 
-dotenv@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
-  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
+dotenv@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-11.0.0.tgz#ee37feddf8ada6d348a79e198312d4a8abfd1c1e"
+  integrity sha512-Fp/b504Y5W+e+FpCxTFMUZ7ZEQkQYF0rx+KZtmwixJxGQbLHrhCwo3FjZgNC8vIfrSi29PABNbMoCGD9YoiXbQ==
 
 dynamic-dedupe@^0.3.0:
   version "0.3.0"
@@ -724,9 +724,9 @@ kareem@2.3.3:
   integrity sha512-uESCXM2KdtOQ8LOvKyTUXEeg0MkYp4wGglTIpGcYHvjJcS5sn2Wkfrfit8m4xSbaNDAw2KdI9elgkOxZbrFYbg==
 
 keyv@^4.0.0:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.0.4.tgz#f040b236ea2b06ed15ed86fbef8407e1a1c8e376"
-  integrity sha512-vqNHbAc8BBsxk+7QBYLW0Y219rWcClspR6WSeoHYKG5mnsSoOH+BL1pWq02DDCVdvvuUny5rkBlzMRzoqc+GIg==
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.0.5.tgz#bb12b467aba372fab2a44d4420c00d3c4ebd484c"
+  integrity sha512-531pkGLqV3BMg0eDqqJFI0R1mkK1Nm5xIP2mM6keP5P8WfFtCkg2IOwplTUmlGoTgIg9yQYZ/kdihhz89XH3vA==
   dependencies:
     json-buffer "3.0.1"
 
@@ -840,10 +840,10 @@ mongodb@4.2.2:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.1.5:
-  version "6.1.5"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.1.5.tgz#2d249748e358ff4f3c6107d2a922c54aacb73d0a"
-  integrity sha512-0rRxTBoqMSuQF/YM3TEvbHn8Ybnd9dRjD7DItEjCXK0vwC/muLKXZ4rVCN4KAnWQAkwYzoWw2tXAy0YF6TUdEg==
+mongoose@6.1.6:
+  version "6.1.6"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.1.6.tgz#47903ef821b63fc5ef80a259c2331cabf994c957"
+  integrity sha512-wvNRJ547x/Bn3EMhwbVInNsEp2OdlMxk4Q/vfgAkw8OI+giZQ72S90ZH0H6VzzIhs4lCU9SwXHYa2O0sPicnEQ==
   dependencies:
     "@types/node" "< 17.0.6"
     bson "^4.2.2"
@@ -881,9 +881,9 @@ nan@^2.14.0:
   integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
 
 nanoid@^3.1.30:
-  version "3.1.30"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.30.tgz#63f93cc548d2a113dc5dfbc63bfa09e2b9b64362"
-  integrity sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==
+  version "3.1.31"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.31.tgz#f5b58a1ce1b7604da5f0605757840598d8974dc6"
+  integrity sha512-ZivnJm0o9bb13p2Ot5CpgC2rQdzB9Uxm/mFZweqm5eMViqOJe3PV6LU2E30SiLgheesmcPrjquqraoolONSA0A==
 
 node-addon-api@^4.2.0:
   version "4.2.0"
