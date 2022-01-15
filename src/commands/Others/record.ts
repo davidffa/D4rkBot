@@ -12,7 +12,7 @@ export default class Record extends Command {
       description: 'Grava áudio num canal de voz.',
       category: 'Others',
       aliases: ['rec'],
-      cooldown: 10
+      cooldown: 5
     });
   }
 
