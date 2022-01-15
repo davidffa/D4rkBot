@@ -2,7 +2,7 @@
   "name": "d4rkbot",
   "version": "4.1.0",
   "description": "Discord Bot made with typescript and eris",
-  "main": "src/index.ts",
+  "main": "./build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidffa/D4rkBot.git"
@@ -14,7 +14,9 @@
     "yarn": "1.22.17"
   },
   "scripts": {
-    "start": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts"
+    "start": "node --expose-gc .",
+    "dev": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",

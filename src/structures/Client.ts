@@ -177,30 +177,34 @@ export default class D4rkClient extends Client {
   }
 
   loadCommands(): void {
-    readdirSync('./src/commands').forEach(dir => {
-      if (dir.endsWith('.ts')) {
+    for (const dir of readdirSync(resolve(__dirname, '..', 'commands'))) {
+      if (dir.endsWith('.ts') || dir.endsWith('.js')) {
         const cmd = require(`../commands/${dir}`).default;
         this.commands.push(new cmd(this));
       } else {
-        readdirSync(`./src/commands/${dir}`).filter(file => file.endsWith('.ts')).forEach(file => {
-          const command = require(`../commands/${dir}/${file}`).default;
-          this.commands.push(new command(this));
-        });
+        for (const file of readdirSync(resolve(__dirname, '..', 'commands', dir))) {
+          if (file.endsWith('.ts') || file.endsWith('.js')) {
+            const command = require(`../commands/${dir}/${file}`).default;
+            this.commands.push(new command(this));
+          }
+        }
       }
-    });
+    }
   }
 
   loadEvents(): void {
-    readdirSync('./src/events').filter(file => file.endsWith('.ts')).forEach(file => {
-      const event = new (require(`../events/${file}`).default)(this);
-      const eventName = file.split('.')[0];
+    for (const file of readdirSync(resolve(__dirname, '..', 'events'))) {
+      if (file.endsWith('.ts') || file.endsWith('.js')) {
+        const event = new (require(`../events/${file}`).default)(this);
+        const eventName = file.split('.')[0];
 
-      if (eventName === 'ready') {
-        super.once('ready', (...args) => event.run(...args));
-      } else {
-        super.on(eventName, (...args) => event.run(...args));
+        if (eventName === 'ready') {
+          super.once('ready', (...args) => event.run(...args));
+        } else {
+          super.on(eventName, (...args) => event.run(...args));
+        }
       }
-    })
+    }
   }
 
   connect(): Promise<void> {

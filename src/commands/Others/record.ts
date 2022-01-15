@@ -1,8 +1,11 @@
 import fs from 'fs';
+import { resolve } from 'path';
+
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { VoiceChannel } from 'eris';
+
 import { Worker } from 'worker_threads';
 
 export default class Record extends Command {
@@ -56,7 +59,7 @@ export default class Record extends Command {
       return;
     }
 
-    const worker = new Worker('./src/workers/ReceiveWorker.js');
+    const worker = new Worker(resolve(__dirname, '..', '..', 'workers', 'ReceiveWorker.js'));
 
     const voiceConnection = await voiceChannel.join({
       selfMute: true,
