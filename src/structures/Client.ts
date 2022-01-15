@@ -60,7 +60,7 @@ export default class D4rkClient extends Client {
         'GUILD_BAN_REMOVE': true,
 
       },
-      messageLimit: 20
+      messageLimit: 10
     }
 
     super(process.env.TOKEN as string, clientOptions);
@@ -102,8 +102,16 @@ export default class D4rkClient extends Client {
 
       if (!guild) return null;
 
-      if (!user && /^#?[0-9]{4}$/g.test(param)) {
-        user = guild.members.find(m => m.user.discriminator === param.replace(/#/, ''))?.user;
+      if (!user) {
+        const usernameRegex = /(.+)?#(\d{4})/;
+        const match = param.match(usernameRegex);
+
+        if (match) {
+          if (match[1])
+            user = guild.members.find(m => m.username === match[1] && m.user.discriminator === match[2])?.user;
+          else
+            user = guild.members.find(m => m.user.discriminator === match[2])?.user;
+        }
       }
 
       if (!user) {
