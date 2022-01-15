@@ -8,6 +8,7 @@ const { createWriteStream, existsSync, mkdirSync } = require('fs');
  * {
  *  guildID?: string,
  *  op: number - operation (0: stop, 1: start, 2: queue voice packet)
+ *  bitrate?: number, - the voice channel bitrate (only for op: 1)
  *  userID?: string, - used to queue voice packet
  *  packet?: Buffer, - voice packet to queue
  * }
@@ -69,7 +70,9 @@ parentPort.on('message', (data) => {
       readable.push(finalPacket);
     }, 20); // oh yeah 20ms audio packets
 
-    FFMPEG = spawn('ffmpeg', ['-f', 's16le', '-ar', '48k', '-ac', '2', '-i', 'pipe:0', '-f', 'mp3', 'pipe:1']);
+    const bitrate = Math.min(180000, data.bitrate);
+
+    FFMPEG = spawn('ffmpeg', ['-f', 's16le', '-ar', '48k', '-ac', '2', '-i', 'pipe:0', '-b:a', bitrate.toString(), '-f', 'mp3', 'pipe:1']);
     readable.pipe(FFMPEG.stdin);
 
     // FFMPEG logs

@@ -70,7 +70,7 @@ export default class Record extends Command {
     });
 
 
-    worker.postMessage({ guildID: ctx.guild.id, op: 1 });
+    worker.postMessage({ guildID: ctx.guild.id, op: 1, bitrate: voiceChannel.bitrate });
 
     worker.once('message', async (data) => {
       if (data.done) {
