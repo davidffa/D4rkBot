@@ -5,8 +5,6 @@ import { ComponentCollector } from '../../structures/Collector';
 
 import { ActionRow, ActionRowComponents, ComponentInteraction, Message } from 'eris';
 
-import cio from 'cheerio';
-
 interface LyricsRes {
   lyrics: string[];
   albumArt: string;
@@ -54,26 +52,10 @@ export default class Lyrics extends Command {
 
       const data = res.response.hits[0].result;
 
-      const lyricsData = await this.client.request(data.url).then(res => res.text());
-
-      const $ = cio.load(lyricsData);
-      let lyrics = $('div[class="lyrics"]').text().trim();
-
-      if (!lyrics) {
-        lyrics = '';
-        $('div[class^="Lyrics__Container"]').each((_, el) => {
-          if ($(el).text().length) {
-            let snippet = $(el).html()
-              ?.replace(/<br>/g, '\n')
-              .replace(/<(?!\s*br\s*\/?)[^>]+>/gi, '');
-
-            lyrics += $('<textarea/>').html(snippet || '').text().trim() + '\n\n';
-          }
-        })
-      }
+      const lyrics = await this.client.request(`${process.env.LYRICSAPIURL}?url=${encodeURIComponent(data.url)}`).then(res => res.json()).then(json => json.lyrics);
 
       return {
-        lyrics: lyrics.trim().split('\n') || '',
+        lyrics,
         albumArt: data.song_art_image_url,
         url: data.url
       };
@@ -146,7 +128,7 @@ export default class Lyrics extends Command {
         style: 2,
         type: 2,
         emoji: {
-          name: '⬅️'
+          name: '⬅'
         },
         disabled: true
       },
@@ -155,7 +137,7 @@ export default class Lyrics extends Command {
         style: 2,
         type: 2,
         emoji: {
-          name: '➡️'
+          name: '➡'
         }
       }
     ]
