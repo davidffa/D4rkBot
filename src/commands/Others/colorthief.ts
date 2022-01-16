@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import { createCanvas } from 'canvas';
-import { getPaletteFromURL } from 'color-thief-node';
+import { getPaletteFromURL, Palette } from 'color-thief-node';
 
 type Color = {
   hex: string;
@@ -31,11 +31,19 @@ export default class ColorThief extends Command {
     const url = ctx.attachments?.[0]?.url ?? ctx.args[0];
 
     if (!url) {
-      ctx.sendMessage({ content: ':x: Informe uma URL ou anexo.', flags: 1 << 6 });
+      ctx.sendMessage(`:x: Argumentos em falta. **Usa:** \`${this.client.guildCache.get(ctx.guild.id)!.prefix}${this.name} ${this.usage}\``);
       return;
     }
 
-    const palette = await getPaletteFromURL(url, 8, 4);
+    let palette: Palette[];
+
+    try {
+      palette = await getPaletteFromURL(url, 8, 3);
+    } catch {
+      ctx.sendMessage(':x: Imagem inválida!');
+      return;
+    }
+
     const paletteHex = palette.reduce((acc: Color[], [r, g, b], i) => {
       const hex = `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`.toUpperCase();
 
