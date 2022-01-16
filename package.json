@@ -16,7 +16,7 @@
   "scripts": {
     "start": "node --expose-gc .",
     "dev": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts",
-    "build": "tsc"
+    "build": "tsc && cp ./src/assets -r ./build"
   },
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
