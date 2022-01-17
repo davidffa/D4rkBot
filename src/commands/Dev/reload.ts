@@ -29,6 +29,7 @@ export default class Reload extends Command {
 
     const cmdPath = resolve(__dirname, '..', cmd.category ?? '', cmd.name);
 
+    this.client.commands.splice(this.client.commands.indexOf(cmd), 1);
     delete require.cache[require.resolve(cmdPath)];
 
     try {

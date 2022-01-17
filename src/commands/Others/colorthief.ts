@@ -38,7 +38,7 @@ export default class ColorThief extends Command {
     let palette: Palette[];
 
     try {
-      palette = await getPaletteFromURL(url, 8, 3);
+      palette = await getPaletteFromURL(url, 8);
     } catch {
       ctx.sendMessage(':x: Imagem inválida!');
       return;
