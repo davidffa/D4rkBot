@@ -34,7 +34,8 @@ export default class Botinfo extends Command {
     const stopDB = process.hrtime(startDB);
     const pingDB = Math.round(((stopDB[0] * 1e9) + stopDB[1]) / 1e6);
 
-    const WSPing = (this.client.shards.get(0)?.latency) || 0;
+    const mem = process.memoryUsage();
+
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTitle('<a:blobdance:804026401849475094> Informações sobre mim')
@@ -43,17 +44,17 @@ export default class Botinfo extends Command {
         `Modelo da CPU: \`${cpuName}\`\nTotal de comandos usados: \`${totalCmdsUsed}\``
       )
       .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt / 1e3))}:R>)`, true)
-      .addField(':id: Meu ID', '`499901597762060288`', true)
+      .addField(':id: Meu ID', `\`${this.client.user.id}\``, true)
       .addField(':man: Dono', '`D4rkB#2408`', true)
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)
       .addField(':desktop: Servidores', `\`${this.client.guilds.size}\``, true)
-      .addField(':ping_pong: Ping da API', `\`${Math.round(WSPing)}ms\``, true)
+      .addField(':ping_pong: Ping da API', `\`${ctx.guild.shard.latency}ms\``, true)
       .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${this.client.guildCache.get(ctx.guild.id)?.prefix}\``, true)
       .addField('<:lang_js:803678540528615424> Versão NodeJS', `\`${process.version}\``, true)
       .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
       .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)
       .addField('<a:loading:804026048647659540> CPU', `\`${cpuUsage}%\``, true)
-      .addField('<:ram:751468688686841986> RAM', `\`${(process.memoryUsage().rss / 1024 / 1024).toFixed(0)}MiB\``, true)
+      .addField('<:ram:751468688686841986> RAM', `Heap: \`${mem.heapUsed / 1024 / 1024}MiB\`\nRSS: \`${(mem.rss / 1024 / 1024).toFixed(0)}MiB\``, true)
       .setThumbnail(this.client.user.dynamicAvatarURL())
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
