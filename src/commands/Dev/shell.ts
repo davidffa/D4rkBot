@@ -7,6 +7,7 @@ import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'e
 
 import { exec } from 'child_process';
 
+const ANSI_REGEX = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
 export default class Shell extends Command {
   constructor(client: Client) {
     super(client, {
@@ -52,15 +53,15 @@ export default class Shell extends Command {
         return;
       }
 
-      const res = stdout || stderr;
+      const res = (stdout || stderr).replace(ANSI_REGEX, '');
 
       let msg: Message;
 
       if (res.length + 15 < 2e3) {
         if (stderr) {
-          msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`sh\n${res}\`\`\``, components: [row], fetchReply: true }) as Message;
+          msg = await ctx.sendMessage({ content: `:outbox_tray: Stderr: \`\`\`sh\n${res}\n\`\`\``, components: [row], fetchReply: true }) as Message;
         } else {
-          msg = await ctx.sendMessage({ content: `:outbox_tray: **Output:**\`\`\`sh\n${res}\n\`\`\``, components: [row], fetchReply: true }) as Message;
+          msg = await ctx.sendMessage({ content: `:outbox_tray: **Stdout:**\`\`\`sh\n${res}\n\`\`\``, components: [row], fetchReply: true }) as Message;
         }
       } else {
         const body = {
