@@ -2,8 +2,8 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { createCanvas } from 'canvas';
-import { getPaletteFromURL, Palette } from 'color-thief-node';
+import { createCanvas, loadImage, Image } from 'canvas';
+import { getPalette } from 'color-thief-node';
 
 type Color = {
   hex: string;
@@ -35,14 +35,21 @@ export default class ColorThief extends Command {
       return;
     }
 
-    let palette: Palette[];
+    let image: Image;
 
     try {
-      palette = await getPaletteFromURL(url, 8);
+      image = await loadImage(url);
     } catch {
       ctx.sendMessage(':x: Imagem inválida!');
       return;
     }
+
+    if (image.width * image.height > 2073600) { // 1920x1080
+      ctx.sendMessage({ content: ":x: A imagem é muito grande! (Tamanho máximo 2073600px)", flags: 1 << 6 });
+      return;
+    }
+
+    const palette = getPalette(image, 8);
 
     const paletteHex = palette.reduce((acc: Color[], [r, g, b], i) => {
       const hex = `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`.toUpperCase();
@@ -62,7 +69,7 @@ export default class ColorThief extends Command {
 
       canvasCtx.fillStyle = (r * 0.299 + g * 0.587 + b * 0.114) > 186 ? '#323232' : '#EDEDED';
 
-      canvasCtx.font = 'bold 24px Arial';
+      canvasCtx.font = 'bold 26px Arial';
       canvasCtx.textAlign = 'center';
 
       canvasCtx.fillText(paletteHex[i].hex, 150 * i + 75, 425);
