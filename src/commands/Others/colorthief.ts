@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import { createCanvas, loadImage, Image } from 'canvas';
-import { getPalette } from 'color-thief-node';
+import { getPaletteFromURL } from 'color-thief-node';
 
 type Color = {
   hex: string;
@@ -49,7 +49,7 @@ export default class ColorThief extends Command {
       return;
     }
 
-    const palette = getPalette(image, 8);
+    const palette = await getPaletteFromURL(url, 8);
 
     const paletteHex = palette.reduce((acc: Color[], [r, g, b], i) => {
       const hex = `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`.toUpperCase();

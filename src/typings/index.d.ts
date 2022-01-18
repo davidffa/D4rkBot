@@ -71,10 +71,3 @@ declare module 'vulkava' {
     effects: Effect[];
   }
 }
-
-import 'color-thief-node';
-import type { Image } from 'canvas';
-
-declare module 'color-thief-node' {
-  export function getPalette(sourceImage: Image, colorCount?: number, quality?: number): Palette[];
-}
