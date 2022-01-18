@@ -54,7 +54,7 @@ export default class Botinfo extends Command {
       .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
       .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)
       .addField('<a:loading:804026048647659540> CPU', `\`${cpuUsage}%\``, true)
-      .addField('<:ram:751468688686841986> RAM', `Heap: \`${mem.heapUsed / 1024 / 1024}MiB\`\nRSS: \`${(mem.rss / 1024 / 1024).toFixed(0)}MiB\``, true)
+      .addField('<:ram:751468688686841986> RAM', `Heap: \`${(mem.heapUsed / 1024 / 1024).toFixed(0)}MiB\`\nRSS: \`${(mem.rss / 1024 / 1024).toFixed(0)}MiB\``, true)
       .setThumbnail(this.client.user.dynamicAvatarURL())
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
