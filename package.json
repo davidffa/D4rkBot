@@ -30,10 +30,10 @@
   "dependencies": {
     "@discordjs/opus": "^0.7.0",
     "@iamtraction/google-translate": "^1.1.2",
-    "canvas": "^2.8.0",
+    "canvas": "^2.9.0",
     "cheerio": "^1.0.0-rc.10",
     "color-thief-node": "^1.0.4",
-    "dotenv": "^14.1.0",
+    "dotenv": "^14.2.0",
     "eris": "^0.16.1",
     "figlet": "^1.5.2",
     "mathjs": "^10.1.0",
