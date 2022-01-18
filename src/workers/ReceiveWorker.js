@@ -72,10 +72,10 @@ parentPort.on('message', (data) => {
 
     const bitrate = Math.min(180000, data.bitrate);
 
-    FFMPEG = spawn('ffmpeg', ['-f', 's16le', '-ar', '48k', '-ac', '2', '-i', 'pipe:0', '-b:a', bitrate.toString(), '-f', 'mp3', 'pipe:1']);
+    FFMPEG = spawn('ffmpeg', ['-f', 's16le', '-ar', '48k', '-ac', '2', '-i', 'pipe:0', '-b:a', bitrate.toString(), '-f', 'mp3', 'pipe:1'], { stdio: ['pipe', 'pipe', 'ignore'] });
     readable.pipe(FFMPEG.stdin);
 
-    // FFMPEG logs
+    // FFMPEG logs (^ remove ignore stderr)
     // FFMPEG.stderr.pipe(process.stderr);
 
     if (!existsSync('./records')) mkdirSync('./records');

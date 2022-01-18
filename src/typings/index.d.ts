@@ -55,6 +55,7 @@ interface IRecord {
   timeout: NodeJS.Timeout;
   worker: Worker;
   voiceChannelID: string;
+  ctx?: CommandContext;
 }
 
 import 'vulkava';

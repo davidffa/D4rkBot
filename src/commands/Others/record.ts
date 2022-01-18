@@ -32,6 +32,8 @@ export default class Record extends Command {
       return;
     }
 
+    await ctx.defer();
+
     const rec = this.client.records.get(ctx.guild.id);
     if (rec) {
       if (voiceChannelID !== rec.voiceChannelID) {
@@ -40,9 +42,8 @@ export default class Record extends Command {
       }
 
       clearTimeout(rec.timeout);
+      rec.ctx = ctx;
       rec.worker.postMessage({ op: 0 });
-      this.client.records.delete(ctx.guild.id);
-      ctx.sendMessage({ content: ':white_check_mark:', flags: 1 << 6 });
       return;
     }
 
@@ -78,16 +79,29 @@ export default class Record extends Command {
 
     worker.once('message', async (data) => {
       if (data.done) {
+        const recCtx = this.client.records.get(ctx.guild.id)!.ctx;
+        this.client.records.delete(ctx.guild.id);
+
         worker.terminate();
         voiceConnection.disconnect();
         const audioFile = fs.readFileSync(`./records/record-${ctx.guild.id}.mp3`);
 
-        await ctx.channel.createMessage({
-          content: ':stop_button: Gravação terminada!'
-        }, {
-          name: 'record.mp3',
-          file: audioFile
-        });
+        if (recCtx) {
+          await recCtx.sendMessage({
+            content: ':stop_button: Gravação terminada!',
+            files: [
+              {
+                name: 'record.mp3',
+                file: audioFile
+              }
+            ]
+          });
+        } else {
+          await ctx.channel.createMessage(':stop_button: Gravação terminada!', {
+            name: 'record.mp3',
+            file: audioFile
+          });
+        }
 
         fs.unlinkSync(`./records/record-${ctx.guild.id}.mp3`);
       }
