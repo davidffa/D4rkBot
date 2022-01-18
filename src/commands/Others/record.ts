@@ -42,6 +42,7 @@ export default class Record extends Command {
       clearTimeout(rec.timeout);
       rec.worker.postMessage({ op: 0 });
       this.client.records.delete(ctx.guild.id);
+      ctx.sendMessage({ content: ':white_check_mark:', flags: 1 << 6 });
       return;
     }
 
@@ -81,14 +82,11 @@ export default class Record extends Command {
         voiceConnection.disconnect();
         const audioFile = fs.readFileSync(`./records/record-${ctx.guild.id}.mp3`);
 
-        await ctx.sendMessage({
-          content: ':stop_button: Gravação terminada!',
-          files: [
-            {
-              name: 'record.mp3',
-              file: audioFile
-            }
-          ]
+        await ctx.channel.createMessage({
+          content: ':stop_button: Gravação terminada!'
+        }, {
+          name: 'record.mp3',
+          file: audioFile
         });
 
         fs.unlinkSync(`./records/record-${ctx.guild.id}.mp3`);
