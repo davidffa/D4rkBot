@@ -91,7 +91,7 @@ export default class Lyrics extends Command {
         } else {
           const titleArr = player.current.title.split('-');
           artist = titleArr[0];
-          title = titleArr[1];
+          title = titleArr[1] ?? player.current.author;
         }
 
         if (title) {
