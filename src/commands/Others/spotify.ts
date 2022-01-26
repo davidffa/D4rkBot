@@ -6,6 +6,7 @@ import { resolve } from 'path';
 
 import Canvas from 'canvas';
 import { getPaletteFromURL } from 'color-thief-node';
+import { Activity } from 'eris';
 
 export default class Spotify extends Command {
   constructor(client: Client) {
@@ -16,6 +17,10 @@ export default class Spotify extends Command {
       category: 'Others',
       cooldown: 5
     });
+  }
+
+  static extractImageFromActivity({ assets }: Activity): string {
+    return assets?.large_image?.split(':')[1] ?? assets?.small_image?.split(':')[1] ?? 'https://t3.ftcdn.net/jpg/03/35/13/14/360_F_335131435_DrHIQjlOKlu3GCXtpFkIG1v0cGgM9vJC.jpg';
   }
 
   async execute(ctx: CommandContext): Promise<void> {
@@ -46,8 +51,10 @@ export default class Spotify extends Command {
     const canvas = Canvas.createCanvas(950, 350);
     const canvasCtx = canvas.getContext('2d');
 
-    const spotifyImg = await Canvas.loadImage(`https://i.scdn.co/image/${activity.assets!.large_image!.split(':')[1]}`);
-    const palette = await getPaletteFromURL(`https://i.scdn.co/image/${activity.assets!.large_image!.split(':')[1]}`);
+    const img = Spotify.extractImageFromActivity(activity);
+
+    const spotifyImg = await Canvas.loadImage(`https://i.scdn.co/image/${img}`);
+    const palette = await getPaletteFromURL(`https://i.scdn.co/image/${img}`);
 
     canvasCtx.drawImage(spotifyImg, 0, 0, 350, 350)
 
