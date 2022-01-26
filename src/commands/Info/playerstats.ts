@@ -25,6 +25,11 @@ export default class PlayerStats extends Command {
 
     const node = player.node;
 
+    if (!node) {
+      ctx.sendMessage({ content: ':x: O player perdeu a conexão com o lavalink!', flags: 1 << 6 });
+      return;
+    }
+
     const ping = await node.ping(ctx.guild.id);
     const nodePing = await node.ping();
 

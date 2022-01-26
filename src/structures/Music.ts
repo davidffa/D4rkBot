@@ -20,10 +20,12 @@ export default class D4rkManager extends Vulkava {
         const guild = client.guilds.get(id);
         if (guild) guild.shard.sendWS(payload.op, payload.d);
       },
+      /*
       spotify: {
         clientId: process.env.SPOTIFYCLIENTID!,
         clientSecret: process.env.SPOTIFYCLIENTSECRET!,
       }
+      */
     });
 
     this.client = client;
@@ -109,7 +111,7 @@ export default class D4rkManager extends Vulkava {
           player.destroy();
         }
 
-        const appName = player.node.options.hostname.split('.')[0];
+        const appName = player.node!.options.hostname.split('.')[0];
 
         if (appName) {
           await this.client.request(`https://api.heroku.com/apps/${appName}/dynos`, {
