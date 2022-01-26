@@ -64,6 +64,8 @@ export default class Forceplay extends Command {
       } else {
         delete player.radio;
 
+        player.textChannelId = ctx.channel.id;
+
         if (res.loadType === 'PLAYLIST_LOADED') {
           const playlist = res.playlistInfo;
           res.tracks.reverse();

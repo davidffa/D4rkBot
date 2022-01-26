@@ -20,12 +20,10 @@ export default class D4rkManager extends Vulkava {
         const guild = client.guilds.get(id);
         if (guild) guild.shard.sendWS(payload.op, payload.d);
       },
-      /*
       spotify: {
         clientId: process.env.SPOTIFYCLIENTID!,
         clientSecret: process.env.SPOTIFYCLIENTSECRET!,
       }
-      */
     });
 
     this.client = client;
@@ -62,7 +60,7 @@ export default class D4rkManager extends Vulkava {
       if (!player.textChannelId) return;
 
       const channel = this.client.getChannel(player.textChannelId);
-      if (channel.type !== 0) return;
+      if (!channel || channel.type !== 0) return;
 
       if (player.lastPlayingMsgID) {
         const msg = channel.messages.get(player.lastPlayingMsgID);
@@ -142,7 +140,7 @@ export default class D4rkManager extends Vulkava {
     this.on('queueEnd', (player): void => {
       if (player.textChannelId) {
         const channel = this.client.getChannel(player.textChannelId);
-        if (channel.type !== 0) return;
+        if (!channel || channel.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
           const msg = channel.messages.get(player.lastPlayingMsgID);

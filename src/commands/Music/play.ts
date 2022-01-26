@@ -71,6 +71,8 @@ export default class Play extends Command {
           player.connect();
         }
 
+        player.textChannelId = ctx.channel.id;
+
         if (res.loadType === 'PLAYLIST_LOADED') {
           const playlist = res.playlistInfo;
 
