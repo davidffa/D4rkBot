@@ -21,8 +21,8 @@ export default class D4rkManager extends Vulkava {
         if (guild) guild.shard.sendWS(payload.op, payload.d);
       },
       spotify: {
-        clientId: process.env.SPOTIFYCLIENTID!,
-        clientSecret: process.env.SPOTIFYCLIENTSECRET!,
+        clientId: process.env.SPOTIFYCLIENTID,
+        clientSecret: process.env.SPOTIFYCLIENTSECRET,
       }
     });
 

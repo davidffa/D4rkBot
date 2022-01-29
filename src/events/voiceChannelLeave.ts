@@ -33,8 +33,9 @@ export default class VoiceChannelLeave {
       return;
     }
 
-    if (!member.bot && oldChannel.id === player.voiceChannelId && !oldChannel.voiceMembers.filter(m => !m.bot).length && oldChannel.id !== process.env.VOICECHANNELID) {
+    if (!member.bot && oldChannel.id === player.voiceChannelId && !oldChannel.voiceMembers.filter(m => !m.bot).length) {
       player.pause(true);
+
       const msg = await this.client.createMessage(player.textChannelId as string, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.');
 
       const timeout = setTimeout(() => {

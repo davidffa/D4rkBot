@@ -93,7 +93,7 @@ export default class Render extends Command {
 
     const res = await this.client.request(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
       headers: {
-        Authorization: process.env.RENDERAPITOKEN as string,
+        Authorization: process.env.RENDERAPITOKEN,
       },
     }).then(r => {
       if (r.status !== 200) return null;

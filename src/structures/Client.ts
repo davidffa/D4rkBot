@@ -215,9 +215,9 @@ export default class D4rkClient extends Client {
     const nodes: NodeOptions[] = [
       {
         id: 'Europe Node',
-        hostname: process.env.EULAVALINKHOST as string,
+        hostname: process.env.EULAVALINKHOST,
         port: Number(process.env.EULAVALINKPORT),
-        password: process.env.LAVALINKPASSWORD as string,
+        password: process.env.LAVALINKPASSWORD,
         maxRetryAttempts: 10,
         retryAttemptsInterval: 3000,
         secure: false,
@@ -226,9 +226,9 @@ export default class D4rkClient extends Client {
       },
       {
         id: 'USA Node',
-        hostname: process.env.USALAVALINKHOST as string,
+        hostname: process.env.USALAVALINKHOST,
         port: Number(process.env.USALAVALINKPORT),
-        password: process.env.LAVALINKPASSWORD as string,
+        password: process.env.LAVALINKPASSWORD,
         maxRetryAttempts: 10,
         retryAttemptsInterval: 3000,
         secure: false,
