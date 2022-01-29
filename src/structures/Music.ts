@@ -63,9 +63,7 @@ export default class D4rkManager extends Vulkava {
       if (!channel || channel.type !== 0) return;
 
       if (player.lastPlayingMsgID) {
-        const msg = channel.messages.get(player.lastPlayingMsgID);
-
-        if (msg) msg.delete();
+        channel.deleteMessage(player.lastPlayingMsgID).catch(() => { });
       }
 
       if (!channel.permissionsOf(this.client.user.id).has('sendMessages')) {
@@ -143,8 +141,7 @@ export default class D4rkManager extends Vulkava {
         if (!channel || channel.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
-          const msg = channel.messages.get(player.lastPlayingMsgID);
-          if (msg) msg.delete();
+          channel.deleteMessage(player.lastPlayingMsgID).catch(() => { });
         }
         player.destroy();
 

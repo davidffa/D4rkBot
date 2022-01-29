@@ -42,8 +42,7 @@ export default class Stop extends Command {
         if (channel.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
-          const msg = channel.messages.get(player.lastPlayingMsgID);
-          if (msg) msg.delete();
+          channel.deleteMessage(player.lastPlayingMsgID).catch(() => { });
         }
       }
       player.destroy();
