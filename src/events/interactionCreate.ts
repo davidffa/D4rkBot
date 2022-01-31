@@ -12,6 +12,7 @@ export default class InteractionCreate {
 
   async run(interaction: Interaction) {
     if (interaction instanceof AutocompleteInteraction) {
+      if (interaction.channel.type === 1) return;
       const cmd = this.client.commands.find(c => c.name === interaction.data.name);
 
       if (!cmd) throw new Error(`Command ${interaction.data.name} does not exist!`);
@@ -36,7 +37,11 @@ export default class InteractionCreate {
       return;
     }
 
-    if (interaction.channel.type === 1) return;
+    if (interaction.channel.type === 1) {
+      interaction.createMessage(':frowning: De momento não suporto comandos nas DMs!');
+      return;
+    }
+
     const cmd = this.client.commands.find(c => c.name === interaction.data.name);
     if (!cmd) throw new Error(`Command ${interaction.data.name} does not exist!`);
 
