@@ -23,14 +23,15 @@ export default class VoiceChannelIdSwitch {
 
     if (oldChannel.id === player.voiceChannelId && !oldChannel.voiceMembers.filter(m => !m.bot).length && newChannel.id !== player.voiceChannelId) {
       player.pause(true);
-      const msg = await this.client.createMessage(player.textChannelId as string, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.');
 
       const timeout = setTimeout(() => {
-        this.client.createMessage(player.textChannelId as string, ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos');
+        this.client.createMessage(player.textChannelId!, ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos').catch(() => { });
         player.destroy();
-        this.client.music.channelTimeouts.get(member.guild.id)?.message.delete().catch(() => { });
+        this.client.music.channelTimeouts.get(member.guild.id)?.message?.delete().catch(() => { });
         this.client.music.channelTimeouts.delete(member.guild.id);
       }, 2 * 60 * 1000);
+
+      const msg = await this.client.createMessage(player.textChannelId!, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.').catch(() => null);
 
       this.client.music.channelTimeouts.set(member.guild.id, { timeout, message: msg });
       return;
@@ -41,7 +42,7 @@ export default class VoiceChannelIdSwitch {
       const data = this.client.music.channelTimeouts.get(member.guild.id);
       if (!data) return;
       clearTimeout(data.timeout);
-      data.message.delete().catch(() => { });
+      data.message?.delete().catch(() => { });
       this.client.music.channelTimeouts.delete(member.guild.id);
     }
   }

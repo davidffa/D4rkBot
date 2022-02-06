@@ -18,7 +18,7 @@ export default class VoiceChannelJoin {
       const data = this.client.music.channelTimeouts.get(member.guild.id);
       if (!data) return;
       clearTimeout(data.timeout);
-      data.message.delete().catch(() => { });
+      data.message?.delete().catch(() => { });
       this.client.music.channelTimeouts.delete(member.guild.id);
     }
   }

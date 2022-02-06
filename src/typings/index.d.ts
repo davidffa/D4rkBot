@@ -27,7 +27,7 @@ interface Utils {
 
 interface Timeouts {
   timeout: NodeJS.Timeout;
-  message: Message;
+  message: Message | null;
 }
 
 interface ComponentCollectors {
