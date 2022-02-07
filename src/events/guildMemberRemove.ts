@@ -24,6 +24,8 @@ export default class GuildMemberRemove {
         return;
       }
 
+      if ((guild.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
+
       if (channel.permissionsOf(this.client.user.id).has('sendMessages'))
         this.client.createMessage(channel.id, `O membro \`${member.username}#${member.discriminator}\` saiu do servidor.`);
     }

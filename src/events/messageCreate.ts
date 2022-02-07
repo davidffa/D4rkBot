@@ -21,6 +21,10 @@ export default class MessageCreate {
 
     if (message.author.bot || message.channel.type === 1 || !this.client.cacheLoaded) return;
 
+    if (message.guildID) {
+      if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
+    }
+
     const prefix = (this.client.guildCache.get(message.guildID as string)?.prefix) || 'db.';
 
     if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {

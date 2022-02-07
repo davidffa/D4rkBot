@@ -33,6 +33,7 @@ export default class GuildMemberAdd {
     }
 
     if (!guildData.welcomeChatID) return;
+    if ((guild.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
 
     const applyText = (canvas: CanvasOptions, text: string) => {
       const ctx = canvas.getContext('2d');
