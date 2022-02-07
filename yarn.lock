@@ -484,10 +484,9 @@ entities@^2.0.0:
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.2.0.tgz#098dc90ebb83d8dffa089d55256b351d34c4da55"
   integrity sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==
 
-eris@^0.16.1:
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/eris/-/eris-0.16.1.tgz#44b0a9220944fc73dd74538cd614826bfbfcde61"
-  integrity sha512-fqjgaddSvUlUjA7s85OvZimLrgCwX58Z6FXOIxdNFJdT6XReJ/LOWZKdew2CaalM8BvN2JKzn98HmKYb3zMhKg==
+eris@DonovanDMC/eris#everything:
+  version "0.16.2-dev"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/dc8e25c47696ea97d6f27cb7a1069ba184a4b5b5"
   dependencies:
     ws "^8.2.3"
   optionalDependencies:

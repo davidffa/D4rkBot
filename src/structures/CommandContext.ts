@@ -1,5 +1,5 @@
 import Client from './Client';
-import { AdvancedMessageContent, Attachment, CommandInteraction, FileContent, Guild, InteractionDataOptionsWithValue, Member, Message, TextableChannel, User } from 'eris';
+import { AdvancedMessageContent, Attachment, CommandInteraction, FileContent, Guild, InteractionDataOptionWithValue, Member, Message, TextableChannel, User } from 'eris';
 
 export enum Type {
   MESSAGE,
@@ -37,12 +37,12 @@ export default class CommandContext {
           this.args.push(interaction.data.options[0].name.toString().trim());
 
           if (interaction.data.options[0].options) {
-            for (const val of (interaction.data.options[0].options as InteractionDataOptionsWithValue[])) {
+            for (const val of (interaction.data.options[0].options)) {
               this.args.push(val.value.toString().trim());
             }
           }
         } else {
-          const options = interaction.data.options as InteractionDataOptionsWithValue[];
+          const options = interaction.data.options as InteractionDataOptionWithValue[];
 
           this.args = options?.map(ops => ops.value.toString().trim()) ?? [];
         }
