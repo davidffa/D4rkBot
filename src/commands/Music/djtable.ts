@@ -171,7 +171,7 @@ export default class Djtable extends Command {
             const val = data.values[0] as Effect;
 
             if (player.effects.includes(val)) {
-              player.effects.splice(player.effects.indexOf(val));
+              player.effects.splice(player.effects.indexOf(val), 1);
             } else {
               player.effects.push(val);
             }
