@@ -98,10 +98,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^17.0.16":
-  version "17.0.16"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.16.tgz#e3733f46797b9df9e853ca9f719c8a6f7b84cd26"
-  integrity sha512-ydLaGVfQOQ6hI1xK2A5nVh8bl0OGoIfYMxPWHqqYe9bTkWCfqiVvZoh2I/QF2sNSkZzZyROBoTefIEI+PB6iIA==
+"@types/node@*", "@types/node@^17.0.17":
+  version "17.0.17"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.17.tgz#a8ddf6e0c2341718d74ee3dc413a13a042c45a0c"
+  integrity sha512-e8PUNQy1HgJGV3iU/Bp2+D/DXh3PYeyli8LgIwsQcs1Ar1LoaWHSIT6Rw+H2rNJmiq6SNWiDytfx8+gYj7wDHw==
 
 "@types/responselike@*", "@types/responselike@^1.0.0":
   version "1.0.0"
@@ -486,7 +486,7 @@ entities@^2.0.0:
 
 eris@DonovanDMC/eris#everything:
   version "0.16.2-dev"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/dc8e25c47696ea97d6f27cb7a1069ba184a4b5b5"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/4489321d3d241aa8a9f8071f6e1c9a8fef37cc02"
   dependencies:
     ws "^8.2.3"
   optionalDependencies:
@@ -789,9 +789,9 @@ mimic-response@^3.1.0:
   integrity sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==
 
 minimatch@^3.0.4:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.5.tgz#4da8f1290ee0f0f8e83d60ca69f8f134068604a3"
-  integrity sha512-tUpxzX0VAzJHjLu0xUfFv1gwVp9ba3IOuRAVH2EGuRW8a5emA2FlACLqiT/lDVtS1W+TGNwqz3sWaNyLgDJWuw==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.1.tgz#879ad447200773912898b46cd516a7abbb5e50b0"
+  integrity sha512-reLxBcKUPNBnc/sVtAbxgRVFSegoGeLaSjmphNhcwcolhYLRgtJscn5mRl6YRZNQv40Y7P6JM2YhSIsbL9OB5A==
   dependencies:
     brace-expansion "^1.1.7"
 
@@ -1354,12 +1354,12 @@ util-deprecate@^1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
-vulkava@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.0.12.tgz#d8366025bae436c6db914124e71ada69a379584d"
-  integrity sha512-IpAWLaxZZwlX6zb03lzkBZcA2giCgs62NCH9rpDAxiF9U4BF8r9EHzMnjrVTstOgrQ08t8vAiiT899WFbl95WQ==
+vulkava@^1.0.13:
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.0.13.tgz#0f4e8144c50f3c1a297375b094d75b21f5eda60d"
+  integrity sha512-0h0DtK7Ogg7S7t8p8eh3j/5GGuyxVUlUxuG1RJKk54nUr+MyZ8r+IBVTk5JDDa9xKe8IKFoKoK1t8hrOetP1yA==
   dependencies:
-    ws "^8.4.0"
+    ws "^8.5.0"
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
@@ -1399,7 +1399,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-ws@^8.2.3, ws@^8.4.0:
+ws@^8.2.3, ws@^8.5.0:
   version "8.5.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.5.0.tgz#bfb4be96600757fe5382de12c670dab984a1ed4f"
   integrity sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==
