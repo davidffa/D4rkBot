@@ -245,5 +245,5 @@ const configs = {
   lowpass: {
     lowPass: { smoothing: 15 }
   },
-  '8D': { rotation: { speed: .2 } }
+  '8D': { rotation: { rotationHz: .2 } }
 };
