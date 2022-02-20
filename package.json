@@ -42,7 +42,7 @@
     "sodium-native": "^3.3.0",
     "steam-provider": "^0.3.2",
     "unicode-emoji-json": "^0.3.0",
-    "vulkava": "^1.1.0",
+    "vulkava": "^1.1.1",
     "xml2js": "^0.4.23"
   }
 }
