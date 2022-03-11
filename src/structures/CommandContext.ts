@@ -31,6 +31,7 @@ export default class CommandContext {
       this.attachments = interaction.attachments;
     } else {
       this.type = Type.INTERACTION;
+      this.attachments = []; // TODO: support slash attachments
 
       if (interaction.data.type === 1) {
         if (interaction.data.options?.[0].type === 1) {
