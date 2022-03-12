@@ -17,7 +17,8 @@ export default class GuildCreate {
       welcomeChatID: '',
       memberRemoveChatID: '',
       djRole: '',
-      didUMean: true
+      didUMean: true,
+      levelEnabled: false
     });
 
     const embed = new this.client.embed()
