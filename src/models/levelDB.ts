@@ -5,7 +5,6 @@ export interface LevelDB extends Document {
   _id: string;
   guildID: string;
   xp: number;
-  level: number;
 }
 
 const levelDB = new Schema({
@@ -19,11 +18,8 @@ const levelDB = new Schema({
   },
   xp: {
     type: Number,
-    required: true
-  },
-  level: {
-    type: Number,
-    required: true
+    required: true,
+    default: 0
   }
 }, {
   versionKey: false

@@ -5,6 +5,8 @@ import CommandContext from '../structures/CommandContext';
 import { Message, ActionRowComponents, ActionRow, ComponentInteraction } from 'eris';
 import { appendFileSync, existsSync, mkdirSync } from 'fs';
 
+const EMOJI_REGEX = /<a?:\w{2,32}:\d+>/g
+
 export default class MessageCreate {
   client: Client;
 
@@ -22,6 +24,24 @@ export default class MessageCreate {
     if (message.author.bot || message.channel.type === 1 || !this.client.cacheLoaded) return;
 
     if (message.guildID) {
+      if (this.client.guildCache.get(message.guildID)?.levelEnabled) {
+        const filteredContentLength = message.content.replace(EMOJI_REGEX, '').replace(/\s+/g, '').length
+          - message.mentions.length * 21
+          - message.channelMentions.length * 21
+          - message.roleMentions.length * 22;
+
+        await this.client.levelDB.updateOne({
+          _id: message.author.id,
+          guildID: message.guildID
+        }, {
+          $inc: {
+            xp: Math.round(10 * Math.log(Math.max(0, filteredContentLength) / 20 + .75)) // https://www.geogebra.org/calculator/myh3sp2y
+          }
+        }, {
+          upsert: true
+        });
+      }
+
       if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
     }
 

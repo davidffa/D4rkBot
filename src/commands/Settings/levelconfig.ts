@@ -31,7 +31,7 @@ export default class LevelConfig extends Command {
       }
 
       data.levelEnabled = true;
-      this.client.guildDB.updateOne({ guildID: ctx.guild.id }, { $set: { levelEnabled: true } }, { upsert: true });
+      await this.client.guildDB.updateOne({ guildID: ctx.guild.id }, { $set: { levelEnabled: true } }, { upsert: true });
       ctx.sendMessage(':white_check_mark: O sistema de níveis foi ativado com sucesso!\n_Nenhum conteúdo das mensagens será salvo neste sistema._');
     } else if (ctx.args[0] === 'off') {
       if (!data.levelEnabled) {
@@ -40,7 +40,7 @@ export default class LevelConfig extends Command {
       }
 
       data.levelEnabled = false;
-      this.client.guildDB.updateOne({ guildID: ctx.guild.id }, { $set: { levelEnabled: false } }, { upsert: true });
+      await this.client.guildDB.updateOne({ guildID: ctx.guild.id }, { $set: { levelEnabled: false } }, { upsert: true });
       ctx.sendMessage(':white_check_mark: O sistema de níveis foi desativado com sucesso!');
     } else if (ctx.args[0] === 'reset') {
       if (ctx.args[1]) {
@@ -52,7 +52,7 @@ export default class LevelConfig extends Command {
           return;
         }
 
-        this.client.levelDB.deleteOne({
+        await this.client.levelDB.deleteOne({
           _id: member.id,
           guildID: ctx.guild.id
         });
