@@ -1,7 +1,7 @@
 import { mainDB } from '../Database';
 import { Schema, Document } from 'mongoose';
 
-interface GuildDB extends Document {
+export interface GuildDB extends Document {
   guildID: string;
   prefix?: string;
   roleID?: string;

@@ -6,7 +6,7 @@ interface Playlist {
   tracks?: string[];
 }
 
-interface UserDB extends Document {
+export interface UserDB extends Document {
   _id: string;
   playlists?: Playlist[];
 }

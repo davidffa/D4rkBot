@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 import { Client, ClientOptions, User, Guild, Constants, Role } from 'eris';
 import { NodeOptions } from 'vulkava';
+import { Model } from 'mongoose';
 
 import Embed from './Embed';
 import Music from './Music';
@@ -11,9 +12,10 @@ import msToHour from '../utils/msToHour';
 import msToDate from '../utils/msToDate';
 import request, { ReqOptions, Response } from '../utils/Request';
 
-import botDatabase from '../models/botDB';
-import guildDatabase from '../models/guildDB';
-import userDatabase from '../models/userDB';
+import botDatabase, { BotDB } from '../models/botDB';
+import guildDatabase, { GuildDB } from '../models/guildDB';
+import levelDatabase, { LevelDB } from '../models/levelDB';
+import userDatabase, { UserDB } from '../models/userDB';
 
 import { ComponentCollector, MessageCollector } from './Collector';
 
@@ -30,9 +32,10 @@ export default class D4rkClient extends Client {
   commandsUsed: number;
   private lastCmdsUsed: number;
   lockedCmds: Array<string>;
-  botDB: typeof botDatabase;
-  guildDB: typeof guildDatabase;
-  userDB: typeof userDatabase;
+  botDB: Model<BotDB>;
+  guildDB: Model<GuildDB>;
+  levelDB: Model<LevelDB>;
+  userDB: Model<UserDB>;
   embed: typeof Embed;
   // reactionCollectors: Array<ReactionCollector>;
   messageCollectors: Array<MessageCollector>;
@@ -77,6 +80,7 @@ export default class D4rkClient extends Client {
     this.lockedCmds = [];
     this.botDB = botDatabase;
     this.guildDB = guildDatabase;
+    this.levelDB = levelDatabase;
     this.userDB = userDatabase;
     this.embed = Embed;
     this.request = request;

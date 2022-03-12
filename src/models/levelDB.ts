@@ -1,7 +1,7 @@
 import { Schema, Document } from 'mongoose';
 import { mainDB } from '../Database';
 
-interface LevelDB extends Document {
+export interface LevelDB extends Document {
   _id: string;
   xp: number;
   level: number;

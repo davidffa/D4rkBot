@@ -1,7 +1,7 @@
 import { mainDB } from '../Database';
 import { Schema, Document } from 'mongoose';
 
-interface BotDB extends Document {
+export interface BotDB extends Document {
   botID: string;
   commands?: number;
   lockedCmds?: Array<string>;
