@@ -43,6 +43,7 @@ interface GuildCache {
   memberRemoveChatID: string;
   djRole: string;
   didUMean: boolean;
+  levelEnabled: boolean;
 }
 
 interface Choices {

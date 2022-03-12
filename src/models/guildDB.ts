@@ -10,6 +10,7 @@ export interface GuildDB extends Document {
   disabledCmds?: Array<string>;
   djrole?: string;
   didumean?: boolean;
+  levelEnabled?: boolean;
 }
 
 const guildDB = new Schema({
@@ -36,6 +37,9 @@ const guildDB = new Schema({
     type: String
   },
   didumean: {
+    type: Boolean
+  },
+  levelEnabled: {
     type: Boolean
   }
 }, {

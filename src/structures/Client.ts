@@ -260,7 +260,8 @@ export default class D4rkClient extends Client {
         welcomeChatID: guildData?.welcomeChatID ?? '',
         memberRemoveChatID: guildData?.memberRemoveChatID ?? '',
         djRole: guildData?.djrole ?? '',
-        didUMean: guildData?.didumean ?? true
+        didUMean: guildData?.didumean ?? true,
+        levelEnabled: guildData?.levelEnabled ?? false,
       });
     });
 

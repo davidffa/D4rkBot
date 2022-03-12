@@ -3,12 +3,17 @@ import { mainDB } from '../Database';
 
 export interface LevelDB extends Document {
   _id: string;
+  guildID: string;
   xp: number;
   level: number;
 }
 
 const levelDB = new Schema({
   _id: {
+    type: String,
+    required: true
+  },
+  guildID: {
     type: String,
     required: true
   },
