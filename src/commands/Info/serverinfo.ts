@@ -35,7 +35,6 @@ export default class Serverinfo extends Command {
       voice: 0,
       category: 0,
       news: 0,
-      store: 0,
       stage: 0
     }
 
@@ -50,7 +49,6 @@ export default class Serverinfo extends Command {
       else if (ch.type === 2) ++channels.voice;
       else if (ch.type === 4) ++channels.category;
       else if (ch.type === 5) ++channels.news;
-      else if (ch.type === 6) ++channels.store;
       else if (ch.type === 13) ++channels.stage;
     })
 
@@ -80,7 +78,7 @@ export default class Serverinfo extends Command {
       .addField(':calendar: Entrei em', `<t:${~~(ctx.guild.members.get(this.client.user.id)!.joinedAt as number / 1e3)}:d> (<t:${~~(ctx.guild.members.get(this.client.user.id)!.joinedAt as number / 1e3)}:R>)`, true)
       .addField('<:badgebooster:803666384373809233> Boost', `Nível: ${boostLevel}\nQuantidade: ${boostAmount}`, true)
       .addField(`:man: Membros [${guild.members.size}]`, `<:online:804049640437448714> Online: ${status.online}\n<:idle:804049737383673899> Ausente: ${status.idle}\n<:dnd:804049759328403486> Ocupado: ${status.dnd}\n<:offline:804049815713480715> Offline: ${status.offline}\n<:bot:804028762307821578> Bots: ${bots}`, true)
-      .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Palco: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:shopping_bags: Loja: ${channels.store}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
+      .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Palco: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
       .addField(`:grinning: Emojis [${emojis}]`, `Estáticos: ${staticEmojis}\nAnimados: ${animatedEmojis}`, true)
       .setThumbnail(guild.dynamicIconURL() ?? '')
       .setImage(guild.dynamicBannerURL() ?? '')
