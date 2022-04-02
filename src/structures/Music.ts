@@ -43,9 +43,13 @@ export default class D4rkManager extends Vulkava {
     this.pingNodes();
 
     this.on('error', (node, error): void => {
-      console.log(`Ocorreu um erro no Node ${node.identifier}. Erro: ${error.message}`);
+      console.log(`[Lavalink] Erro no Node ${node.identifier}. Erro: ${error.message}`);
       if (error.message.startsWith('Unable to connect after')) this.reconnect(node);
     });
+
+    this.on('warn', (node, warn) => {
+      console.log(`[Lavalink] Aviso no Node ${node.identifier}. Aviso: ${warn}`);
+    })
 
     this.on('nodeDisconnect', (node, code, reason): void => {
       console.log(`O node do lavalink ${node.identifier} desconectou. Close code: ${code}. Reason: ${reason === '' ? 'Unknown' : reason}`);
