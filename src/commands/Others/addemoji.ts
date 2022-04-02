@@ -57,8 +57,8 @@ export default class Addemoji extends Command {
       return;
     }
 
-    const { buffer, type } = await this.client.request(imageURL).then((res) => {
-      const buff = res.buffer;
+    const { buffer, type } = await this.client.request(imageURL).then(async (res) => {
+      const buff = Buffer.from(await res.body.arrayBuffer());
       const types = res.headers['content-type'];
 
       if (!types || !(/image\/png|image\/jpeg|image\/jpg|image\/gif/g.test(types))) {
@@ -92,7 +92,7 @@ export default class Addemoji extends Command {
       if (err.message.includes('image: File cannot be larger than 256.0 kb')) {
         ctx.sendMessage({ content: ':x: A imagem não pode ser maior do que 256 KB.', flags: 1 << 6 });
       } else {
-        ctx.sendMessage({ content: ':x: Ocorreu um erro ao enviar o emoji.', flags: 1 << 6 });
+        ctx.sendMessage({ content: `:x: Ocorreu um erro ao enviar o emoji. Erro: \`${err.message}\``, flags: 1 << 6 });
         console.error(err);
       }
     }

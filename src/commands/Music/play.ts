@@ -121,7 +121,11 @@ export default class Play extends Command {
       return;
     }
 
-    const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`).then(r => r.text('latin1'));
+    const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`, {
+      headers: {
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36'
+      }
+    }).then(async r => Buffer.from(await r.body.arrayBuffer()).toString('latin1'));
 
     const choices: Choices[] = [];
 

@@ -58,7 +58,10 @@ export default class Render extends Command {
         }, 5e3);
 
         try {
-          const res = await this.client.request(url);
+          const res = await this.client.request(url).then(async r => {
+            r.body.dump();
+            return r.statusCode;
+          });
 
           if (res)
             resolve(url);
@@ -96,8 +99,8 @@ export default class Render extends Command {
         Authorization: process.env.RENDERAPITOKEN,
       },
     }).then(r => {
-      if (r.status !== 200) return null;
-      return r.buffer;
+      if (r.statusCode !== 200) return null;
+      return r.body.arrayBuffer();
     });
 
     if (!res) {

@@ -46,13 +46,13 @@ export default class Lyrics extends Command {
         headers: {
           'Authorization': `Bearer ${process.env.GENIUSLYRICSTOKEN}`
         }
-      }).then(res => res.json());
+      }).then(res => res.body.json());
 
       if (!res.response.hits.length) return null;
 
       const data = res.response.hits[0].result;
 
-      const lyrics = await this.client.request(`${process.env.LYRICSAPIURL}?url=${encodeURIComponent(data.url)}`).then(res => res.json()).then(json => json.lyrics);
+      const lyrics = await this.client.request(`${process.env.LYRICSAPIURL}?url=${encodeURIComponent(data.url)}`).then(res => res.body.json()).then(json => json.lyrics);
 
       return {
         lyrics,

@@ -120,6 +120,8 @@ export default class D4rkManager extends Vulkava {
               'Accept': 'application/vnd.heroku+json; version=3',
               'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
             }
+          }).then(r => {
+            r.body.dump();
           });
         }
         return;
@@ -231,14 +233,15 @@ export default class D4rkManager extends Vulkava {
     const xmlParser = new Parser();
 
     if (['CidadeHipHop', 'CidadeFM', 'RadioComercial', 'M80'].includes(radio)) {
-      const xml = await this.client.request(`https://${radio === 'M80' ? 'm80' : radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.text());
+      const xml = await this.client.request(`https://${radio === 'M80' ? 'm80' : radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.body.text());
 
       const text = await xmlParser.parseStringPromise(xml).then(t => t.RadioInfo.Table[0]);
 
       artist = text['DB_DALET_ARTIST_NAME'][0];
       songTitle = text['DB_DALET_TITLE_NAME'][0];
     } else if (radio === 'RFM') {
-      const xml = await this.client.request('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml').then(r => r.text('utf16le'));
+      const xml = await this.client.request('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml')
+        .then(async r => Buffer.from(await r.body.arrayBuffer()).toString('utf16le'));
 
       const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
 
@@ -261,7 +264,9 @@ export default class D4rkManager extends Vulkava {
             headers: {
               Authorization: node.options.password!
             }
-          })
+          }).then(r => {
+            r.body.dump();
+          });
         }, 25 * 60 * 1000);
       }
     }

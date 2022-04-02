@@ -24,8 +24,8 @@ export default class Restart extends Command {
       }
     }).then(async r => {
       return {
-        status: r.status,
-        res: await r.json()
+        status: r.statusCode,
+        res: await r.body.json()
       }
     });
 

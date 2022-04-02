@@ -42,7 +42,7 @@ export default class Qrcode extends Command {
 
         await ctx.defer();
 
-        const { buffer } = await this.client.request(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(ctx.args.slice(1).join(' '))}`);
+        const buffer = await this.client.request(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(ctx.args.slice(1).join(' '))}`).then(async r => Buffer.from(await r.body.arrayBuffer()));
 
         const embed = new this.client.embed()
           .setTitle('<:qrcode:784833114761461800> QR Code')
@@ -75,7 +75,7 @@ export default class Qrcode extends Command {
         }
 
         const data = await this.client.request(`http://api.qrserver.com/v1/read-qr-code/?fileurl=${qrURL}`)
-          .then(res => res.json())
+          .then(res => res.body.json())
           .then(json => json[0].symbol[0].data)
           .catch(() => null);
 

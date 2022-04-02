@@ -2,6 +2,8 @@ import { readdirSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 import { Client, ClientOptions, User, Guild, Constants, Role } from 'eris';
 import { NodeOptions } from 'vulkava';
+import { request, Dispatcher } from 'undici';
+import { UrlObject } from 'url';
 
 import Embed from './Embed';
 import Music from './Music';
@@ -9,7 +11,6 @@ import Music from './Music';
 import levDistance from '../utils/levenshteinDistance';
 import msToHour from '../utils/msToHour';
 import msToDate from '../utils/msToDate';
-import request, { ReqOptions, Response } from '../utils/Request';
 
 import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
@@ -38,7 +39,10 @@ export default class D4rkClient extends Client {
   messageCollectors: Array<MessageCollector>;
   componentCollectors: Array<ComponentCollector>;
   records: Map<string, IRecord>;
-  request: (url: string, options?: ReqOptions) => Promise<Response>;
+  request: (
+    url: string | URL | UrlObject,
+    options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>>,
+  ) => Promise<Dispatcher.ResponseData>;
 
   constructor() {
     const clientOptions: ClientOptions = {

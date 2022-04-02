@@ -20,14 +20,19 @@ export default class Github extends Command {
       return;
     }
 
-    const res = await this.client.request(`https://api.github.com/users/${encodeURIComponent(ctx.args[0])}`);
+    const res = await this.client.request(`https://api.github.com/users/${encodeURIComponent(ctx.args[0])}`, {
+      headers: {
+        'user-agent': 'D4rkBot (Discord Bot)'
+      }
+    });
 
-    if (res.status !== 200) {
+    if (res.statusCode !== 200) {
+      res.body.dump();
       ctx.sendMessage({ content: ':x: Perfil não encontrado', flags: 1 << 6 });
       return;
     }
 
-    const user = await res.json();
+    const user = await res.body.json();
 
     const embed = new this.client.embed()
       .setTitle(`<:github:784791056670654465> Perfil de ${user.login}`)

@@ -1,4 +1,4 @@
-import fetch from './Request';
+import { request } from 'undici';
 
 let id = '';
 
@@ -8,12 +8,12 @@ const CLIENT_ID_REGEX = /,client_id:"(\w+)"/
 export default async function soundCloudIdExtractor(): Promise<string | null> {
   if (id) return id;
 
-  const httpRes = await fetch('https://soundcloud.com').then(r => r.text());
+  const httpRes = await request('https://soundcloud.com').then(r => r.body.text());
   const scripts = httpRes.match(SCRIPT_REGEX);
 
   if (!scripts) return null;
 
-  const scriptRes = await fetch(scripts[scripts.length - 1]).then(r => r.text());
+  const scriptRes = await request(scripts[scripts.length - 1]).then(r => r.body.text());
   const clientId = scriptRes.match(CLIENT_ID_REGEX);
 
   if (!clientId) return null;

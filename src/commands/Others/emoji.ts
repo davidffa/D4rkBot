@@ -44,7 +44,7 @@ export default class Emoji extends Command {
       const unicodeEmojiInfo: UnicodeEmojiInfo | undefined = require('unicode-emoji-json')[ctx.args[0]];
 
       if (unicodeEmojiInfo) {
-        const emojiAPIInfo = await this.client.request(`https://emoji-api.com/emojis?search=${unicodeEmojiInfo.slug}&access_key=${process.env.EMOJIAPIKEY}`).then(res => res.json());
+        const emojiAPIInfo = await this.client.request(`https://emoji-api.com/emojis?search=${unicodeEmojiInfo.slug}&access_key=${process.env.EMOJIAPIKEY}`).then(res => res.body.json());
 
         const embed = new this.client.embed()
           .setColor('RANDOM')

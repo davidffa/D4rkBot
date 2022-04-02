@@ -21,14 +21,19 @@ export default class Repository extends Command {
       return;
     }
 
-    const res = await this.client.request(`https://api.github.com/repos/${encodeURIComponent(ctx.args[0])}/${encodeURIComponent(ctx.args[1])}`);
+    const res = await this.client.request(`https://api.github.com/repos/${encodeURIComponent(ctx.args[0])}/${encodeURIComponent(ctx.args[1])}`, {
+      headers: {
+        'user-agent': 'D4rkBot (Discord Bot)'
+      }
+    });
 
-    if (res.status !== 200) {
+    if (res.statusCode !== 200) {
+      res.body.dump();
       ctx.sendMessage({ content: ':x: Repositório não encontrado', flags: 1 << 6 });
       return;
     }
 
-    const repo = await res.json();
+    const repo = await res.body.json();
 
     const embed = new this.client.embed()
       .setTitle(`<:github:784791056670654465> Repositório ${repo.name}`)

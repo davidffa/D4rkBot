@@ -114,8 +114,11 @@ export default class Eval extends Command {
 
         const bin = await this.client.request('https://sourceb.in/api/bins', {
           method: 'POST',
-          body
-        }).then(res => res.json());
+          body: JSON.stringify(body),
+          headers: {
+            'content-type': 'application/json',
+          }
+        }).then(res => res.body.json());
 
         if (bin.key) {
           msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row], fetchReply: true }) as Message;

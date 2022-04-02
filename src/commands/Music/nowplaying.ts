@@ -57,16 +57,16 @@ export default class Nowplaying extends Command {
       if (player.current.thumbnail) {
         let url = player.current.thumbnail;
 
-        let { buffer, status } = await this.client.request(url).then(r => {
+        let { buffer, status } = await this.client.request(url).then(async r => {
           return {
-            buffer: r.buffer,
-            status: r.status
+            buffer: await r.body.arrayBuffer(),
+            status: r.statusCode
           }
         });
 
-        if (status !== 200) buffer = await this.client.request(player.current.thumbnail).then(r => r.buffer);
+        if (status !== 200) buffer = await this.client.request(player.current.thumbnail).then(r => r.body.arrayBuffer());
 
-        const thumb = await Canvas.loadImage(buffer);
+        const thumb = await Canvas.loadImage(Buffer.from(buffer));
         canvasCtx.drawImage(thumb, 70, 67, 240, 135);
       }
 
