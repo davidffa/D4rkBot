@@ -1369,11 +1369,12 @@ util-deprecate@^1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
-vulkava@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.1.4.tgz#7db6c8b553cb7cb509571082deb520c1ae0ec7c3"
-  integrity sha512-0jSh1uQGcBvje/RjtBx91ft+X25e3YM16fbLKcRizWgFXcu/WjYaM7e39GWE4+81Rg/R3Jq2/qRDx4z4v9OUqA==
+vulkava@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.2.0.tgz#51ca3e33e7dbe0b89ec700ec29e9682fd29e90cb"
+  integrity sha512-joX6RvOdTusYa4dS9OzKKsir5ABqkojAHdW+xYN16FLBKIr254nXr/a2RlGDQM86aFvA3KkKfRnIOmVnFlKeDA==
   dependencies:
+    undici "^5.0.0"
     ws "^8.5.0"
 
 webidl-conversions@^3.0.0:
