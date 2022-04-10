@@ -30,6 +30,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.7.0",
     "@iamtraction/google-translate": "^1.1.2",
+    "bufferutil": "^4.0.6",
     "canvas": "^2.9.1",
     "cheerio": "^1.0.0-rc.10",
     "color-thief-node": "^1.0.4",
@@ -43,6 +44,7 @@
     "steam-provider": "^0.3.2",
     "undici": "^5.0.0",
     "unicode-emoji-json": "^0.3.1",
+    "utf-8-validate": "^5.0.9",
     "vulkava": "^1.2.3",
     "xml2js": "^0.4.23"
   }
