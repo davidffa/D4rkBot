@@ -2,11 +2,11 @@ import Client from './Client';
 import CommandContext from './CommandContext';
 
 import { User, Member, VoiceChannel } from 'eris';
-import { NodeOptions, Vulkava, Player, Node } from 'vulkava';
+import { NodeOptions, Vulkava, Player } from 'vulkava';
 
 import { Parser } from 'xml2js';
 
-import { Timeouts, ComponentCollectors } from '../typings/index';
+import { Timeouts, ComponentCollectors } from '../typings';
 
 export default class D4rkManager extends Vulkava {
   client: Client;
@@ -43,16 +43,15 @@ export default class D4rkManager extends Vulkava {
     this.pingNodes();
 
     this.on('error', (node, error): void => {
-      console.log(`[Lavalink] Erro no Node ${node.identifier}. Erro: ${error.message}`);
-      if (error.message.startsWith('Unable to connect after')) this.reconnect(node);
+      console.log(`[Lavalink] Erro no ${node.identifier}: ${error.message}`);
     });
 
     this.on('warn', (node, warn) => {
-      console.log(`[Lavalink] Aviso no Node ${node.identifier}. Aviso: ${warn}`);
+      console.log(`[Lavalink] Aviso no ${node.identifier}: ${warn}`);
     })
 
     this.on('nodeDisconnect', (node, code, reason): void => {
-      console.log(`O node do lavalink ${node.identifier} desconectou. Close code: ${code}. Reason: ${reason === '' ? 'Unknown' : reason}`);
+      console.log(`O ${node.identifier} desconectou. Close code: ${code}. Reason: ${reason === '' ? 'Unknown' : reason}`);
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
@@ -105,29 +104,31 @@ export default class D4rkManager extends Vulkava {
       if (err && err.message.includes('429')) {
         const newNode = this.nodes.find(node => node.state === 1 && node !== player.node);
 
-        if (newNode) player.moveNode(newNode);
-        else {
-          this.client.createMessage(player.textChannelId as string, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
-          player.destroy();
+        if (newNode) {
+          player.moveNode(newNode);
+          return;
         }
+        // else {
+        //   this.client.createMessage(player.textChannelId!, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
+        //   player.destroy();
+        // }
 
-        const appName = player.node!.options.hostname.split('.')[0];
+        // const appName = player.node!.options.hostname.split('.')[0];
 
-        if (appName) {
-          await this.client.request(`https://api.heroku.com/apps/${appName}/dynos`, {
-            method: 'DELETE',
-            headers: {
-              'Accept': 'application/vnd.heroku+json; version=3',
-              'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
-            }
-          }).then(r => {
-            r.body.dump();
-          });
-        }
-        return;
+        // if (appName) {
+        //   await this.client.request(`https://api.heroku.com/apps/${appName}/dynos`, {
+        //     method: 'DELETE',
+        //     headers: {
+        //       'Accept': 'application/vnd.heroku+json; version=3',
+        //       'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
+        //     }
+        //   }).then(r => {
+        //     r.body.dump();
+        //   });
+        // }
       }
       player.textChannelId && this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\``);
-      console.error(`[Lavalink] Track Error on guild ${player.guildId}. Error: ${err.message}`);
+      console.error(`[Lavalink] Track Error on guild ${player.guildId}: ${err.message}`);
 
       if (!player.errorCount) {
         player.errorCount = 0;
@@ -270,25 +271,5 @@ export default class D4rkManager extends Vulkava {
         }, 25 * 60 * 1000);
       }
     }
-  }
-
-  private reconnect(node: Node) {
-    node.disconnect();
-    this.nodes.splice(this.nodes.indexOf(node), 1);
-
-    const newNode = new Node(this, {
-      id: node.identifier as string,
-      hostname: node.options.hostname,
-      port: node.options.port,
-      password: node.options.password,
-      maxRetryAttempts: 10,
-      retryAttemptsInterval: 3000,
-      secure: false,
-      region: node.options.region
-    })
-
-    this.nodes.push(newNode);
-
-    newNode.connect();
   }
 }
