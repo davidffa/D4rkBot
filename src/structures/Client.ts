@@ -19,8 +19,11 @@ import userDatabase from '../models/userDB';
 import { ComponentCollector, MessageCollector } from './Collector';
 
 import { Command, Utils, GuildCache, IRecord } from '../typings/index';
+import Logger from '../utils/Logger';
 
 export default class D4rkClient extends Client {
+  private readonly log: Logger;
+
   cacheLoaded: boolean;
   commands: Array<Command>;
   music: Music;
@@ -68,6 +71,8 @@ export default class D4rkClient extends Client {
     }
 
     super(process.env.TOKEN as string, clientOptions);
+
+    this.log = Logger.getLogger(this.constructor.name);
 
     this.editStatus('idle', {
       name: 'A iniciar...',
@@ -294,7 +299,7 @@ export default class D4rkClient extends Client {
 
     this.cacheLoaded = true;
 
-    console.log('Guild Cache carregada.');
+    this.log.info('Guild Cache carregada.');
   }
 
   loadStatus(): void {

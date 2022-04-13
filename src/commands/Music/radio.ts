@@ -3,7 +3,10 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import { ConnectionState } from 'vulkava';
+import Logger from '../../utils/Logger';
 export default class Radio extends Command {
+  private readonly log: Logger;
+
   constructor(client: Client) {
     super(client, {
       name: 'radio',
@@ -12,6 +15,8 @@ export default class Radio extends Command {
       cooldown: 5,
       category: 'Music'
     });
+
+    this.log = Logger.getLogger(this.constructor.name);
   }
 
   async execute(ctx: CommandContext): Promise<void> {
@@ -147,7 +152,8 @@ export default class Radio extends Command {
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
       ctx.sendMessage({ embeds: [embed] });
-    } catch (err) {
+    } catch (err: any) {
+      this.log.error(err?.message);
       console.error(err);
       player.destroy();
       ctx.sendMessage({ content: ':x: Ocorreu um erro ao tocar a rádio.', flags: 1 << 6 });

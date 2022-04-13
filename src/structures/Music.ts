@@ -7,11 +7,14 @@ import { NodeOptions, Vulkava, Player } from 'vulkava';
 import { Parser } from 'xml2js';
 
 import { Timeouts, ComponentCollectors } from '../typings';
+import Logger from '../utils/Logger';
 
-export default class D4rkManager extends Vulkava {
+export default class Lavalink extends Vulkava {
   client: Client;
   channelTimeouts: Map<string, Timeouts>;
   searchCollectors: Map<string, ComponentCollectors>;
+
+  private readonly log: Logger;
 
   constructor(client: Client, nodes: NodeOptions[]) {
     super({
@@ -30,8 +33,10 @@ export default class D4rkManager extends Vulkava {
     this.channelTimeouts = new Map();
     this.searchCollectors = new Map();
 
+    this.log = Logger.getLogger(this.constructor.name);
+
     this.on('nodeConnect', async (node): Promise<void> => {
-      console.log(`${node.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.hostname}:${node.options.port}) conectado!`);
+      this.log.info(`${node.identifier} (ws${node.options.secure ? 's' : ''}://${node.options.hostname}:${node.options.port}) conectado!`);
 
       for (const player of [...this.players.values()].filter(p => p.node === node).values()) {
         const position = player.position;
@@ -43,15 +48,15 @@ export default class D4rkManager extends Vulkava {
     this.pingNodes();
 
     this.on('error', (node, error): void => {
-      console.log(`[Lavalink] Erro no ${node.identifier}: ${error.message}`);
+      this.log.error(`Erro no ${node.identifier}: ${error.message}`);
     });
 
     this.on('warn', (node, warn) => {
-      console.log(`[Lavalink] Aviso no ${node.identifier}: ${warn}`);
+      this.log.warn(`Aviso no ${node.identifier}: ${warn}`);
     })
 
     this.on('nodeDisconnect', (node, code, reason): void => {
-      console.log(`O ${node.identifier} desconectou. Close code: ${code}. Reason: ${reason === '' ? 'Unknown' : reason}`);
+      this.log.info(`O ${node.identifier} desconectou. Close code: ${code}. Reason: ${reason === '' ? 'Unknown' : reason}`);
     });
 
     this.on('trackStart', async (player, track): Promise<void> => {
@@ -97,7 +102,7 @@ export default class D4rkManager extends Vulkava {
         this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}.`);
         player.skip();
       }
-      console.error(`[Lavalink] Track Stuck on guild ${player.guildId}. Music title: ${track.title}`);
+      this.log.error(`Track Stuck on guild ${player.guildId}. Music title: ${track.title}`);
     });
 
     this.on('trackException', async (player, track, err): Promise<void> => {
@@ -128,7 +133,7 @@ export default class D4rkManager extends Vulkava {
         // }
       }
       player.textChannelId && this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\``);
-      console.error(`[Lavalink] Track Error on guild ${player.guildId}: ${err.message}`);
+      this.log.error(`Track Error on guild ${player.guildId}: ${err.message}`);
 
       if (!player.errorCount) {
         player.errorCount = 0;

@@ -2,12 +2,17 @@ import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
 import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionDataOptionWithValue } from 'eris';
 import { appendFileSync, existsSync, mkdirSync } from 'fs';
+import Logger from '../utils/Logger';
 
 export default class InteractionCreate {
   client: Client;
 
+  private readonly log: Logger;
+
   constructor(client: Client) {
     this.client = client;
+
+    this.log = Logger.getLogger(this.constructor.name);
   }
 
   async run(interaction: Interaction) {
@@ -103,7 +108,7 @@ export default class InteractionCreate {
         flags: 1 << 6
       });
 
-      console.error(err.message);
+      this.log.error(err.message);
 
       const embed = new this.client.embed()
         .setTitle(':x: Ocorreu um erro!')

@@ -3,13 +3,8 @@ import './Database';
 
 import Client from './structures/Client';
 
-process.on('uncaughtException', (err) => {
-  console.error(err);
-});
-
-process.on('unhandledRejection', (err) => {
-  console.error(err);
-});
+process.on('uncaughtException', console.error);
+process.on('unhandledRejection', console.error);
 
 const client = new Client();
 

@@ -1,8 +1,11 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import Logger from '../../utils/Logger';
 
 export default class Forceplay extends Command {
+  private readonly log: Logger;
+
   constructor(client: Client) {
     super(client, {
       name: 'forceplay',
@@ -13,6 +16,8 @@ export default class Forceplay extends Command {
       usage: '<Nome/URL>',
       args: 1
     });
+
+    this.log = Logger.getLogger(this.constructor.name);
   }
 
   async execute(ctx: CommandContext): Promise<void> {
@@ -99,7 +104,8 @@ export default class Forceplay extends Command {
           player.skip();
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      this.log.error(err?.message)
       console.error(err);
       ctx.sendMessage({ content: ':x: Ocorreu um erro ao procurar a música.', flags: 1 << 6 });
     }
