@@ -227,8 +227,8 @@ export default class D4rkClient extends Client {
         hostname: process.env.EULAVALINKHOST,
         port: 2333,
         password: process.env.LAVALINKPASSWORD,
-        maxRetryAttempts: 10,
-        retryAttemptsInterval: 2000,
+        maxRetryAttempts: 5,
+        retryAttemptsInterval: 6000,
         secure: false,
         region: 'EU',
         resumeKey: 'D4rkBot'
@@ -238,8 +238,8 @@ export default class D4rkClient extends Client {
         hostname: process.env.USALAVALINKHOST,
         port: 2333,
         password: process.env.LAVALINKPASSWORD,
-        maxRetryAttempts: 10,
-        retryAttemptsInterval: 2000,
+        maxRetryAttempts: 5,
+        retryAttemptsInterval: 6000,
         secure: false,
         region: 'USA',
         resumeKey: 'D4rkBot'
