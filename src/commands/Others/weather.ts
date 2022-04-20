@@ -49,7 +49,7 @@ export default class Weather extends Command {
 
     let weather: WeatherInfo | null | undefined;
 
-    xmlParser.parseString(res, (err: string, json: any): void => {
+    xmlParser.parseString(res, (err: Error | null, json: any): void => {
       if (err || !json || !json.weatherdata || !json.weatherdata.weather) {
         weather = null;
         return;
