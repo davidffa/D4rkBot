@@ -16,7 +16,7 @@
   "scripts": {
     "start": "node --expose-gc .",
     "dev": "tsnd --expose-gc --transpile-only --ignore-watch node_modules --respawn src/index.ts",
-    "build": "tsc && cp ./src/assets -r ./build"
+    "build": "tsc && cp -r ./src/assets ./build"
   },
   "devDependencies": {
     "@types/color-thief-node": "^1.0.1",
@@ -38,7 +38,7 @@
     "eris": "DonovanDMC/eris#everything",
     "figlet": "^1.5.2",
     "mathjs": "^10.5.0",
-    "mongoose": "6.3.0",
+    "mongoose": "6.3.1",
     "sbd": "^1.0.19",
     "sodium-native": "^3.3.0",
     "steam-provider": "^0.3.2",
