@@ -35,7 +35,7 @@ export default class Unban extends Command {
       return;
     }
 
-    const member = bans.find(m => m.user.id === ctx.args[0] || m.user.username.toLowerCase().startsWith(ctx.args.join(' ').toLowerCase()));
+    const member = bans.find(m => m.user.id === (ctx.targetUsers?.[0]?.id ?? ctx.args[0]) || m.user.username.toLowerCase().startsWith(ctx.args.join(' ').toLowerCase()));
 
     if (!member) {
       ctx.sendMessage({ content: ':x: Membro não encontrado!', flags: 1 << 6 });

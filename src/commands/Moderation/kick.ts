@@ -30,7 +30,7 @@ export default class Kick extends Command {
       return;
     }
 
-    const user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
+    const user = ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
 
     if (!user) {
       ctx.sendMessage({ content: ':x: Utilizador inválido!', flags: 1 << 6 });

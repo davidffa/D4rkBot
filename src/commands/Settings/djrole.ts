@@ -65,7 +65,7 @@ export default class Djrole extends Command {
       return;
     }
 
-    const role = this.client.utils.findRole(ctx.args.join(' '), ctx.guild);
+    const role = ctx.targetRoles?.[0] ?? this.client.utils.findRole(ctx.args.join(' '), ctx.guild);
 
     if (!role) {
       ctx.sendMessage({ content: ':x: Cargo não encontrado!', flags: 1 << 6 });

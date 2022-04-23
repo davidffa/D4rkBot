@@ -31,8 +31,8 @@ export default class Spotify extends Command {
 
     let member = ctx.member;
 
-    if (ctx.args[0]) {
-      const user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
+    if (ctx.args[0] || ctx.targetUsers) {
+      const user = ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
       member = ctx.guild.members.get(user?.id ?? '');
 
       if (!member) {

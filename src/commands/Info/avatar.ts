@@ -27,7 +27,7 @@ export default class Avatar extends Command {
     if (!ctx.args.length || ctx.channel.type === 1) {
       user = ctx.author;
     } else {
-      user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild)
+      user = ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild)
     }
 
     if (!user) {

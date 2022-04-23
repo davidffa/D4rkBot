@@ -1,5 +1,18 @@
 import Client from './Client';
-import { AdvancedMessageContent, Attachment, CommandInteraction, FileContent, Guild, InteractionDataOptionWithValue, Member, Message, TextableChannel, User } from 'eris';
+
+import { CommandInteraction, Message } from 'eris';
+import type {
+  AdvancedMessageContent,
+  Attachment,
+  FileContent,
+  Guild,
+  InteractionDataOptionWithValue,
+  Member,
+  PartialChannel,
+  Role,
+  TextableChannel,
+  User
+} from 'eris';
 
 export enum Type {
   MESSAGE,
@@ -16,9 +29,13 @@ export default class CommandContext {
   private readonly interactionOrMessage: Message | CommandInteraction;
   private deferred: boolean;
 
-  public type: Type;
-  public args: string[] = [];
-  public attachments: Attachment[];
+  public readonly type: Type;
+  public readonly args: string[] = [];
+  public readonly attachments: Attachment[];
+
+  declare public readonly targetUsers?: User[];
+  declare public readonly targetRoles?: Role[];
+  declare public readonly targetChannels?: PartialChannel[];
 
   constructor(client: Client, interaction: Message | CommandInteraction, args: string[] = []) {
     this.client = client;
@@ -43,12 +60,25 @@ export default class CommandContext {
             }
           }
         } else {
+          if (interaction.data.resolved?.users) {
+            this.targetUsers = interaction.data.resolved?.users?.map(user => user);
+          }
+
+          if (interaction.data.resolved?.roles) {
+            this.targetRoles = interaction.data.resolved?.roles?.map(role => role);
+          }
+
+          if (interaction.data.resolved?.channels) {
+            this.targetChannels = interaction.data.resolved?.channels?.map(channel => channel);
+          }
+
           const options = interaction.data.options as InteractionDataOptionWithValue[];
 
           this.args = options?.map(ops => ops.value.toString().trim()) ?? [];
         }
       } else if (interaction.data.type === 2) {
-        this.args.push(interaction.data.target_id!);
+        // this.args.push(interaction.data.target_id!);
+        this.targetUsers = interaction.data.resolved?.users?.map(user => user);
       } else if (interaction.data.type === 3) {
         this.args = interaction.data.resolved!.messages!.get(interaction.data.target_id!)!.content.split(/ +/);
       }

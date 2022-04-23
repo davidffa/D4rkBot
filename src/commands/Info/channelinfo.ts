@@ -21,8 +21,8 @@ export default class Channelinfo extends Command {
       return;
     }
 
-    const channel = ctx.args.length ? (ctx.guild.channels.get(ctx.args[0])
-      || ctx.guild.channels.find(ch => ch.name.includes(ctx.args.join(' ')))) : ctx.channel;
+    const channel = ctx.args.length ? (ctx.guild.channels.get(ctx.targetChannels?.[0].id ?? ctx.args[0])
+      ?? ctx.guild.channels.find(ch => ch.name.includes(ctx.args.join(' ')))) : ctx.channel;
 
     if (!channel) {
       ctx.sendMessage({ content: ':x: Canal não encontrado!', flags: 1 << 6 });

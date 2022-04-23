@@ -46,7 +46,7 @@ export default class Userinfo extends Command {
     if (!ctx.args.length)
       user = ctx.author;
     else
-      user = await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
+      user = ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
 
     if (!user) {
       ctx.sendMessage({ content: ':x: Utilizador não encontrado.', flags: 1 << 6 });
