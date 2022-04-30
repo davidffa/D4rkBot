@@ -22,6 +22,35 @@ const voiceMap = new Map();
 const readable = new Readable();
 readable._read = () => { };
 
+function processVoiceSample() {
+  const finalPacket = Buffer.allocUnsafe(3840); // (48k 16 bit little endian pcm, 2 stereo channels)
+
+  if (voiceMap.size) {
+    for (var i = 0; i < 3840; i += 2) {
+      let sample = 0;
+
+      for (const voiceQueue of voiceMap.values()) {
+        sample += voiceQueue[0].readInt16LE(i);
+      }
+
+      // Clamp the sample value to 16 bit integer range
+      if (sample > 32767) sample = 32767;
+      else if (sample < -32768) sample = -32768;
+
+      finalPacket.writeInt16LE(sample, i);
+    }
+
+    for (const [userID, voiceQueue] of voiceMap.entries()) {
+      voiceQueue.shift();
+      if (!voiceQueue[0]) voiceMap.delete(userID);
+    }
+  } else { // no voice packets, fill buffer with silence
+    finalPacket.fill(0);
+  }
+
+  readable.push(finalPacket);
+}
+
 parentPort.on('message', (data) => {
   const { guildID, op, userID, packet } = data;
 
@@ -31,6 +60,13 @@ parentPort.on('message', (data) => {
     else voiceMap.set(userID, [Buffer.from(packet)]);
   } else if (op === 0) {
     clearInterval(interval);
+
+    // Flush the voice map
+    while (voiceMap.size) {
+      // console.log("Flushing the voice map");
+      processVoiceSample();
+    }
+
     readable.unpipe(FFMPEG.stdin);
     FFMPEG.kill();
 
@@ -42,32 +78,7 @@ parentPort.on('message', (data) => {
   } else if (op === 1) {
     // let intensive work begin!!!
     interval = setInterval(() => {
-      const finalPacket = Buffer.allocUnsafe(3840); // (48k 16 bit little endian pcm, 2 stereo channels)
-
-      if (voiceMap.size) {
-        for (var i = 0; i < 3840; i += 2) {
-          let sample = 0;
-
-          for (const voiceQueue of voiceMap.values()) {
-            sample += voiceQueue[0].readInt16LE(i);
-          }
-
-          // Respect 16bit boundaries
-          if (sample > 32767) sample = 32767;
-          else if (sample < -32768) sample = -32768;
-
-          finalPacket.writeInt16LE(sample, i);
-        }
-
-        for (const [userID, voiceQueue] of voiceMap.entries()) {
-          voiceQueue.shift();
-          if (!voiceQueue[0]) voiceMap.delete(userID);
-        }
-      } else { // no voice packets, fill buffer with silence
-        finalPacket.fill(0);
-      }
-
-      readable.push(finalPacket);
+      processVoiceSample();
     }, 20); // oh yeah 20ms audio packets
 
     const bitrate = Math.min(180000, data.bitrate);
