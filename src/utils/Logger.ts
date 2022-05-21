@@ -14,20 +14,20 @@ export default class Logger {
 
   constructor(private readonly className: string) { }
 
-  get currentDate() {
+  static get currentDate() {
     const date = new Date();
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
   }
 
   info(message: string) {
-    console.log(`${this.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.BLUE}INFO ${Logger.COLORS.RESET}${message}`);
+    console.log(`${Logger.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.BLUE}INFO ${Logger.COLORS.RESET}${message}`);
   }
 
   warn(message: string) {
-    console.warn(`${this.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.YELLOW}WARN ${Logger.COLORS.RESET}${message}`);
+    console.warn(`${Logger.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.YELLOW}WARN ${Logger.COLORS.RESET}${message}`);
   }
 
   error(message: string) {
-    console.error(`${this.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.RED}ERROR ${Logger.COLORS.RESET}${message}`);
+    console.error(`${Logger.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.RED}ERROR ${Logger.COLORS.RESET}${message}`);
   }
 }
