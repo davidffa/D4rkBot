@@ -180,7 +180,7 @@ export default class MessageCreate {
         mkdirSync('./logs');
 
       if (message.channel.type === 0)
-        appendFileSync('./logs/log.txt', `Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
+        appendFileSync('./logs/log.txt', `${Logger.currentDate} - Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
     } catch (err: any) {
       message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
       this.log.error(err.message);

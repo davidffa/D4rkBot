@@ -101,7 +101,7 @@ export default class InteractionCreate {
       if (!existsSync('./logs'))
         mkdirSync('./logs');
 
-      appendFileSync('./logs/log.txt', `Slash Command: \`${cmd.name}\` executado no servidor \`${interaction.guildID}\`\nArgs: \`${ctx.args?.join(' ')}\`\nUser: ${interaction.member?.username}#${interaction.member?.discriminator} (${interaction.member?.id})\n\n`);
+      appendFileSync('./logs/log.txt', `${Logger.currentDate} - Slash Command: \`${cmd.name}\` executado no servidor \`${interaction.guildID}\`\nArgs: \`${ctx.args?.join(' ')}\`\nUser: ${interaction.member?.username}#${interaction.member?.discriminator} (${interaction.member?.id})\n\n`);
     } catch (err: any) {
       interaction.createMessage({
         content: `:x: Ocorreu um erro ao executar o comando \`${cmd.name}\``,
