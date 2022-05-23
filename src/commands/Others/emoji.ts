@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, ActionRowComponents, ActionRow, ComponentInteraction, ComponentInteractionSelectMenuData } from 'eris';
+import { Message, ActionRowComponents, ActionRow, ComponentInteraction, InteractionComponentSelectMenuData } from 'eris';
 
 interface UnicodeEmojiInfo {
   name: string;
@@ -237,7 +237,7 @@ export default class Emoji extends Command {
     const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 20000 });
 
     collector.on('collect', i => {
-      const data = i.data as ComponentInteractionSelectMenuData
+      const data = i.data as InteractionComponentSelectMenuData
       getEmojiInfo(emojiList[Number(data.values[0])], i);
     });
   }

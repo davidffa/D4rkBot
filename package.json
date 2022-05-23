@@ -35,7 +35,7 @@
     "cheerio": "^1.0.0-rc.11",
     "color-thief-node": "^1.0.4",
     "dotenv": "^16.0.1",
-    "eris": "DonovanDMC/eris#everything",
+    "eris": "DonovanDMC/eris#everything-v10",
     "figlet": "^1.5.2",
     "mathjs": "^10.5.3",
     "mongoose": "6.3.4",

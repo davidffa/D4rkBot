@@ -3,7 +3,16 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { ActionRow, ActionRowComponents, AutocompleteInteraction, ComponentInteraction, ComponentInteractionSelectMenuData, InteractionDataOptionWithValue, Message, VoiceChannel } from 'eris';
+import type {
+  ActionRow,
+  ActionRowComponents,
+  AutocompleteInteraction,
+  ComponentInteraction,
+  InteractionComponentSelectMenuData,
+  InteractionDataOptionsWithValue,
+  Message,
+  VoiceChannel
+} from 'eris';
 
 import { Player, SearchResult, ConnectionState } from 'vulkava';
 
@@ -167,7 +176,7 @@ export default class Search extends Command {
                 player.connect();
               }
 
-              const data = i.data as ComponentInteractionSelectMenuData;
+              const data = i.data as InteractionComponentSelectMenuData;
 
               const selectedTracks = data.values.map(val => tracks[Number(val)]);
 
@@ -206,7 +215,7 @@ export default class Search extends Command {
     }
   }
 
-  async runAutoComplete(interaction: AutocompleteInteraction, value: string, options: InteractionDataOptionWithValue[]) {
+  async runAutoComplete(interaction: AutocompleteInteraction, value: string, options: InteractionDataOptionsWithValue[]) {
     if (!value) {
       interaction.result([]);
       return;

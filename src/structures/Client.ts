@@ -60,6 +60,7 @@ export default class D4rkClient extends Client {
         'guildVoiceStates',
         'guildPresences',
         'guildMessages',
+        'messageContent'
       ],
       disableEvents: {
         'TYPING_START': true,

@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
-import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionDataOptionWithValue } from 'eris';
+import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionDataOptionsWithValue } from 'eris';
 import { appendFileSync, existsSync, mkdirSync } from 'fs';
 import Logger from '../utils/Logger';
 
@@ -22,7 +22,7 @@ export default class InteractionCreate {
 
       if (!cmd) throw new Error(`Command ${interaction.data.name} does not exist!`);
 
-      const ops = interaction.data.options as InteractionDataOptionWithValue[];
+      const ops = interaction.data.options as InteractionDataOptionsWithValue[];
 
       const focusedField = ops.find(o => o.focused);
 

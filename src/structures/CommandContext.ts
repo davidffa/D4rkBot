@@ -6,7 +6,7 @@ import type {
   Attachment,
   FileContent,
   Guild,
-  InteractionDataOptionWithValue,
+  InteractionDataOptionsWithValue,
   Member,
   PartialChannel,
   Role,
@@ -72,7 +72,7 @@ export default class CommandContext {
             this.targetChannels = interaction.data.resolved?.channels?.map(channel => channel);
           }
 
-          const options = interaction.data.options as InteractionDataOptionWithValue[];
+          const options = interaction.data.options as InteractionDataOptionsWithValue[];
 
           this.args = options?.map(ops => ops.value.toString().trim()) ?? [];
         }
