@@ -44,7 +44,7 @@ export default class Userinfo extends Command {
     let user: User | null;
 
     if (!ctx.args.length)
-      user = ctx.author;
+      user = ctx.targetUsers?.[0] ?? ctx.author;
     else
       user = ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild);
 

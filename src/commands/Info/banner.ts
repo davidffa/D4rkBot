@@ -28,7 +28,7 @@ export default class Banner extends Command {
       return;
     }
 
-    let user = !ctx.args.length ? ctx.author : (ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild));
+    let user = ctx.targetUsers?.[0] ?? (!ctx.args.length ? ctx.author : await this.client.utils.findUser(ctx.args.join(' '), ctx.guild));
 
     if (!user) {
       ctx.sendMessage({ content: ':x: Utilizador não encontrado!', flags: 1 << 6 });
