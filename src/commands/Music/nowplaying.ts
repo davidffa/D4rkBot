@@ -22,13 +22,24 @@ export default class Nowplaying extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    const player = this.client.music.players.get(ctx.guild.id);
-
-    if (!player || !player.current) {
-      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
+    if (ctx.args[0]) {
+      const { artist, songTitle } = await this.client.music.getRadioNowPlaying(ctx.args[0]);
+      if(artist && songTitle) {
+        ctx.sendMessage(`:radio: A tocar a música \`${artist} - ${songTitle}\` na rádio \`${ctx.args[0]}\``);
+      } else {
+        ctx.sendMessage({ content: ':x: Não encontrei essa rádio!', flags: 1 << 6 })
+      }
       return;
     }
 
+    const player = this.client.music.players.get(ctx.guild.id);
+
+    if (!player || !player.current ) {
+      ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
+      return;
+    }
+    
+  
     if (player.radio) {
       const { artist, songTitle } = await this.client.music.getRadioNowPlaying(player.radio);
 
