@@ -45,8 +45,6 @@ export default class Lavalink extends Vulkava {
       }
     });
 
-    this.pingNodes();
-
     this.on('error', (node, error): void => {
       this.log.error(`Erro no ${node.identifier}: ${error.message}`);
     });
@@ -113,24 +111,6 @@ export default class Lavalink extends Vulkava {
           player.moveNode(newNode);
           return;
         }
-        // else {
-        //   this.client.createMessage(player.textChannelId!, ':warning: Parece que o YouTube me impediu de tocar essa música!\nAguarda um momento enquanto resolvo esse problema e tenta novamente daqui a uns segundos.');
-        //   player.destroy();
-        // }
-
-        // const appName = player.node!.options.hostname.split('.')[0];
-
-        // if (appName) {
-        //   await this.client.request(`https://api.heroku.com/apps/${appName}/dynos`, {
-        //     method: 'DELETE',
-        //     headers: {
-        //       'Accept': 'application/vnd.heroku+json; version=3',
-        //       'Authorization': `Bearer ${process.env.HEROKUAPITOKEN}`
-        //     }
-        //   }).then(r => {
-        //     r.body.dump();
-        //   });
-        // }
       }
       player.textChannelId && this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\``);
       this.log.error(`Track Error on guild ${player.guildId}: ${err.message}`);
@@ -238,8 +218,10 @@ export default class Lavalink extends Vulkava {
     let artist, songTitle;
     const xmlParser = new Parser();
 
+    const lcRadio = radio.toLowerCase();
+
     if (['CidadeHipHop', 'CidadeFM', 'RadioComercial', 'M80'].includes(radio)) {
-      const xml = await this.client.request(`https://${radio === 'M80' ? 'm80' : radio === 'RadioComercial' ? 'radiocomercial' : 'cidade'}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.body.text());
+      const xml = await this.client.request(`https://${lcRadio.startsWith('cidade') ? 'cidade' : lcRadio}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.body.text());
 
       const text = await xmlParser.parseStringPromise(xml).then(t => t.RadioInfo.Table[0]);
 
@@ -260,21 +242,5 @@ export default class Lavalink extends Vulkava {
 
   init() {
     return super.start(this.client.user.id);
-  }
-
-  private pingNodes() {
-    for (const node of this.nodes.values()) {
-      if (node.options.hostname.includes('heroku')) {
-        setInterval(() => {
-          this.client.request(`http://${node.options.hostname}/version`, {
-            headers: {
-              Authorization: node.options.password!
-            }
-          }).then(r => {
-            r.body.dump();
-          });
-        }, 25 * 60 * 1000);
-      }
-    }
   }
 }
