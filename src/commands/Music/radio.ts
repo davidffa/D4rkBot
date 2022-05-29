@@ -7,6 +7,14 @@ import Logger from '../../utils/Logger';
 export default class Radio extends Command {
   private readonly log: Logger;
 
+  static radios = {
+    M80: 'https://mcrscast1.mcr.iol.pt/m80',
+    CidadeFM: 'https://mcrscast.mcr.iol.pt/cidadefm',
+    CidadeHipHop: 'https://mcrscast.mcr.iol.pt/cidHiphop',
+    RFM: 'https://20723.live.streamtheworld.com/RFMAAC.aac',
+    RadioComercial: 'https://mcrscast1.mcr.iol.pt/comercial'
+  };
+
   constructor(client: Client) {
     super(client, {
       name: 'radio',
@@ -26,21 +34,13 @@ export default class Radio extends Command {
       return;
     }
 
-    const radios = {
-      M80: 'https://mcrscast1.mcr.iol.pt/m80',
-      CidadeFM: 'https://mcrscast.mcr.iol.pt/cidadefm',
-      CidadeHipHop: 'https://mcrscast.mcr.iol.pt/cidHiphop',
-      RFM: 'https://20723.live.streamtheworld.com/RFMAAC.aac',
-      RadioComercial: 'https://mcrscast1.mcr.iol.pt/comercial'
-    };
-
-    const radio = Object.entries(radios).find(([radio]) => radio.toLowerCase() === ctx.args?.join('').toLowerCase());
+    const radio = Object.entries(Radio.radios).find(([radio]) => radio.toLowerCase() === ctx.args?.join('').toLowerCase());
 
     if (!radio) {
       const embed = new this.client.embed()
         .setTitle('<a:disco:803678643661832233> Lista de estações de rádio disponíveis')
         .setColor('RANDOM')
-        .setDescription(Object.keys(radios).join(', '))
+        .setDescription(Object.keys(Radio.radios).join(', '))
         .setTimestamp()
         .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 

@@ -7,6 +7,7 @@ import { User } from 'eris';
 import Canvas from 'canvas';
 
 import { resolve } from 'path';
+import Radio from './radio';
 
 export default class Nowplaying extends Command {
   constructor(client: Client) {
@@ -21,6 +22,24 @@ export default class Nowplaying extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
+
+    if (ctx.args[0]) {
+      const radio = Object.keys(Radio.radios).find(r => r.toLowerCase() === ctx.args[0].toLowerCase());
+
+      if (!radio) {
+        ctx.sendMessage({ content: `:x: Não encontrei essa rádio! Rádios suportadas: \`${Object.keys(Radio.radios).join(', ')}\``, flags: 1 << 6 })
+        return;
+      }
+
+      const { artist, songTitle } = await this.client.music.getRadioNowPlaying(radio);
+
+      if (artist && songTitle) {
+        ctx.sendMessage(`:radio: A tocar a música \`${artist} - ${songTitle}\` na rádio \`${radio}\``);
+      } else {
+        ctx.sendMessage({ content: `:x: Não encontrei nenhuma música a tocar nesta rádio!`, flags: 1 << 6 })
+      }
+      return;
+    }
 
     const player = this.client.music.players.get(ctx.guild.id);
 
