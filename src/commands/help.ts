@@ -83,6 +83,7 @@ export default class Help extends Command {
             style: 4,
             type: 2,
             emoji: {
+              id: null,
               name: '🗑️'
             }
           }

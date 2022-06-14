@@ -36,7 +36,7 @@ export default class Inviteinfo extends Command {
 
       invite.inviter && embed.addField(':man_shrugging: Quem convidou', `\`${invite.inviter?.username} (${invite.inviter?.id})\``, true)
 
-      embed.addField('<:chat:804050576647913522> Canal', `\`${invite.channel.name}\``, true)
+      embed.addField('<:chat:804050576647913522> Canal', `\`${invite.channel?.name ?? 'Desconhecido'}\``, true)
         .addField('<:followers:784795303156908032> Total de membros (aproximado)', `\`${invite.memberCount}\``, true)
 
       invite.guild?.iconURL && embed.setThumbnail(invite.guild.dynamicIconURL()!)

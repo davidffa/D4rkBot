@@ -121,7 +121,7 @@ export default class Djtable extends Command {
         custom_id: 'clear',
         type: 2,
         style: 4,
-        emoji: { name: '🗑️' }
+        emoji: { id: null, name: '🗑️' }
       },
       {
         custom_id: 'close',

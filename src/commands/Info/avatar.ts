@@ -68,6 +68,7 @@ export default class Avatar extends Command {
         style: 2,
         type: 2,
         emoji: {
+          id: null,
           name: '⬅️'
         },
         disabled: true
@@ -77,6 +78,7 @@ export default class Avatar extends Command {
         style: 2,
         type: 2,
         emoji: {
+          id: null,
           name: '➡️'
         }
       }

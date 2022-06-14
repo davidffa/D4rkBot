@@ -46,6 +46,7 @@ export default class Logs extends Command {
         style: 2,
         type: 2,
         emoji: {
+          id: null,
           name: '👋'
         },
       },
@@ -54,6 +55,7 @@ export default class Logs extends Command {
         style: 2,
         type: 2,
         emoji: {
+          id: null,
           name: '🚪'
         }
       }

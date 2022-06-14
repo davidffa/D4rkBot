@@ -118,7 +118,7 @@ export default class Search extends Command {
             custom_id: 'cancel',
             type: 2,
             style: 4,
-            emoji: { name: '🗑️' }
+            emoji: { id: null, name: '🗑️' }
           }
         ]
 

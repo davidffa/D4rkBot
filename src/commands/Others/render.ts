@@ -131,6 +131,7 @@ export default class Render extends Command {
         style: 4,
         type: 2,
         emoji: {
+          id: null,
           name: '🗑️'
         }
       },
