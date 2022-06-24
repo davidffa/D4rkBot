@@ -18,6 +18,7 @@ import { Player, SearchResult, ConnectionState } from 'vulkava';
 
 import soundCloudIdExtractor from '../../utils/soundCloudIdExtractor';
 import { Choices } from '../../typings';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Search extends Command {
   constructor(client: Client) {
@@ -51,7 +52,8 @@ export default class Search extends Command {
         guildId: ctx.guild.id,
         voiceChannelId: voiceChannelID,
         textChannelId: ctx.channel.id,
-        selfDeaf: true
+        selfDeaf: true,
+        queue: new TrackQueue()
       });
 
       player.effects = [];
@@ -182,7 +184,7 @@ export default class Search extends Command {
 
               for (const t of selectedTracks) {
                 t.setRequester(ctx.author);
-                player.queue.push(t);
+                player.queue.add(t);
               }
 
               const ebd = new this.client.embed()

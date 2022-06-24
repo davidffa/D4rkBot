@@ -6,6 +6,7 @@ import { ComponentCollector } from '../../structures/Collector';
 import { ActionRow, ComponentInteraction, ActionRowComponents, Message, VoiceChannel } from 'eris';
 
 import { Track, UnresolvedTrack, ConnectionState } from 'vulkava';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class PlayList extends Command {
   constructor(client: Client) {
@@ -449,7 +450,8 @@ export default class PlayList extends Command {
           guildId: ctx.guild.id,
           voiceChannelId: voiceChannelID,
           textChannelId: ctx.channel.id,
-          selfDeaf: true
+          selfDeaf: true,
+          queue: new TrackQueue(),
         });
 
         player.effects = [];
@@ -467,7 +469,7 @@ export default class PlayList extends Command {
 
         for (const t of tracksToLoad) {
           t.setRequester(ctx.author);
-          player.queue.push(t);
+          player.queue.add(t);
         }
 
         if (!player.playing) player.play();

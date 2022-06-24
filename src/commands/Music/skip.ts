@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Skip extends Command {
   constructor(client: Client) {
@@ -37,7 +38,7 @@ export default class Skip extends Command {
     const skip = (dj: Boolean): void => {
       player.skip();
 
-      if (!player.queue[0] && !player.trackRepeat && !player.queueRepeat) {
+      if (!(player.queue as TrackQueue).peek() && !player.trackRepeat && !player.queueRepeat) {
         const channel = this.client.getChannel(player.textChannelId!);
         if (channel.type !== 0) return;
 

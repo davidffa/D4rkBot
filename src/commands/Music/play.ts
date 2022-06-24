@@ -7,6 +7,7 @@ import { AutocompleteInteraction, VoiceChannel } from 'eris';
 import { Player, ConnectionState } from 'vulkava';
 
 import { Choices } from '../../typings/index';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Play extends Command {
   constructor(client: Client) {
@@ -40,7 +41,8 @@ export default class Play extends Command {
         guildId: ctx.guild?.id as string,
         voiceChannelId: voiceChannelID,
         textChannelId: ctx.channel.id,
-        selfDeaf: true
+        selfDeaf: true,
+        queue: new TrackQueue()
       });
 
       player.effects = [];
@@ -78,7 +80,7 @@ export default class Play extends Command {
 
           for (const track of res.tracks) {
             track.setRequester(ctx.author);
-            player.queue.push(track);
+            player.queue.add(track);
           }
 
           if (!player.playing)
@@ -102,7 +104,7 @@ export default class Play extends Command {
           const tracks = res.tracks;
 
           tracks[0].setRequester(ctx.author);
-          player.queue.push(tracks[0]);
+          player.queue.add(tracks[0]);
 
           ctx.sendMessage(`:bookmark_tabs: Adicionado à lista \`${tracks[0].title}\``);
 

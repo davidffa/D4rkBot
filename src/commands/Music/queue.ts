@@ -4,6 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
 import { ActionRow, ActionRowComponents, ComponentInteraction, Message, User } from 'eris';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Queue extends Command {
   constructor(client: Client) {
@@ -35,27 +36,17 @@ export default class Queue extends Command {
       return;
     }
 
-    const queue = player.queue;
-
-    const getSongDetails = (pos: number, pos2: number): string => {
-      const data = [];
-
-      for (; pos < pos2 && queue[pos]; pos++) {
-        const req = queue[pos].requester as User;
-        data.push(`${pos + 1}º - \`${queue[pos].title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`)
-      }
-      return data.join('\n');
-    }
+    const queue = player.queue as TrackQueue;
 
     let page = 1;
-    const pages = Math.max(Math.ceil(queue.length / 10), 1);
+    const pages = Math.max(Math.ceil(queue.size / 10), 1);
 
     const req = player.current?.requester as User;
 
     const desc = [
       `<a:disco:803678643661832233> **A tocar:** \`${player.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)\n`,
-      `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(player.queueDuration)}) ----- Total de músicas na queue: ${queue.length}`,
-      `${getSongDetails(0, 10)}`
+      `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(player.queueDuration)}) ----- Total de músicas na queue: ${queue.size}`,
+      `${queue.getSongDetails(0, 10)}`
     ];
 
     const embed = new this.client.embed()
@@ -66,7 +57,7 @@ export default class Queue extends Command {
       .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
 
-    if (queue.length <= 10) {
+    if (queue.size <= 10) {
       await ctx.sendMessage({ embeds: [embed] });
       return;
     }
@@ -107,8 +98,8 @@ export default class Queue extends Command {
     collector.on('collect', i => {
       const newDesc = [
         `<a:disco:803678643661832233> **A tocar:** \`${player.current?.title}\` (Requisitado por \`${req.username}#${req.discriminator}\`)`,
-        `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(player.queueDuration)}) ----- Total de músicas na queue: ${queue.length}`,
-        `${getSongDetails(0, 10)}`
+        `:alarm_clock: Tempo total da queue (${this.client.utils.msToHour(player.queueDuration)}) ----- Total de músicas na queue: ${queue.size}`,
+        `${queue.getSongDetails(0, 10)}`
       ];
 
       switch (i.data.custom_id) {
@@ -123,7 +114,7 @@ export default class Queue extends Command {
             embed.setDescription(newDesc.join('\n'))
               .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());;
           } else {
-            embed.setDescription(getSongDetails((page - 1) * 10, page * 10))
+            embed.setDescription(queue.getSongDetails((page - 1) * 10, page * 10))
               .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
           }
 
@@ -136,7 +127,7 @@ export default class Queue extends Command {
           }
           row.components[0].disabled = false;
 
-          embed.setDescription(getSongDetails((page - 1) * 10, page * 10))
+          embed.setDescription(queue.getSongDetails((page - 1) * 10, page * 10))
             .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
 
           i.editParent({ embeds: [embed], components: [row] });

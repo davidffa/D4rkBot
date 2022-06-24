@@ -59,6 +59,7 @@ interface IRecord {
 }
 
 import 'vulkava';
+import { TrackQueue } from '../structures/TrackQueue';
 
 type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave' | 'lowpass' | '8D';
 

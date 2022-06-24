@@ -4,6 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { ConnectionState } from 'vulkava';
 import Logger from '../../utils/Logger';
+import { TrackQueue } from '../../structures/TrackQueue';
 export default class Radio extends Command {
   private readonly log: Logger;
 
@@ -105,7 +106,8 @@ export default class Radio extends Command {
         guildId: ctx.guild.id,
         voiceChannelId: voiceChannelID,
         textChannelId: ctx.channel.id,
-        selfDeaf: true
+        selfDeaf: true,
+        queue: new TrackQueue()
       })
       player.effects = [];
     }
@@ -132,14 +134,14 @@ export default class Radio extends Command {
       }
 
       if (player.current) {
-        player.queue = [];
+        player.queue.clear();
         player.skip();
       }
 
       player.textChannelId = ctx.channel.id;
 
       res.tracks[0].setRequester(ctx.author);
-      player.queue.push(res.tracks[0]);
+      player.queue.add(res.tracks[0]);
 
       if (!player.playing)
         player.play();

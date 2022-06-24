@@ -2,6 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import Logger from '../../utils/Logger';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Forceplay extends Command {
   private readonly log: Logger;
@@ -77,7 +78,7 @@ export default class Forceplay extends Command {
 
           for (const track of res.tracks) {
             track.setRequester(ctx.author);
-            player.queue.unshift(track);
+            (player.queue as TrackQueue).addToBeginning(track);
           }
 
           player.skip();
@@ -100,7 +101,7 @@ export default class Forceplay extends Command {
           const tracks = res.tracks;
 
           tracks[0].setRequester(ctx.author);
-          player.queue.unshift(tracks[0]);
+          (player.queue as TrackQueue).addToBeginning(tracks[0]);
           player.skip();
         }
       }

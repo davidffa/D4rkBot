@@ -3,6 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import { User } from 'eris';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Stop extends Command {
   constructor(client: Client) {
@@ -52,10 +53,7 @@ export default class Stop extends Command {
 
     const allQueueRequester = (user: User): boolean => {
       if (player.current?.requester !== user) return false;
-      for (const m of player.queue) {
-        if (m.requester !== user) return false;
-      }
-      return true;
+      return (player.queue as TrackQueue).areAllTracksFromUser(user);
     }
 
     const member = ctx.member

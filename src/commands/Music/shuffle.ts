@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Shuffle extends Command {
   constructor(client: Client) {
@@ -42,11 +43,11 @@ export default class Shuffle extends Command {
     }
 
     const shuffle = (): void => {
-      if (!player.queue.length) {
+      if (!player.queue.size) {
         ctx.sendMessage({ content: ':x: A queue está vazia!', flags: 1 << 6 });
         return;
       }
-      player.shuffleQueue();
+      (player.queue as TrackQueue).shuffle();
 
       ctx.sendMessage('<a:disco:803678643661832233> Lista de músicas embaralhada!');
     }
