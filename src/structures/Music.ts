@@ -141,6 +141,13 @@ export default class Lavalink extends Vulkava {
           channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
       }
     });
+
+    this.on('recordFinished', (node, _, id) => {
+      const rec = this.client.records.get(id);
+      if (rec) {
+        rec.onFinish(rec.oldCtx, rec.newCtx ?? null, node, id);
+      }
+    });
   }
 
   async hasDJRole(member: Member): Promise<boolean> {
@@ -178,7 +185,7 @@ export default class Lavalink extends Vulkava {
       return false;
     }
 
-    if (this.client.records.has(ctx.guild.id)) {
+    if (this.client.records.has(voiceChannelID)) {
       ctx.sendMessage({ content: ':x: Não consigo tocar música enquanto gravo áudio!', flags: 1 << 6 });
       return false;
     }

@@ -10,16 +10,15 @@ export default class VoiceChannelLeave {
   }
 
   async run(member: Member, oldChannel: VoiceChannel): Promise<void> {
-    const rec = this.client.records.get(member.guild.id);
-    if (rec && member.id === this.client.user.id) {
-      clearTimeout(rec.timeout);
-      rec.worker.postMessage({ op: 0 });
-      this.client.records.delete(member.guild.id);
-      return;
-    }
-
     const player = this.client.music.players.get(member.guild.id);
     if (!player) return;
+
+    const rec = this.client.records.get(oldChannel.id);
+    if (rec && member.id === this.client.user.id) {
+      clearTimeout(rec.timeout);
+      player?.destroy();
+      return;
+    }
 
     if (member.id === this.client.user.id) {
       this.client.createMessage(player.textChannelId!, ':warning: Fui desconectado do canal de voz, por isso limpei a queue.');

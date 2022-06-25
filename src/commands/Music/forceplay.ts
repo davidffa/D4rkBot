@@ -30,7 +30,7 @@ export default class Forceplay extends Command {
 
     const player = this.client.music.players.get(ctx.guild.id);
 
-    if (!player) {
+    if (!player || !player.current) {
       ctx.sendMessage({ content: `:x: Não estou a tocar nada. **Usa:**\`${this.client.guildCache.get(ctx.guild.id)?.prefix}play <Nome/URL>\``, flags: 1 << 6 });
       return;
     }

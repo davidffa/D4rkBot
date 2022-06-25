@@ -19,7 +19,7 @@ export default class Skip extends Command {
 
     const player = this.client.music.players.get(ctx.guild.id);
 
-    if (!player) {
+    if (!player || !player.current) {
       ctx.sendMessage({ content: ':x: Não estou a tocar nada de momento!', flags: 1 << 6 });
       return;
     }

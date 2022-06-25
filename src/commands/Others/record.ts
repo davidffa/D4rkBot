@@ -1,12 +1,8 @@
-import fs from 'fs';
-import { resolve } from 'path';
-
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { VoiceChannel } from 'eris';
-
-import { Worker } from 'worker_threads';
+import { Node } from 'vulkava';
 
 export default class Record extends Command {
   constructor(client: Client) {
@@ -19,6 +15,40 @@ export default class Record extends Command {
     });
   }
 
+  async onFinish(oldCtx: CommandContext, ctx: CommandContext | null, node: Node, id: string) {
+    try {
+      this.client.records.delete(id);
+      const buf = await node.getRecord(oldCtx.guild.id, id);
+      node.deleteRecord(oldCtx.guild.id, id);
+
+      if (ctx) {
+        ctx.sendMessage({
+          content: ':stop_button: Gravação terminada!',
+          files: [
+            {
+              name: 'record.mp3',
+              file: buf
+            }
+          ]
+        });
+        return;
+      }
+
+      oldCtx.channel.createMessage({
+        content: ':stop_button: Gravação terminada!',
+      }, {
+        name: 'record.mp3',
+        file: buf
+      });
+    } catch (_) {
+      if (ctx) {
+        ctx.sendMessage(':x: Erro ao obter a gravação!');
+        return;
+      }
+      oldCtx.channel.createMessage(':x: Erro ao obter a gravação!');
+    }
+  }
+
   async execute(ctx: CommandContext): Promise<void> {
     const voiceChannelID = ctx.member!.voiceState.channelID;
 
@@ -27,28 +57,29 @@ export default class Record extends Command {
       return;
     }
 
-    if (this.client.music.players.get(ctx.guild.id)) {
-      ctx.sendMessage({ content: ':x: Não consigo gravar áudio enquanto toco música!', flags: 1 << 6 });
-      return;
-    }
-
     await ctx.defer();
 
-    const rec = this.client.records.get(ctx.guild.id);
+    const rec = this.client.records.get(voiceChannelID);
     if (rec) {
-      if (voiceChannelID !== rec.voiceChannelID) {
+      const player = this.client.music.players.get(ctx.guild.id)!!;
+      if (voiceChannelID !== player?.voiceChannelId) {
         ctx.sendMessage({ content: ':x: Precisas de estar no mesmo canal de voz que eu para usar esse comando!', flags: 1 << 6 });
         return;
       }
 
       clearTimeout(rec.timeout);
-      rec.ctx = ctx;
-      rec.worker.postMessage({ op: 0 });
+      rec.newCtx = ctx;
+
+      player.destroy();
+      return;
+    }
+
+    if (this.client.music.players.get(ctx.guild.id)) {
+      ctx.sendMessage({ content: ':x: Não consigo gravar áudio enquanto toco música!', flags: 1 << 6 });
       return;
     }
 
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
-
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
     if (!permissions.has('readMessages')) {
@@ -61,63 +92,27 @@ export default class Record extends Command {
       return;
     }
 
-    const worker = new Worker(resolve(__dirname, '..', '..', 'workers', 'ReceiveWorker.js'));
-
-    const voiceConnection = await voiceChannel.join({
-      selfMute: true,
+    const player = this.client.music.createPlayer({
+      guildId: ctx.guild.id,
+      textChannelId: ctx.channel.id,
+      voiceChannelId: voiceChannelID
     });
 
-    const stream = voiceConnection.receive('pcm');
-
-    stream.on('data', (data, userID) => {
-      if (!userID) return;
-      worker.postMessage({ op: 2, userID, packet: data });
-    });
-
-
-    worker.postMessage({ guildID: ctx.guild.id, op: 1, bitrate: voiceChannel.bitrate });
-
-    worker.once('message', async (data) => {
-      if (data.done) {
-        const recCtx = this.client.records.get(ctx.guild.id)!.ctx;
-        this.client.records.delete(ctx.guild.id);
-
-        worker.terminate();
-        voiceConnection.disconnect();
-        const audioFile = fs.readFileSync(`./records/record-${ctx.guild.id}.mp3`);
-
-        if (recCtx) {
-          await recCtx.sendMessage({
-            content: ':stop_button: Gravação terminada!',
-            files: [
-              {
-                name: 'record.mp3',
-                file: audioFile
-              }
-            ]
-          });
-        } else {
-          await ctx.channel.createMessage(':stop_button: Gravação terminada!', {
-            name: 'record.mp3',
-            file: audioFile
-          });
-        }
-
-        fs.unlinkSync(`./records/record-${ctx.guild.id}.mp3`);
-      }
+    player.connect();
+    player.recorder.start({
+      id: voiceChannelID,
+      bitrate: voiceChannel.bitrate
     });
 
     const timeout = setTimeout(() => {
-      worker.postMessage({ op: 0 });
-      return;
+      player?.destroy();
     }, 8 * 60 * 1000);
 
-    this.client.records.set(ctx.guild.id, {
-      worker,
+    this.client.records.set(voiceChannelID, {
       timeout,
-      voiceChannelID,
+      onFinish: this.onFinish.bind(this),
+      oldCtx: ctx
     });
-
     ctx.sendMessage(':red_circle: Gravação iniciada! (Máximo de 8 minutos).')
   }
 }

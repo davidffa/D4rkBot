@@ -50,16 +50,15 @@ interface Choices {
   value: string;
 }
 
-import { Worker } from 'worker_threads';
-interface IRecord {
-  timeout: NodeJS.Timeout;
-  worker: Worker;
-  voiceChannelID: string;
-  ctx?: CommandContext;
-}
-
 import 'vulkava';
 import { TrackQueue } from '../structures/TrackQueue';
+
+interface IRecord {
+  timeout: NodeJS.Timeout;
+  oldCtx: CommandContext;
+  newCtx?: CommandContext;
+  onFinish: (oldCtx: CommandContext, ctx: CommandContext | null, player: Player, id: string) => Promise<void>;
+}
 
 type Effect = 'bass' | 'pop' | 'soft' | 'treblebass' | 'nightcore' | 'vaporwave' | 'lowpass' | '8D';
 

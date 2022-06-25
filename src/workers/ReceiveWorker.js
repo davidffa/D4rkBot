@@ -1,3 +1,20 @@
+/*
+ *  Copyright 2022 David Amorim
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * 
+ */
+
 const { parentPort } = require('worker_threads');
 const { spawn } = require('child_process');
 const { Readable } = require('stream');
@@ -23,7 +40,9 @@ const readable = new Readable();
 readable._read = () => { };
 
 function processVoiceSample() {
-  const finalPacket = Buffer.allocUnsafe(3840); // (48k 16 bit little endian pcm, 2 stereo channels)
+  // ((sample_rate/1000) * frame_duration) * channel_count * 2 (16 bit, so 2 bytes per sample)
+  // (48000 / 1000 * 20) * 2 * 2 = 3840
+  const finalPacket = Buffer.allocUnsafe(3840);
 
   if (voiceMap.size) {
     for (var i = 0; i < 3840; i += 2) {

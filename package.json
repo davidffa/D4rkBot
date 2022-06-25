@@ -45,7 +45,7 @@
     "undici": "^5.5.1",
     "unicode-emoji-json": "^0.3.1",
     "utf-8-validate": "^5.0.9",
-    "vulkava": "^1.4.0",
+    "vulkava": "davidffa/vulkava#build",
     "xml2js": "^0.4.23",
     "zlib-sync": "^0.1.7"
   }

@@ -1509,10 +1509,9 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vulkava@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.4.0.tgz#e68120c038d131ca87b425b97a996d8c86d8a817"
-  integrity sha512-JBcYdaiwc6jo0CmsuZvzoySTxCrB/5v6j2DfwIBUzAt7/NbMFKfkdARfm+VgnG+WlvuFe6xBM5z+cnMSZfRVhw==
+vulkava@davidffa/vulkava#build:
+  version "1.5.0-dev"
+  resolved "https://codeload.github.com/davidffa/vulkava/tar.gz/cfa3cfc960dbcffc4292f9dce39488fb6f0749ff"
   dependencies:
     undici "^5.5.1"
     ws "^8.8.0"
