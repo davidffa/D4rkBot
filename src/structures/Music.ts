@@ -144,7 +144,9 @@ export default class Lavalink extends Vulkava {
 
     this.on('recordFinished', (node, guildId, id) => {
       const rec = this.client.records.get(id);
-      if (rec && this.players.get(guildId)!!.node === node) {
+      const player = this.players.get(guildId);
+
+      if (rec && (!player || player.node === node)) {
         rec.onFinish(rec.oldCtx, rec.newCtx ?? null, node, id);
       }
     });
