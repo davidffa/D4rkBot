@@ -20,6 +20,8 @@ export default class VoiceChannelIdSwitch {
       return;
     }
 
+    if (rec) return;
+
     if (member.id === this.client.user.id) {
       player.voiceChannelId = newChannel.id;
 

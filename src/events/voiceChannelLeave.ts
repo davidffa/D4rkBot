@@ -20,6 +20,8 @@ export default class VoiceChannelLeave {
       return;
     }
 
+    if (rec) return;
+
     if (member.id === this.client.user.id) {
       this.client.createMessage(player.textChannelId!, ':warning: Fui desconectado do canal de voz, por isso limpei a queue.');
       player.destroy();
