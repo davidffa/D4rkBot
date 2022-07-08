@@ -47,9 +47,9 @@
     got "^11.8.1"
 
 "@jridgewell/resolve-uri@^3.0.3":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.0.8.tgz#687cc2bbf243f4e9a868ecf2262318e2658873a1"
-  integrity sha512-YK5G9LaddzGbcucK4c8h5tWFmMPBvRZ/uyWmN1/SbBdIvqGUdWGkJ5BAaccgs6XbzVLsqbPJrBSFwKv3kT9i7w==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.1.0.tgz#2203b118c157721addfe69d47b70465463066d78"
+  integrity sha512-F2msla3tad+Mfht5cJq7LSXcdudKTWCVYUgw6pLFOOHSTtZlj6SWNYAp+AhuqLmWdBO2X5hPrLcu8cVP8fy28w==
 
 "@jridgewell/sourcemap-codec@^1.4.10":
   version "1.4.14"
@@ -148,10 +148,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^18.0.1":
-  version "18.0.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.1.tgz#e91bd73239b338557a84d1f67f7b9e0f25643870"
-  integrity sha512-CmR8+Tsy95hhwtZBKJBs0/FFq4XX7sDZHlGGf+0q+BRZfMbOTkzkj0AFAuTyXbObDIoanaBBW0+KEW+m3N16Wg==
+"@types/node@*", "@types/node@^18.0.3":
+  version "18.0.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.3.tgz#463fc47f13ec0688a33aec75d078a0541a447199"
+  integrity sha512-HzNRZtp4eepNitP+BD6k2L6DROIDG4Q0fm4x+dwfsr6LGmROENnok75VGw40628xf+iR24WeMFcHuuBDUAzzsQ==
 
 "@types/responselike@*", "@types/responselike@^1.0.0":
   version "1.0.0"
@@ -284,9 +284,9 @@ braces@~3.0.2:
     fill-range "^7.0.1"
 
 bson@^4.6.2, bson@^4.6.3:
-  version "4.6.4"
-  resolved "https://registry.yarnpkg.com/bson/-/bson-4.6.4.tgz#e66d4a334f1ab230dfcfb9ec4ea9091476dd372e"
-  integrity sha512-TdQ3FzguAu5HKPPlr0kYQCyrYUYh8tFM+CMTpxjNzVzxeiJY00Rtuj3LXLHSgiGvmaWlZ8PE+4KyM2thqE38pQ==
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-4.6.5.tgz#1a410148c20eef4e40d484878a037a7036e840fb"
+  integrity sha512-uqrgcjyOaZsHfz7ea8zLRCLe1u+QGUSzMZmvXqO24CDW7DWoW1qiN9folSwa7hSneTSgM2ykDIzF5kcQQ8cwNw==
   dependencies:
     buffer "^5.6.0"
 
@@ -591,8 +591,8 @@ entities@^4.2.0, entities@^4.3.0:
   integrity sha512-o4q/dYJlmyjP2zfnaWDUC6A3BQFmVTX+tZPezK7k0GLSU9QYCauscf5Y+qcEPzKL+EixVouYDgLQK5H9GrLpkg==
 
 eris@DonovanDMC/eris#everything-v10:
-  version "0.17.2-everything-v10.73b6708"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/fa0e8371ae3080c0de4e5a3dbead090abc85fdab"
+  version "0.17.2-everything-v10.01118e5"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/0b43817f8319dd38da6d1e68e665781d94c1423c"
   dependencies:
     ws "^8.2.3"
   optionalDependencies:
@@ -957,10 +957,10 @@ mongodb@4.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.4.2:
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.4.2.tgz#79efd7f1e606114045a3de2bbd0a0972823d02dc"
-  integrity sha512-VRotms+XC42vPlS3Tr2GTg0qkppHzWob62sUjdC22ir8aqWVrbCsHjEuMsL6zZlKSIj8zNBODm9hRV+RHRiLRQ==
+mongoose@6.4.3:
+  version "6.4.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.4.3.tgz#a44978adb987fb98c8339629e83e16e07e9cbdcd"
+  integrity sha512-JuEdgpDxYIqG+V85LzNn7LKIr73ixnKVbmEhJNSf3vF1+QmIfar5S0wfL/s3CSM3qs/p6J2vWirOle1INW5VCA==
   dependencies:
     bson "^4.6.2"
     kareem "2.4.1"
@@ -1471,10 +1471,10 @@ typescript@^4.7.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
-undici@^5.5.1, undici@^5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.6.0.tgz#3fd695d4454970bae3d151326ee4ab645b8d1962"
-  integrity sha512-mc+8SY1fXubTrdx4CXDkeFFGV8lI3Tq4I/70U1V8Z6g4iscGII0uLO7CPnDt56bXEbvaKwo2T2+VrteWbZiXiQ==
+undici@^5.5.1, undici@^5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.6.1.tgz#7e5c56d15032d06738358dea433f98130e2a0561"
+  integrity sha512-yYVqywdCbNb99f/w045wqmv++WExXDjY0FEvLSB7QUZZH6izxrVkF4dJn1aimcvN0+WAhv75Gg7v6VJoqmRtJQ==
 
 unicode-emoji-json@^0.3.1:
   version "0.3.1"
@@ -1498,9 +1498,10 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vulkava@davidffa/vulkava#build:
-  version "1.5.0-dev"
-  resolved "https://codeload.github.com/davidffa/vulkava/tar.gz/f1f1fe1d27abbc74a143375f24f4898f3e1defca"
+vulkava@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.5.0.tgz#7507973c8b375d46f0d4439e394794adcbc2d5cb"
+  integrity sha512-OPAm7JoEaOw7btqCA3h+tF8hzHxay/tYn0MT8mzlToWuGseCoqWsmfCzW6hkfLr/RvLZNPogJAUyiAMbNPP1fw==
   dependencies:
     undici "^5.5.1"
     ws "^8.8.0"
