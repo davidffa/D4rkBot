@@ -2,24 +2,55 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import xml2js from 'xml2js';
+import { request } from 'undici';
+import Logger from '../../utils/Logger';
 
-interface WeatherInfo {
-  imageURL: string;
-  lat: string;
-  long: string;
-  timezone: string;
-  temp: string;
-  feelsLike: string;
-  observationTime: string;
-  observationPoint: string;
-  humidity: string;
-  day: string;
-  wind: string;
-  skyText: string;
+interface FindResponse {
+  cod: string | number;
+  message: string;
+  list: Array<{
+    id: string;
+    name: string;
+    coord: {
+      lat: number;
+      lon: number;
+    }
+  }>;
 }
 
+interface WeatherInfo {
+  dt: number;
+  sunrise?: number;
+  sunset?: number;
+  temp: number;
+  feels_like: number;
+  pressure: number;
+  humidity: number;
+  uvi: number;
+  clouds: number;
+  visibility: number;
+  wind_speed: number;
+  wind_deg: number;
+  wind_gust: number;
+  weather: Array<{
+    description: string;
+    icon: string;
+  }>;
+}
+
+interface WeatherResponse {
+  timezone_offset: number;
+  current: WeatherInfo;
+}
+
+const BASE_URL = 'https://openweathermap.org';
+const SCRIPT_REGEX = /<script src="(\/themes\/openweathermap\/assets\/vendor\/owm\/js\/weather-widget-new.+)">/;
+const APP_ID_REGEX = /appid:"([a-z0-9]+)"/;
+let appId = "";
+
 export default class Weather extends Command {
+  private readonly log: Logger;
+
   constructor(client: Client) {
     super(client, {
       name: 'weather',
@@ -30,6 +61,8 @@ export default class Weather extends Command {
       aliases: ['clima', 'meteorologia'],
       cooldown: 5
     });
+
+    this.log = Logger.getLogger(this.constructor.name);
   }
 
   async execute(ctx: CommandContext): Promise<void> {
@@ -38,62 +71,127 @@ export default class Weather extends Command {
       return;
     }
 
-    const xmlParser = new xml2js.Parser({ charkey: 'C$', attrkey: 'A$', explicitArray: true });
-
-    const res = await this.client.request(`http://weather.service.msn.com/find.aspx?src=outlook&weadegreetype=C&culture=pt-PT&weasearchstr=${ctx.args.join(' ')}`).then(res => res.body.text());
-
-    if (!res) {
-      ctx.sendMessage({ content: ':x: Ocorreu um erro ao obter os dados meteorológicos', flags: 1 << 6 });
-      return;
-    }
-
-    let weather: WeatherInfo | null | undefined;
-
-    xmlParser.parseString(res, (err: Error | null, json: any): void => {
-      if (err || !json || !json.weatherdata || !json.weatherdata.weather) {
-        weather = null;
+    if (appId === "") {
+      try {
+        await Weather.fetchAppId();
+      } catch (e: any) {
+        ctx.sendMessage({ content: `:x: Ocorreu um erro ao obter a meteorologia!`, flags: 1 << 6 });
+        this.log.error(e?.message);
         return;
       }
+    }
 
-      const data = json.weatherdata.weather[0]['A$'];
-      const weatherData = json.weatherdata.weather[0].current[0]['A$'];
+    let find: FindResponse = await request(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.body.json());
+    if (find.cod != '200') {
+      if (find.cod == '401') {
+        await Weather.fetchAppId();
+        find = await request(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.body.json());
 
-      weather = {
-        imageURL: `${data.imagerelativeurl}/law/${weatherData.skycode}.gif`,
-        lat: data.lat,
-        long: data.long,
-        timezone: data.timezone >= 0 ? `UTC+${data.timezone}` : `UTC${data.timezone}`,
-        temp: weatherData.temperature,
-        feelsLike: weatherData.feelslike,
-        observationTime: weatherData.observationtime,
-        observationPoint: weatherData.observationpoint,
-        humidity: weatherData.humidity,
-        day: weatherData.day,
-        wind: weatherData.winddisplay,
-        skyText: weatherData.skytext
+        if (find.cod != '200') {
+          ctx.sendMessage({ content: `:x: Ocorreu um erro ao obter a meteorologia!`, flags: 1 << 6 });
+          this.log.error(`Weather find error ${find.cod}: ${find.message}`);
+          return;
+        }
       }
-    });
 
-    if (!weather) {
-      ctx.sendMessage({ content: ':x: Cidade não encontrada!', flags: 1 << 6 });
+      ctx.sendMessage({ content: `:x: Ocorreu um erro ao obter a meteorologia!`, flags: 1 << 6 });
+      this.log.error(`Weather find error ${find.cod}: ${find.message}`);
       return;
     }
+
+    if (!find.list.length) {
+      ctx.sendMessage({ content: `:x: Cidade não encontrada! Tenta \`Nome da cidade, código do país\` exemplo: \`Lisboa, PT\``, flags: 1 << 6 });
+      return;
+    }
+
+    const { current, timezone_offset }: WeatherResponse = await request(`${BASE_URL}/data/2.5/onecall?lang=pt&lat=${find.list[0].coord.lat}&lon=${find.list[0].coord.lon}&units=metric&appid=${appId}`).then(r => r.body.json());
+
+    if (!current) {
+      ctx.sendMessage({ content: ':x: Ocorreu um erro ao obter a meterologia!', flags: 1 << 6 });
+      return;
+    }
+
+    const tz = timezone_offset / 3600;
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
-      .setTitle(`Meteorologia para ${weather.observationPoint}, ${weather.day}`)
-      .setDescription(weather.skyText)
-      .addField(':alarm_clock: Fuso Horário:', `\`${weather.timezone}\``, true)
-      .addField(':thermometer: Temperatura:', `\`${weather.temp}ºC\``, true)
-      .addField(':thermometer: Sensação Térmica:', `\`${weather.feelsLike}ºC\``, true)
-      .addField(':wind_blowing_face: Vento:', `\`${weather.wind}\``, true)
-      .addField(':sweat_drops: Humidade:', `\`${weather.humidity}%\``, true)
-      .addField(':clock: Hora de observação:', `\`${weather.observationTime}\` (Hora local)`, true)
-      .addField(':map: Coordenadas', `Latitude: \`${weather.lat}\`\nLongitude: \`${weather.long}\``, true)
-      .setThumbnail(weather.imageURL)
+      .setTitle(`Meteorologia para ${find.list[0].name}, <t:${current.dt}:F>`)
+      .addField(':alarm_clock: Fuso Horário:', `\`UTC${tz >= 0 ? '+' : ''}${tz}\``, true)
+      .addField(':thermometer: Temperatura:', `\`${current.temp.toFixed(0)}ºC\``, true)
+      .addField(':thermometer: Sensação Térmica:', `\`${current.feels_like.toFixed(0)}ºC\``, true)
+      .addField(':beach_umbrella: Índice UV:', `\`${Weather.getUVState(~~current.uvi)}\`, \`${current.uvi.toFixed(0)}\``, true)
+      .addField(':sweat_drops: Humidade:', `\`${current.humidity}%\``, true)
+      .addField(':earth_africa: Pressão', `\`${current.pressure} hPa\``, true)
+      .addField(':cloud: Nuvens:', `\`${current.clouds}%\``, true)
+      .addField(':railway_track: Visibilidade:', `\`${(current.visibility / 1000).toFixed(1)} km\``, true)
+      .setThumbnail(`https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`)
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
 
+    if (current.sunrise && current.sunset) {
+      const my_tz_offset = new Date().getTimezoneOffset() * 60;
+      const sunrise = new Date((current.sunrise + timezone_offset + my_tz_offset) * 1000);
+      const sunset = new Date((current.sunset + timezone_offset + my_tz_offset) * 1000);
+
+      const sunriseH = sunrise.getHours().toString().padStart(2, '0');
+      const sunriseM = sunrise.getMinutes().toString().padStart(2, '0');
+      const sunsetH = sunset.getHours().toString().padStart(2, '0');
+      const sunsetM = sunset.getMinutes().toString().padStart(2, '0');
+
+      embed.addField(':sunny: Sol:', `${sunriseH}:${sunriseM}-${sunsetH}:${sunsetM}`, true);
+    }
+
+    embed.addField(':map: Coordenadas', `Latitude: \`${find.list[0].coord.lat}\`\nLongitude: \`${find.list[0].coord.lon}\``, true)
+      .addField(':wind_blowing_face: Vento:', `\`${current.wind_speed} m/s ${Weather.windDegToDirection(current.wind_deg)}\``, true)
+      .addField(':clock: Hora de observação:', `<t:${current.dt}:t>`, true)
     ctx.sendMessage({ embeds: [embed] });
+  }
+
+  static getUVState(uv: number): string {
+    if (uv <= 2) return 'Baixo';
+    else if (uv <= 5) return 'Moderado';
+    else if (uv <= 7) return 'Alto';
+    else if (uv <= 10) return 'Muito alto';
+    else return 'Extremo';
+  }
+
+  static windDegToDirection(deg: number): string {
+    const directions = [
+      'Norte',
+      'Norte-Nordeste',
+      'Nordeste',
+      'Este-Nordeste',
+      'Este',
+      'Este-Sudeste',
+      'Sudeste',
+      'Sul-Sudeste',
+      'Sul',
+      'Sul-Sudoeste',
+      'Sudoeste',
+      'Oeste-Sudoeste',
+      'Oeste',
+      'Oeste-Noroeste',
+      'Noroeste',
+      'Norte-Noroeste'
+    ];
+
+    return directions[Math.round((directions.length / 360) * ((deg + 180) / 2 + 11.25))];
+  }
+
+  static async fetchAppId(): Promise<void> {
+    const html = await request(BASE_URL).then(r => r.body.text());
+    const htmlMatch = html.match(SCRIPT_REGEX);
+    if (htmlMatch === null) {
+      throw new Error('Could not find the app script');
+    }
+
+    const script = await request(`${BASE_URL}${htmlMatch[1]}`).then(r => r.body.text());
+    const appIdMatch = script.match(APP_ID_REGEX);
+
+    if (appIdMatch === null) {
+      throw new Error('Could not find the app id');
+    }
+
+    appId = appIdMatch[1];
   }
 }
