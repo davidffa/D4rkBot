@@ -1463,10 +1463,10 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vulkava@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.5.0.tgz#7507973c8b375d46f0d4439e394794adcbc2d5cb"
-  integrity sha512-OPAm7JoEaOw7btqCA3h+tF8hzHxay/tYn0MT8mzlToWuGseCoqWsmfCzW6hkfLr/RvLZNPogJAUyiAMbNPP1fw==
+vulkava@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.5.2.tgz#9ba2d28c3d44217fdef4de026b079850472431a8"
+  integrity sha512-3SmCd4sohRTSipK4jkuKUQJYsIIX/IXTbcaqM6RHyLGOK2FzTUIzH/mbd30eut5wq9lmkUHC3wKTU06qbgeurA==
   dependencies:
     undici "^5.5.1"
     ws "^8.8.0"
