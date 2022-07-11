@@ -115,6 +115,14 @@ export default class Lavalink extends Vulkava {
       player.textChannelId && this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\``);
       this.log.error(`Track Error on guild ${player.guildId}: ${err.message}`);
 
+      if (err.message.includes('Failed to resolve track')) {
+        if (player.queue.size > 0)
+          player.skip();
+        else
+          player.destroy();
+        return;
+      }
+
       if (!player.errorCount) {
         player.errorCount = 0;
       } else ++player.errorCount;
@@ -124,7 +132,10 @@ export default class Lavalink extends Vulkava {
         return;
       }
 
-      player.skip();
+      if (player.queue.size > 0)
+        player.skip();
+      else
+        player.destroy();
     });
 
     this.on('queueEnd', (player): void => {
