@@ -568,8 +568,8 @@ entities@^4.2.0, entities@^4.3.0:
   integrity sha512-o4q/dYJlmyjP2zfnaWDUC6A3BQFmVTX+tZPezK7k0GLSU9QYCauscf5Y+qcEPzKL+EixVouYDgLQK5H9GrLpkg==
 
 eris@DonovanDMC/eris#everything-v10:
-  version "0.17.2-everything-v10.01118e5"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/0b43817f8319dd38da6d1e68e665781d94c1423c"
+  version "0.17.2-everything-v10.52b9fd5"
+  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/44f4e0810a0c922db4224e7d40a6bc66d373353b"
   dependencies:
     ws "^8.2.3"
   optionalDependencies:
@@ -934,10 +934,10 @@ mongodb@4.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose@6.4.3:
-  version "6.4.3"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.4.3.tgz#a44978adb987fb98c8339629e83e16e07e9cbdcd"
-  integrity sha512-JuEdgpDxYIqG+V85LzNn7LKIr73ixnKVbmEhJNSf3vF1+QmIfar5S0wfL/s3CSM3qs/p6J2vWirOle1INW5VCA==
+mongoose@6.4.4:
+  version "6.4.4"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.4.4.tgz#4e22a36373d8a867ee8f73063d8b31f1e451316d"
+  integrity sha512-r6sp96veRNhNIWFtHHe4Lqak+ilgiExYnnMLhYTGdzjIMR90G1ayx0JKFVdHuC6dKNHGFX0ETJGbf36N8Romjg==
   dependencies:
     bson "^4.6.2"
     kareem "2.4.1"
