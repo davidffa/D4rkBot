@@ -72,6 +72,7 @@ export default class Weather extends Command {
     }
 
     if (appId === "") {
+      await ctx.defer();
       try {
         await Weather.fetchAppId();
       } catch (e: any) {
@@ -84,6 +85,7 @@ export default class Weather extends Command {
     let find: FindResponse = await request(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.body.json());
     if (find.cod != '200') {
       if (find.cod == '401') {
+        await ctx.defer();
         await Weather.fetchAppId();
         find = await request(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.body.json());
 
@@ -142,8 +144,8 @@ export default class Weather extends Command {
     }
 
     embed.addField(':map: Coordenadas', `Latitude: \`${find.list[0].coord.lat}\`\nLongitude: \`${find.list[0].coord.lon}\``, true)
-      .addField(':wind_blowing_face: Vento:', `\`${current.wind_speed} m/s ${Weather.windDegToDirection(current.wind_deg)}\``, true)
-      .addField(':clock: Hora de observação:', `<t:${current.dt}:t>`, true)
+      .addField(':wind_blowing_face: Vento:', `\`${current.wind_speed} m/s ${Weather.windDegToDirection(current.wind_deg)}\``, true);
+
     ctx.sendMessage({ embeds: [embed] });
   }
 
