@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Role } from 'eris';
+import { Message, Role } from 'eris';
 
 export default class Ban extends Command {
   constructor(client: Client) {
@@ -104,7 +104,12 @@ export default class Ban extends Command {
       .setTimestamp()
 
     const dm = await user.getDMChannel();
-    const msg = await dm.createMessage({ embeds: [embed] }).catch(() => null);
+    let msg: Message | null;
+    try {
+      msg = await dm.createMessage({ embeds: [embed] });
+    } catch (_) {
+      msg = null;
+    }
 
     ctx.guild.banMember(user.id, 0, reason).then(() => {
       ctx.sendMessage(`<a:verificado:803678585008816198> Banis-te o \`${user?.username}#${user?.discriminator}\` por \`${reason}\``);

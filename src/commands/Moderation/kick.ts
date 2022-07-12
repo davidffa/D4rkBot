@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Role } from 'eris';
+import { Message, Role } from 'eris';
 
 export default class Kick extends Command {
   constructor(client: Client) {
@@ -107,7 +107,12 @@ export default class Kick extends Command {
       .setTimestamp()
 
     const dm = await user.getDMChannel();
-    const msg = await dm.createMessage({ embeds: [embed] }).catch(() => null);
+    let msg: Message | null;
+    try {
+      msg = await dm.createMessage({ embeds: [embed] });
+    } catch (_) {
+      msg = null;
+    }
 
     ctx.guild.kickMember(user.id, reason).then(() => {
       if (!member) return;
