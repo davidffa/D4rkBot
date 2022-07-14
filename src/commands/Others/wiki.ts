@@ -34,7 +34,7 @@ export default class Wiki extends Command {
 
     const search = await this.client.request(`https://pt.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=1&gsrsearch=${encodeURIComponent(ctx.args.join(' '))}`).then(r => r.body.json());
 
-    if (search.query?.pages[-1]) {
+    if (!search.query) {
       if (ctx.type === Type.INTERACTION) {
         ctx.sendMessage(':x: Não encontrei nada na wikipedia.');
       } else {
@@ -45,7 +45,7 @@ export default class Wiki extends Command {
 
     const { title } = Object.values(search.query.pages)[0] as any;
 
-    const res = await this.client.request(`https://pt.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&explaintext&format=json&titles=${encodeURIComponent(title)}`).then(r => r.body.json());
+    const res = await this.client.request(`https://pt.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&explaintext&format=json&pithumbsize=512&titles=${encodeURIComponent(title)}`).then(r => r.body.json());
 
     const { extract, thumbnail } = Object.values(res.query.pages)[0] as any;
 
