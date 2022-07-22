@@ -99,13 +99,13 @@ export default class D4rkClient extends Client {
     const findUser = async (param: string, guild: Guild | null): Promise<User | null> => {
       let user: User | null | undefined;
 
-      const matched = param.match(/<@!?(\d{17,18})>/)
+      const matched = param.match(/<@!?(\d{17,19})>/)
 
       if (matched) {
         try {
           user = this.users.get(matched[1]) || await this.getRESTUser(matched[1]);
         } catch { }
-      } else if (/\d{17,18}/.test(param)) {
+      } else if (/\d{17,19}/.test(param)) {
         try {
           user = this.users.get(param) || await this.getRESTUser(param);
         } catch { }
@@ -152,11 +152,11 @@ export default class D4rkClient extends Client {
     const findRole = (param: string, guild: Guild): Role | null => {
       let role: Role | null | undefined;
 
-      const matched = param.match(/<@&(\d{17,18})>/);
+      const matched = param.match(/<@&(\d{17,19})>/);
 
       if (matched) {
         role = guild.roles.get(matched[1]);
-      } else if (/\d{17,18}/.test(param)) {
+      } else if (/\d{17,19}/.test(param)) {
         role = guild.roles.get(param)
       }
 

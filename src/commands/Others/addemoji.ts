@@ -2,6 +2,8 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
+const EMOJI_REGEX = /<(a?):.{2,32}:(\d{17,19})>/;
+
 export default class Addemoji extends Command {
   constructor(client: Client) {
     super(client, {
@@ -26,9 +28,10 @@ export default class Addemoji extends Command {
       return;
     }
 
-    if (/<a?:.{2,32}:\d{17,18}>/.test(ctx.args[0])) {
-      const id = ctx.args[0].match(/\d{17,18}/)?.[0] as string;
-      ctx.args[0] = `https://cdn.discordapp.com/emojis/${id}${/^<a/.test(ctx.args[0]) ? '.gif' : '.png'}`;
+    const match = ctx.args[0].match(EMOJI_REGEX);
+
+    if (match) {
+      ctx.args[0] = `https://cdn.discordapp.com/emojis/${match[2]}${match[1] ? '.gif' : '.png'}`;
     }
 
     const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
