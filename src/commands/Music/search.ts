@@ -8,7 +8,7 @@ import type {
   ActionRowComponents,
   AutocompleteInteraction,
   ComponentInteraction,
-  InteractionComponentSelectMenuData,
+  ComponentInteractionSelectMenuData,
   InteractionDataOptionsWithValue,
   Message,
   VoiceChannel
@@ -178,7 +178,7 @@ export default class Search extends Command {
                 player.connect();
               }
 
-              const data = i.data as InteractionComponentSelectMenuData;
+              const data = i.data as ComponentInteractionSelectMenuData;
 
               const selectedTracks = data.values.map(val => tracks[Number(val)]);
 

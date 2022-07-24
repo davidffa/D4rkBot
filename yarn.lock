@@ -567,9 +567,9 @@ entities@^4.2.0, entities@^4.3.0:
   resolved "https://registry.yarnpkg.com/entities/-/entities-4.3.1.tgz#c34062a94c865c322f9d67b4384e4169bcede6a4"
   integrity sha512-o4q/dYJlmyjP2zfnaWDUC6A3BQFmVTX+tZPezK7k0GLSU9QYCauscf5Y+qcEPzKL+EixVouYDgLQK5H9GrLpkg==
 
-eris@DonovanDMC/eris#everything-v10:
-  version "0.17.2-everything-v10.49f9d4e"
-  resolved "https://codeload.github.com/DonovanDMC/eris/tar.gz/7f7e738fdf998103dee861f7bd60a6b16be9bb89"
+eris@abalabahaha/eris#dev:
+  version "0.17.2-dev"
+  resolved "https://codeload.github.com/abalabahaha/eris/tar.gz/4ea56e45ffe68e95d89d7f3edcc181097f4f9f8d"
   dependencies:
     ws "^8.2.3"
   optionalDependencies:

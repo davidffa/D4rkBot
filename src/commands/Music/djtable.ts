@@ -4,7 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { Effect } from '../../typings/index';
 
-import { ActionRow, ActionRowComponents, ComponentInteraction, InteractionComponentSelectMenuData, Message } from 'eris';
+import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteractionSelectMenuData, Message } from 'eris';
 import { ComponentCollector } from '../../structures/Collector';
 
 export default class Djtable extends Command {
@@ -166,7 +166,7 @@ export default class Djtable extends Command {
       collector.on('collect', i => {
         switch (i.data.custom_id) {
           case 'menu':
-            const data = i.data as InteractionComponentSelectMenuData;
+            const data = i.data as ComponentInteractionSelectMenuData;
 
             const val = data.values[0] as Effect;
 
