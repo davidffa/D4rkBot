@@ -311,7 +311,7 @@ export default class D4rkClient extends Client {
       switch (id) {
         case 0:
           this.editStatus('dnd', {
-            name: 'D4rkB#2408',
+            name: 'D4rkB#5745',
             type: 3
           });
           break;

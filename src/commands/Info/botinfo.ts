@@ -45,7 +45,7 @@ export default class Botinfo extends Command {
       )
       .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt / 1e3))}:R>)`, true)
       .addField(':id: Meu ID', `\`${this.client.user.id}\``, true)
-      .addField(':man: Dono', '`D4rkB#2408`', true)
+      .addField(':man: Dono', '`D4rkB#5745`', true)
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)
       .addField(':desktop: Servidores', `\`${this.client.guilds.size}\``, true)
       .addField(':ping_pong: Ping da API', `\`${ctx.guild.shard.latency}ms\``, true)
