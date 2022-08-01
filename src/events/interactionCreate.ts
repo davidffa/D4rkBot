@@ -108,7 +108,7 @@ export default class InteractionCreate {
         flags: 1 << 6
       });
 
-      this.log.error(err.message);
+      this.log.error(err);
 
       const embed = new this.client.embed()
         .setTitle(':x: Ocorreu um erro!')
@@ -117,7 +117,8 @@ export default class InteractionCreate {
         .setFooter(`${interaction.member?.username}#${interaction.member?.discriminator}`, interaction.member?.user.dynamicAvatarURL())
         .setTimestamp();
 
-      this.client.createMessage('334054158879686657', { embeds: [embed] });
+      const ch = await this.client.getDMChannel('334054158879686657');
+      ch.createMessage({ embeds: [embed] });
     }
   }
 }

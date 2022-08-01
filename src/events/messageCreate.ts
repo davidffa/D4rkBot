@@ -183,7 +183,7 @@ export default class MessageCreate {
         appendFileSync('./logs/log.txt', `${Logger.currentDate} - Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
     } catch (err: any) {
       message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
-      this.log.error(err.message);
+      this.log.error(err);
 
       if (message.channel.type === 0) {
         const embed = new this.client.embed()
@@ -193,7 +193,8 @@ export default class MessageCreate {
           .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
           .setTimestamp();
 
-        this.client.createMessage('334054158879686657', { embeds: [embed] });
+        const ch = await this.client.getDMChannel('334054158879686657');
+        ch.createMessage({ embeds: [embed] });
       }
     }
   }
