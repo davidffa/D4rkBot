@@ -8,7 +8,7 @@ export default class Discriminator extends Command {
       name: 'discriminator',
       description: 'Mostra todas as pessoas no servidor com um determinado discriminator.',
       category: 'Info',
-      aliases: ['discrimin'],
+      aliases: ['discrim'],
       cooldown: 5,
       args: 1,
       usage: '<discriminator>'
