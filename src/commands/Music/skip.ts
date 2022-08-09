@@ -36,8 +36,6 @@ export default class Skip extends Command {
     if (voiceChannel.type !== 2) return;
 
     const skip = (dj: Boolean): void => {
-      player.skip();
-
       if (!(player.queue as TrackQueue).peek() && !player.trackRepeat && !player.queueRepeat) {
         const channel = this.client.getChannel(player.textChannelId!);
         if (channel.type !== 0) return;
@@ -50,6 +48,8 @@ export default class Skip extends Command {
         ctx.sendMessage(':bookmark_tabs: A lista de músicas acabou!');
         return;
       }
+
+      player.skip();
       ctx.sendMessage(dj ? ':fast_forward: Música pulada por um DJ!' : ':fast_forward: Música pulada!');
     }
 
