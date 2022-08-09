@@ -40,10 +40,10 @@
     "mongoose": "6.5.1",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
-    "undici": "^5.8.1",
+    "undici": "^5.8.2",
     "unicode-emoji-json": "^0.3.1",
     "utf-8-validate": "^5.0.9",
-    "vulkava": "^1.5.5",
+    "vulkava": "^1.5.6",
     "xml2js": "^0.4.23",
     "zlib-sync": "^0.1.7"
   }
