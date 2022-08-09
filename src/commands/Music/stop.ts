@@ -37,7 +37,7 @@ export default class Stop extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const stop = (dj: Boolean): void => {
+    const stop = (dj: boolean): void => {
       if (player.textChannelId) {
         const channel = this.client.getChannel(player.textChannelId);
         if (channel.type !== 0) return;

@@ -35,7 +35,7 @@ export default class Skip extends Command {
 
     if (voiceChannel.type !== 2) return;
 
-    const skip = (dj: Boolean): void => {
+    const skip = (dj: boolean): void => {
       if (!(player.queue as TrackQueue).peek() && !player.trackRepeat && !player.queueRepeat) {
         const channel = this.client.getChannel(player.textChannelId!);
         if (channel.type !== 0) return;
