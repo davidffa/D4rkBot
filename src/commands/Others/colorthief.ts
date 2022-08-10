@@ -2,8 +2,10 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { createCanvas, loadImage, Image } from 'canvas';
+import { createCanvas } from 'canvas';
 import { getPaletteFromURL } from 'color-thief-node';
+
+import { getImageSize } from '../../utils/imageUtil';
 
 type Color = {
   hex: string;
@@ -35,18 +37,21 @@ export default class ColorThief extends Command {
       return;
     }
 
-    let image: Image;
-
     try {
-      image = await loadImage(url);
-    } catch {
-      ctx.sendMessage(':x: Imagem inválida!');
-      return;
-    }
+      const imgBuf = await this.client.request(url).then(async r => Buffer.from(await r.body.arrayBuffer()));
+      const imgSize = getImageSize(imgBuf);
 
-    if (image.width * image.height > 2073600) { // 1920x1080
-      ctx.sendMessage({ content: ":x: A imagem é muito grande! (Tamanho máximo 2073600px)", flags: 1 << 6 });
-      return;
+      if (!imgSize) {
+        ctx.sendMessage(':x: Imagem inválida! Formatos aceites: PNG, JPG, JPEG');
+        return;
+      }
+
+      if (imgSize.width * imgSize.height > 2_000_000) {
+        ctx.sendMessage({ content: ":x: A imagem é muito grande! (Tamanho máximo 2000000px)", flags: 1 << 6 });
+        return;
+      }
+    } catch {
+      ctx.sendMessage(':x: URL/Imagem inválida!');
     }
 
     const palette = await getPaletteFromURL(url, 8);
