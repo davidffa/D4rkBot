@@ -183,7 +183,8 @@ export default class MessageCreate {
         appendFileSync('./logs/log.txt', `${Logger.currentDate} - Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
     } catch (err: any) {
       message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
-      this.log.error(err);
+      this.log.error(err.message);
+      console.error(err);
 
       if (message.channel.type === 0) {
         const embed = new this.client.embed()

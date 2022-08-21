@@ -108,7 +108,8 @@ export default class InteractionCreate {
         flags: 1 << 6
       });
 
-      this.log.error(err);
+      this.log.error(err.message);
+      console.error(err);
 
       const embed = new this.client.embed()
         .setTitle(':x: Ocorreu um erro!')
