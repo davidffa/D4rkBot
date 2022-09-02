@@ -151,7 +151,7 @@ export default class MessageCreate {
     if (command.args && (args.length < command.args)) {
       let reply = `:x: Argumentos em falta! `;
 
-      if (command.usage) reply += `**Usa:** \`${prefix}${cmdName} ${command.usage}\``;
+      if (command.usage) reply += `**Usa:** ${prefix}\`${cmdName} ${command.usage}\``;
 
       return message.channel.createMessage(reply);
     }
