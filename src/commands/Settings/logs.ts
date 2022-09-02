@@ -26,9 +26,9 @@ export default class Logs extends Command {
     if (!guildData) return;
 
     if (ctx.args[0].toLowerCase() === 'welcome') {
-      const channel = ctx.targetChannels?.[0] ?? ctx.guild.channels.get(ctx.args[1]);
+      const channel = ctx.guild.channels.get(ctx.targetChannels?.[0]?.id ?? ctx.args[1] ?? '');
 
-      if (!ctx.targetChannels?.[0] && !ctx.guild.channels.get(ctx.args[1])) {
+      if (!ctx.targetChannels?.[0] && !ctx.args[1]) {
         guildData.welcomeChatID = '';
         await this.client.guildDB.updateOne({
           guildID: ctx.guild.id
@@ -57,9 +57,9 @@ export default class Logs extends Command {
 
       ctx.sendMessage(`<a:verificado:803678585008816198> Canal de bem-vindo setado para \`${channel.name}\`.`);
     } else if (ctx.args[0].toLowerCase() === 'leave') {
-      const channel = ctx.targetChannels?.[0] ?? ctx.guild.channels.get(ctx.args[1]);
+      const channel = ctx.guild.channels.get(ctx.targetChannels?.[0]?.id ?? ctx.args[1] ?? '');
 
-      if (!ctx.targetChannels?.[0] && !ctx.guild.channels.get(ctx.args[1])) {
+      if (!ctx.targetChannels?.[0] && !ctx.args[1]) {
         guildData.memberRemoveChatID = '';
         await this.client.guildDB.updateOne({
           guildID: ctx.guild.id
