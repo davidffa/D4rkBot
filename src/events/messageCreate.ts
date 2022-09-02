@@ -18,13 +18,7 @@ export default class MessageCreate {
   }
 
   async run(message: Message) {
-    for (const collector of this.client.messageCollectors) {
-      if (collector.channel.id === message.channel.id) {
-        collector.collect(message);
-      }
-    }
-
-    if (message.author.bot || message.channel.type === 1 || !this.client.cacheLoaded) return;
+    if (message.content === '' || message.author.bot || message.channel.type === 1 || !this.client.cacheLoaded) return;
 
     if (message.guildID) {
       if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;

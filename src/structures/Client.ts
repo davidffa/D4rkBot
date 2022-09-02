@@ -16,7 +16,7 @@ import botDatabase from '../models/botDB';
 import guildDatabase from '../models/guildDB';
 import userDatabase from '../models/userDB';
 
-import { ComponentCollector, MessageCollector } from './Collector';
+import { ComponentCollector } from './Collector';
 
 import { Command, Utils, GuildCache, IRecord } from '../typings/index';
 import Logger from '../utils/Logger';
@@ -38,8 +38,6 @@ export default class D4rkClient extends Client {
   guildDB: typeof guildDatabase;
   userDB: typeof userDatabase;
   embed: typeof Embed;
-  // reactionCollectors: Array<ReactionCollector>;
-  messageCollectors: Array<MessageCollector>;
   componentCollectors: Array<ComponentCollector>;
   records: Map<string, IRecord>;
   request: (
@@ -91,8 +89,6 @@ export default class D4rkClient extends Client {
     this.userDB = userDatabase;
     this.embed = Embed;
     this.request = request;
-    // this.reactionCollectors = [];
-    this.messageCollectors = [];
     this.componentCollectors = [];
     this.records = new Map();
 
