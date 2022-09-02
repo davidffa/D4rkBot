@@ -24,7 +24,7 @@ export default class Autorole extends Command {
 
     if (!ctx.args.length) {
       if (!data?.autoRole) {
-        ctx.sendMessage({ content: `:x: Nenhum cargo para autorole setado. **Usa:** \`${data?.prefix || 'db.'}autorole <Cargo>\` para setar o cargo.`, flags: 1 << 6 });
+        ctx.sendMessage({ content: `:x: Nenhum cargo para autorole setado. **Usa:** \`/autorole <Cargo>\` para setar o cargo.`, flags: 1 << 6 });
         return;
       }
 
@@ -37,12 +37,12 @@ export default class Autorole extends Command {
         if (dbData) {
           dbData.roleID = '';
           dbData.save();
-          ctx.sendMessage({ content: `:x: Nenhum cargo para autorole setado. **Usa:** \`${data?.prefix || 'db.'}autorole <Cargo>\` para setar o cargo.`, flags: 1 << 6 });
+          ctx.sendMessage({ content: `:x: Nenhum cargo para autorole setado. **Usa:** \`/autorole <Cargo>\` para setar o cargo.`, flags: 1 << 6 });
         }
         return;
       }
 
-      ctx.sendMessage(`Cargo do autorole: \`${role.name}\`\n**Usa:** \`${data.prefix || 'db.'}autorole <Cargo> (0 para desativar)\``);
+      ctx.sendMessage(`Cargo do autorole: \`${role.name}\`\n**Usa:** \`/autorole <Cargo> (0 para desativar)\``);
       return;
     }
 
@@ -55,7 +55,7 @@ export default class Autorole extends Command {
         if (dbData) {
           dbData.roleID = '';
           dbData.save();
-          ctx.sendMessage(`<a:verificado:803678585008816198> Autorole desativado. **Usa:** \`${data?.prefix || 'db.'}autorole <Cargo>\` para setar um novo cargo.`);
+          ctx.sendMessage(`<a:verificado:803678585008816198> Autorole desativado. **Usa:** \`/autorole <Cargo>\` para setar um novo cargo.`);
         }
         return;
       }

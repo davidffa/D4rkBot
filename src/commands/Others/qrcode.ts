@@ -31,7 +31,7 @@ export default class Qrcode extends Command {
         }
 
         if (!ctx.args[1]) {
-          ctx.sendMessage({ content: `:x: **Usa:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode criar <Texto>`, flags: 1 << 6 });
+          ctx.sendMessage({ content: `:x: **Usa:** /qrcode criar <Texto>`, flags: 1 << 6 });
           return;
         }
 
@@ -70,7 +70,7 @@ export default class Qrcode extends Command {
         const qrURL = ctx.args[1] || ctx.attachments[0]?.url;
 
         if (!qrURL) {
-          ctx.sendMessage({ content: `:x: **Usa:** ${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode ler <URL/Anexo>`, flags: 1 << 6 });
+          ctx.sendMessage({ content: `:x: **Usa:** /qrcode ler <URL/Anexo>`, flags: 1 << 6 });
           return;
         }
 
@@ -97,7 +97,7 @@ export default class Qrcode extends Command {
         ctx.sendMessage({ embeds: [ebd] });
         break;
       default:
-        ctx.sendMessage({ content: `:x: **Usa:** \`${this.client.guildCache.get(ctx.guild?.id as string)?.prefix || 'db.'}qrcode <Criar/Ler> <Texto>|<URL/Anexo>\``, flags: 1 << 6 })
+        ctx.sendMessage({ content: `:x: **Usa:** \`/qrcode <Criar/Ler> <Texto>|<URL/Anexo>\``, flags: 1 << 6 })
         break;
     }
   }

@@ -49,7 +49,7 @@ export default class Addemoji extends Command {
       }
       imageURL = ctx.args[0];
       if (!ctx.args[1]) {
-        ctx.sendMessage({ content: `:x: Argumentos em falta! **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}addemoji <URL/Anexo/Emoji> <nome>\``, flags: 1 << 6 });
+        ctx.sendMessage({ content: `:x: Argumentos em falta! **Usa:** \`/addemoji <URL/Anexo/Emoji> <nome>\``, flags: 1 << 6 });
         return;
       }
       emojiName = ctx.args[1];

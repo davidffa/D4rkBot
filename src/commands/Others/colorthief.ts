@@ -33,7 +33,7 @@ export default class ColorThief extends Command {
     const url = ctx.attachments?.[0]?.url ?? ctx.args[0];
 
     if (!url) {
-      ctx.sendMessage(`:x: Argumentos em falta. **Usa:** \`${this.client.guildCache.get(ctx.guild.id)!.prefix}${this.name} ${this.usage}\``);
+      ctx.sendMessage(`:x: Argumentos em falta. **Usa:** \`/${this.name} ${this.usage}\``);
       return;
     }
 

@@ -80,7 +80,7 @@ export default class Search extends Command {
 
       if (['yt', 'ytm', 'sc', 'od', 'ym'].includes(ctx.args[0].toLowerCase())) {
         if (ctx.args.length < 1) {
-          ctx.sendMessage({ content: `:x: Argumentos em falta. **Usa:** \`${this.client.guildCache.get(ctx.guild.id)!.prefix}${this.name} ${this.usage}\``, flags: 1 << 6 });
+          ctx.sendMessage({ content: `:x: Argumentos em falta. **Usa:** \`/${this.name} ${this.usage}\``, flags: 1 << 6 });
           return;
         }
         res = await this.client.music.search(ctx.args.slice(1).join(' '), sources[ctx.args[0].toLowerCase()]);

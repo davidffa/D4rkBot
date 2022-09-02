@@ -24,7 +24,7 @@ export default class PlayList extends Command {
       return;
     }
 
-    const prefix = this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.';
+    const prefix = '/';
     let player = this.client.music.players.get(ctx.guild.id);
 
     if (!ctx.args.length || ['ajuda', 'help'].includes(ctx.args[0]) || !['shuffle', 'embaralhar', 'renomear', 'rename', 'add', 'detalhes', 'details', 'adicionar', 'criar', 'create', 'delete', 'remove', 'remover', 'apagar', 'excluir', 'tocar', 'play', 'listar', 'lista', 'list'].includes(ctx.args[0])) {

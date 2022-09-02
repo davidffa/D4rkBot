@@ -30,7 +30,7 @@ export default class MessageCreate {
       if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
     }
 
-    const prefix = (this.client.guildCache.get(message.guildID as string)?.prefix) || 'db.';
+    const prefix = `<@${this.client.user.id}>`;
 
     if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {
       if (message.channel.type === 0) {
@@ -39,9 +39,9 @@ export default class MessageCreate {
           message.channel.createMessage(':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>');
           return;
         }
-        return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention} O meu prefixo neste servidor é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`)
+        return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention}! Agora podes usar os meus comandos escrevendo \`/\` e clicando no meu avatar na lista de comandos!\nSe quiseres continuar a usar comandos por mensagem, basta me mencionares antes do comando\n**Exemplo:** <@${this.client.user.id}> help`);
       } else {
-        return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention} O meu prefixo é \`${prefix}\`. Faz \`${prefix}help\` para veres o que posso fazer!`)
+        return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention}! Agora podes usar os meus comandos escrevendo \`/\` e clicando no meu avatar na lista de comandos!\nSe quiseres continuar a usar comandos por mensagem, basta me mencionares antes do comando.\n**Exemplo:** <@${this.client.user.id}> help`);
       }
     }
 
@@ -54,7 +54,7 @@ export default class MessageCreate {
       return;
     }
 
-    const args = message.content.slice(prefix.length).split(/ +/);
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
     const cmdName = args.shift()?.toLowerCase();
 
     if (!cmdName) return;

@@ -261,7 +261,6 @@ export default class D4rkClient extends Client {
       const guildData = guildsDB.find(g => g.guildID === guild.id);
 
       this.guildCache.set(guild.id, {
-        prefix: guildData?.prefix ?? 'db.',
         disabledCmds: guildData?.disabledCmds ?? [],
         autoRole: guildData?.roleID ?? '',
         welcomeChatID: guildData?.welcomeChatID ?? '',

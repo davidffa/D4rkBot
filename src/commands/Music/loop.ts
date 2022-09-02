@@ -60,7 +60,7 @@ export default class Loop extends Command {
         else
           ctx.sendMessage('<a:disco:803678643661832233> Loop da queue desativado!');
       } else {
-        ctx.sendMessage({ content: `:x: **Usa:** \`${this.client.guildCache.get(ctx.guild.id)?.prefix}loop <track/queue>\``, flags: 1 << 6 });
+        ctx.sendMessage({ content: `:x: **Usa:** \`/loop <track/queue>\``, flags: 1 << 6 });
       }
     }
 

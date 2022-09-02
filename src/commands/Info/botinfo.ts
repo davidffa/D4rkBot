@@ -49,7 +49,6 @@ export default class Botinfo extends Command {
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)
       .addField(':desktop: Servidores', `\`${this.client.guilds.size}\``, true)
       .addField(':ping_pong: Ping da API', `\`${ctx.guild.shard.latency}ms\``, true)
-      .addField('<:badgehypesquad:803665497223987210> Prefixos', `Padrão: \`db.\`\nNo servidor: \`${this.client.guildCache.get(ctx.guild.id)?.prefix}\``, true)
       .addField('<:lang_js:803678540528615424> Versão NodeJS', `\`${process.version}\``, true)
       .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
       .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)

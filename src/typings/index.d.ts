@@ -36,7 +36,6 @@ interface ComponentCollectors {
 }
 
 interface GuildCache {
-  prefix: string;
   disabledCmds: Array<string>;
   autoRole: string;
   welcomeChatID: string;

@@ -11,7 +11,6 @@ export default class GuildCreate {
 
   async run(guild: Guild) {
     this.client.guildCache.set(guild.id, {
-      prefix: 'db.',
       disabledCmds: [],
       autoRole: '',
       welcomeChatID: '',

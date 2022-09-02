@@ -77,7 +77,7 @@ export default class Lyrics extends Command {
           res = await lyrics(title, artist);
         } else {
           ctx.sendMessage({
-            content: `:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.\n_P.S. Também deteto se estiveres a ouvir alguma música do spotify!_`,
+            content: `:x: Não estou a tocar nenhuma música de momento!\nTambém podes usar \`/lyrics [Nome da música] - [Artista]\` para procurar uma letra de música.\n_P.S. Também deteto se estiveres a ouvir alguma música do spotify!_`,
             flags: 1 << 6
           });
           return;
@@ -113,7 +113,7 @@ export default class Lyrics extends Command {
     if (!res) {
       if (ctx.args.join(' ').split('-').length === 1) {
         ctx.sendMessage({
-          content: `:x: Não encontrei nenhum resultado.\nExperimenta usar \`${this.client.guildCache.get(ctx.guild.id)?.prefix || 'db.'}lyrics <Nome da música> - <Artista>\``,
+          content: `:x: Não encontrei nenhum resultado.\nExperimenta usar \`/lyrics <Nome da música> - <Artista>\``,
           flags: 1 << 6
         });
       } else {

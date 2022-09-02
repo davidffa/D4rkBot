@@ -21,7 +21,7 @@ export default class Djrole extends Command {
 
     if (!ctx.args.length) {
       if (!data?.djRole) {
-        ctx.sendMessage({ content: `:x: Nenhum cargo de DJ setado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um cargo de DJ.`, flags: 1 << 6 });
+        ctx.sendMessage({ content: `:x: Nenhum cargo de DJ setado. **Usa:** \`/djrole <Cargo>\` para setar um cargo de DJ.`, flags: 1 << 6 });
         return;
       }
 
@@ -34,12 +34,12 @@ export default class Djrole extends Command {
         if (dbData) {
           dbData.djrole = '';
           dbData.save();
-          ctx.sendMessage({ content: `:x: Nenhum cargo de DJ setado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um cargo de DJ.`, flags: 1 << 6 });
+          ctx.sendMessage({ content: `:x: Nenhum cargo de DJ setado. **Usa:** \`/djrole <Cargo>\` para setar um cargo de DJ.`, flags: 1 << 6 });
         }
         return;
       }
 
-      ctx.sendMessage(`<a:disco:803678643661832233> Cargo de DJ atual: \`${djrole.name}\`\n**Usa:** \`${data.prefix || 'db.'}djrole <Cargo> (0 para desativar)\``);
+      ctx.sendMessage(`<a:disco:803678643661832233> Cargo de DJ atual: \`${djrole.name}\`\n**Usa:** \`/djrole <Cargo> (0 para desativar)\``);
       return;
     }
 
@@ -57,7 +57,7 @@ export default class Djrole extends Command {
         if (dbData) {
           dbData.djrole = '';
           dbData.save();
-          ctx.sendMessage(`<a:disco:803678643661832233> Cargo de DJ desativado. **Usa:** \`${data?.prefix || 'db.'}djrole <Cargo>\` para setar um novo cargo de DJ.`);
+          ctx.sendMessage(`<a:disco:803678643661832233> Cargo de DJ desativado. **Usa:** \`/djrole <Cargo>\` para setar um novo cargo de DJ.`);
         }
         return;
       }
