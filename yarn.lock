@@ -1422,7 +1422,7 @@ typescript@^4.8.2:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.2.tgz#e3b33d5ccfb5914e4eeab6699cf208adee3fd790"
   integrity sha512-C0I1UsrrDHo2fYI5oaCGbSejwX4ch+9Y5jTQELvovfmFkK3HHSZJB8MSJcWLmCUBzQBchCrZ9rMRV6GuNrvGtw==
 
-undici@^5.10.0, undici@^5.9.1:
+undici@^5.10.0:
   version "5.10.0"
   resolved "https://registry.yarnpkg.com/undici/-/undici-5.10.0.tgz#dd9391087a90ccfbd007568db458674232ebf014"
   integrity sha512-c8HsD3IbwmjjbLvoZuRI26TZic+TSEe8FPMLLOkN1AfYRhdjnKBU6yL+IwcSCbdZiX4e5t0lfMDLDCqj4Sq70g==
@@ -1449,12 +1449,12 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vulkava@^1.5.7:
-  version "1.5.7"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.5.7.tgz#1133e46d0e67bac20703e32e72a2a73396f294cf"
-  integrity sha512-mrpzESFvID8CoCjMIfV8RxRS7rtgfS2r6k0lJexLVecHrQFQeshBHEp5rsX904Txv1vvUZmwfNQgRjYJRKYWkw==
+vulkava@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.5.8.tgz#ac9e0dde2d27bdfcce89f5771d2d7a9575f4a21f"
+  integrity sha512-ZWIxfKwLpwKuxb01BytFQQ2fvbe021L1k4g6npJUczUwygPOYoF70Ex+0GwylQjB95skBPzT0/CL3wKhBWqhsg==
   dependencies:
-    undici "^5.9.1"
+    undici "^5.10.0"
     ws "^8.8.1"
 
 webidl-conversions@^3.0.0:
