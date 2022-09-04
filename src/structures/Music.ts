@@ -123,11 +123,18 @@ export default class Lavalink extends Vulkava {
         return;
       }
 
-      if (!player.errorCount) {
+      if (player.errorCount === undefined) {
         player.errorCount = 0;
       } else ++player.errorCount;
 
-      if (player.errorCount > 5) {
+      if (player.errorCount === 3) {
+        const newNode = this.nodes.find(node => node.state === 1 && node !== player.node);
+
+        if (newNode) {
+          player.moveNode(newNode);
+          return;
+        }
+      } else if (player.errorCount >= 10) {
         player.destroy();
         return;
       }
