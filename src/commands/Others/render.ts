@@ -59,7 +59,7 @@ export default class Render extends Command {
 
         try {
           const res = await this.client.request(url).then(async r => {
-            r.body.dump();
+            r.body.destroy();
             return r.statusCode;
           });
 

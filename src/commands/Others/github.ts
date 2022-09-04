@@ -27,7 +27,7 @@ export default class Github extends Command {
     });
 
     if (res.statusCode !== 200) {
-      res.body.dump();
+      res.body.destroy();
       ctx.sendMessage({ content: ':x: Perfil não encontrado', flags: 1 << 6 });
       return;
     }

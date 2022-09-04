@@ -28,7 +28,7 @@ export default class Repository extends Command {
     });
 
     if (res.statusCode !== 200) {
-      res.body.dump();
+      res.body.destroy();
       ctx.sendMessage({ content: ':x: Repositório não encontrado', flags: 1 << 6 });
       return;
     }
