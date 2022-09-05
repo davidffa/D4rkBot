@@ -104,7 +104,7 @@ export default class Lavalink extends Vulkava {
     });
 
     this.on('trackException', async (player, track, err): Promise<void> => {
-      if (err && err.message.includes('429')) {
+      if (err && (err.message.includes('429') || err.message.includes('This video is not available'))) {
         const newNode = this.nodes.find(node => node.state === 1 && node !== player.node);
 
         if (newNode) {
