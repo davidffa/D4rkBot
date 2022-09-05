@@ -103,7 +103,7 @@ export default class MessageCreate {
       }
 
       const msg = await message.channel.createMessage({
-        content: `:x: Eu não tenho esse comando.\n:thinking: Querias dizer \`${prefix}${diduMean}\`?`,
+        content: `:x: Eu não tenho esse comando.\n:thinking: Querias dizer ${prefix}\`${diduMean}\`?`,
         components: [row]
       });
 
