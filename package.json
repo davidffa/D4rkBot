@@ -30,7 +30,7 @@
   "dependencies": {
     "@iamtraction/google-translate": "^1.1.2",
     "bufferutil": "^4.0.6",
-    "canvas": "^2.9.3",
+    "canvas": "^2.10.0",
     "cheerio": "^1.0.0-rc.12",
     "color-thief-node": "^1.0.4",
     "dotenv": "^16.0.2",
@@ -43,7 +43,7 @@
     "undici": "^5.10.0",
     "unicode-emoji-json": "^0.3.1",
     "utf-8-validate": "^5.0.9",
-    "vulkava": "^1.5.8",
+    "vulkava": "^1.5.9",
     "xml2js": "^0.4.23",
     "zlib-sync": "^0.1.7"
   }
