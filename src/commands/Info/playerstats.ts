@@ -36,7 +36,7 @@ export default class PlayerStats extends Command {
     const embed = new this.client.embed()
       .setTitle('Status do player')
       .setColor('RANDOM')
-      .addField(':microphone2: Conectado ao servidor de voz', `\`${player.voiceState.event.endpoint}\``)
+      .addField(':microphone2: Conectado ao servidor de voz', `\`${player.voiceState.event?.endpoint ?? 'Desconhecido'}\``)
       .addField('<:lavalink:829751857483350058> Conectado ao lavalink', `\`${node.identifier}\``)
       .addField('🏓 Pings', `Lavalink <-> servidor de voz: \`${ping}ms\`\nBot <-> Lavalink: \`${nodePing}ms\``)
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
