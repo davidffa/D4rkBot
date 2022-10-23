@@ -4,6 +4,8 @@ import CommandContext from '../../structures/CommandContext';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Remove extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'remove',

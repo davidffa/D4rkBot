@@ -7,13 +7,15 @@ import { ActionRow, ActionRowComponents, ComponentInteraction, Message, User } f
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Queue extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'queue',
       description: 'Vê as músicas que estão na queue.',
       category: 'Music',
       aliases: ['q'],
-      cooldown: 6,
+      cooldown: 6
     });
   }
 

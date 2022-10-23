@@ -189,11 +189,10 @@ export default class D4rkClient extends Client {
         const cmd = require(`../commands/${dir}`).default;
         this.commands.push(new cmd(this));
       } else {
-        if (dir === 'Music') continue;
-
         for (const file of readdirSync(resolve(__dirname, '..', 'commands', dir))) {
           if (file.endsWith('.ts') || file.endsWith('.js')) {
             const command = require(`../commands/${dir}/${file}`).default;
+            if (command.disabled) continue;
             this.commands.push(new command(this));
           }
         }

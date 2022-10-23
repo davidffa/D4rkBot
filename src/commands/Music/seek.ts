@@ -3,6 +3,8 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 export default class Seek extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'seek',

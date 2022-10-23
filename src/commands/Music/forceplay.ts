@@ -7,6 +7,8 @@ import { TrackQueue } from '../../structures/TrackQueue';
 export default class Forceplay extends Command {
   private readonly log: Logger;
 
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'forceplay',

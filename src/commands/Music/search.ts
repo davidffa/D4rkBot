@@ -21,6 +21,8 @@ import { Choices } from '../../typings';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Search extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'search',

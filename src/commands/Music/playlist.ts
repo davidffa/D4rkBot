@@ -9,6 +9,8 @@ import { Track, UnresolvedTrack, ConnectionState } from 'vulkava';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class PlayList extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'playlist',

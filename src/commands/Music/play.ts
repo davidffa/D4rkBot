@@ -10,6 +10,8 @@ import { Choices } from '../../typings/index';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Play extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'play',

@@ -8,13 +8,15 @@ import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteract
 import { ComponentCollector } from '../../structures/Collector';
 
 export default class Djtable extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'djtable',
       description: 'Adiciona efeitos na música que está a tocar.',
       category: 'Music',
       aliases: ['soundeffects', 'efeitos', 'filters', 'soundfilters', 'effects', 'mesadj'],
-      cooldown: 5,
+      cooldown: 5
     });
   }
 

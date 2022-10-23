@@ -4,13 +4,15 @@ import CommandContext from '../../structures/CommandContext';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Skip extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'skip',
       description: 'Pula a música atual.',
       category: 'Music',
       aliases: ['s', 'pular'],
-      cooldown: 2,
+      cooldown: 2
     });
   }
 

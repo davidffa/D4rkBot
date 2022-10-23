@@ -9,11 +9,11 @@ export default class Radio extends Command {
   private readonly log: Logger;
 
   static radios = {
-    M80: 'https://mcrscast1.mcr.iol.pt/m80',
-    CidadeFM: 'https://mcrscast.mcr.iol.pt/cidadefm',
-    CidadeHipHop: 'https://mcrscast.mcr.iol.pt/cidHiphop',
+    M80: 'https://media3.mcr.iol.pt/livefm/m80.mp3/icecast.audio',
+    CidadeFM: 'https://media3.mcr.iol.pt/livefm/cidade.mp3/icecast.audio',
+    CidadeHipHop: 'https://media3.mcr.iol.pt/wrcidade/cidhiphop.aac/icecast.audio',
     RFM: 'https://20723.live.streamtheworld.com/RFMAAC.aac',
-    RadioComercial: 'https://mcrscast1.mcr.iol.pt/comercial'
+    RadioComercial: 'https://media3.mcr.iol.pt/livefm/comercial.mp3/icecast.audio'
   };
 
   constructor(client: Client) {

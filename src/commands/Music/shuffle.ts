@@ -4,13 +4,15 @@ import CommandContext from '../../structures/CommandContext';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Shuffle extends Command {
+  static disabled = true;
+
   constructor(client: Client) {
     super(client, {
       name: 'shuffle',
       description: 'Embaralha a lista de músicas.',
       category: 'Music',
       aliases: ['baralhar', 'embaralhar'],
-      cooldown: 8,
+      cooldown: 8
     });
   }
 
