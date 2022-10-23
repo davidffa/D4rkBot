@@ -5,7 +5,8 @@ export default class Logger {
     BLUE: '\u001b[34m',
     YELLOW: '\u001b[33m',
     RED: '\u001b[31m',
-    BOLD: '\u001b[1m'
+    BOLD: '\u001b[1m',
+    WHITE: '\u001b[37m',
   };
 
   static getLogger(className: string): Logger {
@@ -29,5 +30,9 @@ export default class Logger {
 
   error(message: string) {
     console.error(`${Logger.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.RED}ERROR ${Logger.COLORS.RESET}${message}`);
+  }
+
+  debug(message: string) {
+    console.debug(`${Logger.currentDate} ${Logger.COLORS.BOLD}${Logger.COLORS.GREEN}${this.className} ${Logger.COLORS.WHITE}DEBUG ${Logger.COLORS.RESET}${message}`);
   }
 }
