@@ -4,8 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 import Embed from '../../structures/Embed';
 
 import { Node } from 'vulkava';
-import { User, Message, ActionRowComponents, ActionRow, ComponentInteraction } from 'eris';
-import { ComponentCollector } from '../../structures/Collector';
+import { User } from 'eris';
 
 export default class Lavalink extends Command {
   constructor(client: Client) {
@@ -19,12 +18,9 @@ export default class Lavalink extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    const nodes = [
-      this.client.music.nodes.find(n => n.identifier === 'USA Node'),
-      this.client.music.nodes.find(n => n.identifier === 'Europe Node')
-    ]
+    const node = this.client.music.nodes.find(n => n.identifier === 'USA Node')
 
-    if (!nodes.length) {
+    if (!node) {
       ctx.sendMessage(':warning: Não existem nodes do lavalink disponíveis.');
       return;
     }
@@ -34,60 +30,9 @@ export default class Lavalink extends Command {
       return;
     }
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'left',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '⬅️'
-        },
-        disabled: true
-      },
-      {
-        custom_id: 'right',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '➡️'
-        }
-      }
-    ]
+    const embed = await this.getNodeInfoEmbed(ctx.author, node);
 
-    const row: ActionRow = {
-      type: 1,
-      components
-    }
-
-    const embed = await this.getNodeInfoEmbed(ctx.author, nodes[0] as Node);
-
-    const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
-
-    let page = 1;
-
-    const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
-    const collector = new ComponentCollector(this.client, msg, filter, { time: 3 * 60 * 1000, max: 10 });
-
-    collector.on('collect', async (i) => {
-      switch (i.data.custom_id) {
-        case 'left':
-          if (page === 1) return;
-          page--;
-          row.components[0].disabled = true;
-          row.components[1].disabled = false;
-          break;
-        case 'right':
-          if (page === 2) return;
-          page++;
-          row.components[0].disabled = false;
-          row.components[1].disabled = true;
-          break;
-      }
-      const e = await this.getNodeInfoEmbed(ctx.author, nodes[page - 1] as Node);
-      i.editParent({ embeds: [e], components: [row] });
-    });
+    ctx.sendMessage({ embeds: [embed] });
   }
 
   async getNodeInfoEmbed(author: User, node: Node): Promise<Embed> {
@@ -96,7 +41,7 @@ export default class Lavalink extends Command {
 
     return new this.client.embed()
       .setColor('RANDOM')
-      .setTitle('<:lavalink:829751857483350058> Status dos Nodes do Lavalink')
+      .setTitle('<:lavalink:829751857483350058> Status do Node do Lavalink')
       .setDescription('[Lavalink que eu uso](https://github.com/davidffa/lavalink/releases)\nWrapper do Lavalink: [Vulkava](https://npmjs.com/package/vulkava)')
       .addField(':id: Nome', `\`${node.identifier}\``, true)
       .addField(':calendar: Players a tocar', `\`${node.stats.players}\``, true)

@@ -222,17 +222,6 @@ export default class D4rkClient extends Client {
   connectLavaLink(): void {
     const nodes: NodeOptions[] = [
       {
-        id: 'Europe Node',
-        hostname: process.env.EULAVALINKHOST,
-        port: 2333,
-        password: process.env.LAVALINKPASSWORD,
-        maxRetryAttempts: 5,
-        retryAttemptsInterval: 6000,
-        secure: false,
-        region: 'EU',
-        resumeKey: 'D4rkBot'
-      },
-      {
         id: 'USA Node',
         hostname: process.env.USALAVALINKHOST,
         port: 2333,
