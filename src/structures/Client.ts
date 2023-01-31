@@ -2,8 +2,6 @@ import { readdirSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 import { Client, ClientOptions, User, Guild, Constants, Role, ClientEvents, TextChannel } from 'oceanic.js';
 import { NodeOptions } from 'vulkava';
-import { request, Dispatcher } from 'undici';
-import { UrlObject } from 'url';
 
 import Embed from './Embed';
 import Music from './Music';
@@ -40,10 +38,6 @@ export default class D4rkClient extends Client {
   embed: typeof Embed;
   componentCollectors: Array<ComponentCollector>;
   records: Map<string, IRecord>;
-  request: (
-    url: string | URL | UrlObject,
-    options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>>,
-  ) => Promise<Dispatcher.ResponseData>;
 
   constructor() {
     const clientOptions: ClientOptions = {
@@ -86,7 +80,6 @@ export default class D4rkClient extends Client {
     this.guildDB = guildDatabase;
     this.userDB = userDatabase;
     this.embed = Embed;
-    this.request = request;
     this.componentCollectors = [];
     this.records = new Map();
 
