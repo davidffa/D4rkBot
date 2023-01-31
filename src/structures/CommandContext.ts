@@ -49,7 +49,7 @@ export default class CommandContext {
       this.attachments = []; // TODO: support slash attachments
 
       if (interaction.data.type === 1) {
-        if (interaction.data.options.raw?.[0].type === 1) {
+        if (interaction.data.options.raw?.[0]?.type === 1) {
           this.args.push(interaction.data.options.raw[0].name.toString().trim());
 
           if (interaction.data.options.raw[0].options) {
