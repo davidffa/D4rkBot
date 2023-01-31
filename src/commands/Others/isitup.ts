@@ -26,7 +26,7 @@ export default class Isitup extends Command {
 
     const url = ctx.args[0].replace(HTTP, '').replace(PATH, '');
 
-    const body = await this.client.request(`https://isitup.org/${url}.json`).then(res => res.body.json()).catch(_ => null);
+    const body = await fetch(`https://isitup.org/${url}.json`).then(res => res.json()).catch(_ => null);
 
     if (!body) {
       ctx.sendMessage({ content: ':x: Site inválido!', flags: 1 << 6 });

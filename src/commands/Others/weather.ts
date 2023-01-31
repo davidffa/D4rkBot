@@ -2,7 +2,6 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { request } from 'undici';
 import Logger from '../../utils/Logger';
 import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
@@ -83,12 +82,12 @@ export default class Weather extends Command {
       }
     }
 
-    let find: FindResponse = await request(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.body.json());
+    let find: FindResponse = await fetch(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.json());
     if (find.cod != '200') {
       if (find.cod == '401') {
         await ctx.defer();
         await Weather.fetchAppId();
-        find = await request(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.body.json());
+        find = await fetch(`${BASE_URL}/data/2.5/find?q=${encodeURIComponent(ctx.args.join(' '))}&units=metric&appid=${appId}`).then(r => r.json());
 
         if (find.cod != '200') {
           ctx.sendMessage({ content: `:x: Ocorreu um erro ao obter a meteorologia!`, flags: 1 << 6 });
@@ -107,7 +106,7 @@ export default class Weather extends Command {
       return;
     }
 
-    const { current, timezone_offset }: WeatherResponse = await request(`${BASE_URL}/data/2.5/onecall?lang=pt&lat=${find.list[0].coord.lat}&lon=${find.list[0].coord.lon}&units=metric&appid=${appId}`).then(r => r.body.json());
+    const { current, timezone_offset }: WeatherResponse = await fetch(`${BASE_URL}/data/2.5/onecall?lang=pt&lat=${find.list[0].coord.lat}&lon=${find.list[0].coord.lon}&units=metric&appid=${appId}`).then(r => r.json());
 
     if (!current) {
       ctx.sendMessage({ content: ':x: Ocorreu um erro ao obter a meterologia!', flags: 1 << 6 });
@@ -182,13 +181,13 @@ export default class Weather extends Command {
   }
 
   static async fetchAppId(): Promise<void> {
-    const html = await request(BASE_URL).then(r => r.body.text());
+    const html = await fetch(BASE_URL).then(r => r.text());
     const htmlMatch = html.match(SCRIPT_REGEX);
     if (htmlMatch === null) {
       throw new Error('Could not find the app script');
     }
 
-    const script = await request(`${BASE_URL}${htmlMatch[1]}`).then(r => r.body.text());
+    const script = await fetch(`${BASE_URL}${htmlMatch[1]}`).then(r => r.text());
     const appIdMatch = script.match(APP_ID_REGEX);
 
     if (appIdMatch === null) {

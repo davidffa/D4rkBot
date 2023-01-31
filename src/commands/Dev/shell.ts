@@ -72,13 +72,13 @@ export default class Shell extends Command {
           }]
         };
 
-        const bin = await this.client.request('https://sourceb.in/api/bins', {
+        const bin = await fetch('https://sourceb.in/api/bins', {
           method: 'POST',
           body: JSON.stringify(body),
           headers: {
             'content-type': 'application/json',
           }
-        }).then(res => res.body.json());
+        }).then(res => res.json());
 
         if (bin.key) {
           msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [components], fetchReply: true }) as Message;

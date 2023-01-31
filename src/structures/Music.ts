@@ -254,15 +254,15 @@ export default class Lavalink extends Vulkava {
     const lcRadio = radio.toLowerCase();
 
     if (['CidadeHipHop', 'CidadeFM', 'RadioComercial', 'M80'].includes(radio)) {
-      const xml = await this.client.request(`https://${lcRadio.startsWith('cidade') ? 'cidade' : lcRadio}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.body.text());
+      const xml = await fetch(`https://${lcRadio.startsWith('cidade') ? 'cidade' : lcRadio}.iol.pt/nowplaying${radio === 'CidadeHipHop' ? '_Cidade_HipHop' : ''}.xml`).then(r => r.text());
 
       const text = await xmlParser.parseStringPromise(xml).then(t => t.RadioInfo.Table[0]);
 
       artist = text['DB_DALET_ARTIST_NAME'][0];
       songTitle = text['DB_DALET_TITLE_NAME'][0];
     } else if (radio === 'RFM') {
-      const xml = await this.client.request('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml')
-        .then(async r => Buffer.from(await r.body.arrayBuffer()).toString('utf16le'));
+      const xml = await fetch('https://configsa01.blob.core.windows.net/rfm/rfmOnAir.xml')
+        .then(async r => Buffer.from(await r.arrayBuffer()).toString('utf16le'));
 
       const text = await xmlParser.parseStringPromise(xml).then(parsed => parsed.music.song[0]);
 

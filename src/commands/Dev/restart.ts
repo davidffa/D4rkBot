@@ -16,7 +16,7 @@ export default class Restart extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.author.id !== '334054158879686657') return;
 
-    const { status, res } = await this.client.request(`https://api.heroku.com/apps/${ctx.args[0].toLowerCase()}/dynos`, {
+    const { status, res } = await fetch(`https://api.heroku.com/apps/${ctx.args[0].toLowerCase()}/dynos`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/vnd.heroku+json; version=3',
@@ -24,8 +24,8 @@ export default class Restart extends Command {
       }
     }).then(async r => {
       return {
-        status: r.statusCode,
-        res: await r.body.json()
+        status: r.status,
+        res: await r.json()
       }
     });
 

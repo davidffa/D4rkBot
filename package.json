@@ -40,7 +40,6 @@
     "oceanic.js": "^1.4.2-dev.7d4a9cd",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
-    "undici": "^5.16.0",
     "unicode-emoji-json": "^0.4.0",
     "utf-8-validate": "^6.0.2",
     "vulkava": "^1.5.10",

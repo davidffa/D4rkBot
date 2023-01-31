@@ -43,17 +43,17 @@ export default class Lyrics extends Command {
         .replace(/\s+/g, ' ')
         .trim();
 
-      const res = await this.client.request(`https://api.genius.com/search?q=${encodeURIComponent(song)}`, {
+      const res = await fetch(`https://api.genius.com/search?q=${encodeURIComponent(song)}`, {
         headers: {
           'Authorization': `Bearer ${process.env.GENIUSLYRICSTOKEN}`
         }
-      }).then(res => res.body.json());
+      }).then(res => res.json());
 
       if (!res.response.hits.length) return null;
 
       const data = res.response.hits[0].result;
 
-      const lyrics = await this.client.request(`${process.env.LYRICSAPIURL}?url=${encodeURIComponent(data.url)}`).then(res => res.body.json()).then(json => json.lyrics);
+      const lyrics = await fetch(`${process.env.LYRICSAPIURL}?url=${encodeURIComponent(data.url)}`).then(res => res.json()).then(json => json.lyrics);
 
       return {
         lyrics,

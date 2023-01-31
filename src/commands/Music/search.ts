@@ -225,11 +225,11 @@ export default class Search extends Command {
     const choices: Choices[] = [];
 
     if (options[0].value === 'yt' || options[0].value === 'ytm') {
-      const res = await this.client.request(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`, {
+      const res = await fetch(`https://clients1.google.com/complete/search?client=youtube&hl=pt-PT&ds=yt&q=${encodeURIComponent(value)}`, {
         headers: {
           'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36'
         }
-      }).then(async r => Buffer.from(await r.body.arrayBuffer()).toString('latin1'));
+      }).then(async r => Buffer.from(await r.arrayBuffer()).toString('latin1'));
 
       const data = res.split('[');
 
@@ -247,11 +247,11 @@ export default class Search extends Command {
       const id = await soundCloudIdExtractor();
 
       if (id) {
-        const res = await this.client.request(`https://api-v2.soundcloud.com/search/queries?q=${encodeURIComponent(value)}&client_id=${id}&limit=7`, {
+        const res = await fetch(`https://api-v2.soundcloud.com/search/queries?q=${encodeURIComponent(value)}&client_id=${id}&limit=7`, {
           headers: {
             'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36'
           }
-        }).then(r => r.body.json());
+        }).then(r => r.json());
         const searchResult = res.collection;
 
         for (var i = 0, min = Math.min(searchResult.length, 8); i < min; i++) {
@@ -262,11 +262,11 @@ export default class Search extends Command {
         }
       }
     } else if (options[0].value === 'od') {
-      const res = await this.client.request(`https://lighthouse.odysee.com/search?s=${encodeURIComponent(value)}&size=7&from=0&nsfw=false`, {
+      const res = await fetch(`https://lighthouse.odysee.com/search?s=${encodeURIComponent(value)}&size=7&from=0&nsfw=false`, {
         headers: {
           'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36'
         }
-      }).then(r => r.body.json());
+      }).then(r => r.json());
 
       for (var i = 0, min = Math.min(res.length, 8); i < min; i++) {
         choices.push({

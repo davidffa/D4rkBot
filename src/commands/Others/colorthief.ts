@@ -38,7 +38,7 @@ export default class ColorThief extends Command {
     }
 
     try {
-      const imgBuf = await this.client.request(url).then(async r => Buffer.from(await r.body.arrayBuffer()));
+      const imgBuf = await fetch(url).then(async r => Buffer.from(await r.arrayBuffer()));
       const imgSize = getImageSize(imgBuf);
 
       if (!imgSize) {

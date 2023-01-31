@@ -59,9 +59,8 @@ export default class Render extends Command {
         }, 5e3);
 
         try {
-          const res = await this.client.request(url).then(async r => {
-            r.body.destroy();
-            return r.statusCode;
+          const res = await fetch(url).then(async r => {
+            return r.status;
           });
 
           if (res)
@@ -95,13 +94,13 @@ export default class Render extends Command {
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
-    const res = await this.client.request(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
+    const res = await fetch(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
       headers: {
         Authorization: process.env.RENDERAPITOKEN,
       },
     }).then(r => {
-      if (r.statusCode !== 200) return null;
-      return r.body.arrayBuffer();
+      if (r.status !== 200) return null;
+      return r.arrayBuffer();
     });
 
     if (!res) {
