@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Isitup extends Command {
   constructor(client: Client) {
@@ -15,7 +16,7 @@ export default class Isitup extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -35,7 +36,7 @@ export default class Isitup extends Command {
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     if (body.response_code) {
       body.response_time *= 1e3;

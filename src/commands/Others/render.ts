@@ -5,7 +5,8 @@ import { ComponentCollector, } from '../../structures/Collector';
 
 import { inflateSync } from 'zlib';
 
-import { Message, ComponentInteraction, ActionRowComponents, ActionRow } from 'eris';
+import { Message, ComponentInteraction, MessageActionRow } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Render extends Command {
   constructor(client: Client) {
@@ -28,12 +29,12 @@ export default class Render extends Command {
       return;
     }
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -79,12 +80,12 @@ export default class Render extends Command {
       if (ctx.type === Type.INTERACTION) {
         ctx.sendMessage(`:x: ${ctx.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
       } else {
-        waitMsg?.edit(`:x: ${ctx.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.`);
+        waitMsg?.edit({ content: `:x: ${ctx.member?.mention}, esse site não existe ou não respondeu dentro de 5 segundos.` });
       }
       return;
     }
 
-    if (ctx.type === Type.MESSAGE) waitMsg?.edit('<a:loading2:805088089319407667> A renderizar a página...');
+    if (ctx.type === Type.MESSAGE) waitMsg?.edit({ content: '<a:loading2:805088089319407667> A renderizar a página...' });
 
     const embed = new this.client.embed()
       .setColor('RANDOM')
@@ -92,7 +93,7 @@ export default class Render extends Command {
       .setURL(finalURL)
       .setImage('attachment://render.png')
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     const res = await this.client.request(`${process.env.RENDERAPIURL}?url=${encodeURIComponent(finalURL)}`, {
       headers: {
@@ -107,7 +108,7 @@ export default class Render extends Command {
       if (ctx.type === Type.INTERACTION) {
         ctx.sendMessage(':x: Site inválido');
       } else {
-        waitMsg?.edit(':x: Site inválido');
+        waitMsg?.edit({ content: ':x: Site inválido' });
       }
       return;
     }
@@ -118,36 +119,33 @@ export default class Render extends Command {
       if (ctx.type === Type.INTERACTION) {
         ctx.sendMessage(':x: Site inválido');
       } else {
-        waitMsg?.edit(':x: Site inválido');
+        waitMsg?.edit({ content: ':x: Site inválido' });
       }
       return;
     }
 
     waitMsg?.delete();
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'delete',
-        style: 4,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '🗑️'
-        }
-      },
-    ]
-
-    const row: ActionRow = {
+    const row: MessageActionRow = {
       type: 1,
-      components
+      components: [
+        {
+          customID: 'delete',
+          style: 4,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '🗑️'
+          }
+        },
+      ]
     }
-
     const msg = await ctx.sendMessage({
       embeds: [embed],
       files: [
         {
           name: 'render.png',
-          file: inflate
+          contents: inflate
         }
       ],
       components: [row],

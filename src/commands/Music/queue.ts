@@ -3,8 +3,9 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { ActionRow, ActionRowComponents, ComponentInteraction, Message, User } from 'eris';
+import { ComponentInteraction, Message, MessageActionRow, User } from 'oceanic.js';
 import { TrackQueue } from '../../structures/TrackQueue';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Queue extends Command {
   static disabled = true;
@@ -21,7 +22,7 @@ export default class Queue extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -56,7 +57,7 @@ export default class Queue extends Command {
       .setTitle(':bookmark_tabs: Lista de músicas')
       .setDescription(desc.join('\n'))
       .setTimestamp()
-      .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
 
     if (queue.size <= 10) {
@@ -64,32 +65,30 @@ export default class Queue extends Command {
       return;
     }
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'left',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '⬅️'
-        },
-        disabled: true
-      },
-      {
-        custom_id: 'right',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '➡️'
-        }
-      }
-    ];
-
-    const row: ActionRow = {
+    const row: MessageActionRow = {
       type: 1,
-      components
-    }
+      components: [
+        {
+          customID: 'left',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '⬅️'
+          },
+          disabled: true
+        },
+        {
+          customID: 'right',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '➡️'
+          }
+        }
+      ]
+    };
 
     const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
@@ -104,7 +103,7 @@ export default class Queue extends Command {
         `${queue.getSongDetails(0, 10)}`
       ];
 
-      switch (i.data.custom_id) {
+      switch (i.data.customID) {
         case 'left':
           if (page === 1) return;
           if (--page === 1) {
@@ -114,10 +113,10 @@ export default class Queue extends Command {
 
           if (page === 1) {
             embed.setDescription(newDesc.join('\n'))
-              .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());;
+              .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
           } else {
             embed.setDescription(queue.getSongDetails((page - 1) * 10, page * 10))
-              .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+              .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
           }
 
           i.editParent({ embeds: [embed], components: [row] });
@@ -130,7 +129,7 @@ export default class Queue extends Command {
           row.components[0].disabled = false;
 
           embed.setDescription(queue.getSongDetails((page - 1) * 10, page * 10))
-            .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+            .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
           i.editParent({ embeds: [embed], components: [row] });
           break;

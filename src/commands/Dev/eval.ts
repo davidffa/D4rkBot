@@ -4,7 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
+import { Message, ComponentInteraction, MessageActionRow } from 'oceanic.js';
 
 import { Player } from 'vulkava';
 
@@ -50,31 +50,29 @@ export default class Eval extends Command {
 
     let msg: Message;
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'delete',
-        style: 4,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '🗑️'
-        }
-      },
-      {
-        custom_id: 'dm',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '📋'
-        }
-      }
-    ]
-
-    const row: ActionRow = {
+    const components: MessageActionRow = {
       type: 1,
-      components
-    }
+      components: [
+        {
+          customID: 'delete',
+          style: 4,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '🗑️'
+          }
+        },
+        {
+          customID: 'dm',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '📋'
+          }
+        }
+      ]
+    };
 
     try {
       const start = process.hrtime();
@@ -104,7 +102,7 @@ export default class Eval extends Command {
       const res = response.join('\n');
 
       if (res.length < 2e3) {
-        msg = await ctx.sendMessage({ content: res, components: [row], fetchReply: true }) as Message;
+        msg = await ctx.sendMessage({ content: res, components: [components], fetchReply: true }) as Message;
       } else {
         const body = {
           files: [{
@@ -123,23 +121,23 @@ export default class Eval extends Command {
         }).then(res => res.body.json());
 
         if (bin.key) {
-          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row], fetchReply: true }) as Message;
+          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [components], fetchReply: true }) as Message;
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
             files: [
               {
                 name: 'eval.txt',
-                file: Buffer.from(res)
+                contents: Buffer.from(res)
               }
             ],
-            components: [row],
+            components: [components],
             fetchReply: true
           }) as Message;
         }
       }
     } catch (err) {
-      msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``, components: [row], fetchReply: true }) as Message;
+      msg = await ctx.sendMessage({ content: `:x: Erro: \`\`\`x1\n${clean(err)}\`\`\``, components: [components], fetchReply: true }) as Message;
     }
 
     const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
@@ -147,16 +145,16 @@ export default class Eval extends Command {
     const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
     collector.on('collect', async i => {
-      switch (i.data.custom_id) {
+      switch (i.data.customID) {
         case 'dm':
-          const dmChannel = await ctx.author.getDMChannel();
-          dmChannel.createMessage(msg.content);
+          const dmChannel = await ctx.author.createDM();
+          dmChannel.createMessage({ content: msg.content });
 
           msg.edit({ content: '<a:verificado:803678585008816198> Resultado da eval enviado no privado!', components: [] });
 
           break;
         case 'delete':
-          if (msg.attachments.length === 1) {
+          if (msg.attachments.size === 1) {
             msg.delete();
             return;
           }

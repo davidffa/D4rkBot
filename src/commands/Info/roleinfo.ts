@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class RoleInfo extends Command {
   constructor(client: Client) {
@@ -17,7 +18,7 @@ export default class RoleInfo extends Command {
   execute(ctx: CommandContext): void {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -38,7 +39,7 @@ export default class RoleInfo extends Command {
     const embed = new this.client.embed()
       .setTitle(`Informações do cargo ${role.name}`)
       .addField(':id: ID', `\`${role.id}\``, true)
-      .addField(':calendar: Criado em', `<t:${Math.floor(role.createdAt / 1e3)}:d> (<t:${Math.floor(role.createdAt / 1e3)}:R>)`, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(role.createdAt.getDate() / 1e3)}:d> (<t:${Math.floor(role.createdAt.getDate() / 1e3)}:R>)`, true)
       .addField('@ Mencionável', `\`${role.mentionable ? 'Sim' : 'Não'}\``, true)
       .addField(':military_medal: Posição', `\`${role.position}\``, true)
       .addField(':beginner: Separado', `\`${role.hoist ? 'Sim' : 'Não'}\``, true)
@@ -47,9 +48,9 @@ export default class RoleInfo extends Command {
       .addField(':8ball: Permissões', `\`\`\`\n${Object.keys(role.permissions.json).length ? Object.keys(role.permissions.json).join(', ') : 'Nenhuma'}\`\`\``)
       .setColor(role.color)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
-    role.iconURL && embed.setThumbnail(role.iconURL);
+    role.icon && embed.setThumbnail(role.icon);
 
     ctx.sendMessage({ embeds: [embed] });
   }

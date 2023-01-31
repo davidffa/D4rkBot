@@ -3,7 +3,8 @@ import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
 import { ComponentCollector } from '../structures/Collector';
 
-import { ActionRow, ComponentInteraction, Message } from 'eris';
+import { ComponentInteraction, Message, MessageActionRow } from 'oceanic.js';
+import { dynamicAvatar } from '../utils/dynamicAvatar';
 
 export default class Help extends Command {
   constructor(client: Client) {
@@ -16,7 +17,7 @@ export default class Help extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -33,7 +34,7 @@ export default class Help extends Command {
     const embed = new this.client.embed()
       .setColor('RANDOM')
       .setTitle('Ajuda')
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author))
       .setTimestamp();
 
     if (!ctx.args.length) {
@@ -75,11 +76,11 @@ export default class Help extends Command {
         .addField(`:thinking: Mais ajuda`, `Faz <@${this.client.user.id}> \`help <nome do comando>\` para obter informação sobre um comando`)
         .addField(`<:megathink:803675654376652880> Ainda mais ajuda`, '[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)')
 
-      const row: ActionRow = {
+      const row: MessageActionRow = {
         type: 1,
         components: [
           {
-            custom_id: 'delete',
+            customID: 'delete',
             style: 4,
             type: 2,
             emoji: {

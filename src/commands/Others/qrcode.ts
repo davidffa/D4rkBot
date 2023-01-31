@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Qrcode extends Command {
   constructor(client: Client) {
@@ -16,7 +17,7 @@ export default class Qrcode extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -25,7 +26,7 @@ export default class Qrcode extends Command {
       case 'criar':
       case 'create':
       case 'c':
-        if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+        if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) {
           ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
           return;
         }
@@ -49,14 +50,14 @@ export default class Qrcode extends Command {
           .setColor('RANDOM')
           .setImage('attachment://qr.png')
           .setTimestamp()
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
         ctx.sendMessage({
           embeds: [embed],
           files: [
             {
               name: 'qr.png',
-              file: buffer
+              contents: buffer
             }
           ]
         });
@@ -92,7 +93,7 @@ export default class Qrcode extends Command {
           .setDescription(`:newspaper: **Texto:**\n\n\`\`\`\n${data}\`\`\``)
           .setThumbnail(qrURL)
           .setTimestamp()
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
         ctx.sendMessage({ embeds: [ebd] });
         break;

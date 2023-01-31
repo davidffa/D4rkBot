@@ -19,12 +19,12 @@ export default class Lock extends Command {
 
     const channel = ctx.channel;
 
-    if (!channel.permissionsOf(ctx.author.id).has('manageChannels')) {
+    if (!channel.permissionsOf(ctx.author.id).has('MANAGE_CHANNELS')) {
       ctx.sendMessage({ content: ':x: Não tens permissão para alterar as permissões deste canal.', flags: 1 << 6 });
       return;
     }
 
-    if (!channel.permissionsOf(this.client.user.id).has('manageChannels')) {
+    if (!channel.permissionsOf(this.client.user.id).has('MANAGE_CHANNELS')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para alterar as permissões deste canal!', flags: 1 << 6 });
       return;
     }
@@ -40,6 +40,11 @@ export default class Lock extends Command {
     const deny = permissions?.deny ?? 0n;
 
     await ctx.sendMessage(':lock: Canal bloqueado!');
-    channel.editPermission(ctx.guild.id, allow & ~(1n << 11n), deny | (1n << 11n), 0, 'Lock cmd' || ctx.args.join(' ').slice(0, 50));
+    channel.editPermission(ctx.guild.id, {
+      type: 0,
+      allow: allow & ~(1n << 11n),
+      deny: deny | (1n << 11n),
+      reason: 'Lock cmd' || ctx.args.join(' ').slice(0, 50)
+    });
   }
 }

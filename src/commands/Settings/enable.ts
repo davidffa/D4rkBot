@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Enable extends Command {
   constructor(client: Client) {
@@ -17,7 +18,7 @@ export default class Enable extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
+    if (!ctx.member?.permissions.has('MANAGE_GUILD') && ctx.author.id !== '334054158879686657') {
       ctx.sendMessage({ content: ':x: Precisas da permissão `MANAGE_GUILD` para usar este comando.', flags: 1 << 6 });
       return;
     }
@@ -47,7 +48,7 @@ export default class Enable extends Command {
       guildDBData.save();
     }
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage(`<:on:764478511875751937> O comando \`${ctx.args[0]}\` foi ativado com sucesso!`);
       return;
     }
@@ -56,7 +57,7 @@ export default class Enable extends Command {
       .setColor('RANDOM')
       .setDescription(`<:on:764478511875751937> O comando \`${ctx.args[0]}\` foi ativado com sucesso!`)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
   }

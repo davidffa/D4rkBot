@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Repository extends Command {
   constructor(client: Client) {
@@ -16,7 +17,7 @@ export default class Repository extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -47,7 +48,7 @@ export default class Repository extends Command {
       .setThumbnail(`${repo.owner.avatar_url}${Math.floor(Math.random() * 10000)}`)
       .setURL(repo.html_url)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     repo.language && embed.addField(':gear: Linguagem', repo.language, true);
     repo.license && repo.license.name && embed.addField(':newspaper: Licença', repo.license.name, true)

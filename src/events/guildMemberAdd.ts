@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Guild, Member } from 'eris';
+import { Guild, Member, TextableChannel } from 'oceanic.js';
 
 import { resolve } from 'path';
 import Canvas, { Canvas as CanvasOptions } from 'canvas';
@@ -54,7 +54,7 @@ export default class GuildMemberAdd {
       return;
     }
 
-    if (!channel.permissionsOf(this.client.user.id).has('sendMessages') || !channel.permissionsOf(this.client.user.id).has('attachFiles')) return;
+    if (!channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES') || !channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) return;
 
     const canvas = Canvas.createCanvas(700, 250);
     const ctx = canvas.getContext('2d');
@@ -75,12 +75,16 @@ export default class GuildMemberAdd {
     ctx.closePath();
     ctx.clip();
 
-    const avatar = await Canvas.loadImage(member.user.staticAvatarURL);
+    const avatar = await Canvas.loadImage(member.user.avatarURL());
     ctx.drawImage(avatar, 22, 22, 206, 206);
 
-    this.client.createMessage(guildData.welcomeChatID, '', {
-      name: 'bem-vindo.png',
-      file: canvas.toBuffer()
+    const ch = guild.channels.get(guildData.welcomeChatID) as TextableChannel;
+
+    ch.createMessage({
+      files: [{
+        name: 'bem-vindo.png',
+        contents: canvas.toBuffer()
+      }]
     })
   }
 }

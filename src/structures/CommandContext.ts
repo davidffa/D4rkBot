@@ -1,27 +1,25 @@
 import Client from './Client';
 
-import { CommandInteraction, Message } from 'eris';
+import { CommandInteraction, InteractionOptionsWithValue, Message } from 'oceanic.js'
+
 import type {
-  AdvancedMessageContent,
   Attachment,
-  FileContent,
+  CreateMessageOptions,
   Guild,
-  InteractionDataOptionsWithValue,
   Member,
   PartialChannel,
   Role,
   TextableChannel,
   User
-} from 'eris';
+} from 'oceanic.js';
 
 export enum Type {
   MESSAGE,
   INTERACTION
 }
 
-type Content = AdvancedMessageContent & {
+type Content = CreateMessageOptions & {
   fetchReply?: boolean;
-  files?: FileContent[];
 }
 
 export default class CommandContext {
@@ -45,18 +43,18 @@ export default class CommandContext {
       this.type = Type.MESSAGE;
 
       this.args = args;
-      this.attachments = interaction.attachments;
+      this.attachments = [...interaction.attachments.values()];
     } else {
       this.type = Type.INTERACTION;
       this.attachments = []; // TODO: support slash attachments
 
       if (interaction.data.type === 1) {
-        if (interaction.data.options?.[0].type === 1) {
-          this.args.push(interaction.data.options[0].name.toString().trim());
+        if (interaction.data.options.raw?.[0].type === 1) {
+          this.args.push(interaction.data.options.raw[0].name.toString().trim());
 
-          if (interaction.data.options[0].options) {
-            for (const val of (interaction.data.options[0].options)) {
-              this.args.push((val as InteractionDataOptionsWithValue).value.toString().trim());
+          if (interaction.data.options.raw[0].options) {
+            for (const val of (interaction.data.options.raw[0].options)) {
+              this.args.push((val as InteractionOptionsWithValue).value.toString().trim());
             }
           }
         } else {
@@ -72,7 +70,7 @@ export default class CommandContext {
             this.targetChannels = interaction.data.resolved?.channels?.map(channel => channel);
           }
 
-          const options = interaction.data.options as InteractionDataOptionsWithValue[];
+          const options = interaction.data.options.raw as InteractionOptionsWithValue[];
 
           this.args = options?.map(ops => ops.value.toString().trim()) ?? [];
         }
@@ -80,7 +78,7 @@ export default class CommandContext {
         // this.args.push(interaction.data.target_id!);
         this.targetUsers = interaction.data.resolved?.users?.map(user => user);
       } else if (interaction.data.type === 3) {
-        this.args = interaction.data.resolved!.messages!.get(interaction.data.target_id!)!.content.split(/ +/);
+        this.args = interaction.data.resolved!.messages!.get(interaction.data.targetID!)!.content.split(/ +/);
       }
     }
   }
@@ -99,31 +97,29 @@ export default class CommandContext {
   }
 
   get channel(): TextableChannel {
-    return this.interactionOrMessage.channel;
+    return this.interactionOrMessage.channel as TextableChannel;
   }
 
   async sendMessage(content: Content | string): Promise<Message<TextableChannel> | void> {
     content = this.formatContent(content);
 
     const fetchReply = !!content.fetchReply;
-    const files = content.files;
 
     delete content.fetchReply;
-    delete content.files;
 
     if (content.content === undefined) content.content = '';
 
     if (this.interactionOrMessage instanceof Message) {
-      return this.channel.createMessage(content, files);
+      return this.channel.createMessage(content);
     } else {
       if (this.deferred) {
-        await this.interactionOrMessage.editOriginalMessage(content, files);
+        await this.interactionOrMessage.editOriginal(content);
       } else {
-        await this.interactionOrMessage.createMessage(content, files);
+        await this.interactionOrMessage.createMessage(content);
       }
 
       if (fetchReply) {
-        return this.interactionOrMessage.getOriginalMessage();
+        return this.interactionOrMessage.getOriginal() as Promise<Message<TextableChannel>>;
       }
     }
   }

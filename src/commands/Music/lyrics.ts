@@ -3,7 +3,8 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { ActionRow, ActionRowComponents, ComponentInteraction, Message } from 'eris';
+import { ComponentInteraction, Message, MessageActionRow } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 interface LyricsRes {
   lyrics: string[];
@@ -26,14 +27,14 @@ export default class Lyrics extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     await ctx.defer();
 
-    const lyrics = async (name: string, artist?: string): Promise<LyricsRes | null> => {
+    const lyrics = async (name: string, artist?: string | null): Promise<LyricsRes | null> => {
       const song = `${name} ${artist}`
         .toLowerCase()
         .replace(/ *\([^)]*\) */g, '')
@@ -68,7 +69,7 @@ export default class Lyrics extends Command {
       const player = this.client.music.players.get(ctx.guild.id);
 
       if (!player || !player.current) {
-        const activity = ctx.member?.activities?.find(a => a.name === 'Spotify');
+        const activity = ctx.member?.presence?.activities?.find(a => a.name === 'Spotify');
 
         if (activity && activity.details) {
           title = activity.details;
@@ -122,31 +123,29 @@ export default class Lyrics extends Command {
       return;
     }
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'left',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '⬅'
-        },
-        disabled: true
-      },
-      {
-        custom_id: 'right',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '➡'
-        }
-      }
-    ]
-
-    const row: ActionRow = {
+    const row: MessageActionRow = {
       type: 1,
-      components
+      components: [
+        {
+          customID: 'left',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '⬅'
+          },
+          disabled: true
+        },
+        {
+          customID: 'right',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '➡'
+          }
+        }
+      ]
     }
 
     let page = 1;
@@ -159,7 +158,7 @@ export default class Lyrics extends Command {
       .setThumbnail(res.albumArt)
       .setURL(res.url)
       .setTimestamp()
-      .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
     const msg = await ctx.sendMessage({ embeds: [embed], components: [row], fetchReply: true }) as Message;
 
@@ -170,7 +169,7 @@ export default class Lyrics extends Command {
     const changePage = (i: ComponentInteraction): void => {
       if (!res) return;
 
-      switch (i.data.custom_id) {
+      switch (i.data.customID) {
         case 'left':
           if (page === 1) return;
           if (--page === 1) {
@@ -188,7 +187,7 @@ export default class Lyrics extends Command {
       }
 
       embed.setDescription(res.lyrics.slice((page - 1) * 20, page * 20).join('\n'))
-        .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
       i.editParent({ embeds: [embed], components: [row] });
     }

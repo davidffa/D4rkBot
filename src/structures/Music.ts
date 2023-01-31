@@ -1,13 +1,14 @@
 import Client from './Client';
 import CommandContext from './CommandContext';
 
-import { User, Member, VoiceChannel } from 'eris';
+import { User, Member, VoiceChannel, TextableChannel } from 'oceanic.js';
 import { NodeOptions, Vulkava, Player } from 'vulkava';
 
 import { Parser } from 'xml2js';
 
 import { Timeouts, ComponentCollectors } from '../typings';
 import Logger from '../utils/Logger';
+import { dynamicAvatar } from '../utils/dynamicAvatar';
 
 export default class Lavalink extends Vulkava {
   client: Client;
@@ -21,7 +22,7 @@ export default class Lavalink extends Vulkava {
       nodes,
       sendWS(id, payload) {
         const guild = client.guilds.get(id);
-        if (guild) guild.shard.sendWS(payload.op, payload.d);
+        if (guild) guild.shard.send(payload.op, payload.d);
       },
       spotify: {
         clientId: process.env.SPOTIFYCLIENTID,
@@ -72,7 +73,7 @@ export default class Lavalink extends Vulkava {
         channel.deleteMessage(player.lastPlayingMsgID).catch(() => { });
       }
 
-      if (!channel.permissionsOf(this.client.user.id).has('sendMessages')) {
+      if (!channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES')) {
         delete player.lastPlayingMsgID;
         return;
       }
@@ -82,7 +83,7 @@ export default class Lavalink extends Vulkava {
       const embed = new this.client.embed()
         .setColor('RANDOM')
         .setTimestamp()
-        .setFooter(`${requester.username}#${requester.discriminator}`, requester.dynamicAvatarURL());
+        .setFooter(`${requester.username}#${requester.discriminator}`, dynamicAvatar(requester));
 
       if (!player.radio) {
         embed.setTitle('<a:disco:803678643661832233> A Tocar')
@@ -97,7 +98,8 @@ export default class Lavalink extends Vulkava {
 
     this.on('trackStuck', (player, track): void => {
       if (player.textChannelId) {
-        this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}.`);
+        const ch = this.client.getChannel(player.textChannelId) as TextableChannel;
+        ch.createMessage({ content: `:x: Ocorreu um erro ao tocar a música ${track.title}.` });
         player.skip();
       }
       this.log.error(`Track Stuck on guild ${player.guildId}. Music title: ${track.title}`);
@@ -112,7 +114,11 @@ export default class Lavalink extends Vulkava {
           return;
         }
       }
-      player.textChannelId && this.client.createMessage(player.textChannelId, `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\``);
+
+      if (player.textChannelId) {
+        const ch = this.client.getChannel(player.textChannelId) as TextableChannel;
+        ch.createMessage({ content: `:x: Ocorreu um erro ao tocar a música ${track.title}. Erro: \`${err.message}\`` });
+      }
       this.log.error(`Track Error on guild ${player.guildId}: ${err.message}`);
 
       if (err.message.includes('Failed to resolve track')) {
@@ -155,8 +161,8 @@ export default class Lavalink extends Vulkava {
         }
         player.destroy();
 
-        if (channel.permissionsOf(this.client.user.id).has('sendMessages'))
-          channel.createMessage(`:bookmark_tabs: A lista de músicas acabou!`);
+        if (channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES'))
+          channel.createMessage({ content: `:bookmark_tabs: A lista de músicas acabou!` });
       }
     });
 
@@ -198,7 +204,7 @@ export default class Lavalink extends Vulkava {
   }
 
   canPlay(ctx: CommandContext, player?: Player | undefined): boolean {
-    const voiceChannelID = ctx.member!.voiceState.channelID;
+    const voiceChannelID = ctx.member!.voiceState!.channelID;
 
     if (!voiceChannelID) {
       ctx.sendMessage({ content: ':x: Precisas de estar num canal de voz para executar esse comando!', flags: 1 << 6 });
@@ -214,17 +220,17 @@ export default class Lavalink extends Vulkava {
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
-    if (!permissions.has('readMessages')) {
+    if (!permissions.has('VIEW_CHANNEL')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para ver o teu canal de voz!', flags: 1 << 6 });
       return false;
     }
 
-    if (!permissions.has('voiceConnect')) {
+    if (!permissions.has('CONNECT')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para entrar no teu canal de voz!', flags: 1 << 6 });
       return false;
     }
 
-    if (!permissions.has('voiceSpeak')) {
+    if (!permissions.has('SPEAK')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para falar no teu canal de voz!', flags: 1 << 6 });
       return false;
     }

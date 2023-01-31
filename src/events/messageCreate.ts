@@ -2,9 +2,10 @@ import Client from '../structures/Client';
 import { ComponentCollector } from '../structures/Collector';
 import CommandContext from '../structures/CommandContext';
 
-import { Message, ActionRowComponents, ActionRow, ComponentInteraction } from 'eris';
+import { Message, ComponentInteraction, MessageActionRow } from 'oceanic.js';
 import { appendFileSync, existsSync, mkdirSync } from 'fs';
 import Logger from '../utils/Logger';
+import { dynamicAvatar } from '../utils/dynamicAvatar';
 
 export default class MessageCreate {
   client: Client;
@@ -18,7 +19,7 @@ export default class MessageCreate {
   }
 
   async run(message: Message) {
-    if (message.content === '' || message.author.bot || message.channel.type === 1 || !this.client.cacheLoaded) return;
+    if (message.content === '' || message.author.bot || !message.channel || message.channel.type === 1 || !this.client.cacheLoaded) return;
 
     if (message.guildID) {
       if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
@@ -28,22 +29,22 @@ export default class MessageCreate {
 
     if (new RegExp(`^<@!?${this.client.user.id}>$`).test(message.content)) {
       if (message.channel.type === 0) {
-        if (!message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
+        if (!message.channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES')) return;
         if (this.client.blacklist.includes(message.author.id)) {
-          message.channel.createMessage(':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>');
+          message.channel.createMessage({ content: ':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>' });
           return;
         }
-        return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention}! Agora podes usar os meus comandos escrevendo \`/\` e clicando no meu avatar na lista de comandos!\nSe quiseres continuar a usar comandos por mensagem, basta me mencionares antes do comando\n**Exemplo:** <@${this.client.user.id}> help`);
+        return message.channel.createMessage({ content: `<a:blobcool:804026346954555432> Olá ${message.author.mention}! Agora podes usar os meus comandos escrevendo \`/\` e clicando no meu avatar na lista de comandos!\nSe quiseres continuar a usar comandos por mensagem, basta me mencionares antes do comando\n**Exemplo:** <@${this.client.user.id}> help` });
       } else {
-        return message.channel.createMessage(`<a:blobcool:804026346954555432> Olá ${message.author.mention}! Agora podes usar os meus comandos escrevendo \`/\` e clicando no meu avatar na lista de comandos!\nSe quiseres continuar a usar comandos por mensagem, basta me mencionares antes do comando.\n**Exemplo:** <@${this.client.user.id}> help`);
+        return message.channel.createMessage({ content: `<a:blobcool:804026346954555432> Olá ${message.author.mention}! Agora podes usar os meus comandos escrevendo \`/\` e clicando no meu avatar na lista de comandos!\nSe quiseres continuar a usar comandos por mensagem, basta me mencionares antes do comando.\n**Exemplo:** <@${this.client.user.id}> help` });
       }
     }
 
     if (!message.content.startsWith(prefix)) return;
 
     if (this.client.blacklist.includes(message.author.id)) {
-      if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('sendMessages')) {
-        message.channel.createMessage(':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>');
+      if (message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES')) {
+        message.channel.createMessage({ content: ':x: Estás na minha blacklist, por isso não podes usar nenhum comando meu!\nSe achas que foi injusto contacta o meu dono no meu servidor de suporte: <https://discord.gg/dBQnxVCTEw>' });
       }
       return;
     }
@@ -57,7 +58,7 @@ export default class MessageCreate {
 
     if (!command) {
       if (!this.client.guildCache.get(message.guildID as string)?.didUMean) return;
-      if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
+      if (message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES')) return;
       let cmds: string[] = [];
 
       this.client.commands.forEach(cmd => {
@@ -84,23 +85,21 @@ export default class MessageCreate {
         }
       });
 
-      const components: ActionRowComponents[] = [
-        {
-          custom_id: 'run',
-          style: 1,
-          type: 2,
-          label: 'Executar',
-          emoji: {
-            id: '777546055952498708',
-            name: 'shell',
-          }
-        },
-      ]
-
-      const row: ActionRow = {
+      const row: MessageActionRow = {
         type: 1,
-        components
-      }
+        components: [
+          {
+            customID: 'run',
+            style: 1,
+            type: 2,
+            label: 'Executar',
+            emoji: {
+              id: '777546055952498708',
+              name: 'shell',
+            }
+          },
+        ]
+      };
 
       const msg = await message.channel.createMessage({
         content: `:x: Eu não tenho esse comando.\n:thinking: Querias dizer ${prefix}\`${diduMean}\`?`,
@@ -124,13 +123,13 @@ export default class MessageCreate {
       return;
     }
 
-    if (command.name !== 'unlock' && message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
+    if (command.name !== 'unlock' && message.channel.type === 0 && !message.channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES')) return;
 
-    if (this.client.lockedCmds.includes(command.name) && message.author.id !== '334054158879686657' && message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('sendMessages'))
-      return message.channel.createMessage(`:x: O comando \`${cmdName}\` está em manutenção.`);
+    if (this.client.lockedCmds.includes(command.name) && message.author.id !== '334054158879686657' && message.channel.type === 0 && message.channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES'))
+      return message.channel.createMessage({ content: `:x: O comando \`${cmdName}\` está em manutenção.` });
 
-    if (message.channel.type === 0 && this.client.guildCache.get(message.guildID as string)?.disabledCmds.includes(command.name) && message.channel.permissionsOf(this.client.user.id).has('sendMessages'))
-      return message.channel.createMessage(`:x: O comando \`${command.name}\` está desativado neste servidor.`);
+    if (message.channel.type === 0 && this.client.guildCache.get(message.guildID as string)?.disabledCmds.includes(command.name) && message.channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES'))
+      return message.channel.createMessage({ content: `:x: O comando \`${command.name}\` está desativado neste servidor.` });
 
     if (!this.client.cooldowns.has(command.name))
       this.client.cooldowns.set(command.name, new Map<string, number>());
@@ -144,7 +143,7 @@ export default class MessageCreate {
 
       if (now < expirationTime) {
         const timeLeft = (expirationTime - now) / 1000;
-        return message.channel.createMessage(`:clock1: Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\``);
+        return message.channel.createMessage({ content: `:clock1: Espera mais \`${timeLeft.toFixed(1)}\` segundos para voltares a usar o comando \`${command.name}\`` });
       }
     }
 
@@ -153,7 +152,7 @@ export default class MessageCreate {
 
       if (command.usage) reply += `**Usa:** ${prefix}\`${cmdName} ${command.usage}\``;
 
-      return message.channel.createMessage(reply);
+      return message.channel.createMessage({ content: reply });
     }
 
     if (timestamps) {
@@ -176,7 +175,7 @@ export default class MessageCreate {
       if (message.channel.type === 0)
         appendFileSync('./logs/log.txt', `${Logger.currentDate} - Comando: \`${cmdName}\` executado no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nUser: ${message.author.username}#${message.author.discriminator} (${message.author.id})\n\n`);
     } catch (err: any) {
-      message.channel.createMessage(`:x: Ocorreu um erro ao executar o comando \`${cmdName}\``);
+      message.channel.createMessage({ content: `:x: Ocorreu um erro ao executar o comando \`${cmdName}\`` });
       this.log.error(err.message);
       console.error(err);
 
@@ -185,10 +184,10 @@ export default class MessageCreate {
           .setTitle(':x: Ocorreu um erro!')
           .setColor('8B0000')
           .setDescription(`Ocorreu um erro ao executar o comando \`${cmdName}\` no servidor \`${message.channel.guild.name}\`\nArgs: \`${args.join(' ')}\`\nErro: \`${err.message}\``)
-          .setFooter(`${message.author.username}#${message.author.discriminator}`, message.author.dynamicAvatarURL())
+          .setFooter(`${message.author.username}#${message.author.discriminator}`, dynamicAvatar(message.author))
           .setTimestamp();
 
-        const ch = await this.client.getDMChannel('334054158879686657');
+        const ch = await this.client.users.get('334054158879686657')!.createDM();
         ch.createMessage({ embeds: [embed] });
       }
     }

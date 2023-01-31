@@ -3,6 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import Logger from '../../utils/Logger';
 import { TrackQueue } from '../../structures/TrackQueue';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Forceplay extends Command {
   private readonly log: Logger;
@@ -25,7 +26,7 @@ export default class Forceplay extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -37,7 +38,7 @@ export default class Forceplay extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState!.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
@@ -92,7 +93,7 @@ export default class Forceplay extends Command {
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
             .addField(':watch: Duração', `\`${this.client.utils.msToHour(playlist?.duration || 0)}\``)
             .setTimestamp()
-            .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+            .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
           const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 

@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Invite extends Command {
   constructor(client: Client) {
@@ -36,10 +37,10 @@ export default class Invite extends Command {
       .setColor('RANDOM')
       .setTitle('Convite')
       .setDescription(embedRes.join('\n'))
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author))
       .setTimestamp();
 
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage(res.join('\n'))
     } else {
       ctx.sendMessage({ embeds: [embed] });

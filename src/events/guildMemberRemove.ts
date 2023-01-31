@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Guild, Member } from 'eris';
+import { Guild, Member, TextableChannel } from 'oceanic.js';
 
 export default class GuildMemberRemove {
   client: Client;
@@ -13,7 +13,7 @@ export default class GuildMemberRemove {
     const guildData = this.client.guildCache.get(guild.id);
 
     if (guildData && guildData.memberRemoveChatID) {
-      const channel = guild.channels.get(guildData.memberRemoveChatID);
+      const channel = guild.channels.get(guildData.memberRemoveChatID) as TextableChannel;
       if (!channel) {
         guildData.memberRemoveChatID = '';
         const data = await this.client.guildDB.findOne({ guildID: guild.id });
@@ -26,8 +26,9 @@ export default class GuildMemberRemove {
 
       if ((guild.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
 
-      if (channel.permissionsOf(this.client.user.id).has('sendMessages'))
-        this.client.createMessage(channel.id, `O membro \`${member.username}#${member.discriminator}\` saiu do servidor.`);
+      if (channel.permissionsOf(this.client.user.id).has('SEND_MESSAGES')) {
+        channel.createMessage({ content: `O membro \`${member.username}#${member.discriminator}\` saiu do servidor.` });
+      }
     }
   }
 }

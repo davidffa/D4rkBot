@@ -3,6 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import translate from '@iamtraction/google-translate';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Translate extends Command {
   constructor(client: Client) {
@@ -18,7 +19,7 @@ export default class Translate extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -41,7 +42,7 @@ export default class Translate extends Command {
         .addField(`:bookmark: Texto de origem: (${res.from.language.iso})`, `\`\`\`${text}\`\`\``)
         .addField(`:book: Texto traduzido: (${ctx.args[0]})`, `\`\`\`${res.text ? res.text : ''}\`\`\``)
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
       ctx.sendMessage({ embeds: [embed] });
     } catch (err: any) {

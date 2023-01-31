@@ -18,12 +18,12 @@ export default class Unban extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.member.permissions.has('banMembers')) {
+    if (!ctx.member.permissions.has('BAN_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tens permissão para desbanir membros.', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('banMembers')) {
+    if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('BAN_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para desbanir membros!', flags: 1 << 6 });
       return;
     }
@@ -42,7 +42,7 @@ export default class Unban extends Command {
       return;
     }
 
-    ctx.guild.unbanMember(member.user.id).then(() => {
+    ctx.guild.removeBan(member.user.id).then(() => {
       ctx.sendMessage(`<a:verificado:803678585008816198> Desbanis-te o \`${member.user.username}#${member.user.discriminator}\``);
     }).catch(() => {
       ctx.sendMessage({ content: ':x: Ocorreu um erro ao tentar desbanir esse membro.', flags: 1 << 6 });

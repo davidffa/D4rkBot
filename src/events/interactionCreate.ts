@@ -1,8 +1,9 @@
 import Client from '../structures/Client';
 import CommandContext from '../structures/CommandContext';
-import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionDataOptionsWithValue } from 'eris';
+import { Interaction, CommandInteraction, ComponentInteraction, AutocompleteInteraction, InteractionOptionsWithValue } from 'oceanic.js';
 import { appendFileSync, existsSync, mkdirSync } from 'fs';
 import Logger from '../utils/Logger';
+import { dynamicAvatar } from '../utils/dynamicAvatar';
 
 export default class InteractionCreate {
   client: Client;
@@ -22,7 +23,7 @@ export default class InteractionCreate {
 
       if (!cmd) throw new Error(`Command ${interaction.data.name} does not exist!`);
 
-      const ops = interaction.data.options as InteractionDataOptionsWithValue[];
+      const ops = interaction.data.options.raw as InteractionOptionsWithValue[];
 
       const focusedField = ops.find(o => o.focused);
 
@@ -43,7 +44,7 @@ export default class InteractionCreate {
     }
 
     if (!interaction.member) {
-      interaction.createMessage(':frowning: De momento não suporto comandos nas DMs!');
+      interaction.createMessage({ content: ':frowning: De momento não suporto comandos nas DMs!' });
       return;
     }
 
@@ -115,10 +116,10 @@ export default class InteractionCreate {
         .setTitle(':x: Ocorreu um erro!')
         .setColor('8B0000')
         .setDescription(`Ocorreu um erro ao executar o comando \`${cmd.name}\` no servidor \`${interaction.guildID}\`\n**Args:** \`[${ctx.args?.join(' ')}]\`\n**Erro:** \`${err.message}\``)
-        .setFooter(`${interaction.member?.username}#${interaction.member?.discriminator}`, interaction.member?.user.dynamicAvatarURL())
+        .setFooter(`${interaction.member?.username}#${interaction.member?.discriminator}`, dynamicAvatar(interaction.member?.user))
         .setTimestamp();
 
-      const ch = await this.client.getDMChannel('334054158879686657');
+      const ch = await this.client.users.get('334054158879686657')!.createDM();
       ch.createMessage({ embeds: [embed] });
     }
   }

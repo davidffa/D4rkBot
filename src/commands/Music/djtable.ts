@@ -4,8 +4,9 @@ import CommandContext from '../../structures/CommandContext';
 
 import { Effect } from '../../typings/index';
 
-import { ActionRow, ActionRowComponents, ComponentInteraction, ComponentInteractionSelectMenuData, Message } from 'eris';
+import { ComponentInteraction, MessageComponentSelectMenuInteractionData, Message, MessageActionRow, VoiceChannel } from 'oceanic.js';
 import { ComponentCollector } from '../../structures/Collector';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Djtable extends Command {
   static disabled = true;
@@ -23,7 +24,7 @@ export default class Djtable extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({
         content: ':x: Preciso da permissão `Anexar Links` para executar este comando',
         flags: 1 << 6
@@ -38,109 +39,113 @@ export default class Djtable extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member!.voiceState.channelID;
+    const voiceChannelID = ctx.member!.voiceState!.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannel = this.client.getChannel(voiceChannelID);
+    const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     if (voiceChannel.type !== 2) return;
 
     const member = ctx.member;
     if (!member) return;
 
-    const menu: ActionRowComponents[] = [
-      {
-        custom_id: 'menu',
-        type: 3,
-        placeholder: 'Escolhe um filtro para ativar/desativar',
-        options: [
-          {
-            label: 'Bass',
-            value: 'bass',
-            emoji: {
-              name: '1️⃣'
-            }
-          },
-          {
-            label: 'Pop',
-            value: 'pop',
-            emoji: {
-              name: '2️⃣'
-            }
-          },
-          {
-            label: 'Soft',
-            value: 'soft',
-            emoji: {
-              name: '3️⃣'
-            }
-          },
-          {
-            label: 'Treblebass',
-            value: 'treblebass',
-            emoji: {
-              name: '4️⃣'
-            }
-          },
-          {
-            label: 'Nightcore',
-            value: 'nightcore',
-            emoji: {
-              name: '5️⃣'
-            }
-          },
-          {
-            label: 'Vaporwave',
-            value: 'vaporwave',
-            emoji: {
-              name: '6️⃣'
-            }
-          },
-          {
-            label: 'Lowpass',
-            value: 'lowpass',
-            emoji: {
-              name: '7️⃣'
-            }
-          },
-          {
-            label: '8D',
-            value: '8D',
-            emoji: {
-              name: '8️⃣'
-            }
-          },
-        ]
-      },
-    ];
-
-    const btns: ActionRowComponents[] = [
-      {
-        custom_id: 'clear',
-        type: 2,
-        style: 4,
-        emoji: { id: null, name: '🗑️' }
-      },
-      {
-        custom_id: 'close',
-        type: 2,
-        style: 4,
-        label: 'Fechar'
-      }
-    ]
-
-    const menuRow: ActionRow = {
+    const menu: MessageActionRow = {
       type: 1,
-      components: menu
+      components: [
+        {
+          customID: 'menu',
+          type: 3,
+          placeholder: 'Escolhe um filtro para ativar/desativar',
+          options: [
+            {
+              label: 'Bass',
+              value: 'bass',
+              emoji: {
+                name: '1️⃣',
+                id: null
+              }
+            },
+            {
+              label: 'Pop',
+              value: 'pop',
+              emoji: {
+                name: '2️⃣',
+                id: null
+              }
+            },
+            {
+              label: 'Soft',
+              value: 'soft',
+              emoji: {
+                name: '3️⃣',
+                id: null
+              }
+            },
+            {
+              label: 'Treblebass',
+              value: 'treblebass',
+              emoji: {
+                name: '4️⃣',
+                id: null
+              }
+            },
+            {
+              label: 'Nightcore',
+              value: 'nightcore',
+              emoji: {
+                name: '5️⃣',
+                id: null
+              }
+            },
+            {
+              label: 'Vaporwave',
+              value: 'vaporwave',
+              emoji: {
+                name: '6️⃣',
+                id: null
+              }
+            },
+            {
+              label: 'Lowpass',
+              value: 'lowpass',
+              emoji: {
+                name: '7️⃣',
+                id: null
+              }
+            },
+            {
+              label: '8D',
+              value: '8D',
+              emoji: {
+                name: '8️⃣',
+                id: null
+              }
+            },
+          ]
+        },
+      ]
     }
 
-    const btnRow: ActionRow = {
+    const btns: MessageActionRow = {
       type: 1,
-      components: btns
+      components: [
+        {
+          customID: 'clear',
+          type: 2,
+          style: 4,
+          emoji: { id: null, name: '🗑️' }
+        },
+        {
+          customID: 'close',
+          type: 2,
+          style: 4,
+          label: 'Fechar'
+        }
+      ]
     }
 
     const sendFilterMessage = async (): Promise<void> => {
@@ -156,9 +161,9 @@ export default class Djtable extends Command {
         .setDescription(`:wastebasket: Remove todos os filtros ativos\n\n${effects.map((effect) => `${effect.charAt(0).toUpperCase()}${effect.slice(1)} **[${player.effects.includes(effect) ? '<:on:764478511875751937>' : '<:off:764478504124416040>'}]**`).join('\n')}`)
         .setThumbnail('https://i.pinimg.com/564x/a3/a9/29/a3a929cc8d09e88815b89bc071ff4d8d.jpg')
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
-      const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow], fetchReply: true }) as Message;
+      const msg = await ctx.sendMessage({ embeds: [embed], components: [menu, btns], fetchReply: true }) as Message;
       player.djTableMsg = msg;
 
       const filter = (i: ComponentInteraction) => i.member!.id === ctx.author.id;
@@ -166,11 +171,11 @@ export default class Djtable extends Command {
       const collector = new ComponentCollector(this.client, msg, filter, { max: 20, time: 90000 });
 
       collector.on('collect', i => {
-        switch (i.data.custom_id) {
+        switch (i.data.customID) {
           case 'menu':
-            const data = i.data as ComponentInteractionSelectMenuData;
+            const data = i.data as MessageComponentSelectMenuInteractionData;
 
-            const val = data.values[0] as Effect;
+            const val = data.values.raw[0] as Effect;
 
             if (player.effects.includes(val)) {
               player.effects.splice(player.effects.indexOf(val), 1);

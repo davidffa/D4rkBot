@@ -3,7 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, ActionRow, ActionRowComponents, ComponentInteraction } from 'eris';
+import { Message, ComponentInteraction, MessageActionRow } from 'oceanic.js';
 
 import { exec } from 'child_process';
 
@@ -23,30 +23,28 @@ export default class Shell extends Command {
   execute(ctx: CommandContext) {
     if (ctx.author.id !== '334054158879686657') return;
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'delete',
-        style: 4,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '🗑️'
-        }
-      },
-      {
-        custom_id: 'dm',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '📋'
-        }
-      }
-    ]
-
-    const row: ActionRow = {
+    const components: MessageActionRow = {
       type: 1,
-      components
+      components: [
+        {
+          customID: 'delete',
+          style: 4,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '🗑️'
+          }
+        },
+        {
+          customID: 'dm',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '📋'
+          }
+        }
+      ]
     }
 
     exec(ctx.args.join(' '), async (_err, stdout, stderr) => {
@@ -61,9 +59,9 @@ export default class Shell extends Command {
 
       if (res.length + 15 < 2e3) {
         if (stderr) {
-          msg = await ctx.sendMessage({ content: `:outbox_tray: Stderr: \`\`\`sh\n${res}\n\`\`\``, components: [row], fetchReply: true }) as Message;
+          msg = await ctx.sendMessage({ content: `:outbox_tray: Stderr: \`\`\`sh\n${res}\n\`\`\``, components: [components], fetchReply: true }) as Message;
         } else {
-          msg = await ctx.sendMessage({ content: `:outbox_tray: **Stdout:**\`\`\`sh\n${res}\n\`\`\``, components: [row], fetchReply: true }) as Message;
+          msg = await ctx.sendMessage({ content: `:outbox_tray: **Stdout:**\`\`\`sh\n${res}\n\`\`\``, components: [components], fetchReply: true }) as Message;
         }
       } else {
         const body = {
@@ -83,17 +81,17 @@ export default class Shell extends Command {
         }).then(res => res.body.json());
 
         if (bin.key) {
-          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [row], fetchReply: true }) as Message;
+          msg = await ctx.sendMessage({ content: `:warning: O output passou dos 2000 caracteres. **Output:** https://sourceb.in/${bin.key}`, components: [components], fetchReply: true }) as Message;
         } else {
           msg = await ctx.sendMessage({
             content: ':warning: O output passou dos 2000 caracteres. Aqui vai o ficheiro com o output!',
             files: [
               {
                 name: 'shell.txt',
-                file: Buffer.from(res)
+                contents: Buffer.from(res)
               }
             ],
-            components: [row],
+            components: [components],
             fetchReply: true
           }) as Message;
         }
@@ -104,16 +102,16 @@ export default class Shell extends Command {
       const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 3 * 60 * 1000 });
 
       collector.on('collect', async i => {
-        switch (i.data.custom_id) {
+        switch (i.data.customID) {
           case 'dm':
-            const dmChannel = await ctx.author.getDMChannel();
-            dmChannel.createMessage(msg.content);
+            const dmChannel = await ctx.author.createDM();
+            dmChannel.createMessage({ content: msg.content });
 
             msg.edit({ content: '<a:verificado:803678585008816198> Resultado do shell enviado no privado!', components: [] });
 
             break;
           case 'delete':
-            if (msg.attachments.length === 1) {
+            if (msg.attachments.size === 1) {
               msg.delete();
               return;
             }

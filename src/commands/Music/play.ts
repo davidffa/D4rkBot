@@ -2,12 +2,13 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { AutocompleteInteraction, VoiceChannel } from 'eris';
+import { AutocompleteInteraction, VoiceChannel } from 'oceanic.js';
 
 import { Player, ConnectionState } from 'vulkava';
 
 import { Choices } from '../../typings/index';
 import { TrackQueue } from '../../structures/TrackQueue';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Play extends Command {
   static disabled = true;
@@ -26,7 +27,7 @@ export default class Play extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -35,7 +36,7 @@ export default class Play extends Command {
 
     if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = ctx.member?.voiceState.channelID as string;
+    const voiceChannelID = ctx.member?.voiceState!.channelID as string;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
@@ -67,7 +68,7 @@ export default class Play extends Command {
         }
 
         if (player.state === ConnectionState.DISCONNECTED) {
-          if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
+          if (!voiceChannel.permissionsOf(this.client.user.id).has('MANAGE_CHANNELS') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
             ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
             player.destroy();
             return;
@@ -95,7 +96,7 @@ export default class Play extends Command {
             .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + res.tracks.length + '`')
             .addField(':watch: Duração', `\`${this.client.utils.msToHour(playlist?.duration || 0)}\``)
             .setTimestamp()
-            .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+            .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
           const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 

@@ -1,7 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { VoiceChannel } from 'eris';
+import { VoiceChannel } from 'oceanic.js';
 import { Node } from 'vulkava';
 
 export default class Record extends Command {
@@ -27,7 +27,7 @@ export default class Record extends Command {
           files: [
             {
               name: 'record.mp3',
-              file: buf
+              contents: buf
             }
           ]
         });
@@ -36,21 +36,24 @@ export default class Record extends Command {
 
       oldCtx.channel.createMessage({
         content: ':stop_button: Gravação terminada!',
-      }, {
-        name: 'record.mp3',
-        file: buf
+        files: [
+          {
+            name: 'record.mp3',
+            contents: buf
+          }
+        ]
       });
     } catch (_) {
       if (ctx) {
         ctx.sendMessage(':x: Erro ao obter a gravação!');
         return;
       }
-      oldCtx.channel.createMessage(':x: Erro ao obter a gravação!');
+      oldCtx.channel.createMessage({ content: ':x: Erro ao obter a gravação!' });
     }
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    const voiceChannelID = ctx.member!.voiceState.channelID;
+    const voiceChannelID = ctx.member!.voiceState!.channelID;
 
     if (!voiceChannelID) {
       ctx.sendMessage({ content: ':x: Precisas de estar num canal de voz para executar esse comando!', flags: 1 << 6 });
@@ -82,12 +85,12 @@ export default class Record extends Command {
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
-    if (!permissions.has('readMessages')) {
+    if (!permissions.has('VIEW_CHANNEL')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para ver o teu canal de voz!', flags: 1 << 6 });
       return;
     }
 
-    if (!permissions.has('voiceConnect')) {
+    if (!permissions.has('CONNECT')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para entrar no teu canal de voz!', flags: 1 << 6 });
       return;
     }

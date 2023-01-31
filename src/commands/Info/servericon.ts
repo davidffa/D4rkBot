@@ -1,6 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { Guild } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Servericon extends Command {
   constructor(client: Client) {
@@ -16,7 +18,7 @@ export default class Servericon extends Command {
   execute(ctx: CommandContext): void {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Embeds` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -26,7 +28,7 @@ export default class Servericon extends Command {
       return;
     }
 
-    const url = ctx.guild.dynamicIconURL()!;
+    const url = Servericon.dynamicIcon(ctx.guild)!;
 
     const embed = new this.client.embed()
       .setTitle(`:frame_photo: Icon do servidor **${ctx.guild.name}**`)
@@ -34,8 +36,17 @@ export default class Servericon extends Command {
       .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${url}) para baixar a imagem!`)
       .setImage(url)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
+  }
+
+  static dynamicIcon(guild: Guild) {
+    if (guild.icon) {
+      if (guild.icon.startsWith('a_')) {
+        return guild.iconURL('gif');
+      }
+      return guild.iconURL();
+    }
   }
 }

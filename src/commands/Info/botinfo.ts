@@ -2,9 +2,10 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { VERSION } from 'eris';
+import { VERSION } from 'oceanic.js';
 
 import os from 'os';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Botinfo extends Command {
   constructor(client: Client) {
@@ -20,7 +21,7 @@ export default class Botinfo extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -43,20 +44,20 @@ export default class Botinfo extends Command {
         '**[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)**\n\n' +
         `Modelo da CPU: \`${cpuName}\`\nTotal de comandos usados: \`${totalCmdsUsed}\``
       )
-      .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt / 1e3))}:R>)`, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt.getDate() / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt.getDate() / 1e3))}:R>)`, true)
       .addField(':id: Meu ID', `\`${this.client.user.id}\``, true)
       .addField(':man: Dono', '`D4rkB#5745`', true)
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)
       .addField(':desktop: Servidores', `\`${this.client.guilds.size}\``, true)
       .addField(':ping_pong: Ping da API', `\`${ctx.guild.shard.latency}ms\``, true)
       .addField('<:lang_js:803678540528615424> Versão NodeJS', `\`${process.version}\``, true)
-      .addField('<a:blobdiscord:803989275619754014> Versão do Eris', `\`v${VERSION}\``, true)
+      .addField('<a:blobdiscord:803989275619754014> Versão do Oceanic.js', `\`v${VERSION}\``, true)
       .addField('<:MongoDB:773610222602158090>Banco de dados', `_MongoDB_\nPing: \`${pingDB}ms\``, true)
       .addField('<a:loading:804026048647659540> CPU', `\`${cpuUsage}%\``, true)
       .addField('<:ram:751468688686841986> RAM', `Heap: \`${(mem.heapUsed / 1024 / 1024).toFixed(0)}MiB\`\nRSS: \`${(mem.rss / 1024 / 1024).toFixed(0)}MiB\``, true)
-      .setThumbnail(this.client.user.dynamicAvatarURL())
+      .setThumbnail(dynamicAvatar(this.client.user))
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
   }

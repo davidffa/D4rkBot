@@ -15,7 +15,7 @@ export default class Autorole extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
-    if (!ctx.member?.permissions.has('manageRoles') && ctx.author.id !== '334054158879686657') {
+    if (!ctx.member?.permissions.has('MANAGE_ROLES') && ctx.author.id !== '334054158879686657') {
       ctx.sendMessage({ content: ':x: Precisas da permissão `Gerenciar Cargos` para usar este comando.', flags: 1 << 6 });
       return;
     }
@@ -94,6 +94,6 @@ export default class Autorole extends Command {
       }
     });
 
-    ctx.sendMessage(`<a:verificado:803678585008816198> Cargo \`${role.name}\` setado como cargo de autorole.${ctx.channel.permissionsOf(this.client.user.id).has('manageRoles') ? '' : '\n:warning: Não tenho permissão para alterar cargos no servidor!'}${(botHighestRole && botHighestRole.position <= role.position) ? '\n:warning: Esse cargo está numa posição superior ao meu cargo mais alto!' : ''}`);
+    ctx.sendMessage(`<a:verificado:803678585008816198> Cargo \`${role.name}\` setado como cargo de autorole.${ctx.channel.permissionsOf(this.client.user.id).has('MANAGE_ROLES') ? '' : '\n:warning: Não tenho permissão para alterar cargos no servidor!'}${(botHighestRole && botHighestRole.position <= role.position) ? '\n:warning: Esse cargo está numa posição superior ao meu cargo mais alto!' : ''}`);
   }
 }

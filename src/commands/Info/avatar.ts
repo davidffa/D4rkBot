@@ -2,8 +2,9 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { ActionRow, ActionRowComponents, ComponentInteraction, Message, User } from 'eris';
+import { ComponentInteraction, Message, MessageActionRow, User } from 'oceanic.js';
 import { ComponentCollector } from '../../structures/Collector';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Avatar extends Command {
   constructor(client: Client) {
@@ -17,14 +18,14 @@ export default class Avatar extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
     let user: User | null;
 
-    if (!ctx.args.length || ctx.channel.type === 1) {
+    if (!ctx.args.length) {
       user = ctx.targetUsers?.[0] ?? ctx.author;
     } else {
       user = ctx.targetUsers?.[0] ?? await this.client.utils.findUser(ctx.args.join(' '), ctx.guild)
@@ -35,7 +36,7 @@ export default class Avatar extends Command {
       return;
     }
 
-    const userUrl = user.dynamicAvatarURL();
+    const userUrl = dynamicAvatar(user);
 
     const userEmbed = new this.client.embed()
       .setTitle(`:frame_photo: Avatar de ${user.username}#${user.discriminator}`)
@@ -43,7 +44,7 @@ export default class Avatar extends Command {
       .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${userUrl}) para baixar a imagem!`)
       .setImage(userUrl)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(user));
 
     const member = ctx.guild.members.get(user.id);
 
@@ -52,7 +53,7 @@ export default class Avatar extends Command {
       return;
     }
 
-    const memberUrl = member.avatarURL;
+    const memberUrl = dynamicAvatar(member);
 
     const memberEmbed = new this.client.embed()
       .setTitle(`:frame_photo: Avatar de ${user.username}#${user.discriminator} neste servidor`)
@@ -60,34 +61,32 @@ export default class Avatar extends Command {
       .setDescription(`:diamond_shape_with_a_dot_inside: Clique [aqui](${memberUrl}) para baixar a imagem!`)
       .setImage(memberUrl)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'left',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '⬅️'
-        },
-        disabled: true
-      },
-      {
-        custom_id: 'right',
-        style: 2,
-        type: 2,
-        emoji: {
-          id: null,
-          name: '➡️'
-        }
-      }
-    ]
-
-    const row: ActionRow = {
+    const row: MessageActionRow = {
       type: 1,
-      components
-    }
+      components: [
+        {
+          customID: 'left',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '⬅️'
+          },
+          disabled: true
+        },
+        {
+          customID: 'right',
+          style: 2,
+          type: 2,
+          emoji: {
+            id: null,
+            name: '➡️'
+          }
+        }
+      ]
+    };
 
     const msg = await ctx.sendMessage({ embeds: [memberEmbed], components: [row], fetchReply: true }) as Message;
 
@@ -96,7 +95,7 @@ export default class Avatar extends Command {
     const collector = new ComponentCollector(this.client, msg, filter, { time: 3 * 60 * 1000 });
 
     collector.on('collect', i => {
-      if (i.data.custom_id === 'left') {
+      if (i.data.customID === 'left') {
         row.components[0].disabled = true;
         row.components[1].disabled = false;
         i.editParent({ embeds: [memberEmbed], components: [row] });

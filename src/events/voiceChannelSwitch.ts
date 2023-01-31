@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Member, VoiceChannel } from 'eris';
+import { Member, TextableChannel, VoiceChannel } from 'oceanic.js';
 
 export default class VoiceChannelIdSwitch {
   client: Client;
@@ -28,14 +28,15 @@ export default class VoiceChannelIdSwitch {
       if (!newChannel.voiceMembers.filter(m => !m.bot).length) {
         player.pause(true);
 
+        const ch = this.client.getChannel(player.textChannelId!) as TextableChannel;
         const timeout = setTimeout(() => {
-          this.client.createMessage(player.textChannelId!, ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos').catch(() => { });
+          ch.createMessage({ content: ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos' }).catch(() => { });
           player.destroy();
           this.client.music.channelTimeouts.get(member.guild.id)?.message?.delete().catch(() => { });
           this.client.music.channelTimeouts.delete(member.guild.id);
         }, 2 * 60 * 1000);
 
-        const msg = await this.client.createMessage(player.textChannelId!, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.').catch(() => null);
+        const msg = await ch.createMessage({ content: ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.' }).catch(() => null);
 
         this.client.music.channelTimeouts.set(member.guild.id, { timeout, message: msg });
       } else if (this.client.music.channelTimeouts.has(member.guild.id)) {
@@ -53,13 +54,15 @@ export default class VoiceChannelIdSwitch {
       player.pause(true);
 
       const timeout = setTimeout(() => {
-        this.client.createMessage(player.textChannelId!, ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos').catch(() => { });
+        const ch = this.client.getChannel(player.textChannelId!) as TextableChannel;
+        ch.createMessage({ content: ':x: Saí do canal de voz porque fiquei sozinho mais de 2 minutos' }).catch(() => { });
         player.destroy();
         this.client.music.channelTimeouts.get(member.guild.id)?.message?.delete().catch(() => { });
         this.client.music.channelTimeouts.delete(member.guild.id);
       }, 2 * 60 * 1000);
 
-      const msg = await this.client.createMessage(player.textChannelId!, ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.').catch(() => null);
+      const ch = this.client.getChannel(player.textChannelId!) as TextableChannel;
+      const msg = await ch.createMessage({ content: ':warning: Pausei a música porque fiquei sozinho no canal de voz, se ninguem aparecer irei sair em 2 minutos.' }).catch(() => null);
 
       this.client.music.channelTimeouts.set(member.guild.id, { timeout, message: msg });
       return;

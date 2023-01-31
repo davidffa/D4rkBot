@@ -5,6 +5,7 @@ import CommandContext from '../../structures/CommandContext';
 import { ConnectionState } from 'vulkava';
 import Logger from '../../utils/Logger';
 import { TrackQueue } from '../../structures/TrackQueue';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 export default class Radio extends Command {
   private readonly log: Logger;
 
@@ -30,7 +31,7 @@ export default class Radio extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -43,13 +44,13 @@ export default class Radio extends Command {
         .setColor('RANDOM')
         .setDescription(Object.keys(Radio.radios).join(', '))
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
       ctx.sendMessage({ embeds: [embed] });
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState!.channelID;
     const currPlayer = this.client.music.players.get(ctx.guild.id);
 
     if (!voiceChannelID) {
@@ -57,7 +58,7 @@ export default class Radio extends Command {
       return;
     }
 
-    const voiceChannel = this.client.getChannel(voiceChannelID);
+    const voiceChannel = this.client.getChannel(voiceChannelID)!;
 
     if (voiceChannel.type !== 2) {
       ctx.sendMessage({ content: ':x: Ocorreu um erro! `Channel type is not VoiceChannel`', flags: 1 << 6 });
@@ -71,17 +72,17 @@ export default class Radio extends Command {
 
     const permissions = voiceChannel.permissionsOf(this.client.user.id);
 
-    if (!permissions.has('readMessages')) {
+    if (!permissions.has('VIEW_CHANNEL')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para ver o teu canal de voz!', flags: 1 << 6 });
       return;
     }
 
-    if (!permissions.has('voiceConnect')) {
+    if (!permissions.has('CONNECT')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para entrar no teu canal de voz!', flags: 1 << 6 });
       return;
     }
 
-    if (!permissions.has('voiceSpeak')) {
+    if (!permissions.has('SPEAK')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para falar no teu canal de voz!', flags: 1 << 6 });
       return;
     }
@@ -96,7 +97,7 @@ export default class Radio extends Command {
     if (player && !player.radio) {
       if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
         if (voiceChannel.voiceMembers.filter(m => !m.bot).length !== 1
-          && (ctx.member && !await this.client.music.hasDJRole(ctx.member) && !voiceChannel.permissionsOf(ctx.member).has('voiceMoveMembers'))) {
+          && (ctx.member && !await this.client.music.hasDJRole(ctx.member) && !voiceChannel.permissionsOf(ctx.member).has('MOVE_MEMBERS'))) {
           ctx.sendMessage({ content: ':x: Apenas quem requisitou todas as músicas da queue, alguém com o cargo DJ ou alguém com a permissão `Mover Membros` pode usar este comando!', flags: 1 << 6 });
           return;
         }
@@ -124,7 +125,7 @@ export default class Radio extends Command {
       }
 
       if (player.state === ConnectionState.DISCONNECTED) {
-        if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels')
+        if (!voiceChannel.permissionsOf(this.client.user.id).has('MANAGE_CHANNELS')
           && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
           ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
           player.destroy();
@@ -152,7 +153,7 @@ export default class Radio extends Command {
         .setTitle(`<a:disco:803678643661832233> A Tocar a rádio ${player.radio}`)
         .setColor('RANDOM')
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
       ctx.sendMessage({ embeds: [embed] });
     } catch (err: any) {
       this.log.error(err?.message);

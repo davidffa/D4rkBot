@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { User } from 'eris';
+import { User } from 'oceanic.js';
 
 export default class Blacklist extends Command {
   constructor(client: Client) {
@@ -37,7 +37,7 @@ export default class Blacklist extends Command {
     } else if (ctx.args[0].toLowerCase() === 'add' || ctx.args[0].toLowerCase() === 'remove') {
       let user: User;
       try {
-        user = this.client.users.get(ctx.args[1]) || await this.client.getRESTUser(ctx.args[1]);
+        user = this.client.users.get(ctx.args[1]) || await this.client.rest.users.get(ctx.args[1]);
       } catch {
         ctx.sendMessage(':x: Utilizador não encontrado!')
         return;

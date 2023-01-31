@@ -18,13 +18,13 @@ export default class Addemoji extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (!ctx.guild) return;
-    if (ctx.channel.type !== 0 || !ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('manageEmojis')) {
-      ctx.sendMessage({ content: ':x: Preciso da permissão `Gerir Emojis` para executar este comando!', flags: 1 << 6 });
+    if (ctx.channel.type !== 0 || !ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('MANAGE_EMOJIS_AND_STICKERS')) {
+      ctx.sendMessage({ content: ':x: Preciso da permissão `Gerir Emojis e Stickers` para executar este comando!', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.member!.permissions.has('manageEmojis')) {
-      ctx.sendMessage({ content: ':x: Precisas da permissão `Gerir Emojis` para executar este comando!', flags: 1 << 6 })
+    if (!ctx.member!.permissions.has('MANAGE_EMOJIS_AND_STICKERS')) {
+      ctx.sendMessage({ content: ':x: Precisas da permissão `Gerir Emojis e Stickers` para executar este comando!', flags: 1 << 6 })
       return;
     }
 

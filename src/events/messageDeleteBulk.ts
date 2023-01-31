@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Message } from 'eris';
+import { Message } from 'oceanic.js';
 
 export default class MessageDeleteBulk {
   client: Client;

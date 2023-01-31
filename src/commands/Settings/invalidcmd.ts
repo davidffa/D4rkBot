@@ -17,7 +17,7 @@ export default class InvalidCmd extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
-    if (!ctx.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
+    if (!ctx.member?.permissions.has('MANAGE_GUILD') && ctx.author.id !== '334054158879686657') {
       ctx.sendMessage({ content: ':x: Precisas da permissão `Gerenciar Servidor` para usar este comando.', flags: 1 << 6 });
       return;
     }

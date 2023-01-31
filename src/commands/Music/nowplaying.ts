@@ -2,12 +2,13 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { User } from 'eris';
+import { User } from 'oceanic.js';
 
 import Canvas from 'canvas';
 
 import { resolve } from 'path';
 import Radio from './radio';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Nowplaying extends Command {
   constructor(client: Client) {
@@ -60,7 +61,7 @@ export default class Nowplaying extends Command {
       return;
     }
 
-    if (ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+    if (ctx.channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) {
       const canvas = Canvas.createCanvas(370, 410);
       const canvasCtx = canvas.getContext('2d');
 
@@ -124,16 +125,16 @@ export default class Nowplaying extends Command {
         files: [
           {
             name: 'nowplaying.png',
-            file: canvas.toBuffer()
+            contents: canvas.toBuffer()
           }
         ]
       });
-    } else if (ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    } else if (ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       const embed = new this.client.embed()
         .setColor('RANDOM')
         .setTitle('<a:disco:803678643661832233> A tocar')
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
       if (player.current.uri) embed.setURL(player.current.uri);
       const requester = player.current.requester as User;

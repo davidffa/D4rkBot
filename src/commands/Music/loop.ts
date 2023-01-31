@@ -32,14 +32,14 @@ export default class Loop extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState!.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannel = this.client.getChannel(voiceChannelID);
+    const voiceChannel = this.client.getChannel(voiceChannelID)!;
 
     if (voiceChannel.type !== 2) return;
 

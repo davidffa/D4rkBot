@@ -1,4 +1,4 @@
-import type { Message, User, Guild, AllowedMentions, EmbedOptions, MessageFile, AutocompleteInteraction } from 'eris';
+import type { Message, User, Guild, AutocompleteInteraction } from 'oceanic.js';
 import CommandContext from '../structures/CommandContext';
 
 interface CommandOptions {

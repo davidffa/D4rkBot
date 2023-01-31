@@ -3,6 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import { create, all } from 'mathjs';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Calc extends Command {
   constructor(client: Client) {
@@ -18,7 +19,7 @@ export default class Calc extends Command {
   }
 
   execute(ctx: CommandContext) {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage(':x: Preciso da permissão `Anexar Links` para executar este comando');
       return;
     }
@@ -62,7 +63,7 @@ export default class Calc extends Command {
       .addField(':inbox_tray: Expressão', `\`\`\`${ctx.args.join(' ')}\`\`\``)
       .addField(':outbox_tray: Resultado', `\`\`\`${result}\`\`\``)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
   }

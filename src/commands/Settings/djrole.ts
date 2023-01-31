@@ -43,7 +43,7 @@ export default class Djrole extends Command {
       return;
     }
 
-    if (!ctx.member?.permissions.has('manageRoles') && ctx.author.id !== '334054158879686657') {
+    if (!ctx.member?.permissions.has('MANAGE_ROLES') && ctx.author.id !== '334054158879686657') {
       ctx.sendMessage({ content: ':x: Precisas da permissão `Gerenciar Cargos` para usar este comando.', flags: 1 << 6 });
       return;
     }

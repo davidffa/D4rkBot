@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message, Role } from 'eris';
+import { Message, Role } from 'oceanic.js';
 
 export default class Kick extends Command {
   constructor(client: Client) {
@@ -20,12 +20,12 @@ export default class Kick extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.member.permissions.has('kickMembers')) {
+    if (!ctx.member.permissions.has('KICK_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tens permissão para expulsar membros.', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('kickMembers')) {
+    if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('KICK_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para expulsar membros!', flags: 1 << 6 });
       return;
     }
@@ -106,7 +106,7 @@ export default class Kick extends Command {
       .setColor(0xffff00)
       .setTimestamp()
 
-    const dm = await user.getDMChannel();
+    const dm = await user.createDM();
     let msg: Message | null;
     try {
       msg = await dm.createMessage({ embeds: [embed] });
@@ -114,7 +114,7 @@ export default class Kick extends Command {
       msg = null;
     }
 
-    ctx.guild.kickMember(user.id, reason).then(() => {
+    ctx.guild.removeMember(user.id, reason).then(() => {
       if (!member) return;
       ctx.sendMessage(`<a:verificado:803678585008816198> Expulsas-te o \`${user.username}#${user.discriminator}\` por \`${reason}\``);
     }).catch(() => {

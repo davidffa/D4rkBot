@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Member, VoiceChannel } from 'eris';
+import { Member, VoiceChannel } from 'oceanic.js';
 
 export default class VoiceChannelJoin {
   client: Client;

@@ -26,21 +26,21 @@ export default class Skip extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState!.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannel = this.client.getChannel(voiceChannelID);
+    const voiceChannel = this.client.getChannel(voiceChannelID)!;
 
     if (voiceChannel.type !== 2) return;
 
     const skip = (dj: boolean): void => {
       if (!(player.queue as TrackQueue).peek() && !player.trackRepeat && !player.queueRepeat) {
         const channel = this.client.getChannel(player.textChannelId!);
-        if (channel.type !== 0) return;
+        if (channel?.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
           channel.deleteMessage(player.lastPlayingMsgID).catch(() => { });

@@ -6,7 +6,7 @@ import { resolve } from 'path';
 
 import Canvas from 'canvas';
 import { getPaletteFromURL } from 'color-thief-node';
-import { Activity } from 'eris';
+import { PresenceActivity } from 'oceanic.js';
 
 export default class Spotify extends Command {
   constructor(client: Client) {
@@ -19,12 +19,12 @@ export default class Spotify extends Command {
     });
   }
 
-  static extractImageFromActivity({ assets }: Activity): string {
-    return assets?.large_image?.split(':')[1] ?? assets?.small_image?.split(':')[1] ?? 'https://t3.ftcdn.net/jpg/03/35/13/14/360_F_335131435_DrHIQjlOKlu3GCXtpFkIG1v0cGgM9vJC.jpg';
+  static extractImageFromActivity({ assets }: PresenceActivity): string {
+    return assets?.largeImage?.split(':')[1] ?? assets?.smallImage?.split(':')[1] ?? 'https://t3.ftcdn.net/jpg/03/35/13/14/360_F_335131435_DrHIQjlOKlu3GCXtpFkIG1v0cGgM9vJC.jpg';
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -41,7 +41,7 @@ export default class Spotify extends Command {
       }
     }
 
-    const activity = member?.activities?.find(a => a.name === 'Spotify');
+    const activity = member?.presence?.activities?.find(a => a.name === 'Spotify');
 
     if (!activity) {
       ctx.sendMessage({ content: ctx.args.length ? ':x: Esse membro não está a ouvir nada no spotify!' : 'Não estás a ouvir nada no spotify!', flags: 1 << 6 });
@@ -88,8 +88,8 @@ export default class Spotify extends Command {
     canvasCtx.font = 'italic 16px Arial';
     canvasCtx.fillText(artist, 400, 165, 500);
 
-    const duration = activity.timestamps!.end! - activity.timestamps!.start;
-    const current = Math.min(Math.abs(Date.now() - activity.timestamps!.start), duration);
+    const duration = activity.timestamps!.end! - activity.timestamps!.start!;
+    const current = Math.min(Math.abs(Date.now() - activity.timestamps!.start!), duration);
 
     const durationStr = this.client.utils.msToHour(duration);
 
@@ -131,7 +131,7 @@ export default class Spotify extends Command {
       files: [
         {
           name: 'Spotify.png',
-          file: canvas.toBuffer()
+          contents: canvas.toBuffer()
         }
       ]
     });

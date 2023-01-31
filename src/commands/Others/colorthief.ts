@@ -25,7 +25,7 @@ export default class ColorThief extends Command {
   }
 
   async execute(ctx: CommandContext) {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -83,7 +83,7 @@ export default class ColorThief extends Command {
     ctx.sendMessage({
       content: ':art: Paleta de cores da imagem',
       files: [{
-        file: canvas.toBuffer(),
+        contents: canvas.toBuffer(),
         name: 'palette.png'
       }]
     });

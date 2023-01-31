@@ -16,7 +16,7 @@ export default class Logs extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!ctx.channel.permissionsOf(ctx.author.id).has('manageMessages') && ctx.author.id !== '334054158879686657') {
+    if (!ctx.channel.permissionsOf(ctx.author.id).has('MANAGE_MESSAGES') && ctx.author.id !== '334054158879686657') {
       ctx.sendMessage({ content: ':x: Precisas da permissão `Gerenciar Mensagens` para usar este comando!', flags: 1 << 6 });
       return;
     }

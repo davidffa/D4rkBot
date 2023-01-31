@@ -2,7 +2,8 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { User, Member, Constants } from 'eris';
+import { User, Member, Constants } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Userinfo extends Command {
   constructor(client: Client) {
@@ -24,19 +25,19 @@ export default class Userinfo extends Command {
   }
 
   getDevice(member: Member): string | null {
-    if (!member.clientStatus) return null;
+    if (!member.presence) return null;
 
     const res: string[] = [];
-    if (member.clientStatus.desktop !== 'offline') res.push(':computer:');
-    if (member.clientStatus.mobile !== 'offline') res.push(':mobile_phone:');
-    if (member.clientStatus.web !== 'offline') res.push(':globe_with_meridians:');
+    if (member.presence.clientStatus.desktop !== 'offline') res.push(':computer:');
+    if (member.presence.clientStatus.mobile !== 'offline') res.push(':mobile_phone:');
+    if (member.presence.clientStatus.web !== 'offline') res.push(':globe_with_meridians:');
 
     return res.join(' - ');
   }
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -60,14 +61,14 @@ export default class Userinfo extends Command {
       .setColor('RANDOM')
       .addField(':bookmark_tabs: Tag', `\`${user.username}#${user.discriminator}\``, true)
       .addField(':id: ID', `\`${user.id}\``, true)
-      .addField(':calendar: Conta criada em', `<t:${Math.floor(user.createdAt / 1e3)}:d> (<t:${Math.floor(user.createdAt / 1e3)}:R>)`, true)
-      .setThumbnail(user.dynamicAvatarURL())
+      .addField(':calendar: Conta criada em', `<t:${Math.floor(user.createdAt.getDate() / 1e3)}:d> (<t:${Math.floor(user.createdAt.getDate() / 1e3)}:R>)`, true)
+      .setThumbnail(dynamicAvatar(user))
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     if (member) {
-      embed.addField(':calendar: Entrada no servidor', `<t:${Math.floor(member.joinedAt! / 1e3)}:d> (<t:${Math.floor(member.joinedAt! / 1e3)}:R>)`, true)
-        .addField(':shrug: Status', `\`${this.getStatus(member.status)}\``, true)
+      embed.addField(':calendar: Entrada no servidor', `<t:${Math.floor(member.joinedAt!.getDate() / 1e3)}:d> (<t:${Math.floor(member.joinedAt!.getDate() / 1e3)}:R>)`, true)
+        .addField(':shrug: Status', `\`${this.getStatus(member.presence!.status)}\``, true)
 
       const devices = this.getDevice(member);
 
@@ -75,7 +76,7 @@ export default class Userinfo extends Command {
         embed.addField('Dispositivos :technologist:', devices, true);
       }
 
-      const pos = ctx.guild.members.map(m => { return { id: m.id, joinedAt: m.joinedAt } }).sort((a, b) => a.joinedAt! - b.joinedAt!).findIndex(m => m.id === member.id) + 1;
+      const pos = ctx.guild.members.map(m => { return { id: m.id, joinedAt: m.joinedAt } }).sort((a, b) => a.joinedAt?.getDate()! - b.joinedAt?.getDate()!).findIndex(m => m.id === member.id) + 1;
 
       embed.addField(':trophy: Posição de entrada', `\`${pos}/${ctx.guild.members.size}\``, true)
     }
@@ -101,7 +102,7 @@ export default class Userinfo extends Command {
     const flags = (user.publicFlags ?? 0) & ~(Constants.UserFlags.BOT_HTTP_INTERACTIONS);
 
     if (flags) {
-      const flagArray = Object.entries(Constants.UserFlags).filter(([, bit]) => (flags & bit) == bit).map(([field,]) => field);
+      const flagArray = Object.entries(Constants.UserFlags).filter(([, bit]) => typeof bit === 'number' && (flags & bit) == bit).map(([field,]) => field);
 
       const userBadges = flagArray.map(f => BadgeEmojis[f]);
 

@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class PlayerStats extends Command {
   constructor(client: Client) {
@@ -39,7 +40,7 @@ export default class PlayerStats extends Command {
       .addField(':microphone2: Conectado ao servidor de voz', `\`${player.voiceState.event?.endpoint ?? 'Desconhecido'}\``)
       .addField('<:lavalink:829751857483350058> Conectado ao lavalink', `\`${node.identifier}\``)
       .addField('🏓 Pings', `Lavalink <-> servidor de voz: \`${ping}ms\`\nBot <-> Lavalink: \`${nodePing}ms\``)
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author))
       .setTimestamp();
 
     ctx.sendMessage({ embeds: [embed] });

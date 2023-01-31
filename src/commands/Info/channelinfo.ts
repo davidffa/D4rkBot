@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Channelinfo extends Command {
   constructor(client: Client) {
@@ -16,7 +17,7 @@ export default class Channelinfo extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (!ctx.guild) return;
-    if (ctx.channel.type !== 0 || !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type !== 0 || !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando.', flags: 1 << 6 });
       return;
     }
@@ -34,20 +35,27 @@ export default class Channelinfo extends Command {
       2: 'Voz',
       4: 'Categoria',
       5: 'Anúncios',
-      6: 'Loja',
-      13: 'Palco'
+      // 6: 'Loja',
+      10: 'Tópico de anúncios',
+      11: 'Tópico público',
+      12: 'Tópico privado',
+      13: 'Palco',
+      14: 'Diretório',
+      15: 'Fórum',
     }
 
     const embed = new this.client.embed()
       .setTitle('Channel Info')
       .setColor('RANDOM')
       .addField(':id: ID', `\`${channel.id}\``, true)
-      .addField(':calendar: Criado em', `<t:${~~(channel.createdAt / 1e3)}:d> (<t:${~~(channel.createdAt / 1e3)}:R>)`, true)
+      .addField(':calendar: Criado em', `<t:${~~(channel.createdAt.getDate() / 1e3)}:d> (<t:${~~(channel.createdAt.getDate() / 1e3)}:R>)`, true)
       .addField(':newspaper: Nome', `\`${channel.name}\``, true)
       .addField(':diamond_shape_with_a_dot_inside: Tipo', `\`${channelTypes[channel.type]}\``, true)
-      .addField(':underage: NSFW', `\`${channel.nsfw ? 'Sim' : 'Não'}\``, true)
-      .addField(':trophy: Posição', `\`${channel.position}\``, true)
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
+
+    channel.type !== 4 && channel.type !== 13 && embed.addField(':underage: NSFW', `\`${channel.nsfw ? 'Sim' : 'Não'}\``, true)
+
+    embed.addField(':trophy: Posição', `\`${channel.position}\``, true)
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author))
       .setTimestamp();
 
     if (channel.type === 2 || channel.type === 13) {
@@ -68,7 +76,7 @@ export default class Channelinfo extends Command {
       }
       embed.addField(':notes: Taxa de bits', `\`${channel.bitrate}\``, true);
       embed.addField(':map: Região', `${channel.rtcRegion ? regions[channel.rtcRegion] : '`Auto`'}`, true);
-      embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 2 ? '720p' : 'Auto'}\``, true);
+      channel.type === 2 && embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 2 ? '720p' : 'Auto'}\``, true);
     }
 
     channel.parentID && embed.addField(':flag_white: Categoria', `\`${ctx.guild.channels.get(channel.parentID)?.name}\``, true);

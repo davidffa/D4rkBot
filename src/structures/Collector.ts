@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import Client from './Client';
-import { Message, ComponentInteraction } from 'eris';
+import { Message, ComponentInteraction } from 'oceanic.js';
 
 declare function ComponentCollectorFilter(interaction: ComponentInteraction): boolean;
 

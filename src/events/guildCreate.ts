@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Guild } from 'eris';
+import { Guild } from 'oceanic.js';
 
 export default class GuildCreate {
   client: Client;
@@ -28,10 +28,10 @@ export default class GuildCreate {
       .addField(':man: Membros', `\`${guild.members.size}\``, true)
       .setTimestamp();
 
-    guild.dynamicIconURL() && embed.setThumbnail(guild.dynamicIconURL()!);
+    guild.iconURL() && embed.setThumbnail(guild.iconURL()!);
 
-    const channel = await this.client.users.get('334054158879686657')?.getDMChannel();
+    const channel = await this.client.users.get('334054158879686657')?.createDM();
 
-    channel && this.client.createMessage(channel.id, { embeds: [embed] });
+    channel && channel.createMessage({ embeds: [embed] });
   }
 }

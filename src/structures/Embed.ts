@@ -1,4 +1,4 @@
-import { EmbedAuthorOptions, EmbedField, EmbedFooterOptions, EmbedImageOptions } from 'eris';
+import { EmbedAuthorOptions, EmbedField, EmbedFooterOptions, EmbedImageOptions } from 'oceanic.js';
 
 export default class Embed {
   author?: EmbedAuthorOptions;
@@ -8,7 +8,7 @@ export default class Embed {
   footer?: EmbedFooterOptions;
   image?: EmbedImageOptions;
   thumbnail?: EmbedImageOptions;
-  timestamp?: Date | string;
+  timestamp?: string;
   title?: string;
   url?: string;
 
@@ -21,7 +21,7 @@ export default class Embed {
   setAuthor(name: string, iconURL?: string, url?: string): this {
     this.author = {
       name,
-      icon_url: iconURL,
+      iconURL,
       url
     };
 
@@ -46,7 +46,7 @@ export default class Embed {
   setFooter(text: string, iconURL?: string): this {
     this.footer = {
       text,
-      icon_url: iconURL
+      iconURL
     }
 
     return this;
@@ -68,7 +68,7 @@ export default class Embed {
 
   setTimestamp(timestamp?: string): this {
     if (!timestamp) {
-      this.timestamp = new Date();
+      this.timestamp = new Date().toISOString();
     } else {
       this.timestamp = timestamp;
     }

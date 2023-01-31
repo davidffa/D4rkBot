@@ -15,12 +15,12 @@ export default class Banlist extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.member.permissions.has('banMembers')) {
+    if (!ctx.member.permissions.has('BAN_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tens permissão para ver a lista de membros banidos.', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('banMembers')) {
+    if (!ctx.guild.members.get(this.client.user.id)?.permissions.has('BAN_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para ver a lista de membros banidos!', flags: 1 << 6 });
       return;
     }

@@ -3,6 +3,7 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
 import cio from 'cheerio';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Currency extends Command {
   constructor(client: Client) {
@@ -18,7 +19,7 @@ export default class Currency extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -49,7 +50,7 @@ export default class Currency extends Command {
       .addField(`:moneybag: Valor de origem: (${ctx.args[0]})`, `\`\`\`\n${ctx.args[2]}\`\`\``)
       .addField(`:moneybag: Valor convertido: (${ctx.args[1]})`, `\`\`\`\n${value.split(' ')[0]}\`\`\``)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
   }

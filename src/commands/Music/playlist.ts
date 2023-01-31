@@ -3,10 +3,11 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { ActionRow, ComponentInteraction, ActionRowComponents, Message, VoiceChannel } from 'eris';
+import { ComponentInteraction, Message, MessageActionRow, VoiceChannel } from 'oceanic.js';
 
 import { Track, UnresolvedTrack, ConnectionState } from 'vulkava';
 import { TrackQueue } from '../../structures/TrackQueue';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class PlayList extends Command {
   static disabled = true;
@@ -21,7 +22,7 @@ export default class PlayList extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando!', flags: 1 << 6 });
       return;
     }
@@ -47,7 +48,7 @@ export default class PlayList extends Command {
         .setColor('RANDOM')
         .setDescription(`\`\`\`md\n${help.join('\n─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n')}\n\`\`\``)
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
       ctx.sendMessage({ embeds: [embed] });
       return;
@@ -163,7 +164,7 @@ export default class PlayList extends Command {
           .setColor('RANDOM')
           .setDescription(`${playlists.map(p => `${p.name} - \`${(p.tracks && p.tracks.length) || 0}\` músicas`).join('\n')}`)
           .setTimestamp()
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
         ctx.sendMessage({ embeds: [listEmbed] });
         break;
@@ -199,7 +200,7 @@ export default class PlayList extends Command {
           .setColor('RANDOM')
           .setDescription(`**${playlist.name}** - \`${tracks.length}\` músicas\n\n${tracks.slice(0, 10).map((track, idx) => `${idx + 1}º - [${track.title}](${track.uri})`).join('\n')}`)
           .setTimestamp()
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
 
         if (playlist.tracks.length <= 10) {
@@ -207,32 +208,30 @@ export default class PlayList extends Command {
           return;
         }
 
-        const components: ActionRowComponents[] = [
-          {
-            custom_id: 'left',
-            style: 2,
-            type: 2,
-            emoji: {
-              id: null,
-              name: '⬅️'
-            },
-            disabled: true
-          },
-          {
-            custom_id: 'right',
-            style: 2,
-            type: 2,
-            emoji: {
-              id: null,
-              name: '➡️'
-            }
-          }
-        ];
-
-        const row: ActionRow = {
+        const row: MessageActionRow = {
           type: 1,
-          components
-        }
+          components: [
+            {
+              customID: 'left',
+              style: 2,
+              type: 2,
+              emoji: {
+                id: null,
+                name: '⬅️'
+              },
+              disabled: true
+            },
+            {
+              customID: 'right',
+              style: 2,
+              type: 2,
+              emoji: {
+                id: null,
+                name: '➡️'
+              }
+            }
+          ]
+        };
 
         const msg = await ctx.sendMessage({ embeds: [detailEmbed], components: [row], fetchReply: true }) as Message;
 
@@ -246,7 +245,7 @@ export default class PlayList extends Command {
         collector.on('collect', i => {
           if (!playlist || !playlist.tracks) return;
 
-          switch (i.data.custom_id) {
+          switch (i.data.customID) {
             case 'left':
               if (page === 1) return;
               if (--page === 1) {
@@ -254,7 +253,7 @@ export default class PlayList extends Command {
               }
               row.components[1].disabled = false;
               detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.title}](${track.uri})`).join('\n'))
-                .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+                .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
               i.editParent({ embeds: [detailEmbed], components: [row] });
               break;
@@ -265,7 +264,7 @@ export default class PlayList extends Command {
               }
               row.components[0].disabled = false;
               detailEmbed.setDescription(tracks.slice((page - 1) * 10, page * 10).map((track, idx) => `${idx + ((page - 1) * 10) + 1}º - [${track.title}](${track.uri})`).join('\n'))
-                .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+                .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
               i.editParent({ embeds: [detailEmbed], components: [row] });
               break;
@@ -445,7 +444,7 @@ export default class PlayList extends Command {
 
         if (!this.client.music.canPlay(ctx, player)) return;
 
-        const voiceChannelID = ctx.member?.voiceState.channelID as string;
+        const voiceChannelID = ctx.member?.voiceState!.channelID as string;
         const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
         player = this.client.music.createPlayer({
@@ -459,7 +458,7 @@ export default class PlayList extends Command {
         player.effects = [];
 
         if (player.state === ConnectionState.DISCONNECTED) {
-          if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
+          if (!voiceChannel.permissionsOf(this.client.user.id).has('MANAGE_CHANNELS') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
             ctx.sendMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
             player.destroy();
             return;
@@ -482,7 +481,7 @@ export default class PlayList extends Command {
           .addField(":page_with_curl: Nome:", '`' + list.name + '`')
           .addField("<a:infinity:838759634361253929> Quantidade de músicas:", '`' + songs.length + '`')
           .setTimestamp()
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
         ctx.sendMessage({ embeds: [playEmbed] });
         break;

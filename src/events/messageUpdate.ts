@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Message, OldMessage } from 'eris';
+import { JSONMessage, Message } from 'oceanic.js';
 
 export default class MessageUpdate {
   client: Client;
@@ -9,7 +9,7 @@ export default class MessageUpdate {
     this.client = client;
   }
 
-  run(message: Message, oldMessage: OldMessage) {
+  run(message: Message, oldMessage: JSONMessage) {
     if (!oldMessage || !message || oldMessage.content === message.content) return;
 
     if (this.client.blacklist?.includes(message.author.id)) return;

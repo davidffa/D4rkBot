@@ -4,6 +4,7 @@ import CommandContext from '../../structures/CommandContext';
 
 import { request } from 'undici';
 import Logger from '../../utils/Logger';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 interface FindResponse {
   cod: string | number;
@@ -66,7 +67,7 @@ export default class Weather extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -128,7 +129,7 @@ export default class Weather extends Command {
       .addField(':railway_track: Visibilidade:', `\`${(current.visibility / 1000).toFixed(1)} km\``, true)
       .setThumbnail(`https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     if (current.sunrise && current.sunset) {
       const my_tz_offset = new Date().getTimezoneOffset() * 60;

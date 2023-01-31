@@ -4,7 +4,8 @@ import CommandContext from '../../structures/CommandContext';
 import Embed from '../../structures/Embed';
 
 import { Node } from 'vulkava';
-import { User } from 'eris';
+import { User } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Lavalink extends Command {
   constructor(client: Client) {
@@ -25,7 +26,7 @@ export default class Lavalink extends Command {
       return;
     }
 
-    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (ctx.channel.type === 0 && !ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -52,6 +53,6 @@ export default class Lavalink extends Command {
       .addField(':information_source: Versões', `Lavaplayer: \`${versions!.LAVAPLAYER}\`\nBuild: \`${versions!.BUILD}\`\nBuild em: <t:${Math.floor(versions!.BUILDTIME / 1000)}:d>`, true)
       .addField('\u200B', `<:spring:869617355498610708> \`${versions!.SPRING}\`\n<:kotlin:856168010004037702> \`${versions!.KOTLIN}\`\n<:java:869621849045229608> \`${versions!.JVM}\``, true)
       .setTimestamp()
-      .setFooter(`${author.username}#${author.discriminator}`, author.dynamicAvatarURL());
+      .setFooter(`${author.username}#${author.discriminator}`, dynamicAvatar(author));
   }
 }

@@ -4,21 +4,22 @@ import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
 import type {
-  ActionRow,
-  ActionRowComponents,
+
   AutocompleteInteraction,
   ComponentInteraction,
-  ComponentInteractionSelectMenuData,
-  InteractionDataOptionsWithValue,
+  InteractionOptionsWithValue,
   Message,
+  MessageActionRow,
+  MessageComponentSelectMenuInteractionData,
   VoiceChannel
-} from 'eris';
+} from 'oceanic.js';
 
 import { Player, SearchResult, ConnectionState } from 'vulkava';
 
 import soundCloudIdExtractor from '../../utils/soundCloudIdExtractor';
 import { Choices } from '../../typings';
 import { TrackQueue } from '../../structures/TrackQueue';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Search extends Command {
   static disabled = true;
@@ -37,7 +38,7 @@ export default class Search extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -46,7 +47,7 @@ export default class Search extends Command {
 
     if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = ctx.member?.voiceState.channelID as string;
+    const voiceChannelID = ctx.member?.voiceState!.channelID!;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {
@@ -99,48 +100,44 @@ export default class Search extends Command {
           desc += `${i}º - [${res.tracks[i - 1].title}](${res.tracks[i - 1].uri})\n`;
         }
 
-        const menu: ActionRowComponents[] = [
-          {
-            custom_id: 'menu',
-            type: 3,
-            min_values: 1,
-            max_values: tracks.length,
-            placeholder: 'Escolhe as músicas para adicionar à lista',
-            options: tracks.map((track, idx) => {
-              return {
-                emoji: { name: emojis[idx] },
-                label: formatString(track.author || 'Desconhecido', 75),
-                description: formatString(track.title, 100),
-                value: idx.toString()
-              }
-            })
-          },
-        ];
-
-        const btns: ActionRowComponents[] = [
-          {
-            custom_id: 'cancel',
-            type: 2,
-            style: 4,
-            emoji: { id: null, name: '🗑️' }
-          }
-        ]
-
-        const menuRow: ActionRow = {
+        const menuRow: MessageActionRow = {
           type: 1,
-          components: menu
-        }
+          components: [
+            {
+              customID: 'menu',
+              type: 3,
+              minValues: 1,
+              maxValues: tracks.length,
+              placeholder: 'Escolhe as músicas para adicionar à lista',
+              options: tracks.map((track, idx) => {
+                return {
+                  emoji: { name: emojis[idx], id: null },
+                  label: formatString(track.author || 'Desconhecido', 75),
+                  description: formatString(track.title, 100),
+                  value: idx.toString()
+                }
+              })
+            },
+          ]
+        };
 
-        const btnRow: ActionRow = {
+        const btnRow: MessageActionRow = {
           type: 1,
-          components: btns
+          components: [
+            {
+              customID: 'cancel',
+              type: 2,
+              style: 4,
+              emoji: { id: null, name: '🗑️' }
+            }
+          ]
         }
 
         const embed = new this.client.embed()
           .setColor('RANDOM')
           .setTitle(':mag: Resultados da procura')
           .setDescription(desc)
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author))
           .setTimestamp();
 
         const msg = await ctx.sendMessage({ embeds: [embed], components: [menuRow, btnRow], fetchReply: true }) as Message;
@@ -159,7 +156,7 @@ export default class Search extends Command {
         this.client.music.searchCollectors.set(ctx.author.id, { message: msg, collector });
 
         collector.on('collect', i => {
-          switch (i.data.custom_id) {
+          switch (i.data.customID) {
             case 'cancel':
               i.editParent({ content: ':x: Pesquisa cancelada!', embeds: [], components: [] });
               break;
@@ -172,7 +169,7 @@ export default class Search extends Command {
               }
 
               if (player.state === ConnectionState.DISCONNECTED) {
-                if (!voiceChannel.permissionsOf(this.client.user.id).has('manageChannels') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
+                if (!voiceChannel.permissionsOf(this.client.user.id).has('MANAGE_CHANNELS') && voiceChannel.userLimit && voiceChannel.voiceMembers.size >= voiceChannel.userLimit) {
                   ctx.channel.createMessage({ content: ':x: O canal de voz está cheio!', flags: 1 << 6 });
                   player.destroy();
                   return;
@@ -180,9 +177,9 @@ export default class Search extends Command {
                 player.connect();
               }
 
-              const data = i.data as ComponentInteractionSelectMenuData;
+              const data = i.data as MessageComponentSelectMenuInteractionData;
 
-              const selectedTracks = data.values.map(val => tracks[Number(val)]);
+              const selectedTracks = data.values.raw.map(val => tracks[Number(val)]);
 
               for (const t of selectedTracks) {
                 t.setRequester(ctx.author);
@@ -195,7 +192,7 @@ export default class Search extends Command {
                 .setDescription(selectedTracks.map(t => {
                   return `[${t.title}](${t.uri})`;
                 }).join('\n'))
-                .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL())
+                .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author))
                 .setTimestamp();
 
               i.editParent({ embeds: [ebd], components: [] });
@@ -219,7 +216,7 @@ export default class Search extends Command {
     }
   }
 
-  async runAutoComplete(interaction: AutocompleteInteraction, value: string, options: InteractionDataOptionsWithValue[]) {
+  async runAutoComplete(interaction: AutocompleteInteraction, value: string, options: InteractionOptionsWithValue[]) {
     if (!value) {
       interaction.result([]);
       return;

@@ -1,6 +1,8 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
+import { Guild } from 'oceanic.js';
 
 export default class Serverinfo extends Command {
   constructor(client: Client) {
@@ -16,7 +18,7 @@ export default class Serverinfo extends Command {
   execute(ctx: CommandContext): void {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -39,7 +41,7 @@ export default class Serverinfo extends Command {
     }
 
     guild.members.forEach(member => {
-      member.status ? ++status[member.status] : ++status.offline;
+      member.presence ? ++status[member.presence.status] : ++status.offline;
     });
 
     const bots = guild.members.filter(m => m.bot).length;
@@ -74,17 +76,37 @@ export default class Serverinfo extends Command {
       .addField(':crown: Dono do servidor', `${this.client.users.get(guild.ownerID)?.mention || guild.ownerID}`, true)
       .addField(':police_officer: Nível de verificação', verificationLevels[guild.verificationLevel], true)
       .addField(`<:followers:784795303156908032> Cargos:`, `${guild.roles.size}`, true)
-      .addField(':calendar: Criado em', `<t:${~~(guild.createdAt / 1e3)}:d> (<t:${~~(guild.createdAt / 1e3)}:R>)`, true)
-      .addField(':calendar: Entrei em', `<t:${~~(ctx.guild.members.get(this.client.user.id)!.joinedAt as number / 1e3)}:d> (<t:${~~(ctx.guild.members.get(this.client.user.id)!.joinedAt as number / 1e3)}:R>)`, true)
+      .addField(':calendar: Criado em', `<t:${~~(guild.createdAt.getDate() / 1e3)}:d> (<t:${~~(guild.createdAt.getDate() / 1e3)}:R>)`, true)
+      .addField(':calendar: Entrei em', `<t:${~~(ctx.guild.members.get(this.client.user.id)!.joinedAt?.getDate() as number / 1e3)}:d> (<t:${~~(ctx.guild.members.get(this.client.user.id)!.joinedAt?.getDate() as number / 1e3)}:R>)`, true)
       .addField('<:badgebooster:803666384373809233> Boost', `Nível: ${boostLevel}\nQuantidade: ${boostAmount}`, true)
       .addField(`:man: Membros [${guild.members.size}]`, `<:online:804049640437448714> Online: ${status.online}\n<:idle:804049737383673899> Ausente: ${status.idle}\n<:dnd:804049759328403486> Ocupado: ${status.dnd}\n<:offline:804049815713480715> Offline: ${status.offline}\n<:bot:804028762307821578> Bots: ${bots}`, true)
       .addField(`:white_small_square: Canais [${guild.channels.size}]`, `<:chat:804050576647913522> Texto: ${channels.text}\n:microphone2: Voz: ${channels.voice}\n<:stage:828651062184378389> Palco: ${channels.stage}\n:loudspeaker: Anúncios: ${channels.news}\n:diamond_shape_with_a_dot_inside: Categorias: ${channels.category}`, true)
       .addField(`:grinning: Emojis [${emojis}]`, `Estáticos: ${staticEmojis}\nAnimados: ${animatedEmojis}`, true)
-      .setThumbnail(guild.dynamicIconURL() ?? '')
-      .setImage(guild.dynamicBannerURL() ?? '')
+      .setThumbnail(Serverinfo.dynamicIcon(guild))
+      .setImage(Serverinfo.dynamicBanner(guild))
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
+  }
+
+  static dynamicIcon(guild: Guild) {
+    if (guild.icon) {
+      if (guild.icon.startsWith('a_')) {
+        return guild.iconURL('gif')!;
+      }
+      return guild.iconURL()!;
+    }
+    return '';
+  }
+
+  static dynamicBanner(guild: Guild) {
+    if (guild.banner) {
+      if (guild.banner.startsWith('a_')) {
+        return guild.bannerURL('gif')!;
+      }
+      return guild.bannerURL()!;
+    }
+    return '';
   }
 }

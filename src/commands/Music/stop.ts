@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { User } from 'eris';
+import { User } from 'oceanic.js';
 import { TrackQueue } from '../../structures/TrackQueue';
 
 export default class Stop extends Command {
@@ -26,21 +26,21 @@ export default class Stop extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState.channelID;
+    const voiceChannelID = ctx.member?.voiceState!.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });
       return;
     }
 
-    const voiceChannel = this.client.getChannel(voiceChannelID);
+    const voiceChannel = this.client.getChannel(voiceChannelID)!;
 
     if (voiceChannel.type !== 2) return;
 
     const stop = (dj: boolean): void => {
       if (player.textChannelId) {
         const channel = this.client.getChannel(player.textChannelId);
-        if (channel.type !== 0) return;
+        if (channel?.type !== 0) return;
 
         if (player.lastPlayingMsgID) {
           channel.deleteMessage(player.lastPlayingMsgID).catch(() => { });
@@ -65,7 +65,7 @@ export default class Stop extends Command {
       if (this.client.guildCache.get(ctx.guild.id)?.djRole) {
         if (allQueueRequester(ctx.author)
           || voiceChannel.voiceMembers.filter(m => !m.bot).length === 1
-          || (ctx.member && voiceChannel.permissionsOf(ctx.member).has('voiceMoveMembers'))) {
+          || (ctx.member && voiceChannel.permissionsOf(ctx.member).has('MOVE_MEMBERS'))) {
           stop(false);
           return;
         }

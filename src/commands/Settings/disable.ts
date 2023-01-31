@@ -1,6 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Disable extends Command {
   constructor(client: Client) {
@@ -17,7 +18,7 @@ export default class Disable extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.member?.permissions.has('manageGuild') && ctx.author.id !== '334054158879686657') {
+    if (!ctx.member?.permissions.has('MANAGE_GUILD') && ctx.author.id !== '334054158879686657') {
       ctx.sendMessage({ content: ':x: Precisas da permissão `MANAGE_GUILD` para usar este comando.', flags: 1 << 6 });
       return;
     }
@@ -60,7 +61,7 @@ export default class Disable extends Command {
       });
     }
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage(`<:off:764478504124416040> O comando \`${ctx.args[0]}\` foi desativado com sucesso!`);
       return;
     }
@@ -69,7 +70,7 @@ export default class Disable extends Command {
       .setColor('RANDOM')
       .setDescription(`<:off:764478504124416040> O comando \`${ctx.args[0]}\` foi desativado com sucesso!`)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     ctx.sendMessage({ embeds: [embed] });
   }

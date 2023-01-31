@@ -12,7 +12,7 @@ const permissions = {
   sendMessages: 'Enviar Mensagens',
   sendTTSMessages: 'Enviar mensagens TTS',
   manageMessages: 'Gerenciar Mensagens',
-  embedLinks: 'Inserir Links',
+  EMBED_LINKS: 'Inserir Links',
   attachFiles: 'Anexar Arquivos',
   readMessageHistory: 'Ler o histórico de mensagens',
   mentionEveryone: 'Mencionar everyone',

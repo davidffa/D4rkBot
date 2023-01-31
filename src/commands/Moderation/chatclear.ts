@@ -1,7 +1,7 @@
 import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
-import { Message } from 'eris';
+import { Message } from 'oceanic.js';
 
 export default class Chatclear extends Command {
   constructor(client: Client) {
@@ -21,12 +21,12 @@ export default class Chatclear extends Command {
 
     const channel = ctx.channel;
 
-    if (!channel.permissionsOf(ctx.author.id).has('manageMessages')) {
+    if (!channel.permissionsOf(ctx.author.id).has('MANAGE_MESSAGES')) {
       ctx.sendMessage(':x: Não tens permissão para apagar mensagens.');
       return;
     }
 
-    if (!channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+    if (!channel.permissionsOf(this.client.user.id).has('MANAGE_MESSAGES')) {
       ctx.sendMessage(':x: Não tenho permissão para apagar mensagens!');
       return;
     }

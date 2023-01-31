@@ -2,7 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 
-import { Message, Role } from 'eris';
+import { Message, Role } from 'oceanic.js';
 
 export default class Ban extends Command {
   constructor(client: Client) {
@@ -20,12 +20,12 @@ export default class Ban extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.member || !ctx.guild) return;
 
-    if (!ctx.member.permissions.has('banMembers')) {
+    if (!ctx.member.permissions.has('BAN_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tens permissão para banir membros.', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('banMembers')) {
+    if (!ctx.channel.guild.members.get(this.client.user.id)?.permissions.has('BAN_MEMBERS')) {
       ctx.sendMessage({ content: ':x: Não tenho permissão para banir membros!', flags: 1 << 6 });
       return;
     }
@@ -103,7 +103,7 @@ export default class Ban extends Command {
       .setColor(0xff0000)
       .setTimestamp()
 
-    const dm = await user.getDMChannel();
+    const dm = await user.createDM();
     let msg: Message | null;
     try {
       msg = await dm.createMessage({ embeds: [embed] });
@@ -111,7 +111,9 @@ export default class Ban extends Command {
       msg = null;
     }
 
-    ctx.guild.banMember(user.id, 0, reason).then(() => {
+    ctx.guild.createBan(user.id, {
+      reason
+    }).then(() => {
       ctx.sendMessage(`<a:verificado:803678585008816198> Banis-te o \`${user?.username}#${user?.discriminator}\` por \`${reason}\``);
     }).catch(() => {
       if (msg) msg.delete();

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
-import { Client, ClientOptions, User, Guild, Constants, Role } from 'eris';
+import { Client, ClientOptions, User, Guild, Constants, Role, ClientEvents, TextChannel } from 'oceanic.js';
 import { NodeOptions } from 'vulkava';
 import { request, Dispatcher } from 'undici';
 import { UrlObject } from 'url';
@@ -47,37 +47,35 @@ export default class D4rkClient extends Client {
 
   constructor() {
     const clientOptions: ClientOptions = {
+      auth: process.env.TOKEN,
       defaultImageFormat: 'png',
-      defaultImageSize: Constants.ImageSizeBoundaries.MAXIMUM,
-      getAllUsers: true,
-      restMode: true,
-      compress: true,
-      intents: [
-        'guilds',
-        'guildMembers',
-        'guildEmojis',
-        'guildVoiceStates',
-        'guildPresences',
-        'guildMessages',
-        // 'messageContent'
-      ],
-      disableEvents: {
-        'TYPING_START': true,
-        'GUILD_BAN_ADD': true,
-        'GUILD_BAN_REMOVE': true,
-
+      defaultImageSize: Constants.MAX_IMAGE_SIZE,
+      gateway: {
+        getAllUsers: true,
+        compress: true,
+        intents: [
+          'GUILDS',
+          'GUILD_MEMBERS',
+          'GUILD_EMOJIS_AND_STICKERS',
+          'GUILD_VOICE_STATES',
+          'GUILD_PRESENCES',
+          'GUILD_MESSAGES',
+          // 'MESSAGE_CONTENT',
+        ]
       },
-      messageLimit: 10
-    }
+      collectionLimits: {
+        messages: 10
+      }
+    };
 
-    super(process.env.TOKEN as string, clientOptions);
+    super(clientOptions);
 
     this.log = Logger.getLogger(this.constructor.name);
 
-    this.editStatus('idle', {
+    this.editStatus('idle', [{
       name: 'A iniciar...',
       type: 3
-    });
+    }]);
 
     this.cacheLoaded = false;
     this.commands = [];
@@ -99,11 +97,11 @@ export default class D4rkClient extends Client {
 
       if (matched) {
         try {
-          user = this.users.get(matched[1]) || await this.getRESTUser(matched[1]);
+          user = this.users.get(matched[1]) || await this.rest.users.get(matched[1]);
         } catch { }
       } else if (/\d{17,19}/.test(param)) {
         try {
-          user = this.users.get(param) || await this.getRESTUser(param);
+          user = this.users.get(param) || await this.rest.users.get(param);
         } catch { }
       }
 
@@ -204,7 +202,7 @@ export default class D4rkClient extends Client {
     for (const file of readdirSync(resolve(__dirname, '..', 'events'))) {
       if (file.endsWith('.ts') || file.endsWith('.js')) {
         const event = new (require(`../events/${file}`).default)(this);
-        const eventName = file.split('.')[0];
+        const eventName = file.split('.')[0] as keyof ClientEvents;
 
         if (eventName === 'ready') {
           super.once('ready', (...args) => event.run(...args));
@@ -237,7 +235,7 @@ export default class D4rkClient extends Client {
     this.music = new Music(this, nodes);
 
     this.music.init();
-    super.on('rawWS', (packet) => this.music.handleVoiceUpdate(packet));
+    super.on('packet', (packet) => this.music.handleVoiceUpdate(packet));
   }
 
   async loadBotCache(): Promise<void> {
@@ -295,52 +293,52 @@ export default class D4rkClient extends Client {
     const task = async () => {
       switch (id) {
         case 0:
-          this.editStatus('dnd', {
+          this.editStatus('dnd', [{
             name: 'D4rkB#5745',
             type: 3
-          });
+          }]);
           break;
         case 1:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `${this.guilds.size} Servidores`,
             type: 3
-          });
+          }]);
           break;
         case 2:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `${this.users.size} Utilizadores`,
             type: 3
-          });
+          }]);
           break;
         case 3:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `${Object.keys(this.channelGuildMap).length} Canais`,
             type: 1
-          });
+          }]);
           break;
         case 4:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `@D4rkBot`,
             type: 0
-          });
+          }]);
           break;
         case 5:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `${this.music.players.size} músicas`,
             type: 2
-          });
+          }]);
           break;
         case 6:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `Online há ${this.utils.msToDate(process.uptime() * 1e3)}`,
             type: 1
-          });
+          }]);
           break;
         case 7:
-          this.editStatus('online', {
+          this.editStatus('online', [{
             name: `${this.commandsUsed} comandos executados`,
             type: 3
-          });
+          }]);
           break;
       }
       id = id % 7 + 1;
@@ -356,18 +354,20 @@ export default class D4rkClient extends Client {
     if (existsSync(logPath))
       unlinkSync(logPath);
 
+    const channel = this.getChannel('775420724990705736') as TextChannel;
+
     setInterval(async (): Promise<void> => {
       if (!existsSync(logPath)) return;
 
       const buffer = readFileSync(logPath);
 
-      await this.createMessage('775420724990705736', {
+      await channel.createMessage({
         content: `:bookmark_tabs: Log dos comandos.\nData: <t:${Math.floor(Date.now() / 1e3)}>`,
-      }, {
-        name: 'log.txt',
-        file: buffer
-      }
-      );
+        files: [{
+          name: 'log.txt',
+          contents: buffer
+        }]
+      });
       unlinkSync(logPath);
     }, 7.2e6);
   }

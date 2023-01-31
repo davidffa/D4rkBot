@@ -1,4 +1,4 @@
-import { User } from 'eris';
+import { User } from 'oceanic.js';
 import { DefaultQueue, Track, UnresolvedTrack } from 'vulkava';
 
 export class TrackQueue extends DefaultQueue {

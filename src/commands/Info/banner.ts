@@ -4,6 +4,8 @@ import CommandContext from '../../structures/CommandContext';
 
 import Canvas from 'canvas';
 import { getColorFromURL } from 'color-thief-node';
+import { Routes, User } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 export default class Banner extends Command {
   constructor(client: Client) {
@@ -18,12 +20,12 @@ export default class Banner extends Command {
 
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0) return;
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('attachFiles')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('ATTACH_FILES')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Arquivos` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -38,18 +40,18 @@ export default class Banner extends Command {
     let dominant = false;
 
     if (user.banner === undefined || user.accentColor === undefined) {
-      user = await this.client.getRESTUser(user.id)
+      user = await this.client.rest.users.get(user.id)
       this.client.users.update(user);
     }
 
     if (!user.banner && !user.accentColor) {
-      const [r, g, b] = await getColorFromURL(user.dynamicAvatarURL());
+      const [r, g, b] = await getColorFromURL(user.avatarURL());
       user.accentColor = r << 16 | g << 8 | b;
       dominant = true;
     }
 
     const url = user.banner
-      ? user.dynamicBannerURL()!
+      ? Banner.dynamicBanner(this.client, user)
       : 'attachment://banner.png';
 
     const embed = new this.client.embed()
@@ -57,7 +59,7 @@ export default class Banner extends Command {
       .setColor(user.accentColor ?? 'RANDOM')
       .setImage(url)
       .setTimestamp()
-      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+      .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(user));
 
     dominant && embed.setDescription("OBS: A cor deste banner poderá não corresponder à cor original.")
 
@@ -76,10 +78,20 @@ export default class Banner extends Command {
         files: [
           {
             name: 'banner.png',
-            file: canvas.toBuffer()
+            contents: canvas.toBuffer()
           }
         ]
       })
     }
+  }
+
+  static dynamicBanner(client: Client, user: User) {
+    if (user.banner) {
+      if (user.banner.startsWith('a_')) {
+        return client.util.formatImage(Routes.BANNER(user.id, user.banner), 'gif', 4096);
+      }
+      return client.util.formatImage(Routes.BANNER(user.id, user.banner), 'png', 4096);
+    }
+    throw new Error("Unreachable");
   }
 }

@@ -3,7 +3,8 @@ import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { ComponentCollector } from '../../structures/Collector';
 
-import { Message, ActionRowComponents, ActionRow, ComponentInteraction, ComponentInteractionSelectMenuData } from 'eris';
+import { Message, ComponentInteraction, MessageActionRow, MessageComponentSelectMenuInteractionData } from 'oceanic.js';
+import { dynamicAvatar } from '../../utils/dynamicAvatar';
 
 interface UnicodeEmojiInfo {
   name: string;
@@ -35,7 +36,7 @@ export default class Emoji extends Command {
   async execute(ctx: CommandContext): Promise<void> {
     if (ctx.channel.type !== 0 || !ctx.guild) return;
 
-    if (!ctx.channel.permissionsOf(this.client.user.id).has('embedLinks')) {
+    if (!ctx.channel.permissionsOf(this.client.user.id).has('EMBED_LINKS')) {
       ctx.sendMessage({ content: ':x: Preciso da permissão `Anexar Links` para executar este comando', flags: 1 << 6 });
       return;
     }
@@ -55,7 +56,7 @@ export default class Emoji extends Command {
           .addField(':books: Grupo', `\`${unicodeEmojiInfo.group}\``, true)
           .addField(':pushpin: Versão unicode', `\`${unicodeEmojiInfo.unicode_version}\``, true)
           .setTimestamp()
-          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
         if (emojiAPIInfo) {
           const emoji = emojiAPIInfo[0];
@@ -87,32 +88,30 @@ export default class Emoji extends Command {
         emoji.animated ? emojiList.push(`<a:${emoji.name}:${emoji.id}>`) : emojiList.push(`<:${emoji.name}:${emoji.id}>`);
       });
 
-      const components: ActionRowComponents[] = [
-        {
-          custom_id: 'left',
-          style: 2,
-          type: 2,
-          emoji: {
-            id: null,
-            name: '⬅️'
-          },
-          disabled: true
-        },
-        {
-          custom_id: 'right',
-          style: 2,
-          type: 2,
-          emoji: {
-            id: null,
-            name: '➡️'
-          }
-        }
-      ]
-
-      const row: ActionRow = {
+      const row: MessageActionRow = {
         type: 1,
-        components
-      }
+        components: [
+          {
+            customID: 'left',
+            style: 2,
+            type: 2,
+            emoji: {
+              id: null,
+              name: '⬅️'
+            },
+            disabled: true
+          },
+          {
+            customID: 'right',
+            style: 2,
+            type: 2,
+            emoji: {
+              id: null,
+              name: '➡️'
+            }
+          }
+        ]
+      };
 
       let page = 1;
       const pages = Math.ceil(emojiList.length / 30);
@@ -121,7 +120,7 @@ export default class Emoji extends Command {
         .setColor('RANDOM')
         .setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice(0, 30).join(' | ')}`)
         .setTimestamp()
-        .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
 
       if (emojiList.length <= 30) {
         ctx.sendMessage({ embeds: [embed] });
@@ -134,7 +133,7 @@ export default class Emoji extends Command {
       const collector = new ComponentCollector(this.client, msg, filter, { time: 5 * 60 * 1000 });
 
       collector.on('collect', async i => {
-        switch (i.data.custom_id) {
+        switch (i.data.customID) {
           case 'left':
             if (page === 1) return;
             if (--page === 1) {
@@ -152,7 +151,7 @@ export default class Emoji extends Command {
         }
 
         embed.setDescription(`Lista dos emojis do servidor\n\n${emojiList.slice((page - 1) * 30, page * 30).join(' | ')}`)
-          .setFooter(`Página ${page} de ${pages}`, ctx.author.dynamicAvatarURL());
+          .setFooter(`Página ${page} de ${pages}`, dynamicAvatar(ctx.author));
         i.editParent({ embeds: [embed], components: [row] });
       });
 
@@ -174,7 +173,7 @@ export default class Emoji extends Command {
         .setURL(url)
         .setThumbnail(url)
         .setTimestamp()
-        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, ctx.author.dynamicAvatarURL());
+        .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
       if (i) i.editParent({ embeds: [embed], components: [] });
       else ctx.sendMessage({ embeds: [embed] });
@@ -209,29 +208,27 @@ export default class Emoji extends Command {
       return;
     }
 
-    const components: ActionRowComponents[] = [
-      {
-        custom_id: 'menu',
-        type: 3,
-        placeholder: 'Escolhe um emoji para ver mais informação',
-        options: emojiList.slice(0, 20).map((emoji: GuildEmoji, idx) => {
-          return {
-            label: emoji.name,
-            value: '' + idx,
-            emoji: {
-              id: emoji.id,
-              name: emoji.name,
-              animated: emoji.animated
-            },
-          }
-        })
-      },
-    ];
-
-    const row: ActionRow = {
+    const row: MessageActionRow = {
       type: 1,
-      components
-    }
+      components: [
+        {
+          customID: 'menu',
+          type: 3,
+          placeholder: 'Escolhe um emoji para ver mais informação',
+          options: emojiList.slice(0, 20).map((emoji: GuildEmoji, idx) => {
+            return {
+              label: emoji.name,
+              value: '' + idx,
+              emoji: {
+                id: emoji.id,
+                name: emoji.name,
+                animated: emoji.animated
+              },
+            }
+          })
+        },
+      ]
+    };
 
     const msg = await ctx.sendMessage({ content: '\u200B', components: [row], fetchReply: true }) as Message;
 
@@ -239,8 +236,8 @@ export default class Emoji extends Command {
     const collector = new ComponentCollector(this.client, msg, filter, { max: 1, time: 20000 });
 
     collector.on('collect', i => {
-      const data = i.data as ComponentInteractionSelectMenuData
-      getEmojiInfo(emojiList[Number(data.values[0])], i);
+      const data = i.data as MessageComponentSelectMenuInteractionData;
+      getEmojiInfo(emojiList[Number(data.values.raw[0])], i);
     });
   }
 }
