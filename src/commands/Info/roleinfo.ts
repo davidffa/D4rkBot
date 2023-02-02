@@ -39,7 +39,7 @@ export default class RoleInfo extends Command {
     const embed = new this.client.embed()
       .setTitle(`Informações do cargo ${role.name}`)
       .addField(':id: ID', `\`${role.id}\``, true)
-      .addField(':calendar: Criado em', `<t:${Math.floor(role.createdAt.getDate() / 1e3)}:d> (<t:${Math.floor(role.createdAt.getDate() / 1e3)}:R>)`, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(role.createdAt.getTime() / 1e3)}:d> (<t:${Math.floor(role.createdAt.getTime() / 1e3)}:R>)`, true)
       .addField('@ Mencionável', `\`${role.mentionable ? 'Sim' : 'Não'}\``, true)
       .addField(':military_medal: Posição', `\`${role.position}\``, true)
       .addField(':beginner: Separado', `\`${role.hoist ? 'Sim' : 'Não'}\``, true)

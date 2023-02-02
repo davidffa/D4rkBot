@@ -44,7 +44,7 @@ export default class Botinfo extends Command {
         '**[Servidor de Suporte](https://discord.gg/dBQnxVCTEw)**\n\n' +
         `Modelo da CPU: \`${cpuName}\`\nTotal de comandos usados: \`${totalCmdsUsed}\``
       )
-      .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt.getDate() / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt.getDate() / 1e3))}:R>)`, true)
+      .addField(':calendar: Criado em', `<t:${Math.floor(this.client.user.createdAt.getTime() / 1e3)}:d> (<t:${(Math.floor(this.client.user.createdAt.getTime() / 1e3))}:R>)`, true)
       .addField(':id: Meu ID', `\`${this.client.user.id}\``, true)
       .addField(':man: Dono', '`D4rkB#5745`', true)
       .addField('<a:infinity:838759634361253929> Uptime', `\`${this.client.utils.msToDate(process.uptime() * 1e3)}\``, true)

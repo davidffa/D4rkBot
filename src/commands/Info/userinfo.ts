@@ -61,13 +61,13 @@ export default class Userinfo extends Command {
       .setColor('RANDOM')
       .addField(':bookmark_tabs: Tag', `\`${user.username}#${user.discriminator}\``, true)
       .addField(':id: ID', `\`${user.id}\``, true)
-      .addField(':calendar: Conta criada em', `<t:${Math.floor(user.createdAt.getDate() / 1e3)}:d> (<t:${Math.floor(user.createdAt.getDate() / 1e3)}:R>)`, true)
+      .addField(':calendar: Conta criada em', `<t:${Math.floor(user.createdAt.getTime() / 1e3)}:d> (<t:${Math.floor(user.createdAt.getTime() / 1e3)}:R>)`, true)
       .setThumbnail(dynamicAvatar(user))
       .setTimestamp()
       .setFooter(`${ctx.author.username}#${ctx.author.discriminator}`, dynamicAvatar(ctx.author));
 
     if (member) {
-      embed.addField(':calendar: Entrada no servidor', `<t:${Math.floor(member.joinedAt!.getDate() / 1e3)}:d> (<t:${Math.floor(member.joinedAt!.getDate() / 1e3)}:R>)`, true)
+      embed.addField(':calendar: Entrada no servidor', `<t:${Math.floor(member.joinedAt!.getTime() / 1e3)}:d> (<t:${Math.floor(member.joinedAt!.getTime() / 1e3)}:R>)`, true)
         .addField(':shrug: Status', `\`${this.getStatus(member.presence!.status)}\``, true)
 
       const devices = this.getDevice(member);
@@ -76,7 +76,7 @@ export default class Userinfo extends Command {
         embed.addField('Dispositivos :technologist:', devices, true);
       }
 
-      const pos = ctx.guild.members.map(m => { return { id: m.id, joinedAt: m.joinedAt } }).sort((a, b) => a.joinedAt?.getDate()! - b.joinedAt?.getDate()!).findIndex(m => m.id === member.id) + 1;
+      const pos = ctx.guild.members.map(m => { return { id: m.id, joinedAt: m.joinedAt } }).sort((a, b) => a.joinedAt?.getTime()! - b.joinedAt?.getTime()!).findIndex(m => m.id === member.id) + 1;
 
       embed.addField(':trophy: Posição de entrada', `\`${pos}/${ctx.guild.members.size}\``, true)
     }
