@@ -26,7 +26,7 @@ export default class Skip extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState!.channelID;
+    const voiceChannelID = ctx.member?.voiceState?.channelID;
 
     if (!voiceChannelID || (voiceChannelID && voiceChannelID !== player.voiceChannelId)) {
       ctx.sendMessage({ content: ':x: Precisas de estar no meu canal de voz para usar esse comando!', flags: 1 << 6 });

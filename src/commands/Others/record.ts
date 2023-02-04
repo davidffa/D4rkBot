@@ -53,7 +53,7 @@ export default class Record extends Command {
   }
 
   async execute(ctx: CommandContext): Promise<void> {
-    const voiceChannelID = ctx.member!.voiceState!.channelID;
+    const voiceChannelID = ctx.member!.voiceState?.channelID;
 
     if (!voiceChannelID) {
       ctx.sendMessage({ content: ':x: Precisas de estar num canal de voz para executar esse comando!', flags: 1 << 6 });

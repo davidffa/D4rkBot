@@ -36,7 +36,7 @@ export default class Play extends Command {
 
     if (!this.client.music.canPlay(ctx, currPlayer)) return;
 
-    const voiceChannelID = ctx.member?.voiceState!.channelID as string;
+    const voiceChannelID = ctx.member?.voiceState?.channelID as string;
     const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
     const createPlayer = (): Player => {

@@ -50,7 +50,7 @@ export default class Radio extends Command {
       return;
     }
 
-    const voiceChannelID = ctx.member?.voiceState!.channelID;
+    const voiceChannelID = ctx.member?.voiceState?.channelID;
     const currPlayer = this.client.music.players.get(ctx.guild.id);
 
     if (!voiceChannelID) {

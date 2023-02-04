@@ -444,7 +444,7 @@ export default class PlayList extends Command {
 
         if (!this.client.music.canPlay(ctx, player)) return;
 
-        const voiceChannelID = ctx.member?.voiceState!.channelID as string;
+        const voiceChannelID = ctx.member?.voiceState?.channelID as string;
         const voiceChannel = this.client.getChannel(voiceChannelID) as VoiceChannel;
 
         player = this.client.music.createPlayer({

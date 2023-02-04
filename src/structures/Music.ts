@@ -204,7 +204,7 @@ export default class Lavalink extends Vulkava {
   }
 
   canPlay(ctx: CommandContext, player?: Player | undefined): boolean {
-    const voiceChannelID = ctx.member!.voiceState!.channelID;
+    const voiceChannelID = ctx.member!.voiceState?.channelID;
 
     if (!voiceChannelID) {
       ctx.sendMessage({ content: ':x: Precisas de estar num canal de voz para executar esse comando!', flags: 1 << 6 });
