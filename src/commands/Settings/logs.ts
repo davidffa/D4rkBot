@@ -50,7 +50,7 @@ export default class Logs extends Command {
       await this.client.guildDB.updateOne({
         guildID: ctx.guild.id
       }, {
-        $set: { welcomeChatID: '' }
+        $set: { welcomeChatID: channel.id }
       }, {
         upsert: true
       });
