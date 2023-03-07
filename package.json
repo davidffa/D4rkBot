@@ -10,7 +10,7 @@
   "author": "David Amorim",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=18.12.1",
+    "node": ">=18.14.2",
     "yarn": "1.22.19"
   },
   "scripts": {
@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.2",
     "@types/figlet": "^1.5.5",
-    "@types/node": "^18.13.0",
+    "@types/node": "^18.14.6",
     "@types/sbd": "^1.0.3",
     "@types/xml2js": "^0.4.11",
     "ts-node-dev": "^2.0.0",
@@ -35,13 +35,13 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^16.0.3",
     "figlet": "^1.5.2",
-    "mathjs": "^11.5.1",
-    "mongoose": "6.9.2",
-    "oceanic.js": "^1.5.1-dev.b82aee9",
+    "mathjs": "^11.6.0",
+    "mongoose": "7.0.1",
+    "oceanic.js": "^1.5.1-dev.18aed0f",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
     "unicode-emoji-json": "^0.4.0",
-    "utf-8-validate": "^6.0.2",
+    "utf-8-validate": "^6.0.3",
     "vulkava": "^1.6.0",
     "xml2js": "^0.4.23",
     "zlib-sync": "^0.1.8"
