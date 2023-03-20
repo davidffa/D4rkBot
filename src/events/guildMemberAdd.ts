@@ -1,6 +1,6 @@
 import Client from '../structures/Client';
 
-import { Guild, Member, TextableChannel } from 'oceanic.js';
+import { Member, TextableChannel } from 'oceanic.js';
 
 import { resolve } from 'path';
 import Canvas, { Canvas as CanvasOptions } from 'canvas';
@@ -12,7 +12,8 @@ export default class GuildMemberAdd {
     this.client = client;
   }
 
-  async run(guild: Guild, member: Member): Promise<void> {
+  async run(member: Member): Promise<void> {
+    const { guild } = member;
     const guildData = this.client.guildCache.get(guild.id);
 
     if (!guildData) return;
