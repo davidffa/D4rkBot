@@ -2,6 +2,7 @@ import Command from '../../structures/Command';
 import Client from '../../structures/Client';
 import CommandContext from '../../structures/CommandContext';
 import { dynamicAvatar } from '../../utils/dynamicAvatar';
+import { VoiceChannel } from 'oceanic.js';
 
 export default class Channelinfo extends Command {
   constructor(client: Client) {
@@ -74,9 +75,12 @@ export default class Channelinfo extends Command {
         'us-west': ':flag_us:',
         'southafrica': ':flag_za:',
       }
-      embed.addField(':notes: Taxa de bits', `\`${channel.bitrate}\``, true);
-      embed.addField(':map: Região', `${channel.rtcRegion ? regions[channel.rtcRegion] : '`Auto`'}`, true);
-      channel.type === 2 && embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 2 ? '720p' : 'Auto'}\``, true);
+
+      if (channel instanceof VoiceChannel) {
+        embed.addField(':notes: Taxa de bits', `\`${channel.bitrate}\``, true);
+        embed.addField(':map: Região', `${channel.rtcRegion ? regions[channel.rtcRegion] : '`Auto`'}`, true);
+        channel.type === 2 && embed.addField(':movie_camera: Vídeo', `\`${channel.videoQualityMode === 2 ? '720p' : 'Auto'}\``, true);
+      }
     }
 
     channel.parentID && embed.addField(':flag_white: Categoria', `\`${ctx.guild.channels.get(channel.parentID)?.name}\``, true);

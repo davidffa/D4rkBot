@@ -22,7 +22,7 @@ export default class MessageCreate {
     if (message.content === '' || message.author.bot || !message.channel || message.channel.type === 1 || !this.client.cacheLoaded) return;
 
     if (message.guildID) {
-      if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil ?? 0) > Date.now()) return;
+      if ((this.client.guilds.get(message.guildID)!.members.get(this.client.user.id)!.communicationDisabledUntil?.getTime() ?? 0) > Date.now()) return;
     }
 
     const prefix = `<@${this.client.user.id}>`;
