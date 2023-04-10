@@ -23,7 +23,7 @@ export default class GuildCreate {
       .setTitle('<:badgebooster:803666384373809233> Entrei num novo servidor')
       .setColor('RANDOM')
       .addField('Nome', `\`${guild.name}\``, true)
-      .addField(':crown: Dono', `\`${this.client.users.get(guild.ownerID)?.username}#${this.client.users.get(guild.ownerID)?.discriminator}\``, true)
+      .addField(':crown: Dono', `\`${guild.ownerID && this.client.users.get(guild.ownerID)?.username}#${guild.ownerID && this.client.users.get(guild.ownerID)?.discriminator}\``, true)
       .addField(':closed_book: ID', `\`${guild.id}\``, true)
       .addField(':man: Membros', `\`${guild.members.size}\``, true)
       .setTimestamp();

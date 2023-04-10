@@ -73,7 +73,7 @@ export default class Serverinfo extends Command {
       .setTitle(`:bookmark_tabs: Informações do servidor **${guild.name}**`)
       .setColor('RANDOM')
       .addField(':id: ID', guild.id, true)
-      .addField(':crown: Dono do servidor', `${this.client.users.get(guild.ownerID)?.mention || guild.ownerID}`, true)
+      .addField(':crown: Dono do servidor', `${(guild.ownerID && this.client.users.get(guild.ownerID)?.mention) || guild.ownerID}`, true)
       .addField(':police_officer: Nível de verificação', verificationLevels[guild.verificationLevel], true)
       .addField(`<:followers:784795303156908032> Cargos:`, `${guild.roles.size}`, true)
       .addField(':calendar: Criado em', `<t:${~~(guild.createdAt.getTime() / 1e3)}:d> (<t:${~~(guild.createdAt.getTime() / 1e3)}:R>)`, true)
