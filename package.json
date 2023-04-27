@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.2",
     "@types/figlet": "^1.5.5",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.2",
     "@types/sbd": "^1.0.3",
     "@types/xml2js": "^0.4.11",
     "ts-node-dev": "^2.0.0",
@@ -36,7 +36,7 @@
     "dotenv": "^16.0.3",
     "figlet": "^1.6.0",
     "mathjs": "^11.8.0",
-    "mongoose": "7.0.3",
+    "mongoose": "7.1.0",
     "oceanic.js": "^1.6.0",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
