@@ -43,7 +43,9 @@ export default class Record extends Command {
           }
         ]
       });
-    } catch (_) {
+    } catch (e) {
+      console.error(e);
+
       if (ctx) {
         ctx.sendMessage(':x: Erro ao obter a gravação!');
         return;
