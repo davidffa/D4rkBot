@@ -1213,7 +1213,7 @@ typescript@^5.0.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.4.tgz#b217fd20119bd61a94d4011274e0ab369058da3b"
   integrity sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==
 
-undici@^5.12.0, undici@^5.16.0, undici@^5.21.0:
+undici@^5.12.0, undici@^5.21.0, undici@^5.22.0:
   version "5.22.0"
   resolved "https://registry.yarnpkg.com/undici/-/undici-5.22.0.tgz#5e205d82a5aecc003fc4388ccd3d2c6e8674a0ad"
   integrity sha512-fR9RXCc+6Dxav4P9VV/sp5w3eFiSdOjJYsbtWfd4s5L5C4ogyuVpdKIVHeW0vV1MloM65/f7W45nR9ZxwVdyiA==
@@ -1242,13 +1242,13 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vulkava@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.6.0.tgz#6db8d7293d0511f47957f2f80ef61bd805bbf4e9"
-  integrity sha512-SkD30rFQWtKSP5G/84VCh6TQSTjHxwsMYidGEEM8ufjYo9KBMKQGF6S/D+9hNFv7gSU8VIS5veYpkPPRzf3J9Q==
+vulkava@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.6.1.tgz#79b8578125043c834915c7dfe6034b40eddf05eb"
+  integrity sha512-H9FVTu8DpUhUOipxsrM/2hFfbLbGg4zWJ/ncyCH6bCkro22H8n9HhhaWFCULMCiPt4FBtVAP2qLEWvpN8YQW1w==
   dependencies:
-    undici "^5.16.0"
-    ws "^8.12.0"
+    undici "^5.22.0"
+    ws "^8.13.0"
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
@@ -1288,7 +1288,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-ws@^8.12.0, ws@^8.13.0:
+ws@^8.13.0:
   version "8.13.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.13.0.tgz#9a9fb92f93cf41512a0735c8f4dd09b8a1211cd0"
   integrity sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==

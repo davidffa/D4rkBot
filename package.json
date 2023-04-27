@@ -42,7 +42,7 @@
     "steam-provider": "^0.3.2",
     "unicode-emoji-json": "^0.4.0",
     "utf-8-validate": "^6.0.3",
-    "vulkava": "^1.6.0",
+    "vulkava": "^1.6.1",
     "xml2js": "^0.5.0",
     "zlib-sync": "^0.1.8"
   }
