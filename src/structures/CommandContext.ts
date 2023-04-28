@@ -112,6 +112,19 @@ export default class CommandContext {
     if (this.interactionOrMessage instanceof Message) {
       return this.channel.createMessage(content);
     } else {
+      // WARN You cannot attach files in an initial response. Defer the interaction, then use createFollowup.
+      // ^ Emitted by OceanicJS when sending file attachments in an initial response.
+      if (content.files?.length) {
+        await this.defer();
+        await this.interactionOrMessage.editOriginal(content);
+
+        if (fetchReply) {
+          return this.interactionOrMessage.getOriginal() as Promise<Message<TextableChannel>>;
+        }
+
+        return;
+      }
+
       if (this.deferred) {
         await this.interactionOrMessage.editOriginal(content);
       } else {
@@ -130,7 +143,7 @@ export default class CommandContext {
   }
 
   async defer() {
-    if (this.interactionOrMessage instanceof CommandInteraction) {
+    if (this.interactionOrMessage instanceof CommandInteraction && !this.deferred) {
       await this.interactionOrMessage.defer();
       this.deferred = true;
     }
