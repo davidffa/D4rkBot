@@ -10,7 +10,7 @@
   "author": "David Amorim",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=18.14.2",
+    "node": ">=18.17.0",
     "yarn": "1.22.19"
   },
   "scripts": {
