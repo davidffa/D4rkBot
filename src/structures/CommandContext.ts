@@ -3,6 +3,7 @@ import Client from './Client';
 import { CommandInteraction, InteractionOptionsWithValue, Message } from 'oceanic.js'
 
 import type {
+  AnyTextableGuildChannel,
   Attachment,
   CreateMessageOptions,
   Guild,
@@ -100,7 +101,7 @@ export default class CommandContext {
     return this.interactionOrMessage.channel as TextableChannel;
   }
 
-  async sendMessage(content: Content | string): Promise<Message<TextableChannel> | void> {
+  async sendMessage(content: Content | string): Promise<Message<AnyTextableGuildChannel> | void> {
     content = this.formatContent(content);
 
     const fetchReply = !!content.fetchReply;
@@ -119,7 +120,7 @@ export default class CommandContext {
         await this.interactionOrMessage.editOriginal(content);
 
         if (fetchReply) {
-          return this.interactionOrMessage.getOriginal() as Promise<Message<TextableChannel>>;
+          return this.interactionOrMessage.getOriginal() as Promise<Message<AnyTextableGuildChannel>>;
         }
 
         return;
@@ -132,7 +133,7 @@ export default class CommandContext {
       }
 
       if (fetchReply) {
-        return this.interactionOrMessage.getOriginal() as Promise<Message<TextableChannel>>;
+        return this.interactionOrMessage.getOriginal() as Promise<Message<AnyTextableGuildChannel>>;
       }
     }
   }
