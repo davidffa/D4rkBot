@@ -97,10 +97,10 @@
   resolved "https://registry.yarnpkg.com/@types/figlet/-/figlet-1.5.6.tgz#fd6e71c48ffa83953aaf401c8ff179c2a5fabc9f"
   integrity sha512-AOdn9cKJGXpqfHeif16xeGMwWefB4nsOyxkdRMpc+PEP3nUxzu3psJfIqhjrCNW4Sejt5i6rISWmEwK0sw03mA==
 
-"@types/node@*", "@types/node@^20.4.5":
-  version "20.4.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.5.tgz#9dc0a5cb1ccce4f7a731660935ab70b9c00a5d69"
-  integrity sha512-rt40Nk13II9JwQBdeYqmbn2Q6IVTA5uPhvSO+JVqdXw/6/4glI6oR9ezty/A9Hg5u7JH4OmYmuQ+XvjKm0Datg==
+"@types/node@*", "@types/node@^20.4.6":
+  version "20.4.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.6.tgz#b66b66c9bb5d49b199f03399e341c9d6036e9e88"
+  integrity sha512-q0RkvNgMweWWIvSMDiXhflGUKMdIxBo2M2tYM/0kEGDueQByFzK4KZAgu5YHGFNxziTlppNpTIBcqHQAxlfHdA==
 
 "@types/sbd@^1.0.3":
   version "1.0.3"
@@ -393,9 +393,9 @@ diff@^4.0.1:
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
 discord-api-types@^0.37.37:
-  version "0.37.50"
-  resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.50.tgz#6059eb8c0b784ad8194655a8b8b7f540fcfac428"
-  integrity sha512-X4CDiMnDbA3s3RaUXWXmgAIbY1uxab3fqe3qwzg5XutR3wjqi7M3IkgQbsIBzpqBN2YWr/Qdv7JrFRqSgb4TFg==
+  version "0.37.51"
+  resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.51.tgz#a9fe2ceddde1c9c2e4d29987d45241cd746b9319"
+  integrity sha512-tdmdH98t3zgjQF6zwOHl0OB/PCBiE4aVsNTuN7m0PfU2jOLx3lNoU6xTeFALntUtlIxN80GTr9RPQR4t7msjSg==
 
 dom-serializer@^2.0.0:
   version "2.0.0"
@@ -1214,10 +1214,10 @@ typescript@^5.1.6:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.6.tgz#02f8ac202b6dad2c0dd5e0913745b47a37998274"
   integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
 
-undici@^5.12.0, undici@^5.22.0, undici@^5.22.1:
-  version "5.22.1"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.22.1.tgz#877d512effef2ac8be65e695f3586922e1a57d7b"
-  integrity sha512-Ji2IJhFXZY0x/0tVBXeQwgPlLWw13GVzpsWPQ3rV50IFMMof2I55PZZxtm4P6iNq+L5znYN9nSTAq0ZyE6lSJw==
+undici@^5.12.0, undici@^5.22.1:
+  version "5.23.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.23.0.tgz#e7bdb0ed42cebe7b7aca87ced53e6eaafb8f8ca0"
+  integrity sha512-1D7w+fvRsqlQ9GscLBwcAJinqcZGHUKjbOmXdlE/v8BvEGXjeWAax+341q44EuTcHXXnfyKNbKRq4Lg7OzhMmg==
   dependencies:
     busboy "^1.6.0"
 
@@ -1243,12 +1243,12 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vulkava@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.6.1.tgz#79b8578125043c834915c7dfe6034b40eddf05eb"
-  integrity sha512-H9FVTu8DpUhUOipxsrM/2hFfbLbGg4zWJ/ncyCH6bCkro22H8n9HhhaWFCULMCiPt4FBtVAP2qLEWvpN8YQW1w==
+vulkava@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/vulkava/-/vulkava-1.6.2.tgz#573d287da2cbf60769f01486e3227c57dcb6bc60"
+  integrity sha512-LMqIUD0GUIHIhah8H8AFW0vVOgyPYGkqvDD8ySv6XLKmFrXRTPRlkADT7F3NCqPI9AZyUYu5Z435dSejtUNHPA==
   dependencies:
-    undici "^5.22.0"
+    undici "^5.22.1"
     ws "^8.13.0"
 
 webidl-conversions@^3.0.0:
