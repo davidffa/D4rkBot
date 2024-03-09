@@ -43,6 +43,7 @@ export default class Channelinfo extends Command {
       13: 'Palco',
       14: 'Diretório',
       15: 'Fórum',
+      16: 'Média'
     }
 
     const embed = new this.client.embed()

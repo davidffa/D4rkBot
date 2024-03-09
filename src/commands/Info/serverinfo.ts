@@ -57,7 +57,7 @@ export default class Serverinfo extends Command {
     const boostAmount = guild.premiumSubscriptionCount;
     const boostLevel = guild.premiumTier;
 
-    const emojis = guild.emojis.length;
+    const emojis = guild.emojis.size;
     const animatedEmojis = guild.emojis.filter(e => e.animated).length;
     const staticEmojis = emojis - animatedEmojis;
 

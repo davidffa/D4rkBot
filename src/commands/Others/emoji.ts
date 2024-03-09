@@ -76,7 +76,7 @@ export default class Emoji extends Command {
       }
     }
 
-    if (!ctx.channel.guild.emojis.length) {
+    if (!ctx.channel.guild.emojis.size) {
       ctx.sendMessage({ content: ':x: Este servidor não tem emojis :frowning2:.', flags: 1 << 6 });
       return;
     }
