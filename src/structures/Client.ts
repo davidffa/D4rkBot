@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
-import { Client, ClientOptions, User, Guild, Constants, Role, ClientEvents, TextChannel } from 'oceanic.js';
+import { Client, ClientOptions, User, Guild, Role, ClientEvents, TextChannel } from 'oceanic.js';
 import { NodeOptions } from 'vulkava';
 
 import Embed from './Embed';
@@ -43,10 +43,9 @@ export default class D4rkClient extends Client {
     const clientOptions: ClientOptions = {
       auth: process.env.TOKEN,
       defaultImageFormat: 'png',
-      defaultImageSize: Constants.MAX_IMAGE_SIZE,
       gateway: {
         getAllUsers: true,
-        compress: true,
+        compress: "zstd-stream",
         intents: [
           'GUILDS',
           'GUILD_MEMBERS',
@@ -306,7 +305,8 @@ export default class D4rkClient extends Client {
         case 3:
           this.editStatus('online', [{
             name: `${Object.keys(this.channelGuildMap).length} Canais`,
-            type: 1
+            type: 1,
+            url: ''
           }]);
           break;
         case 4:
@@ -324,7 +324,8 @@ export default class D4rkClient extends Client {
         case 6:
           this.editStatus('online', [{
             name: `Online há ${this.utils.msToDate(process.uptime() * 1e3)}`,
-            type: 1
+            type: 1,
+            url: ''
           }]);
           break;
         case 7:

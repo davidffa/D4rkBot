@@ -21,29 +21,29 @@
   "devDependencies": {
     "@types/color-thief-node": "^1.0.4",
     "@types/figlet": "^1.5.8",
-    "@types/node": "^20.11.25",
+    "@types/node": "^22.5.0",
     "@types/sbd": "^1.0.5",
     "@types/xml2js": "^0.4.14",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
     "bufferutil": "^4.0.8",
     "canvas": "^2.11.2",
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "^1.0.0",
     "color-thief-node": "^1.0.4",
     "dotenv": "^16.4.5",
     "figlet": "^1.7.0",
-    "mathjs": "^12.4.0",
-    "mongoose": "8.2.1",
-    "oceanic.js": "^1.9.0",
+    "fzstd": "^0.1.1",
+    "mathjs": "^13.0.3",
+    "mongoose": "8.5.3",
+    "oceanic.js": "^1.11.2",
     "sbd": "^1.0.19",
     "steam-provider": "^0.3.2",
-    "unicode-emoji-json": "^0.4.0",
-    "utf-8-validate": "^6.0.3",
+    "unicode-emoji-json": "^0.6.0",
+    "utf-8-validate": "^6.0.4",
     "vulkava": "^1.6.3",
-    "xml2js": "^0.6.2",
-    "zlib-sync": "^0.1.9"
+    "xml2js": "^0.6.2"
   }
 }
