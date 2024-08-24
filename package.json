@@ -35,7 +35,6 @@
     "color-thief-node": "^1.0.4",
     "dotenv": "^16.4.5",
     "figlet": "^1.7.0",
-    "fzstd": "^0.1.1",
     "mathjs": "^13.0.3",
     "mongoose": "8.5.3",
     "oceanic.js": "^1.11.2",
@@ -44,6 +43,7 @@
     "unicode-emoji-json": "^0.6.0",
     "utf-8-validate": "^6.0.4",
     "vulkava": "^1.6.3",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "zlib-sync": "^0.1.9"
   }
 }

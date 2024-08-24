@@ -45,7 +45,7 @@ export default class D4rkClient extends Client {
       defaultImageFormat: 'png',
       gateway: {
         getAllUsers: true,
-        compress: "zstd-stream",
+        compress: "zlib-stream",
         intents: [
           'GUILDS',
           'GUILD_MEMBERS',
