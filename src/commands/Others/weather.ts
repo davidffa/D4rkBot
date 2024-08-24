@@ -44,8 +44,9 @@ interface WeatherResponse {
 }
 
 const BASE_URL = 'https://openweathermap.org';
-const SCRIPT_REGEX = /<script src="(\/themes\/openweathermap\/assets\/vendor\/owm\/js\/weather-widget-new.+)">/;
-const APP_ID_REGEX = /appid:"([a-z0-9]+)"/;
+const SCRIPT_REGEX = /<script src="(.+\/find.js)"/;
+const APP_ID_REGEX = /appid=([a-z0-9]+)/;
+
 let appId = "";
 
 export default class Weather extends Command {
@@ -181,19 +182,19 @@ export default class Weather extends Command {
   }
 
   static async fetchAppId(): Promise<void> {
-    const html = await fetch(BASE_URL).then(r => r.text());
+    const html = await fetch(`${BASE_URL}/find`).then(r => r.text());
     const htmlMatch = html.match(SCRIPT_REGEX);
     if (htmlMatch === null) {
-      throw new Error('Could not find the app script');
+      throw new Error('Could not find the find script');
     }
 
     const script = await fetch(`${BASE_URL}${htmlMatch[1]}`).then(r => r.text());
-    const appIdMatch = script.match(APP_ID_REGEX);
+    const findAppIdMatch = script.match(APP_ID_REGEX);
 
-    if (appIdMatch === null) {
-      throw new Error('Could not find the app id');
+    if (findAppIdMatch === null) {
+      throw new Error('Could not find the find app id');
     }
 
-    appId = appIdMatch[1];
+    appId = findAppIdMatch[1];
   }
 }
